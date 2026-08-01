@@ -27,6 +27,10 @@ const defaultShortcuts: Shortcut[] = [
   {
     key: 'quickRecordText',
     value: 'CommandOrControl+Shift+T'
+  },
+  {
+    key: 'quickRecordVoice',
+    value: 'CommandOrControl+Shift+V'
   }
 ]
 

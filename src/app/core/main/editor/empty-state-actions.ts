@@ -9,7 +9,7 @@ export async function createNewNoteFromEmptyState({
   await newFile()
 }
 
-export const ONBOARDING_SAMPLE_RECORD = `这是我在 NoteGen 里的第一条记录。
+export const ONBOARDING_SAMPLE_RECORD = `这是我在 NoteLoom 里的第一条记录。
 
 我可以先把零散想法快速记下来，不用一开始就整理结构。
 后面可以把这些记录整理成一篇正式笔记，再继续编辑。

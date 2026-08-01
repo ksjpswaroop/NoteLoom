@@ -117,7 +117,7 @@ Deletion is complete on its own. Save a replacement only when the user separatel
  */
 export const saveMemoryTool: Tool = {
   name: 'save_memory',
-  description: `Save or update a memory only when the user expresses clear persistent intent, such as explicitly asking NoteGen to remember something for future conversations.
+  description: `Save or update a memory only when the user expresses clear persistent intent, such as explicitly asking NoteLoom to remember something for future conversations.
 
 Do not persist one-turn instructions merely because they mention a language, format, tone, or temporary preference. If a persistent request conflicts with an existing memory, inspect existing memories, then call save_memory once with the replacement content and the same stable conflict_key. save_memory consolidates the replacement atomically. Never delete the old memory first unless the user explicitly asks to forget it without saving a replacement.
 
@@ -138,7 +138,7 @@ Examples:
 - "以后都用英文回答我" -> preference
 - "从现在起，发布说明默认先写用户能感知到的变化" -> preference
 - "以后不要在文章里使用过多小标题" -> preference
-- "你记住，NoteGen 项目使用 pnpm" -> memory
+- "你记住，NoteLoom 项目使用 pnpm" -> memory
 - "Remember that I prefer concise English answers in future conversations" -> preference
 - "From now on, use pnpm commands for this workspace" -> preference
 - "Remember that I maintain a React library" -> memory

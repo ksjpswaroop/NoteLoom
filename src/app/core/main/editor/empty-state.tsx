@@ -1,6 +1,6 @@
 'use client'
 
-import { FileText, MessageSquareText, Search, FolderOpen } from 'lucide-react'
+import { FileText, MessageSquareText, Search, FolderOpen, Mic } from 'lucide-react'
 import useArticleStore from '@/stores/article'
 import { useTranslations } from 'next-intl'
 import { open } from '@tauri-apps/plugin-dialog'
@@ -50,6 +50,7 @@ export function EmptyState({
   const { shortcuts } = useShortcutStore()
   const { addWorkspaceHistory } = useSettingStore()
   const [textRecordShortcut, setTextRecordShortcut] = useState('')
+  const [voiceRecordShortcut, setVoiceRecordShortcut] = useState('')
 
   const handleCreateNote = async () => {
     await createNewNoteFromEmptyState({
@@ -72,19 +73,25 @@ export function EmptyState({
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [newFile, setLeftSidebarTab])
 
-  // 读取文本记录快捷键
+  // 读取文本 / 语音记录快捷键
   useEffect(() => {
-    const shortcut = shortcuts.find(s => s.key === 'quickRecordText')
-    if (shortcut) {
-      // 转换快捷键格式：CommandOrControl+Shift+T -> ⌘ ⇧ T
-      const formatted = shortcut.value
+    const formatShortcut = (value: string) =>
+      value
         .replace('CommandOrControl', '⌘')
         .replace('Command', '⌘')
         .replace('Control', 'Ctrl')
         .replace('Shift', '⇧')
         .replace('Alt', '⌥')
         .replace('+', ' ')
-      setTextRecordShortcut(formatted)
+
+    const textShortcut = shortcuts.find(s => s.key === 'quickRecordText')
+    if (textShortcut) {
+      setTextRecordShortcut(formatShortcut(textShortcut.value))
+    }
+
+    const voiceShortcut = shortcuts.find(s => s.key === 'quickRecordVoice')
+    if (voiceShortcut) {
+      setVoiceRecordShortcut(formatShortcut(voiceShortcut.value))
     }
   }, [shortcuts])
 
@@ -117,6 +124,10 @@ export function EmptyState({
     emitter.emit('quickRecordTextHandler')
   }
 
+  const handleOpenVoiceRecord = () => {
+    emitter.emit('quickRecordVoice')
+  }
+
   const handleGlobalSearch = () => {
     // 触发全局搜索弹窗 (Cmd/Ctrl + F)
     const event = new KeyboardEvent('keydown', {
@@ -142,6 +153,13 @@ export function EmptyState({
       description: t('actions.newRecord.desc'),
       shortcut: textRecordShortcut,
       onClick: handleOpenRecord
+    },
+    {
+      icon: <Mic className="w-5 h-5" />,
+      title: 'Voice record',
+      description: 'Capture a voice recording and transcribe it into a record.',
+      shortcut: voiceRecordShortcut,
+      onClick: handleOpenVoiceRecord
     },
     {
       icon: <Search className="w-5 h-5" />,
@@ -198,13 +216,13 @@ export function EmptyState({
           <div className="flex items-center justify-center gap-3 mb-2">
             <Image 
               src="/app-icon.png" 
-              alt="NoteGen" 
+              alt="NoteLoom" 
               width={60}
               height={60}
               className="w-10 h-10 dark:invert"
             />
             <h1 className="text-4xl font-bold tracking-tight">
-              NoteGen
+              NoteLoom
             </h1>
           </div>
           <EmptyTitle className="text-xl">
@@ -316,15 +334,16 @@ export function EmptyState({
         {/* Tips */}
         <div className="flex flex-col gap-2 pt-4 text-center">
           <p className="text-xs text-muted-foreground">
-            查看使用文档：
+            Capture first. Organize later. Derived from{' '}
             <a 
-              href="https://notegen.top/" 
+              href="https://github.com/codexu/note-gen" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-primary hover:underline ml-1"
+              className="text-primary hover:underline"
             >
-              https://notegen.top/
+              NoteGen
             </a>
+            {' '}(GPL-3.0).
           </p>
         </div>
       </div>

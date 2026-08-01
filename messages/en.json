@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "NoteGen",
+    "title": "NoteLoom",
     "description": "Capture first. Organize later."
   },
   "tray": {
@@ -14,7 +14,7 @@
     "window": "Window",
     "pinToggle": "Pin/Unpin",
     "hideWindow": "Hide to Tray",
-    "quit": "Quit NoteGen"
+    "quit": "Quit NoteLoom"
   },
   "settings": {
     "defaultModels": {
@@ -31,7 +31,7 @@
       "desc": "Here, you can configure basic application settings, including interface theme, language and other options.",
       "behavior": {
         "title": "App Behavior",
-        "desc": "Choose how NoteGen starts and what happens when you close its window",
+        "desc": "Choose how NoteLoom starts and what happens when you close its window",
         "close": {
           "title": "When closing the window",
           "desc": "Choose what the window close button should do",
@@ -43,12 +43,12 @@
         },
         "autostart": {
           "title": "Launch at startup",
-          "desc": "Start NoteGen automatically after you sign in",
+          "desc": "Start NoteLoom automatically after you sign in",
           "error": "Could not update the startup setting"
         },
         "closePrompt": {
-          "title": "Close NoteGen?",
-          "desc": "You can keep NoteGen available in the system tray or quit the app completely.",
+          "title": "Close NoteLoom?",
+          "desc": "You can keep NoteLoom available in the system tray or quit the app completely.",
           "cancel": "Cancel",
           "minimize": "Minimize to tray",
           "quit": "Quit app"
@@ -247,7 +247,7 @@
     },
     "webSearch": {
       "title": "Web Search",
-      "desc": "Configure NoteGen's three-layer web search strategy. AI decides when a search is needed.",
+      "desc": "Configure NoteLoom's three-layer web search strategy. AI decides when a search is needed.",
       "nativeEnabled": "Enable native model search",
       "thirdPartyEnabled": "Enable third-party search",
       "basicEnabled": "Enable no-key search",
@@ -448,7 +448,7 @@
       "runtimeManualOnly": "Automatic install is not available for this runtime on the current platform. Please install it manually and run the check again.",
       "installRuntime": "Install Runtime",
       "runtimeInstallTitle": "Install runtime",
-      "runtimeInstallDesc": "NoteGen will run the following install command after confirmation.",
+      "runtimeInstallDesc": "NoteLoom will run the following install command after confirmation.",
       "runtimeInstallPreparing": "Preparing install",
       "runtimeInstallRunning": "Installing",
       "runtimeInstallCompleted": "Install completed",
@@ -499,7 +499,7 @@
       "userInvocable": "Show in Slash Menu",
       "importHelp": "Support importing Skills in zip format. The zip file must contain a SKILL.md file.",
       "workspaceInstallHelp": "Installed in the current workspace's skills folder and available only in this workspace.",
-      "globalInstallHelp": "Installed in NoteGen's global Skills folder and available in every workspace.",
+      "globalInstallHelp": "Installed in NoteLoom's global Skills folder and available in every workspace.",
       "metadata": "Metadata",
       "content": "Instructions",
       "noSkills": "No Skills yet",
@@ -828,7 +828,7 @@
       "resourcesTitle": "Resources and support",
       "resourcesDesc": "Open docs, release notes, or community channels for feedback.",
       "licenseText": "Open source · GitHub · GPL-3.0",
-      "version": "NoteGen v{version}",
+      "version": "NoteLoom v{version}",
       "checkReleases": "Check Release History",
       "language": "Language",
       "checkUpdate": "Check for Updates",
@@ -875,7 +875,7 @@
         },
         "donation": {
           "title": "Donate",
-          "desc": "If NoteGen helps you, you can support ongoing maintenance with a donation."
+          "desc": "If NoteLoom helps you, you can support ongoing maintenance with a donation."
         },
         "docs": {
           "title": "Docs and configuration",
@@ -898,7 +898,7 @@
           "desc": "Set up Git, S3, and WebDAV sync."
         },
         "donate": {
-          "title": "Support NoteGen",
+          "title": "Support NoteLoom",
           "buttonName": "Donate",
           "desc": "Open the donation page to support the project."
         },
@@ -1199,7 +1199,7 @@
       "newToken": "Create Access Token",
       "tokenPermissionGuide": "View Permission Guide",
       "toggleTokenVisibility": "Show or hide Access Token",
-      "newTokenDesc": "Use a fine-grained token. Existing repositories need Contents read/write; repositories created by NoteGen also need Administration read/write.",
+      "newTokenDesc": "Use a fine-grained token. Existing repositories need Contents read/write; repositories created by NoteLoom also need Administration read/write.",
       "giteeTokenDesc": "Gitee personal access token is used for data synchronization. It needs repository read and write permissions. After configuration, it will automatically create a file repository (private) and an image repository.",
       "imageRepoSetting": "Enable Image Hosting",
       "imageRepoSettingDesc": "You have already configured an image repository, you can choose to use the image repository or use local storage.",
@@ -1877,7 +1877,7 @@
       "voicePlaceholder": "Enter voice type, e.g.: alloy",
       "defaultModels": {
         "title": "Default Free Models",
-        "desc": "NoteGen provides free AI model services for users, enabling basic functionality without configuration.",
+        "desc": "NoteLoom provides free AI model services for users, enabling basic functionality without configuration.",
         "chatModel": {
           "name": "Qwen/Qwen3-8B",
           "type": "Chat Model",
@@ -1963,7 +1963,7 @@
     },
     "shortcuts": {
       "title": "Shortcuts",
-      "desc": "Here, you can configure shortcuts to help you use NoteGen more efficiently.",
+      "desc": "Here, you can configure shortcuts to help you use NoteLoom more efficiently.",
       "resetDefaults": "Reset",
       "clear": "Clear",
       "noShortcut": "No Shortcut",
@@ -1972,7 +1972,7 @@
       "conflictGlobal": "Conflicts with global shortcut \"{name}\"",
       "globalShortcuts": {
         "title": "Global shortcuts",
-        "desc": "These shortcuts are registered by the system and can work when NoteGen is not focused."
+        "desc": "These shortcuts are registered by the system and can work when NoteLoom is not focused."
       },
       "editorShortcuts": {
         "title": "Editor shortcuts",
@@ -2200,6 +2200,10 @@
         "quickRecordText": {
           "title": "Quick Record Text",
           "desc": "Quickly open the main window and switch to text recording."
+        },
+        "quickRecordVoice": {
+          "title": "Quick Record Voice",
+          "desc": "Quickly open the main window and start or stop voice recording."
         }
       }
     },
@@ -3189,8 +3193,8 @@
       "fit": "Fit view",
       "layout": "Auto arrange",
       "export": "Export",
-      "import": { "title": "Import", "file": "Choose file", "content": "Enter content", "contentTitle": "Import canvas content", "contentDescription": "Supports NoteGen Canvas JSON or Mermaid flowchart content. Importing replaces the current canvas.", "contentPlaceholder": "Paste Canvas JSON or Mermaid content…", "confirm": "Import into current canvas" },
-      "exportMenu": { "record": "Export as illustration record", "recordError": "Failed to save the illustration record", "computer": "Save to computer", "source": "Editable files", "png2x": "PNG · 2× high resolution", "png4x": "PNG · 4× ultra resolution", "svg": "SVG · vector", "canvasFile": "NoteGen Canvas JSON", "mermaid": "Mermaid flowchart" }
+      "import": { "title": "Import", "file": "Choose file", "content": "Enter content", "contentTitle": "Import canvas content", "contentDescription": "Supports NoteLoom Canvas JSON or Mermaid flowchart content. Importing replaces the current canvas.", "contentPlaceholder": "Paste Canvas JSON or Mermaid content…", "confirm": "Import into current canvas" },
+      "exportMenu": { "record": "Export as illustration record", "recordError": "Failed to save the illustration record", "computer": "Save to computer", "source": "Editable files", "png2x": "PNG · 2× high resolution", "png4x": "PNG · 4× ultra resolution", "svg": "SVG · vector", "canvasFile": "NoteLoom Canvas JSON", "mermaid": "Mermaid flowchart" }
     },
     "contextMenu": { "selectAll": "Select all", "copy": "Copy", "paste": "Paste", "duplicate": "Duplicate", "delete": "Delete selection" },
     "empty": {
@@ -3330,14 +3334,14 @@
       },
       "onboarding": {
         "title": "Onboarding",
-        "subtitle": "Walk through these three tasks to learn the core NoteGen flow.",
+        "subtitle": "Walk through these three tasks to learn the core NoteLoom flow.",
         "dismiss": "Skip onboarding",
         "reopen": "Show onboarding again",
         "start": "Start",
         "viewHint": "Show hint",
         "continue": "Continue",
         "completed": "Done",
-        "allDone": "All getting-started tasks are complete. You've already tried the core NoteGen workflow.",
+        "allDone": "All getting-started tasks are complete. You've already tried the core NoteLoom workflow.",
         "stepLabel": "Task ({current}/{total})",
         "stepCompletedLabel": "Completed Task ({current}/{total})",
         "afterOrganizeDialog": {

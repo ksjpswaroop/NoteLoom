@@ -77,7 +77,7 @@ export class MCPClient {
       protocolVersion: '2024-11-05',
       capabilities: {},
       clientInfo: {
-        name: 'note-gen',
+        name: 'note-loom',
         version: '1.0.0',
       },
     })

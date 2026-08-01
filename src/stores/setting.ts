@@ -1031,10 +1031,41 @@ const useSettingStore = create<SettingState>((set, get) => ({
     },
     {
       id: '1',
-      title: '周报',
-      content: '最近一周的记录整理成一篇周报，将每条记录形成一句总结，每条不超过50字。',
+      title: 'Weekly Digest',
+      content: `Organize the selected records into a weekly digest Markdown note.
+Requirements:
+- Group by theme when possible
+- One short summary sentence per record (≤50 words)
+- Call out open questions and follow-ups
+- Preserve important quotes, links, and file references`,
       status: true,
       range: GenTemplateRange.Week
+    },
+    {
+      id: '2',
+      title: 'Meeting Notes',
+      content: `Organize the selected text, voice transcripts, screenshots, and links into meeting notes.
+Use this structure:
+# Meeting Title
+## Attendees / Context
+## Discussion
+## Decisions
+## Action Items
+## Open Questions
+Prefer the original wording for decisions and action items. Mark unclear audio/transcript gaps explicitly.`,
+      status: true,
+      range: GenTemplateRange.All
+    },
+    {
+      id: '3',
+      title: 'Voice Dump',
+      content: `Turn selected voice transcripts and related text scraps into a clear note.
+- Keep the speaker's intent
+- Remove filler words and repetition
+- Extract action items, ideas, and decisions as bullet lists
+- End with a short "Next steps" section`,
+      status: true,
+      range: GenTemplateRange.All
     }
   ],
   setTemplateList: async (templateList) => {

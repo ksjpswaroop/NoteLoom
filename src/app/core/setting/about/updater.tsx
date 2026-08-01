@@ -90,7 +90,7 @@ function buildReleaseNotes(releases: GithubRelease[], options: BuildReleaseNotes
 
       return {
         version: releaseVersion.text,
-        title: release.name || `NoteGen v${releaseVersion.text}`,
+        title: release.name || `NoteLoom v${releaseVersion.text}`,
         body: release.body ?? null,
         publishedAt: release.published_at ?? null,
         prerelease,
@@ -303,10 +303,10 @@ export default function Updater() {
         <CardHeader className="p-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex min-w-0 items-center gap-3">
-              <Image src="/app-icon.png" alt="NoteGen logo" className="size-14 shrink-0 dark:invert" width={56} height={56} />
+              <Image src="/app-icon.png" alt="NoteLoom logo" className="size-14 shrink-0 dark:invert" width={56} height={56} />
               <div className="flex min-w-0 flex-col gap-2">
                 <div className="flex flex-wrap items-center gap-2">
-                  <CardTitle className="text-xl font-semibold leading-none">NoteGen</CardTitle>
+                  <CardTitle className="text-xl font-semibold leading-none">NoteLoom</CardTitle>
                   <Badge variant="outline">v{version}</Badge>
                   {availableUpdate || ignoredUpdateVersion ? (
                     <>

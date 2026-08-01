@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "NoteGen",
+    "title": "NoteLoom",
     "description": "まず記録、整理はあとで。"
   },
   "tray": {
@@ -14,7 +14,7 @@
     "window": "ウィンドウ",
     "pinToggle": "ピン留め/解除",
     "hideWindow": "トレイに隠す",
-    "quit": "NoteGenを終了"
+    "quit": "NoteLoomを終了"
   },
   "settings": {
     "defaultModels": {
@@ -31,7 +31,7 @@
       "desc": "ここでは、アプリケーションの基本設定を構成できます。インターフェースのテーマ、言語などのオプションが含まれます。",
       "behavior": {
         "title": "アプリの動作",
-        "desc": "NoteGen の起動方法とウィンドウを閉じるときの動作を設定します",
+        "desc": "NoteLoom の起動方法とウィンドウを閉じるときの動作を設定します",
         "close": {
           "title": "ウィンドウを閉じるとき",
           "desc": "閉じるボタンを押したときの動作を選択します",
@@ -43,12 +43,12 @@
         },
         "autostart": {
           "title": "自動起動",
-          "desc": "システムへのサインイン後に NoteGen を自動的に起動します",
+          "desc": "システムへのサインイン後に NoteLoom を自動的に起動します",
           "error": "自動起動設定を更新できませんでした"
         },
         "closePrompt": {
-          "title": "NoteGen を閉じますか？",
-          "desc": "NoteGen をシステムトレイに残すか、アプリを完全に終了できます。",
+          "title": "NoteLoom を閉じますか？",
+          "desc": "NoteLoom をシステムトレイに残すか、アプリを完全に終了できます。",
           "cancel": "キャンセル",
           "minimize": "トレイに最小化",
           "quit": "アプリを終了"
@@ -247,7 +247,7 @@
     },
     "webSearch": {
       "title": "ウェブ検索",
-      "desc": "NoteGen の 3 レイヤーのウェブ検索方式を設定します。AI が検索の必要性を判断します。",
+      "desc": "NoteLoom の 3 レイヤーのウェブ検索方式を設定します。AI が検索の必要性を判断します。",
       "nativeEnabled": "モデルのネイティブ検索を有効化",
       "thirdPartyEnabled": "外部検索を有効化",
       "basicEnabled": "キー不要の検索を有効化",
@@ -298,15 +298,30 @@
       "automaticSearchDesc": "質問が自分の記録に依存する場合、AI が関連ノートを自動的に探します。一般的な質問や現在のノートだけで十分な場合は検索しません。",
       "agentStrategyTitle": "自動検索戦略",
       "agentStrategies": {
-        "fast": { "title": "高速", "desc": "検索は最大 1 回で、応答時間を優先します。" },
-        "balanced": { "title": "標準", "desc": "最大 2 回検索し、速度とノート横断検索のバランスを取ります。" },
-        "deep": { "title": "詳細", "desc": "最大 3 回検索し、比較、経緯の確認、複数ノートの統合に適しています。" }
+        "fast": {
+          "title": "高速",
+          "desc": "検索は最大 1 回で、応答時間を優先します。"
+        },
+        "balanced": {
+          "title": "標準",
+          "desc": "最大 2 回検索し、速度とノート横断検索のバランスを取ります。"
+        },
+        "deep": {
+          "title": "詳細",
+          "desc": "最大 3 回検索し、比較、経緯の確認、複数ノートの統合に適しています。"
+        }
       },
       "presetDesc": "プリセットは結果数としきい値のみ変更します。",
       "presets": {
-        "precision": { "title": "精度優先" },
-        "balanced": { "title": "バランス" },
-        "recall": { "title": "再現率優先" }
+        "precision": {
+          "title": "精度優先"
+        },
+        "balanced": {
+          "title": "バランス"
+        },
+        "recall": {
+          "title": "再現率優先"
+        }
       },
       "settingsTitle": "パラメータ設定",
       "settingsDesc": "パラメータを調整することで、知識庫の検索結果をより正確に制御できます。",
@@ -446,7 +461,7 @@
       "runtimeManualOnly": "このプラットフォームでは自動インストールに対応していません。手動でインストールしてから再チェックしてください。",
       "installRuntime": "ランタイムをインストール",
       "runtimeInstallTitle": "ランタイムをインストール",
-      "runtimeInstallDesc": "確認後、NoteGen は以下のインストールコマンドを実行します。",
+      "runtimeInstallDesc": "確認後、NoteLoom は以下のインストールコマンドを実行します。",
       "runtimeInstallPreparing": "インストールを準備中",
       "runtimeInstallRunning": "インストール中",
       "runtimeInstallCompleted": "インストール完了",
@@ -791,13 +806,13 @@
     "memories": {
       "title": "記憶管理",
       "desc": "AI長期記憶機能で、AIがあなたの執筆設定、知識ベース、メモ習慣を記憶します。",
-    "stats": {
-      "total": "総記憶数",
-      "preferences": "設定",
-      "memories": "記憶",
-      "active": "有効",
-      "pending": "確認待ち",
-      "archived": "削除済み"
+      "stats": {
+        "total": "総記憶数",
+        "preferences": "設定",
+        "memories": "記憶",
+        "active": "有効",
+        "pending": "確認待ち",
+        "archived": "削除済み"
       },
       "form": {
         "title": "新しい記憶を追加",
@@ -812,13 +827,13 @@
         "memoryDescription": "记忆：事实、经验、专长等信息，根据对话内容智能匹配",
         "preferenceLabel": "偏好",
         "memoryLabel": "记忆",
-      "memoryDesc": "事实、经验、专长等",
-      "description": "今後の会話で利用できる安定したユーザー情報を保存します。",
-      "kindLabel": "記憶タイプ",
-      "scopeLabel": "範囲",
-      "alwaysApply": "常に適用",
-      "alwaysApplyDescription": "関連性検索に依存せずコンテキストへ追加します。",
-      "update": "記憶を更新"
+        "memoryDesc": "事实、经验、专长等",
+        "description": "今後の会話で利用できる安定したユーザー情報を保存します。",
+        "kindLabel": "記憶タイプ",
+        "scopeLabel": "範囲",
+        "alwaysApply": "常に適用",
+        "alwaysApplyDescription": "関連性検索に依存せずコンテキストへ追加します。",
+        "update": "記憶を更新"
       },
       "listTitle": "マイ記憶",
       "addMemory": "記憶を追加",
@@ -832,32 +847,72 @@
       "tabs": {
         "all": "すべて",
         "preference": "設定",
-    "memory": "记忆",
-    "policy": {
-      "generate": "チャットの重要な情報を自動的に記憶する",
-      "generateDescription": "AIが重要な情報を自動的に記憶します。「覚えて……」や「今後は……」と伝えることもできます。"
-    },
-    "actions": {"undo": "元に戻す", "more": "その他", "approve": "承認", "approveAll": "すべて承認", "review": "確認する", "edit": "編集", "promote": "安定した指示へ昇格", "demote": "安定した指示から解除", "restore": "復元", "archive": "削除", "deletePermanently": "完全に削除"},
-    "kinds": {"preference": "設定", "fact": "事実", "experience": "経験", "decision": "決定"},
-    "scopes": {"global": "グローバル", "workspace": "現在のワークスペース"},
-    "statuses": {"active": "有効", "pending": "確認待ち", "archived": "削除済み"},
-    "filters": {"search": "記憶を検索", "allKinds": "すべてのタイプ", "allScopes": "すべての範囲"},
-    "sensitive": {"title": "機密情報の可能性", "description": "パスワード、トークン、秘密鍵は自動的に有効化されません。安全性を確認してください。", "badge": "機密"},
-    "indexing": {"ready": "インデックス済み", "pending": "待機中", "failed": "失敗"},
-    "deleteConfirm": {"title": "この記憶を完全に削除しますか？", "description": "完全に削除すると元に戻せません。", "cancel": "キャンセル"},
-    "autoCreated": "バックグラウンドで {count} 件の記憶を生成しました",
-    "pendingConfirmation": "この記憶は確認が必要です",
-    "approvedAll": "すべての候補を承認しました",
-    "savedPendingIndex": "記憶を保存し、インデックス待ちに追加しました",
-    "savedPendingReview": "確認待ちに追加しました",
-    "archived": "記憶を削除しました",
-    "promoted": "Agent のカスタム指示へ追加しました",
-    "demoted": "Agent のカスタム指示から解除しました",
-    "always": "常に適用",
-    "lastRecallReason": "前回の呼び出し：{reason}",
-    "neverRecalled": "未使用",
-    "editTitle": "記憶を編集",
-    "editDescription": "内容、タイプ、範囲、適用方法を変更します。"
+        "memory": "记忆",
+        "policy": {
+          "generate": "チャットの重要な情報を自動的に記憶する",
+          "generateDescription": "AIが重要な情報を自動的に記憶します。「覚えて……」や「今後は……」と伝えることもできます。"
+        },
+        "actions": {
+          "undo": "元に戻す",
+          "more": "その他",
+          "approve": "承認",
+          "approveAll": "すべて承認",
+          "review": "確認する",
+          "edit": "編集",
+          "promote": "安定した指示へ昇格",
+          "demote": "安定した指示から解除",
+          "restore": "復元",
+          "archive": "削除",
+          "deletePermanently": "完全に削除"
+        },
+        "kinds": {
+          "preference": "設定",
+          "fact": "事実",
+          "experience": "経験",
+          "decision": "決定"
+        },
+        "scopes": {
+          "global": "グローバル",
+          "workspace": "現在のワークスペース"
+        },
+        "statuses": {
+          "active": "有効",
+          "pending": "確認待ち",
+          "archived": "削除済み"
+        },
+        "filters": {
+          "search": "記憶を検索",
+          "allKinds": "すべてのタイプ",
+          "allScopes": "すべての範囲"
+        },
+        "sensitive": {
+          "title": "機密情報の可能性",
+          "description": "パスワード、トークン、秘密鍵は自動的に有効化されません。安全性を確認してください。",
+          "badge": "機密"
+        },
+        "indexing": {
+          "ready": "インデックス済み",
+          "pending": "待機中",
+          "failed": "失敗"
+        },
+        "deleteConfirm": {
+          "title": "この記憶を完全に削除しますか？",
+          "description": "完全に削除すると元に戻せません。",
+          "cancel": "キャンセル"
+        },
+        "autoCreated": "バックグラウンドで {count} 件の記憶を生成しました",
+        "pendingConfirmation": "この記憶は確認が必要です",
+        "approvedAll": "すべての候補を承認しました",
+        "savedPendingIndex": "記憶を保存し、インデックス待ちに追加しました",
+        "savedPendingReview": "確認待ちに追加しました",
+        "archived": "記憶を削除しました",
+        "promoted": "Agent のカスタム指示へ追加しました",
+        "demoted": "Agent のカスタム指示から解除しました",
+        "always": "常に適用",
+        "lastRecallReason": "前回の呼び出し：{reason}",
+        "neverRecalled": "未使用",
+        "editTitle": "記憶を編集",
+        "editDescription": "内容、タイプ、範囲、適用方法を変更します。"
       },
       "success": "成功",
       "saved": "記憶を保存しました",
@@ -944,7 +999,7 @@
       "resourcesTitle": "リソースとサポート",
       "resourcesDesc": "ドキュメント、リリースノート、コミュニティでのフィードバックを確認できます。",
       "licenseText": "オープンソース · GitHub · GPL-3.0",
-      "version": "NoteGen v{version}",
+      "version": "NoteLoom v{version}",
       "checkReleases": "過去のバージョンを確認",
       "language": "言語",
       "checkUpdate": "アップデートを確認",
@@ -991,7 +1046,7 @@
         },
         "donation": {
           "title": "寄付",
-          "desc": "NoteGen が役立っている場合は、寄付で継続的なメンテナンスを支援できます。"
+          "desc": "NoteLoom が役立っている場合は、寄付で継続的なメンテナンスを支援できます。"
         },
         "docs": {
           "title": "ドキュメントと設定",
@@ -1014,7 +1069,7 @@
           "desc": "Git、S3、WebDAV同期を設定します。"
         },
         "donate": {
-          "title": "NoteGen を支援",
+          "title": "NoteLoom を支援",
           "buttonName": "寄付",
           "desc": "寄付ページを開いてプロジェクトを支援します。"
         },
@@ -1084,7 +1139,7 @@
       "newToken": "作成 access token",
       "tokenPermissionGuide": "権限ガイドを見る",
       "toggleTokenVisibility": "Access Token の表示を切り替える",
-      "newTokenDesc": "Fine-grained token を推奨します。既存リポジトリには Contents の読み書き権限、NoteGen で作成する場合は Administration の読み書き権限も必要です。",
+      "newTokenDesc": "Fine-grained token を推奨します。既存リポジトリには Contents の読み書き権限、NoteLoom で作成する場合は Administration の読み書き権限も必要です。",
       "giteeTokenDesc": "Giteeの個人アクセストークンはデータ同期に使用されます。リポジトリの読み書き権限が必要です。設定後、自動的にファイルリポジトリ（プライベート）と画像リポジトリが作成されます。",
       "imageRepoSetting": "画像ホスティングを有効化",
       "imageRepoSettingDesc": "画像ホスティングリポジトリが設定されています。有効にすると画像はそちらに保存され、無効の場合はローカル保存となります。",
@@ -1762,7 +1817,7 @@
       "voicePlaceholder": "音声タイプを入力してください（例：alloy）",
       "defaultModels": {
         "title": "デフォルト無料モデル",
-        "desc": "NoteGenはユーザーに無料のAIモデルサービスを提供し、設定なしで基本機能を使用できます。",
+        "desc": "NoteLoomはユーザーに無料のAIモデルサービスを提供し、設定なしで基本機能を使用できます。",
         "chatModel": {
           "name": "Qwen/Qwen3-8B",
           "type": "チャットモデル",
@@ -1848,7 +1903,7 @@
     },
     "shortcuts": {
       "title": "ショートカット",
-      "desc": "ここで、NoteGen をより効率的に使用するためのショートカットを設定できます。",
+      "desc": "ここで、NoteLoom をより効率的に使用するためのショートカットを設定できます。",
       "resetDefaults": "リセットします",
       "clear": "クリア",
       "noShortcut": "未設定",
@@ -1857,7 +1912,7 @@
       "conflictGlobal": "グローバルショートカット「{name}」と競合しています",
       "globalShortcuts": {
         "title": "グローバルショートカット",
-        "desc": "これらはシステムに登録され、NoteGen が前面になくても動作する場合があります。"
+        "desc": "これらはシステムに登録され、NoteLoom が前面になくても動作する場合があります。"
       },
       "editorShortcuts": {
         "title": "エディタショートカット",
@@ -2086,6 +2141,10 @@
           "title": "テキストを素早く記録します",
           "desc": "主ウィンドウを開き、テキスト記録を表示します。"
         }
+      },
+      "quickRecordVoice": {
+        "title": "クイック音声記録",
+        "desc": "メインウィンドウを開き、音声録音を開始または停止します。"
       }
     },
     "skills": {
@@ -2123,7 +2182,7 @@
       "userInvocable": "在斜杠菜单显示",
       "importHelp": "支持导入 zip 格式的 Skill，zip 文件需包含 SKILL.md 文件。",
       "workspaceInstallHelp": "現在のワークスペースの skills フォルダーにインストールされ、このワークスペースだけで利用できます。",
-      "globalInstallHelp": "NoteGen のグローバル Skills フォルダーにインストールされ、すべてのワークスペースで利用できます。",
+      "globalInstallHelp": "NoteLoom のグローバル Skills フォルダーにインストールされ、すべてのワークスペースで利用できます。",
       "metadata": "元数据",
       "content": "指令内容",
       "noSkills": "还没有 Skills",
@@ -2689,9 +2748,15 @@
         "attachImage": "画像を添付",
         "addAttachment": {
           "title": "追加",
-          "image": { "title": "画像" },
-          "file": { "title": "ファイル" },
-          "folder": { "title": "フォルダ" },
+          "image": {
+            "title": "画像"
+          },
+          "file": {
+            "title": "ファイル"
+          },
+          "folder": {
+            "title": "フォルダ"
+          },
           "entryCount": "{count} 件",
           "remove": "{name} を削除",
           "metadataOnly": "メタデータのみ",
@@ -2740,9 +2805,18 @@
           "permissionMode": {
             "label": "Agent の権限モード",
             "modes": {
-              "read-only": { "title": "読み取り専用", "description": "読み取りと分析を許可し、変更を禁止します。" },
-              "ask": { "title": "編集前に確認", "description": "モデルが自由に計画し、具体的な変更を実行前にプレビューします。" },
-              "auto-edit": { "title": "自動編集", "description": "元に戻せるローカル変更は自動実行し、削除・スクリプト・外部操作は確認します。" }
+              "read-only": {
+                "title": "読み取り専用",
+                "description": "読み取りと分析を許可し、変更を禁止します。"
+              },
+              "ask": {
+                "title": "編集前に確認",
+                "description": "モデルが自由に計画し、具体的な変更を実行前にプレビューします。"
+              },
+              "auto-edit": {
+                "title": "自動編集",
+                "description": "元に戻せるローカル変更は自動実行し、削除・スクリプト・外部操作は確認します。"
+              }
             }
           },
           "autoFinal": {
@@ -2824,16 +2898,43 @@
           "commands": {
             "title": "クイックコマンド",
             "placeholder": "コマンドを検索...",
-            "summarize": { "label": "要約", "description": "要点と結論を抽出", "prompt": "次の内容を要約し、要点と結論を抽出してください：" },
-            "organize": { "label": "ノートに整理", "description": "構造化された Markdown に整理", "prompt": "次の内容を明確で構造化された Markdown ノートに整理してください：" },
-            "rewrite": { "label": "推敲", "description": "意味を保ちながら表現を改善", "prompt": "意味を保ちながら、次の内容を推敲してください：" },
-            "translate": { "label": "翻訳", "description": "指定した言語に翻訳", "prompt": "次の内容を以下の言語に翻訳してください：" },
-            "searchNotes": { "label": "ノートを検索", "description": "ナレッジベースから関連情報を検索", "prompt": "ノートのナレッジベースを検索して回答してください：" },
-            "createNote": { "label": "ノートを作成", "description": "構造化された Markdown ノートを新規作成", "prompt": "次の要件に基づいて新しい Markdown ノートを作成してください：" }
+            "summarize": {
+              "label": "要約",
+              "description": "要点と結論を抽出",
+              "prompt": "次の内容を要約し、要点と結論を抽出してください："
+            },
+            "organize": {
+              "label": "ノートに整理",
+              "description": "構造化された Markdown に整理",
+              "prompt": "次の内容を明確で構造化された Markdown ノートに整理してください："
+            },
+            "rewrite": {
+              "label": "推敲",
+              "description": "意味を保ちながら表現を改善",
+              "prompt": "意味を保ちながら、次の内容を推敲してください："
+            },
+            "translate": {
+              "label": "翻訳",
+              "description": "指定した言語に翻訳",
+              "prompt": "次の内容を以下の言語に翻訳してください："
+            },
+            "searchNotes": {
+              "label": "ノートを検索",
+              "description": "ナレッジベースから関連情報を検索",
+              "prompt": "ノートのナレッジベースを検索して回答してください："
+            },
+            "createNote": {
+              "label": "ノートを作成",
+              "description": "構造化された Markdown ノートを新規作成",
+              "prompt": "次の要件に基づいて新しい Markdown ノートを作成してください："
+            }
           },
           "skills": {
             "title": "Skills",
-            "scope": { "global": "グローバル", "project": "ワークスペース" }
+            "scope": {
+              "global": "グローバル",
+              "project": "ワークスペース"
+            }
           },
           "resources": {
             "title": "コンテキストをリンク",
@@ -3011,9 +3112,55 @@
   "canvas": {
     "new": "キャンバスを作成",
     "chooseTemplate": "テンプレートを選択",
-    "manager": { "title": "キャンバスマネージャー", "view": "表示", "grid": "サムネイル表示", "list": "リスト表示", "switchToGrid": "サムネイル表示に切り替え", "switchToList": "リスト表示に切り替え", "sort": { "title": "並び替え", "updated": "更新日時", "created": "作成日時", "name": "名前" }, "pin": "キャンバスを固定", "unpin": "固定を解除", "refreshThumbnails": "サムネイルを再生成", "closeTrash": "キャンバスマネージャーに戻る", "trashEmpty": "最近削除した項目はありません", "trashEmptyDescription": "削除したキャンバスがここに表示されます。", "trashCount": "削除済みキャンバス {count} 件", "sync": { "upload": "アップロード", "pending": "アップロード待ち", "clickToUpload": "アップロード待ち。クリックして今すぐアップロード", "uploading": "アップロード中", "synced": "アップロード済み", "failed": "アップロード失敗", "downloadingAll": "リモートキャンバスを取得中", "deleting": "削除して同期中", "permanentlyDeleting": "完全に削除中" }, "count": "キャンバス {count} 件" },
-    "templates": { "blank": "空白のキャンバス", "flowchart": "フローチャート", "mindmap": "マインドマップ", "timeline": "タイムライン", "quadrant": "4象限", "kanban": "カンバン", "swot": "SWOT 分析" },
-    "import": { "action": "キャンバスまたは Mermaid を読み込む", "fileType": "キャンバスファイル", "defaultTitle": "読み込んだキャンバス", "success": "キャンバスを読み込みました", "error": "このファイルを読み込めません" },
+    "manager": {
+      "title": "キャンバスマネージャー",
+      "view": "表示",
+      "grid": "サムネイル表示",
+      "list": "リスト表示",
+      "switchToGrid": "サムネイル表示に切り替え",
+      "switchToList": "リスト表示に切り替え",
+      "sort": {
+        "title": "並び替え",
+        "updated": "更新日時",
+        "created": "作成日時",
+        "name": "名前"
+      },
+      "pin": "キャンバスを固定",
+      "unpin": "固定を解除",
+      "refreshThumbnails": "サムネイルを再生成",
+      "closeTrash": "キャンバスマネージャーに戻る",
+      "trashEmpty": "最近削除した項目はありません",
+      "trashEmptyDescription": "削除したキャンバスがここに表示されます。",
+      "trashCount": "削除済みキャンバス {count} 件",
+      "sync": {
+        "upload": "アップロード",
+        "pending": "アップロード待ち",
+        "clickToUpload": "アップロード待ち。クリックして今すぐアップロード",
+        "uploading": "アップロード中",
+        "synced": "アップロード済み",
+        "failed": "アップロード失敗",
+        "downloadingAll": "リモートキャンバスを取得中",
+        "deleting": "削除して同期中",
+        "permanentlyDeleting": "完全に削除中"
+      },
+      "count": "キャンバス {count} 件"
+    },
+    "templates": {
+      "blank": "空白のキャンバス",
+      "flowchart": "フローチャート",
+      "mindmap": "マインドマップ",
+      "timeline": "タイムライン",
+      "quadrant": "4象限",
+      "kanban": "カンバン",
+      "swot": "SWOT 分析"
+    },
+    "import": {
+      "action": "キャンバスまたは Mermaid を読み込む",
+      "fileType": "キャンバスファイル",
+      "defaultTitle": "読み込んだキャンバス",
+      "success": "キャンバスを読み込みました",
+      "error": "このファイルを読み込めません"
+    },
     "untitled": "無題のキャンバス",
     "more": "その他の操作",
     "duplicate": "複製",
@@ -3021,9 +3168,21 @@
     "delete": "キャンバスを削除",
     "trash": "最近削除した項目",
     "restore": "キャンバスを復元",
-    "deleteDialog": { "title": "このキャンバスを削除しますか？", "description": "「{title}」は最近削除した項目に移動し、後で復元できます。", "cancel": "キャンセル", "confirm": "最近削除した項目に移動" },
+    "deleteDialog": {
+      "title": "このキャンバスを削除しますか？",
+      "description": "「{title}」は最近削除した項目に移動し、後で復元できます。",
+      "cancel": "キャンセル",
+      "confirm": "最近削除した項目に移動"
+    },
     "permanentDelete": "完全に削除",
-    "permanentDeleteDialog": { "title": "このキャンバスを完全に削除しますか？", "description": "「{title}」のローカル内容が削除されます。同期が設定されている場合、リモート同期ファイルも削除されます。この操作は元に戻せません。", "cancel": "キャンセル", "confirm": "完全に削除", "deleting": "削除中", "error": "完全削除に失敗しました。同期設定とネットワークを確認して再試行してください。" },
+    "permanentDeleteDialog": {
+      "title": "このキャンバスを完全に削除しますか？",
+      "description": "「{title}」のローカル内容が削除されます。同期が設定されている場合、リモート同期ファイルも削除されます。この操作は元に戻せません。",
+      "cancel": "キャンセル",
+      "confirm": "完全に削除",
+      "deleting": "削除中",
+      "error": "完全削除に失敗しました。同期設定とネットワークを確認して再試行してください。"
+    },
     "rename": "名前を変更",
     "loading": "キャンバスを読み込み中...",
     "undo": "元に戻す",
@@ -3033,26 +3192,256 @@
     "exportSuccess": "キャンバスを書き出しました",
     "exportError": "キャンバスの書き出しに失敗しました",
     "aiPreview": "AI 変更プレビュー",
-    "tools": { "label": "キャンバスツール", "select": "選択", "hand": "手のひら", "connector": "コネクター", "pen": "ペン", "highlighter": "蛍光ペン", "eraser": "消しゴム" },
-    "toolbox": { "ai": "AI で図形を生成", "aiPrompt": "私の説明に基づき、現在のキャンバスに個別編集可能なネイティブノードと接続線で図を生成してください：", "shapes": "図形", "media": "メディア", "drawing": "描画", "close": "パネルを閉じる", "commonShapes": "基本図形", "flowchartShapes": "フローチャート", "dataShapes": "データとストレージ", "favorites": "お気に入り", "recent": "最近使用", "searchShapes": "図形を検索", "noShapes": "一致する図形がありません", "favorite": "お気に入りに追加", "unfavorite": "お気に入りを解除", "customComponents": "マイコンポーネント", "deleteCustomComponent": "カスタムコンポーネントを削除", "saveCustomComponent": "コンポーネントを保存", "saveCustomComponentDescription": "選択したノードと内部の接続線を再利用可能なコンポーネントとして保存します。", "customComponentName": "コンポーネント名", "customComponentDefaultName": "マイコンポーネント", "customComponentSaved": "カスタムコンポーネントを保存しました", "connectionShape": "接続する図形を選択", "connectionShapeDescription": "図形を作成し、現在のノードに自動接続します。", "aiDescription": "生成または変更する図を説明", "aiGenerate": "AI に送信", "aiScopes": { "append": "追加", "replace": "置換", "selection": "選択範囲", "appendPrompt": "現在の内容を保持し、次の図を追加してください：", "replacePrompt": "現在のキャンバスを置換し、次の図を生成してください：", "selectionPrompt": "現在選択中のノードと接続線のみ変更してください："}, "aiPresets": { "flowchart": "フローチャート", "flowchartPrompt": "明確な業務フローチャートを生成", "architecture": "アーキテクチャ", "architecturePrompt": "階層化されたソフトウェアシステム構成図を生成", "sequence": "シーケンス", "sequencePrompt": "個別編集可能なノードと接続線で参加者間の時系列のやり取りを表現", "mindmap": "マインドマップ", "mindmapPrompt": "中心テーマから外側へ展開するマインドマップを生成" } },
-    "brush": { "penTitle": "ペン", "highlighterTitle": "蛍光ペン", "strokeTitle": "ブラシストローク", "color": "色", "size": "ブラシ幅" },
-    "nodes": { "process": "処理", "decision": "条件", "terminator": "開始 / 終了", "inputOutput": "入力 / 出力", "document": "ドキュメント", "multiDocument": "複数ドキュメント", "database": "データベース", "predefinedProcess": "定義済み処理", "manualInput": "手動入力", "preparation": "準備", "delay": "遅延", "display": "表示", "connector": "ページ内接続子", "offPageConnector": "ページ外接続子", "internalStorage": "内部ストレージ", "storedData": "保存データ", "text": "テキスト", "note": "ノート参照", "record": "記録", "image": "画像", "link": "ウェブリンク", "todo": "タスク", "group": "グループ", "chart": "データチャート" },
-    "chart": {
-      "createTitle": "データチャートを作成", "editTitle": "データチャートを編集", "description": "データを入力して直接挿入します。ノードはバックグラウンドで解析を完了します。", "titleLabel": "チャートタイトル", "titlePlaceholder": "空欄の場合は自動生成", "titleDescription": "自動タイトルはチャートデータを生成するたびに再生成されます。", "typeLabel": "チャート種類", "dataLabel": "データ", "dataPlaceholder": "月,デスクトップ,モバイル\n1月,186,80\n2月,305,200", "dataDescription": "自然言語の説明、CSV、TSV、Markdown テーブル、JSON に対応しています。", "generate": "プレビューを生成", "generating": "解析中", "preview": "プレビュー", "primarySeries": "数値フィールド", "summary": "{rows} 行 · {series} 系列", "emptyPreviewTitle": "プレビュー未生成", "emptyPreviewDescription": "データを入力してプレビューを生成し、種類と内容を確認してください。", "cancel": "キャンセル", "insert": "キャンバスに挿入", "update": "再生成", "nodeLoading": "チャートを生成中…", "nodeErrorTitle": "チャートの生成に失敗しました", "nodeErrorHint": "ノードをダブルクリックしてデータを修正し、再試行してください。",
-      "types": { "auto": "自動判定", "area": "エリアチャート", "bar": "棒グラフ", "line": "折れ線グラフ", "pie": "円グラフ", "radar": "レーダーチャート", "radial": "ラジアルチャート" },
-      "notes": { "label": "ノートを参照", "placeholder": "ノートを選択", "selected": "{count} 件のノートを選択中", "title": "チャートのデータソース", "description": "チャートのデータソースとして1件以上のノートを選択します。", "search": "ノートを検索", "empty": "ノートが見つかりません", "manualInput": "手動入力" },
-      "recommendations": { "time-series": "時系列を検出したため、折れ線グラフを推薦", "continuous": "連続累積データを検出したため、エリアチャートを推薦", "proportion": "比率を検出したため、円グラフを推薦", "progress": "進捗値を検出したため、ラジアルチャートを推薦", "multidimensional": "多次元比較を検出したため、レーダーチャートを推薦", "categorical": "カテゴリデータを検出したため、棒グラフを推薦", "ai": "データの意味に基づく AI の推薦" },
-      "appearance": { "title": "チャートの外観", "variant": "コンテナ", "palette": "カラーパレット", "showTitle": "タイトルを表示", "showLegend": "凡例を表示", "showGrid": "グリッドを表示", "showXAxis": "カテゴリ軸を表示", "showYAxis": "数値軸を表示", "variants": { "card": "カード", "minimal": "ミニマル", "transparent": "透明" }, "palettes": { "system": "システム", "cool": "クール", "warm": "ウォーム", "monochrome": "モノクロ" } },
-      "errors": { "CHART_NEEDS_HEADER_AND_ROW": "ヘッダーと1行以上のデータが必要です。", "CHART_NEEDS_TWO_COLUMNS": "2列以上のデータが必要です。", "CHART_INVALID_MARKDOWN_TABLE": "Markdown 表の形式が無効です。", "CHART_JSON_ARRAY_REQUIRED": "JSON はオブジェクト配列、または data 配列を含む必要があります。", "CHART_EMPTY_DATA": "データを空にできません。", "CHART_NUMERIC_SERIES_REQUIRED": "描画可能な数値列が見つかりません。", "CHART_MISSING_NUMERIC_VALUE": "数値系列に空値または数値以外の値があります。", "CHART_EMPTY_INPUT": "データを入力してください。", "CHART_AI_REQUIRED": "この入力の解析には AI が必要です。", "CHART_AI_ADDED_VALUE": "AI が入力にない数値を返したため、生成を停止しました。", "CHART_AI_SERIES_MISMATCH": "AI が返した系列の長さが一致しません。", "CHART_AI_INVALID_JSON": "AI が有効なチャートデータを返しませんでした。", "CHART_AI_NOT_CONFIGURED": "先にエディターまたはメイン AI モデルを設定してください。", "CHART_GENERATION_INTERRUPTED": "前回の生成処理は中断されました。", "CHART_UNKNOWN_ERROR": "チャートを生成できませんでした。データを確認して再試行してください。" }
+    "tools": {
+      "label": "キャンバスツール",
+      "select": "選択",
+      "hand": "手のひら",
+      "connector": "コネクター",
+      "pen": "ペン",
+      "highlighter": "蛍光ペン",
+      "eraser": "消しゴム"
     },
-    "linkNode": { "urlPrompt": "ウェブアドレスを入力", "labelPrompt": "リンクタイトルを入力" },
-    "utilityNodes": { "title": "実用ノード", "description": "画像、ウェブリンク、タスクを追加します。" },
-    "arrange": { "title": "整列とグループ", "description": "選択したノードを整理します。", "alignHorizontal": "水平中央揃え", "alignVertical": "垂直中央揃え", "distributeHorizontal": "水平方向に均等配置", "distributeVertical": "垂直方向に均等配置", "group": "グループを作成" },
-    "group": { "defaultLabel": "グループ" },
-    "edge": { "title": "接続スタイル", "description": "選択した接続の経路とラベルを調整します。", "orthogonal": "折れ線", "straight": "直線", "curve": "曲線", "editLabel": "ラベルを編集", "labelPrompt": "接続ラベルを入力", "labelDescription": "ラベルは接続の中央に表示されます。空欄で削除できます。", "saveLabel": "ラベルを保存" },
-    "selection": { "tools": "ノードツール", "style": "ノードスタイル", "color": "アクセント", "customColor": "カスタムカラー", "border": "枠線", "solid": "実線", "dashed": "破線", "dotted": "点線", "borderWidth": "枠線の太さ", "fill": "背景", "transparent": "透明", "customFill": "カスタム背景色", "lock": "ノードをロック", "unlock": "ノードのロックを解除", "copyStyle": "スタイルをコピー", "pasteStyle": "スタイルを貼り付け", "styleCopied": "ノードスタイルをコピーしました", "stylePasted": "ノードスタイルを適用しました", "imagePasted": "画像をキャンバスに貼り付けました", "imagePasteError": "画像を貼り付けられませんでした", "chatContext": "キャンバス選択：ノード {nodes} 件、接続線 {edges} 件", "chatContextNodes": "{nodes} 個のノード", "chatContextNodesAndRelations": "{nodes} 個のノード · {relations} 件の関係", "removeChatContext": "キャンバス選択を解除" },
-    "layer": { "front": "最前面へ", "forward": "前面へ移動", "backward": "背面へ移動", "back": "最背面へ" },
-    "noteNode": { "title": "ノート参照を追加", "description": "ファイルマネージャーからノートを選択します。ノードをダブルクリックすると元ファイルを開けます。", "search": "ノートを検索...", "empty": "ノートが見つかりません", "group": "ワークスペースのノート", "added": "ノート「{name}」を追加しました" },
+    "toolbox": {
+      "ai": "AI で図形を生成",
+      "aiPrompt": "私の説明に基づき、現在のキャンバスに個別編集可能なネイティブノードと接続線で図を生成してください：",
+      "shapes": "図形",
+      "media": "メディア",
+      "drawing": "描画",
+      "close": "パネルを閉じる",
+      "commonShapes": "基本図形",
+      "flowchartShapes": "フローチャート",
+      "dataShapes": "データとストレージ",
+      "favorites": "お気に入り",
+      "recent": "最近使用",
+      "searchShapes": "図形を検索",
+      "noShapes": "一致する図形がありません",
+      "favorite": "お気に入りに追加",
+      "unfavorite": "お気に入りを解除",
+      "customComponents": "マイコンポーネント",
+      "deleteCustomComponent": "カスタムコンポーネントを削除",
+      "saveCustomComponent": "コンポーネントを保存",
+      "saveCustomComponentDescription": "選択したノードと内部の接続線を再利用可能なコンポーネントとして保存します。",
+      "customComponentName": "コンポーネント名",
+      "customComponentDefaultName": "マイコンポーネント",
+      "customComponentSaved": "カスタムコンポーネントを保存しました",
+      "connectionShape": "接続する図形を選択",
+      "connectionShapeDescription": "図形を作成し、現在のノードに自動接続します。",
+      "aiDescription": "生成または変更する図を説明",
+      "aiGenerate": "AI に送信",
+      "aiScopes": {
+        "append": "追加",
+        "replace": "置換",
+        "selection": "選択範囲",
+        "appendPrompt": "現在の内容を保持し、次の図を追加してください：",
+        "replacePrompt": "現在のキャンバスを置換し、次の図を生成してください：",
+        "selectionPrompt": "現在選択中のノードと接続線のみ変更してください："
+      },
+      "aiPresets": {
+        "flowchart": "フローチャート",
+        "flowchartPrompt": "明確な業務フローチャートを生成",
+        "architecture": "アーキテクチャ",
+        "architecturePrompt": "階層化されたソフトウェアシステム構成図を生成",
+        "sequence": "シーケンス",
+        "sequencePrompt": "個別編集可能なノードと接続線で参加者間の時系列のやり取りを表現",
+        "mindmap": "マインドマップ",
+        "mindmapPrompt": "中心テーマから外側へ展開するマインドマップを生成"
+      }
+    },
+    "brush": {
+      "penTitle": "ペン",
+      "highlighterTitle": "蛍光ペン",
+      "strokeTitle": "ブラシストローク",
+      "color": "色",
+      "size": "ブラシ幅"
+    },
+    "nodes": {
+      "process": "処理",
+      "decision": "条件",
+      "terminator": "開始 / 終了",
+      "inputOutput": "入力 / 出力",
+      "document": "ドキュメント",
+      "multiDocument": "複数ドキュメント",
+      "database": "データベース",
+      "predefinedProcess": "定義済み処理",
+      "manualInput": "手動入力",
+      "preparation": "準備",
+      "delay": "遅延",
+      "display": "表示",
+      "connector": "ページ内接続子",
+      "offPageConnector": "ページ外接続子",
+      "internalStorage": "内部ストレージ",
+      "storedData": "保存データ",
+      "text": "テキスト",
+      "note": "ノート参照",
+      "record": "記録",
+      "image": "画像",
+      "link": "ウェブリンク",
+      "todo": "タスク",
+      "group": "グループ",
+      "chart": "データチャート"
+    },
+    "chart": {
+      "createTitle": "データチャートを作成",
+      "editTitle": "データチャートを編集",
+      "description": "データを入力して直接挿入します。ノードはバックグラウンドで解析を完了します。",
+      "titleLabel": "チャートタイトル",
+      "titlePlaceholder": "空欄の場合は自動生成",
+      "titleDescription": "自動タイトルはチャートデータを生成するたびに再生成されます。",
+      "typeLabel": "チャート種類",
+      "dataLabel": "データ",
+      "dataPlaceholder": "月,デスクトップ,モバイル\n1月,186,80\n2月,305,200",
+      "dataDescription": "自然言語の説明、CSV、TSV、Markdown テーブル、JSON に対応しています。",
+      "generate": "プレビューを生成",
+      "generating": "解析中",
+      "preview": "プレビュー",
+      "primarySeries": "数値フィールド",
+      "summary": "{rows} 行 · {series} 系列",
+      "emptyPreviewTitle": "プレビュー未生成",
+      "emptyPreviewDescription": "データを入力してプレビューを生成し、種類と内容を確認してください。",
+      "cancel": "キャンセル",
+      "insert": "キャンバスに挿入",
+      "update": "再生成",
+      "nodeLoading": "チャートを生成中…",
+      "nodeErrorTitle": "チャートの生成に失敗しました",
+      "nodeErrorHint": "ノードをダブルクリックしてデータを修正し、再試行してください。",
+      "types": {
+        "auto": "自動判定",
+        "area": "エリアチャート",
+        "bar": "棒グラフ",
+        "line": "折れ線グラフ",
+        "pie": "円グラフ",
+        "radar": "レーダーチャート",
+        "radial": "ラジアルチャート"
+      },
+      "notes": {
+        "label": "ノートを参照",
+        "placeholder": "ノートを選択",
+        "selected": "{count} 件のノートを選択中",
+        "title": "チャートのデータソース",
+        "description": "チャートのデータソースとして1件以上のノートを選択します。",
+        "search": "ノートを検索",
+        "empty": "ノートが見つかりません",
+        "manualInput": "手動入力"
+      },
+      "recommendations": {
+        "time-series": "時系列を検出したため、折れ線グラフを推薦",
+        "continuous": "連続累積データを検出したため、エリアチャートを推薦",
+        "proportion": "比率を検出したため、円グラフを推薦",
+        "progress": "進捗値を検出したため、ラジアルチャートを推薦",
+        "multidimensional": "多次元比較を検出したため、レーダーチャートを推薦",
+        "categorical": "カテゴリデータを検出したため、棒グラフを推薦",
+        "ai": "データの意味に基づく AI の推薦"
+      },
+      "appearance": {
+        "title": "チャートの外観",
+        "variant": "コンテナ",
+        "palette": "カラーパレット",
+        "showTitle": "タイトルを表示",
+        "showLegend": "凡例を表示",
+        "showGrid": "グリッドを表示",
+        "showXAxis": "カテゴリ軸を表示",
+        "showYAxis": "数値軸を表示",
+        "variants": {
+          "card": "カード",
+          "minimal": "ミニマル",
+          "transparent": "透明"
+        },
+        "palettes": {
+          "system": "システム",
+          "cool": "クール",
+          "warm": "ウォーム",
+          "monochrome": "モノクロ"
+        }
+      },
+      "errors": {
+        "CHART_NEEDS_HEADER_AND_ROW": "ヘッダーと1行以上のデータが必要です。",
+        "CHART_NEEDS_TWO_COLUMNS": "2列以上のデータが必要です。",
+        "CHART_INVALID_MARKDOWN_TABLE": "Markdown 表の形式が無効です。",
+        "CHART_JSON_ARRAY_REQUIRED": "JSON はオブジェクト配列、または data 配列を含む必要があります。",
+        "CHART_EMPTY_DATA": "データを空にできません。",
+        "CHART_NUMERIC_SERIES_REQUIRED": "描画可能な数値列が見つかりません。",
+        "CHART_MISSING_NUMERIC_VALUE": "数値系列に空値または数値以外の値があります。",
+        "CHART_EMPTY_INPUT": "データを入力してください。",
+        "CHART_AI_REQUIRED": "この入力の解析には AI が必要です。",
+        "CHART_AI_ADDED_VALUE": "AI が入力にない数値を返したため、生成を停止しました。",
+        "CHART_AI_SERIES_MISMATCH": "AI が返した系列の長さが一致しません。",
+        "CHART_AI_INVALID_JSON": "AI が有効なチャートデータを返しませんでした。",
+        "CHART_AI_NOT_CONFIGURED": "先にエディターまたはメイン AI モデルを設定してください。",
+        "CHART_GENERATION_INTERRUPTED": "前回の生成処理は中断されました。",
+        "CHART_UNKNOWN_ERROR": "チャートを生成できませんでした。データを確認して再試行してください。"
+      }
+    },
+    "linkNode": {
+      "urlPrompt": "ウェブアドレスを入力",
+      "labelPrompt": "リンクタイトルを入力"
+    },
+    "utilityNodes": {
+      "title": "実用ノード",
+      "description": "画像、ウェブリンク、タスクを追加します。"
+    },
+    "arrange": {
+      "title": "整列とグループ",
+      "description": "選択したノードを整理します。",
+      "alignHorizontal": "水平中央揃え",
+      "alignVertical": "垂直中央揃え",
+      "distributeHorizontal": "水平方向に均等配置",
+      "distributeVertical": "垂直方向に均等配置",
+      "group": "グループを作成"
+    },
+    "group": {
+      "defaultLabel": "グループ"
+    },
+    "edge": {
+      "title": "接続スタイル",
+      "description": "選択した接続の経路とラベルを調整します。",
+      "orthogonal": "折れ線",
+      "straight": "直線",
+      "curve": "曲線",
+      "editLabel": "ラベルを編集",
+      "labelPrompt": "接続ラベルを入力",
+      "labelDescription": "ラベルは接続の中央に表示されます。空欄で削除できます。",
+      "saveLabel": "ラベルを保存"
+    },
+    "selection": {
+      "tools": "ノードツール",
+      "style": "ノードスタイル",
+      "color": "アクセント",
+      "customColor": "カスタムカラー",
+      "border": "枠線",
+      "solid": "実線",
+      "dashed": "破線",
+      "dotted": "点線",
+      "borderWidth": "枠線の太さ",
+      "fill": "背景",
+      "transparent": "透明",
+      "customFill": "カスタム背景色",
+      "lock": "ノードをロック",
+      "unlock": "ノードのロックを解除",
+      "copyStyle": "スタイルをコピー",
+      "pasteStyle": "スタイルを貼り付け",
+      "styleCopied": "ノードスタイルをコピーしました",
+      "stylePasted": "ノードスタイルを適用しました",
+      "imagePasted": "画像をキャンバスに貼り付けました",
+      "imagePasteError": "画像を貼り付けられませんでした",
+      "chatContext": "キャンバス選択：ノード {nodes} 件、接続線 {edges} 件",
+      "chatContextNodes": "{nodes} 個のノード",
+      "chatContextNodesAndRelations": "{nodes} 個のノード · {relations} 件の関係",
+      "removeChatContext": "キャンバス選択を解除"
+    },
+    "layer": {
+      "front": "最前面へ",
+      "forward": "前面へ移動",
+      "backward": "背面へ移動",
+      "back": "最背面へ"
+    },
+    "noteNode": {
+      "title": "ノート参照を追加",
+      "description": "ファイルマネージャーからノートを選択します。ノードをダブルクリックすると元ファイルを開けます。",
+      "search": "ノートを検索...",
+      "empty": "ノートが見つかりません",
+      "group": "ワークスペースのノート",
+      "added": "ノート「{name}」を追加しました"
+    },
     "footer": {
       "nodes": "{count} ノード",
       "edges": "{count} 接続",
@@ -3063,10 +3452,34 @@
       "fit": "全体を表示",
       "layout": "自動整列",
       "export": "書き出す",
-      "import": { "title": "インポート", "file": "ファイルを選択", "content": "内容を入力", "contentTitle": "キャンバス内容をインポート", "contentDescription": "NoteGen Canvas JSON または Mermaid フローチャートに対応しています。現在のキャンバスは置き換えられます。", "contentPlaceholder": "Canvas JSON または Mermaid の内容を貼り付け…", "confirm": "現在のキャンバスにインポート" },
-      "exportMenu": { "record": "画像記録として書き出す", "recordError": "画像記録の保存に失敗しました", "computer": "コンピューターに保存", "source": "編集可能なファイル", "png2x": "PNG · 2× 高解像度", "png4x": "PNG · 4× 超高解像度", "svg": "SVG · ベクター", "canvasFile": "NoteGen Canvas JSON", "mermaid": "Mermaid フローチャート" }
+      "import": {
+        "title": "インポート",
+        "file": "ファイルを選択",
+        "content": "内容を入力",
+        "contentTitle": "キャンバス内容をインポート",
+        "contentDescription": "NoteLoom Canvas JSON または Mermaid フローチャートに対応しています。現在のキャンバスは置き換えられます。",
+        "contentPlaceholder": "Canvas JSON または Mermaid の内容を貼り付け…",
+        "confirm": "現在のキャンバスにインポート"
+      },
+      "exportMenu": {
+        "record": "画像記録として書き出す",
+        "recordError": "画像記録の保存に失敗しました",
+        "computer": "コンピューターに保存",
+        "source": "編集可能なファイル",
+        "png2x": "PNG · 2× 高解像度",
+        "png4x": "PNG · 4× 超高解像度",
+        "svg": "SVG · ベクター",
+        "canvasFile": "NoteLoom Canvas JSON",
+        "mermaid": "Mermaid フローチャート"
+      }
     },
-    "contextMenu": { "selectAll": "すべて選択", "copy": "コピー", "paste": "貼り付け", "duplicate": "複製", "delete": "選択項目を削除" },
+    "contextMenu": {
+      "selectAll": "すべて選択",
+      "copy": "コピー",
+      "paste": "貼り付け",
+      "duplicate": "複製",
+      "delete": "選択項目を削除"
+    },
     "empty": {
       "title": "キャンバスはまだありません",
       "description": "図とフリーハンド描画でアイデアを整理できます。"
@@ -3227,14 +3640,14 @@
       },
       "onboarding": {
         "title": "初回ガイド",
-        "subtitle": "この 3 つのタスクで NoteGen の基本フローを体験できます。",
+        "subtitle": "この 3 つのタスクで NoteLoom の基本フローを体験できます。",
         "dismiss": "オンボーディングをスキップ",
         "reopen": "初回ガイドを再表示",
         "start": "開始",
         "viewHint": "ヒントを見る",
         "continue": "次へ進む",
         "completed": "完了",
-        "allDone": "スタートガイドのタスクはすべて完了しました。NoteGen の基本フローは体験済みです。",
+        "allDone": "スタートガイドのタスクはすべて完了しました。NoteLoom の基本フローは体験済みです。",
         "stepLabel": "タスク ({current}/{total})",
         "stepCompletedLabel": "完了したタスク ({current}/{total})",
         "afterOrganizeDialog": {
@@ -3278,7 +3691,7 @@
           },
           "ai-polish": {
             "title": "Agent でノートを処理しました",
-            "desc": "記録から整理、さらに Agent による処理まで、NoteGen の基本フローを体験できました。"
+            "desc": "記録から整理、さらに Agent による処理まで、NoteLoom の基本フローを体験できました。"
           }
         },
         "spotlight": {
@@ -3833,7 +4246,12 @@
       "canvasTasks": "タスク関係を抽出",
       "canvasSource": "選択した Markdown：",
       "canvasPromptSuffix": "現在の空白キャンバスを読み、キャンバスツールで生成してください。適用前に操作プレビューを表示して確認を待ってください。",
-      "canvasPrompts": { "flowchart": "選択した文章を明確なフローチャートにしてください。", "mindmap": "選択した文章を階層的なマインドマップにしてください。", "timeline": "日付、段階、マイルストーンを抽出してタイムラインを生成してください。", "tasks": "タスク、依存関係、順序を抽出して関係図を生成してください。" },
+      "canvasPrompts": {
+        "flowchart": "選択した文章を明確なフローチャートにしてください。",
+        "mindmap": "選択した文章を階層的なマインドマップにしてください。",
+        "timeline": "日付、段階、マイルストーンを抽出してタイムラインを生成してください。",
+        "tasks": "タスク、依存関係、順序を抽出して関係図を生成してください。"
+      },
       "translate": "翻訳",
       "translateSubtitle": "翻訳先",
       "quoteToChat": "チャットに引用",
@@ -3878,7 +4296,13 @@
       "generating": "生成中...",
       "abort": "中止"
     },
-    "canvasDrop": { "hint": "ドロップしてキャンバス画像を挿入", "generating": "キャンバス画像を生成中…", "success": "キャンバスを挿入しました", "successDescription": "静止画像を生成しました：{path}", "failed": "キャンバスを挿入できませんでした" },
+    "canvasDrop": {
+      "hint": "ドロップしてキャンバス画像を挿入",
+      "generating": "キャンバス画像を生成中…",
+      "success": "キャンバスを挿入しました",
+      "successDescription": "静止画像を生成しました：{path}",
+      "failed": "キャンバスを挿入できませんでした"
+    },
     "image": {
       "insert": "画像を挿入",
       "uploading": "アップロード中...",

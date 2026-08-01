@@ -32,28 +32,28 @@ export function SettingAbout({id, icon}: {id: string, icon?: React.ReactNode}) {
 
   const communityItems: AboutResource[] = [
     {
-      url: "https://notegen.top/",
-      title: t('items.home.title'),
-      desc: t('items.home.desc'),
-      icon: <HomeIcon />,
-      buttonName: t('items.home.buttonName')
-    },
-    {
-      url: "https://github.com/codexu/note-gen",
+      url: "https://github.com/ksjpswaroop/NoteLoom",
       title: t('items.github.title'),
       desc: t('items.github.desc'),
       icon: <GitFork />,
       buttonName: t('items.github.buttonName')
     },
     {
-      url: "https://github.com/codexu/note-gen/issues",
+      url: "https://github.com/codexu/note-gen",
+      title: "Upstream NoteGen",
+      desc: "NoteLoom is derived from NoteGen (GPL-3.0).",
+      icon: <HomeIcon />,
+      buttonName: t('items.home.buttonName')
+    },
+    {
+      url: "https://github.com/ksjpswaroop/NoteLoom/issues",
       title: t('items.issues.title'),
       desc: t('items.issues.desc'),
       icon: <Bug />,
       buttonName: t('items.issues.buttonName')
     },
     {
-      url: "https://github.com/codexu/note-gen/discussions",
+      url: "https://github.com/ksjpswaroop/NoteLoom/discussions",
       title: t('items.discussions.title'),
       desc: t('items.discussions.desc'),
       icon: <MessageSquare />,
@@ -63,9 +63,9 @@ export function SettingAbout({id, icon}: {id: string, icon?: React.ReactNode}) {
 
   const donationItems: AboutResource[] = [
     {
-      url: "https://notegen.top/donate",
+      url: "https://github.com/sponsors/codexu",
       title: t('items.donate.title'),
-      desc: t('items.donate.desc'),
+      desc: "Support upstream NoteGen maintainers.",
       icon: <HandHeart />,
       buttonName: t('items.donate.buttonName'),
       shine: true

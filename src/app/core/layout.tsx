@@ -15,6 +15,7 @@ import useShortcutStore from "@/stores/shortcut"
 import useEditorShortcutStore from "@/stores/editor-shortcut"
 import useUpdateStore from "@/stores/update"
 import initQuickRecordText from "@/lib/shortcut/quick-record-text"
+import initQuickRecordVoice from "@/lib/shortcut/quick-record-voice"
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import initShowWindow from "@/lib/shortcut/show-window"
 import { initMcp } from "@/lib/mcp/init"
@@ -343,6 +344,7 @@ export default function RootLayout({
         if (cancelled) return
 
         initQuickRecordText()
+        initQuickRecordVoice()
         initShowWindow()
         initMcp()
 

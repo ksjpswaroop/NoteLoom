@@ -16,6 +16,7 @@ interface Events {
   'toolbar-reset-selected-text': unknown;
   'quickRecordText': unknown;
   'quickRecordTextHandler': { prefillText?: string } | undefined;
+  'quickRecordVoice': unknown;
   'onboarding-record-prefill-changed': { prefillText?: string } | undefined;
   'onboarding-step-complete': { step: OnboardingStepId; filePath?: string };
   'openWindow': unknown;

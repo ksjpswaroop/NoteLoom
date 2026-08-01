@@ -343,7 +343,7 @@ function describeProcessFailure(result: ProcessResult, timeoutMs: number): strin
     /ModuleNotFoundError:\s+No module named ["']([^"']+)["']/
   )
   if (missingPythonModule) {
-    return `Missing Python dependency "${missingPythonModule[1]}". Install it in the Python environment used by NoteGen; automatic dependency installation is disabled.`
+    return `Missing Python dependency "${missingPythonModule[1]}". Install it in the Python environment used by NoteLoom; automatic dependency installation is disabled.`
   }
 
   return result.stderr || result.stdout || `Script failed with exit code ${result.code}`

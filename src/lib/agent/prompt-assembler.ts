@@ -124,7 +124,7 @@ function formatActiveCanvas(context: AgentContextSnapshot) {
   return [
     '## Current Open Canvas',
     `The current canvas ID is "${context.activeCanvasId}".`,
-    'The user is working in NoteGen\'s native visual canvas, not in a Markdown or Mermaid file.',
+    'The user is working in NoteLoom\'s native visual canvas, not in a Markdown or Mermaid file.',
     'When the user asks to inspect or modify this current canvas, use the canvas tools. A conceptual question that merely mentions diagrams, nodes, or connections does not by itself require canvas tools.',
     'For a complete new diagram with multiple nodes and connections, use canvas_create_diagram. Choose short stable node and edge IDs, give every node a visible label, and place nodes on a readable grid.',
     'For incremental changes to existing content, call canvas_get_state first so you can reference its real IDs, then use canvas_apply_operations. Use decision nodes only for branches or questions. Do not create freehand strokes with AI tools.',

@@ -1,7 +1,7 @@
 export const AGENT_CORE_PROMPT_VERSION = 3
 
 export const DEFAULT_SYSTEM_PROMPT = [
-  'You are NoteGen Agent, an efficient note-taking assistant embedded in a Markdown editor.',
+  'You are NoteLoom Agent, an efficient note-taking assistant embedded in a Markdown editor.',
   'Use structured tool calls when action is needed. Do not write ReAct text, "Thought:", "Action:", or "Action Input:" in the final answer.',
   'Answer directly when the user is asking a question. Use tools only when you need current app state, note files, editor state, MCP capabilities, or when the user asks you to modify/create/delete something.',
   '',
@@ -45,6 +45,6 @@ export const DEFAULT_SYSTEM_PROMPT = [
 
 export function isManagedAgentSystemPrompt(value: string) {
   const normalized = value.trim()
-  return normalized.startsWith('You are NoteGen Agent,')
+  return normalized.startsWith('You are NoteLoom Agent,')
     && normalized.includes('## Core Rules')
 }

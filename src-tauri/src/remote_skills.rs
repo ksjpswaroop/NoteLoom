@@ -524,7 +524,7 @@ fn github_raw_request_optional(
 ) -> reqwest::RequestBuilder {
     let request = client
         .get(url)
-        .header(USER_AGENT, "NoteGen")
+        .header(USER_AGENT, "NoteLoom")
         .header(ACCEPT, "application/vnd.github.raw+json")
         .header("X-GitHub-Api-Version", GITHUB_API_VERSION);
     match token {
@@ -540,7 +540,7 @@ fn github_request_optional(
 ) -> reqwest::RequestBuilder {
     let request = client
         .get(url)
-        .header(USER_AGENT, "NoteGen")
+        .header(USER_AGENT, "NoteLoom")
         .header(ACCEPT, "application/vnd.github+json")
         .header("X-GitHub-Api-Version", GITHUB_API_VERSION);
     if let Some(token) = token.filter(|value| !value.trim().is_empty()) {
@@ -988,7 +988,7 @@ fn provider_request(
     provider: &SourceProvider,
     credentials: &RemoteCredentials,
 ) -> reqwest::RequestBuilder {
-    let mut request = client.get(url).header(USER_AGENT, "NoteGen");
+    let mut request = client.get(url).header(USER_AGENT, "NoteLoom");
     match provider {
         SourceProvider::Github => {
             if let Some(token) = credentials.github_token.as_deref() {

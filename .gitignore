@@ -34,6 +34,8 @@ target/*
 .superpowers/*
 .agents/*
 /docs/*/*
+!/docs/prior-art/
+!/docs/prior-art/**
 skills-lock.json
 src-tauri/resources/ocr/*
 !src-tauri/resources/ocr/.gitkeep
@@ -86,10 +88,11 @@ docs/.vitepress/cache
 
 .idea
 
-# Exclude all markdown files in root directory except README.md
+# Exclude all markdown files in root directory except README.md / PRD.md
 /*.md
 !README.md
 !README.zh-CN.md
+!PRD.md
 
 # backup files
 *.backup

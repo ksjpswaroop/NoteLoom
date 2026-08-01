@@ -31,7 +31,7 @@ export async function createImageRepo(name: string, isPrivate?: boolean) {
       headers,
       body: JSON.stringify({
         name,
-        description: 'This is a NoteGen sync repository.',
+        description: 'This is a NoteLoom sync repository.',
         private: isPrivate
       }),
       proxy

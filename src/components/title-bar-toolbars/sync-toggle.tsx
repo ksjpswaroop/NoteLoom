@@ -706,11 +706,11 @@ export function SyncToggle({ presentation = 'popover' }: SyncToggleProps) {
       let filePath: string;
 
       if (isMobile) {
-        filePath = `note-gen-backup-${dayjs().format('YYYY-MM-DD_HH-mm-ss')}.zip`;
+        filePath = `note-loom-backup-${dayjs().format('YYYY-MM-DD_HH-mm-ss')}.zip`;
       } else {
         const selectedPath = await save({
           title: t('settings.backupSync.localBackup.exportDialog.title'),
-          defaultPath: `note-gen-backup-${dayjs().format('YYYY-MM-DD_HH-mm-ss')}.zip`,
+          defaultPath: `note-loom-backup-${dayjs().format('YYYY-MM-DD_HH-mm-ss')}.zip`,
           filters: [{
             name: 'ZIP Files',
             extensions: ['zip']
