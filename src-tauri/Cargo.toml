@@ -1,5 +1,5 @@
 [package]
-name = "note-gen"
+name = "note-loom"
 version = "0.1.0"
 description = "NoteLoom — Capture first. Organize later."
 authors = ["NoteLoom contributors"]

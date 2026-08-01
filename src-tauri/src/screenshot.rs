@@ -79,7 +79,7 @@ pub fn screenshot(app: AppHandle) -> Result<Vec<ScreenshotImage>, String> {
             "Notification Center",
             "",
             "Desktop",
-            "NoteGen",
+            "NoteLoom",
         ];
 
         if system_titles.contains(&title.as_str()) || title.len() < 2 || width < 150 || height < 150
