@@ -1,5 +1,5 @@
-# 项目级 Cargo 源配置。
-# 覆盖本机可能失效的全局 USTC 镜像，避免新增 Rust 依赖无法下载。
+# Project-level Cargo registry config.
+# Overrides a possibly broken machine-global USTC mirror so new Rust deps can download.
 [source.crates-io]
 replace-with = "rsproxy"
 

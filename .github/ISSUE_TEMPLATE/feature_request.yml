@@ -1,13 +1,13 @@
-name: 💡 改进建议
-title: '[feat] '
-description: 你有什么好的灵感？
-labels: ['type: feat']
+name: "Feature request"
+title: "[feat] "
+description: Suggest an improvement for NoteLoom
+labels: ["type: feat"]
 
 body:
   - type: textarea
     id: problem
     attributes:
-      label: 描述你的建议
-      description: 清楚的描述这个建议可以解决什么问题
+      label: Your suggestion
+      description: Clearly describe the idea and what problem it would solve.
     validations:
       required: true
