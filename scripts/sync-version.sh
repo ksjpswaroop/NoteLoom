@@ -1,18 +1,18 @@
 #!/bin/bash
 
-# 同步版本号脚本
-# 从 tauri.conf.json 读取版本号并更新 iOS Info.plist
+# Sync version numbers across platforms.
+# Read version from tauri.conf.json and update iOS Info.plist.
 
-# 获取当前版本号
+# Version sync helper.
 VERSION=$(node -p "require('./src-tauri/tauri.conf.json').version")
 
 echo "同步版本号: $VERSION"
 
-# 更新 iOS Info.plist
+# NoteLoom version sync helper.
 PLIST_PATH="src-tauri/gen/apple/note-gen_iOS/Info.plist"
 
 if [ -f "$PLIST_PATH" ]; then
-    # 更新版本号 - 使用更精确的匹配模式
+# Version sync helper.
     sed -i '' '/CFBundleShortVersionString/,/<string>/s/<string>.*<\/string>/<string>'$VERSION'<\/string>/' "$PLIST_PATH"
     sed -i '' '/CFBundleVersion/,/<string>/s/<string>.*<\/string>/<string>'$VERSION'<\/string>/' "$PLIST_PATH"
     

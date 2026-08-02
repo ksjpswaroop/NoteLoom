@@ -26,3 +26,4 @@
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/core/record/mark/control-scan.tsx.bak"],
   "exclude": ["node_modules", "docs/**"]
 }
+
