@@ -2643,6 +2643,10 @@ export function TipTapEditor({
         closeSheet()
         document.dispatchEvent(new CustomEvent('tiptap-insert-mermaid', { detail: { type: 'journey' } }))
         return
+      case 'insert-mermaid-timeline':
+        closeSheet()
+        document.dispatchEvent(new CustomEvent('tiptap-insert-mermaid', { detail: { type: 'timeline' } }))
+        return
       default:
         return
     }

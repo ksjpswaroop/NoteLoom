@@ -46,9 +46,34 @@ const EXPORT_OPTIONS: Array<{
   { format: 'png', label: 'Image (.png)', icon: FileImage },
 ]
 
-function successToastTitle(format: MarkdownExportFormat) {
-  if (format === 'pdf') return 'Opened PDF print window'
-  return 'Export succeeded'
+function successToast(format: MarkdownExportFormat): { title: string; description?: string } {
+  switch (format) {
+    case 'pdf':
+      return {
+        title: 'Opened PDF print window',
+        description: 'In the system print dialog, choose “Save as PDF”.',
+      }
+    case 'png':
+      return {
+        title: 'PNG exported',
+        description: 'Mermaid diagrams in the note are included as images.',
+      }
+    case 'html':
+      return {
+        title: 'HTML exported',
+        description: 'Mermaid diagrams are rendered as images in the HTML.',
+      }
+    case 'markdown':
+      return { title: 'Markdown exported' }
+    case 'docx':
+      return { title: 'Word document exported' }
+    case 'text':
+      return { title: 'Plain text exported' }
+    case 'json':
+      return { title: 'JSON exported' }
+    default:
+      return { title: 'Export succeeded' }
+  }
 }
 
 export function ExportButton({ editor, markdown }: ExportButtonProps) {
@@ -58,7 +83,7 @@ export function ExportButton({ editor, markdown }: ExportButtonProps) {
   const showPdfExportStart = useCallback(() => {
     toast({
       title: 'Preparing PDF',
-      description: 'In the system print dialog, choose “Save as PDF”.',
+      description: 'Rendering the note (including Mermaid diagrams)…',
     })
   }, [])
 
@@ -80,7 +105,8 @@ export function ExportButton({ editor, markdown }: ExportButtonProps) {
       )
 
       if (exported) {
-        toast({ title: successToastTitle(format) })
+        const result = successToast(format)
+        toast({ title: result.title, description: result.description })
       }
     } catch (error) {
       console.error(`${format} export failed:`, error)

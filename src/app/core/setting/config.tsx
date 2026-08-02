@@ -18,6 +18,7 @@ import {
   Brain,
   Globe2,
   Palette,
+  MonitorSmartphone,
 } from "lucide-react"
 import type { ReactNode } from 'react'
 import type { SettingSection } from '@/stores/settings-dialog'
@@ -104,6 +105,10 @@ const baseConfig: SettingNavigationItem[] = [
     anchor: 'skills',
   },
   {
+    icon: <MonitorSmartphone className="size-4" />,
+    anchor: 'automations',
+  },
+  {
     icon: <LayoutTemplate className="size-4" />,
     anchor: 'template',
   },
@@ -146,11 +151,14 @@ export interface ModelConfig {
   enableWebSearch?: boolean
   enableNativeWebSearch?: boolean
   enableThirdPartyWebSearch?: boolean
+  enableWigoloWebSearch?: boolean
   enableBasicWebSearch?: boolean
   webSearchProvider?: WebSearchProvider
   webSearchApiKey?: string
   webSearchApiKeys?: WebSearchApiKeys
   webSearchProviderOrder?: WebSearchApiProvider[]
+  wigoloBaseUrl?: string
+  wigoloApiToken?: string
 }
 
 export interface AiConfig {
@@ -180,11 +188,14 @@ export interface AiConfig {
   enableWebSearch?: boolean
   enableNativeWebSearch?: boolean
   enableThirdPartyWebSearch?: boolean
+  enableWigoloWebSearch?: boolean
   enableBasicWebSearch?: boolean
   webSearchProvider?: WebSearchProvider
   webSearchApiKey?: string
   webSearchApiKeys?: WebSearchApiKeys
   webSearchProviderOrder?: WebSearchApiProvider[]
+  wigoloBaseUrl?: string
+  wigoloApiToken?: string
 }
 
 export interface Model {

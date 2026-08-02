@@ -9,7 +9,7 @@ export interface WebSearchSource {
 
 export interface WebSearchResponse {
   query: string
-  provider: 'native' | WebSearchProvider | 'bing' | 'duckduckgo' | 'sogou' | 'so' | 'baidu'
+  provider: 'native' | WebSearchProvider | 'wigolo' | 'bing' | 'duckduckgo' | 'sogou' | 'so' | 'baidu'
   answer?: string
   sources: WebSearchSource[]
 }

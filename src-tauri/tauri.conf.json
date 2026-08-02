@@ -39,7 +39,8 @@
     "resources": [
       "icons",
       "resources/ocr/*",
-      "resources/parakeet-stt/*"
+      "resources/parakeet-stt/*",
+      "resources/midscene/*"
     ],
     "fileAssociations": [
       {

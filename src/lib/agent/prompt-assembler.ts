@@ -95,6 +95,14 @@ function formatActiveFile(context: AgentContextSnapshot) {
     return ''
   }
 
+  if (context.activeFilePath.toLowerCase().endsWith('.excalidraw')) {
+    return [
+      '## Current Open File',
+      `The current file is the Excalidraw sketch "${context.activeFilePath}".`,
+      'Do not use Markdown editor write tools on this file. Use excalidraw_get_state / excalidraw_update_elements instead.',
+    ].join('\n')
+  }
+
   const editorState = context.currentEditorState
   const canInlineEditorState = hasInlineCurrentEditorState(context)
 
@@ -117,17 +125,41 @@ function formatActiveFile(context: AgentContextSnapshot) {
 }
 
 function formatDiagramGuidance(context: AgentContextSnapshot) {
+  const activeIsExcalidraw = Boolean(
+    context.activeFilePath
+    && context.activeFilePath.toLowerCase().endsWith('.excalidraw'),
+  )
   const lines = [
     '## Diagrams and Mind Maps',
-    'NoteLoom has two diagram surfaces:',
-    '1) Native canvas (React Flow): editable nodes/edges persisted as canvas documents. Use canvas_create_project when no canvas is open, then canvas_create_diagram with diagramKind (mindmap, flowchart, orgChart, architecture, sequence, classDiagram, timeline, or generic). Prefer this for mind maps, org charts, and other diagrams the user wants to keep editing visually.',
-    '2) Inline Mermaid in Markdown notes: insert a ```mermaid fenced block via editor tools when the user wants a diagram inside the note (mindmap, flowchart/graph, sequenceDiagram, classDiagram, stateDiagram-v2, erDiagram, gantt, pie, journey).',
-    'Do not invent a third diagram library. Coordinates can be approximate; the canvas auto-layout will refine placement after writes.',
+    'NoteLoom has three diagram surfaces:',
+    '1) Native canvas (React Flow): editable nodes/edges persisted as canvas documents. Use canvas_create_project when no canvas is open, then canvas_create_diagram with diagramKind (mindmap, flowchart, orgChart, architecture, sequence, classDiagram, timeline, stateDiagram, erDiagram, or generic). Prefer this for mind maps, org charts, and other diagrams the user wants to keep editing visually.',
+    '2) Inline Mermaid in Markdown notes (npm package `mermaid`): write a fenced ```mermaid block with valid Mermaid syntax via editor tools (editor_apply_transaction / editor_replace_lines / editor_insert_at_cursor) when the user wants a diagram inside the note. Supported kinds include mindmap, flowchart/graph, sequenceDiagram, classDiagram, stateDiagram-v2, erDiagram, timeline, gantt, pie, and journey.',
+    '3) Excalidraw sketches (workspace `.excalidraw` JSON files via `@excalidraw/excalidraw`): use excalidraw_create to create/open a sketch and excalidraw_update_elements to set/replace element skeletons (rectangle, ellipse, diamond, text, arrow, line, frame). Prefer this for whiteboards, freehand-style sketches, and rough visual layouts the user wants as an Excalidraw file.',
+    'Example inline Mermaid payload (include the fence markers in the Markdown you write):\n```mermaid\nflowchart TD\n  A[Start] --> B[Done]\n```',
+    'Prefer canvas for long-lived structured diagrams; prefer Mermaid when the diagram should live as source text inside the note; prefer Excalidraw when the user asks for a sketch/whiteboard/.excalidraw file. Users can export Mermaid blocks and Excalidraw sketches as PNG/SVG from the UI.',
+    'Do not use the abandoned npm `diagrams` CLI (Electron/Node-only). If the user asks for Graphviz DOT, prefer Mermaid flowchart/graph or a canvas architecture/flowchart. If they ask for railroad/syntax diagrams, prefer Mermaid flowchart or stateDiagram-v2 as a readable substitute.',
+    'Coordinates can be approximate; the canvas auto-layout will refine placement after canvas writes.',
   ]
   if (!context.activeCanvasId) {
-    lines.push('No canvas is currently open. If the user asks to generate an editable diagram or mind map, create one with canvas_create_project first.')
+    lines.push('No canvas is currently open. If the user asks to generate an editable structured diagram or mind map, create one with canvas_create_project first.')
+  }
+  if (!activeIsExcalidraw) {
+    lines.push('No .excalidraw sketch is currently open. If the user asks for an Excalidraw/whiteboard sketch, call excalidraw_create first.')
   }
   return lines.join('\n')
+}
+
+function formatActiveExcalidraw(context: AgentContextSnapshot) {
+  if (!context.activeFilePath || !context.activeFilePath.toLowerCase().endsWith('.excalidraw')) {
+    return ''
+  }
+
+  return [
+    '## Current Open Excalidraw Sketch',
+    `The current sketch file is "${context.activeFilePath}".`,
+    'Use excalidraw_get_state to inspect elements, then excalidraw_update_elements to modify the scene. Pass filePath exactly as this path when targeting this sketch.',
+    'Element skeletons should include type, x, y, and usually width/height/label. For arrows, set start/end to { id: "<shapeId>" } when connecting shapes.',
+  ].join('\n')
 }
 
 function formatActiveCanvas(context: AgentContextSnapshot) {
@@ -140,7 +172,7 @@ function formatActiveCanvas(context: AgentContextSnapshot) {
     `The current canvas ID is "${context.activeCanvasId}".`,
     'The user is working in NoteLoom\'s native visual canvas, not in a Markdown or Mermaid file.',
     'When the user asks to inspect or modify this current canvas, use the canvas tools. A conceptual question that merely mentions diagrams, nodes, or connections does not by itself require canvas tools.',
-    'For a complete new diagram with multiple nodes and connections, use canvas_create_diagram and set diagramKind appropriately (mindmap, flowchart, orgChart, etc.). Choose short stable node and edge IDs, give every node a visible label, and place nodes on a readable grid.',
+    'For a complete new diagram with multiple nodes and connections, use canvas_create_diagram and set diagramKind appropriately (mindmap, flowchart, orgChart, sequence, timeline, stateDiagram, erDiagram, etc.). Choose short stable node and edge IDs, give every node a visible label, and place nodes on a readable grid.',
     'For incremental changes to existing content, call canvas_get_state first so you can reference its real IDs, then use canvas_apply_operations. Use decision nodes only for branches or questions. Do not create freehand strokes with AI tools.',
   ].join('\n')
 }
@@ -273,6 +305,7 @@ export class AgentPromptAssembler {
       formatActiveFile(context),
       formatDiagramGuidance(context),
       formatActiveCanvas(context),
+      formatActiveExcalidraw(context),
       formatEditorSelection(context),
       formatQuote(context),
       formatAttachments(context),

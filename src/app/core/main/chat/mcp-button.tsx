@@ -65,13 +65,18 @@ export function McpServerList({ onInitialize = false, searchable = true }: McpSe
                       </Badge>
                       {status === 'connected' ? (
                         <div className="flex items-center gap-1 text-muted-foreground">
-                          <PlugZap className="size-3" />
+                          <PlugZap className="size-3 text-[#3b82f6]" />
                           <span className="text-[10px]">{toolCount} {t('tools')}</span>
                         </div>
                       ) : status === 'connecting' ? (
                         <div className="flex items-center gap-1 text-muted-foreground">
                           <Plug className="size-3 animate-pulse" />
                           <span className="text-[10px]">{t('connecting')}</span>
+                        </div>
+                      ) : status === 'error' ? (
+                        <div className="flex items-center gap-1 text-destructive">
+                          <Plug className="size-3" />
+                          <span className="text-[10px]">{t('error')}</span>
                         </div>
                       ) : (
                         <div className="flex items-center gap-1 text-muted-foreground">

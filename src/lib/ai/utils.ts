@@ -97,9 +97,11 @@ export async function getAISettings(modelType?: string): Promise<AiConfig | unde
           tokenLimitParam: targetModel.tokenLimitParam,
           enableWebSearch: webSearchSettings.nativeEnabled
             || webSearchSettings.thirdPartyEnabled
+            || webSearchSettings.wigoloEnabled
             || webSearchSettings.basicEnabled,
           enableNativeWebSearch: webSearchSettings.nativeEnabled,
           enableThirdPartyWebSearch: webSearchSettings.thirdPartyEnabled,
+          enableWigoloWebSearch: webSearchSettings.wigoloEnabled,
           enableBasicWebSearch: webSearchSettings.basicEnabled,
           webSearchProvider: webSearchSettings.provider,
           webSearchApiKey: webSearchSettings.provider === 'auto'
@@ -107,6 +109,8 @@ export async function getAISettings(modelType?: string): Promise<AiConfig | unde
             : webSearchSettings.apiKeys[webSearchSettings.provider],
           webSearchApiKeys: webSearchSettings.apiKeys,
           webSearchProviderOrder: webSearchSettings.providerOrder,
+          wigoloBaseUrl: webSearchSettings.wigoloBaseUrl,
+          wigoloApiToken: webSearchSettings.wigoloApiToken,
         }
         return result
       }
@@ -117,9 +121,11 @@ export async function getAISettings(modelType?: string): Promise<AiConfig | unde
           ...config,
           enableWebSearch: webSearchSettings.nativeEnabled
             || webSearchSettings.thirdPartyEnabled
+            || webSearchSettings.wigoloEnabled
             || webSearchSettings.basicEnabled,
           enableNativeWebSearch: webSearchSettings.nativeEnabled,
           enableThirdPartyWebSearch: webSearchSettings.thirdPartyEnabled,
+          enableWigoloWebSearch: webSearchSettings.wigoloEnabled,
           enableBasicWebSearch: webSearchSettings.basicEnabled,
           webSearchProvider: webSearchSettings.provider,
           webSearchApiKey: webSearchSettings.provider === 'auto'
@@ -127,6 +133,8 @@ export async function getAISettings(modelType?: string): Promise<AiConfig | unde
             : webSearchSettings.apiKeys[webSearchSettings.provider],
           webSearchApiKeys: webSearchSettings.apiKeys,
           webSearchProviderOrder: webSearchSettings.providerOrder,
+          wigoloBaseUrl: webSearchSettings.wigoloBaseUrl,
+          wigoloApiToken: webSearchSettings.wigoloApiToken,
         }
       }
     }

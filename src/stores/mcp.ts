@@ -15,22 +15,18 @@ interface MCPState {
   //
   initialized: boolean
 
-  //
-  addServer: (server: MCPServerConfig) => void
-  updateServer: (id: string, updates: Partial<MCPServerConfig>) => void
-  deleteServer: (id: string) => void
-  toggleServerEnabled: (id: string) => void
+  addServer: (server: MCPServerConfig) => Promise<void>
+  updateServer: (id: string, updates: Partial<MCPServerConfig>) => Promise<void>
+  deleteServer: (id: string) => Promise<void>
+  toggleServerEnabled: (id: string) => Promise<void>
 
-  //
   setServerState: (id: string, state: MCPServerState) => void
   getServerState: (id: string) => MCPServerState | undefined
 
-  //
-  setSelectedServers: (ids: string[]) => void
-  toggleServerSelection: (id: string) => void
-  clearSelectedServers: () => void
+  setSelectedServers: (ids: string[]) => Promise<void>
+  toggleServerSelection: (id: string) => Promise<void>
+  clearSelectedServers: () => Promise<void>
 
-  //
   initMcpData: () => Promise<void>
   loadMcpConfig: () => Promise<void>
 }

@@ -10,11 +10,14 @@ import type {
 const ENABLED_KEY = 'webSearch.enabled'
 const NATIVE_ENABLED_KEY = 'webSearch.nativeEnabled'
 const THIRD_PARTY_ENABLED_KEY = 'webSearch.thirdPartyEnabled'
+const WIGOLO_ENABLED_KEY = 'webSearch.wigoloEnabled'
 const BASIC_ENABLED_KEY = 'webSearch.basicEnabled'
 const PROVIDER_KEY = 'webSearch.provider'
 const LEGACY_API_KEY = 'webSearch.apiKey'
 const API_KEYS_KEY = 'webSearch.apiKeys'
 const PROVIDER_ORDER_KEY = 'webSearch.providerOrder'
+const WIGOLO_BASE_URL_KEY = 'webSearch.wigoloBaseUrl'
+const WIGOLO_API_TOKEN_KEY = 'webSearch.wigoloApiToken'
 
 export const WEB_SEARCH_API_PROVIDERS: WebSearchApiProvider[] = [
   'zhipu',
@@ -23,13 +26,18 @@ export const WEB_SEARCH_API_PROVIDERS: WebSearchApiProvider[] = [
   'exa',
 ]
 
+export const DEFAULT_WIGOLO_BASE_URL = 'http://127.0.0.1:3333'
+
 export interface WebSearchSettings {
   nativeEnabled: boolean
   thirdPartyEnabled: boolean
+  wigoloEnabled: boolean
   basicEnabled: boolean
   provider: WebSearchProvider
   apiKeys: WebSearchApiKeys
   providerOrder: WebSearchApiProvider[]
+  wigoloBaseUrl: string
+  wigoloApiToken: string
 }
 
 interface WebSearchSettingsContext {
@@ -40,10 +48,13 @@ interface WebSearchSettingsContext {
 const DEFAULT_WEB_SEARCH_SETTINGS: WebSearchSettings = {
   nativeEnabled: true,
   thirdPartyEnabled: true,
+  wigoloEnabled: true,
   basicEnabled: true,
   provider: 'auto',
   apiKeys: {},
   providerOrder: WEB_SEARCH_API_PROVIDERS,
+  wigoloBaseUrl: DEFAULT_WIGOLO_BASE_URL,
+  wigoloApiToken: '',
 }
 
 export function normalizeWebSearchProviderOrder(value: unknown): WebSearchApiProvider[] {
@@ -58,6 +69,21 @@ export function normalizeWebSearchProviderOrder(value: unknown): WebSearchApiPro
     ...uniqueOrder,
     ...WEB_SEARCH_API_PROVIDERS.filter(provider => !uniqueOrder.includes(provider)),
   ]
+}
+
+export function normalizeWigoloBaseUrl(value: unknown): string {
+  if (typeof value !== 'string') return DEFAULT_WIGOLO_BASE_URL
+  const trimmed = value.trim().replace(/\/+$/, '')
+  if (!trimmed) return DEFAULT_WIGOLO_BASE_URL
+  try {
+    const url = new URL(trimmed)
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+      return DEFAULT_WIGOLO_BASE_URL
+    }
+    return url.origin
+  } catch {
+    return DEFAULT_WIGOLO_BASE_URL
+  }
 }
 
 function normalizeApiKeys(value: unknown): WebSearchApiKeys {
@@ -121,14 +147,20 @@ export async function saveWebSearchSettings(
   const store = targetStore || await Store.load('store.json')
   await store.set(
     ENABLED_KEY,
-    settings.nativeEnabled || settings.thirdPartyEnabled || settings.basicEnabled
+    settings.nativeEnabled
+      || settings.thirdPartyEnabled
+      || settings.wigoloEnabled
+      || settings.basicEnabled
   )
   await store.set(NATIVE_ENABLED_KEY, settings.nativeEnabled)
   await store.set(THIRD_PARTY_ENABLED_KEY, settings.thirdPartyEnabled)
+  await store.set(WIGOLO_ENABLED_KEY, settings.wigoloEnabled)
   await store.set(BASIC_ENABLED_KEY, settings.basicEnabled)
   await store.set(PROVIDER_KEY, 'auto')
   await store.set(API_KEYS_KEY, settings.apiKeys)
   await store.set(PROVIDER_ORDER_KEY, settings.providerOrder)
+  await store.set(WIGOLO_BASE_URL_KEY, normalizeWigoloBaseUrl(settings.wigoloBaseUrl))
+  await store.set(WIGOLO_API_TOKEN_KEY, settings.wigoloApiToken.trim())
   await store.save()
 }
 
@@ -141,26 +173,33 @@ export async function loadWebSearchSettings(
     enabled,
     nativeEnabled,
     thirdPartyEnabled,
+    wigoloEnabled,
     basicEnabled,
     provider,
     apiKeys,
     legacyApiKey,
     providerOrder,
+    wigoloBaseUrl,
+    wigoloApiToken,
   ] = await Promise.all([
     store.get<boolean>(ENABLED_KEY),
     store.get<boolean>(NATIVE_ENABLED_KEY),
     store.get<boolean>(THIRD_PARTY_ENABLED_KEY),
+    store.get<boolean>(WIGOLO_ENABLED_KEY),
     store.get<boolean>(BASIC_ENABLED_KEY),
     store.get<string>(PROVIDER_KEY),
     store.get<unknown>(API_KEYS_KEY),
     store.get<string>(LEGACY_API_KEY),
     store.get<unknown>(PROVIDER_ORDER_KEY),
+    store.get<string>(WIGOLO_BASE_URL_KEY),
+    store.get<string>(WIGOLO_API_TOKEN_KEY),
   ])
 
   if (
     typeof enabled === 'boolean'
     || typeof nativeEnabled === 'boolean'
     || typeof thirdPartyEnabled === 'boolean'
+    || typeof wigoloEnabled === 'boolean'
     || typeof basicEnabled === 'boolean'
   ) {
     const legacyProvider = isWebSearchProvider(provider) ? provider : 'auto'
@@ -176,26 +215,33 @@ export async function loadWebSearchSettings(
       normalizedApiKeys[legacyProvider] = legacyApiKey
     }
 
-    const settings = {
+    const settings: WebSearchSettings = {
       nativeEnabled: legacyDisabled
         ? false
         : typeof nativeEnabled === 'boolean' ? nativeEnabled : legacyDefault,
       thirdPartyEnabled: legacyDisabled
         ? false
         : typeof thirdPartyEnabled === 'boolean' ? thirdPartyEnabled : legacyDefault,
+      wigoloEnabled: legacyDisabled
+        ? false
+        : typeof wigoloEnabled === 'boolean' ? wigoloEnabled : true,
       basicEnabled: legacyDisabled
         ? false
         : typeof basicEnabled === 'boolean' ? basicEnabled : legacyDefault,
       provider: 'auto' as const,
       apiKeys: normalizedApiKeys,
       providerOrder: normalizeWebSearchProviderOrder(providerOrder),
+      wigoloBaseUrl: normalizeWigoloBaseUrl(wigoloBaseUrl),
+      wigoloApiToken: typeof wigoloApiToken === 'string' ? wigoloApiToken : '',
     }
     if (
       legacyProvider !== 'auto'
       || nativeEnabled === undefined
       || thirdPartyEnabled === undefined
+      || wigoloEnabled === undefined
       || basicEnabled === undefined
       || providerOrder === undefined
+      || wigoloBaseUrl === undefined
       || (apiKeys === undefined && Object.keys(normalizedApiKeys).length > 0)
     ) {
       await saveWebSearchSettings(settings, store)
@@ -215,10 +261,13 @@ export async function loadWebSearchSettings(
   const migrated: WebSearchSettings = {
     nativeEnabled: legacyEnabled,
     thirdPartyEnabled: legacyEnabled,
+    wigoloEnabled: legacyEnabled,
     basicEnabled: legacyEnabled,
     provider: 'auto',
     apiKeys: {},
     providerOrder: WEB_SEARCH_API_PROVIDERS,
+    wigoloBaseUrl: DEFAULT_WIGOLO_BASE_URL,
+    wigoloApiToken: '',
   }
   if (
     legacyProvider !== 'auto'

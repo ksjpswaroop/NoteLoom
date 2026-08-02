@@ -90,6 +90,18 @@ const TOOL_CONFIRMATION_DISPLAY: Record<string, ToolConfirmationDisplayConfig> =
     descriptionKey: 'record.chat.input.agent.confirmation.tools.canvas_create_project.description',
     summaryFields: ['title', 'canvasType'],
   },
+  excalidraw_create: {
+    titleKey: 'record.chat.input.agent.confirmation.tools.excalidraw_create.title',
+    descriptionKey: 'record.chat.input.agent.confirmation.tools.excalidraw_create.description',
+    summaryFields: ['title', 'folderPath'],
+    contentFields: ['elements'],
+  },
+  excalidraw_update_elements: {
+    titleKey: 'record.chat.input.agent.confirmation.tools.excalidraw_update_elements.title',
+    descriptionKey: 'record.chat.input.agent.confirmation.tools.excalidraw_update_elements.description',
+    summaryFields: ['filePath', 'replaceExisting'],
+    contentFields: ['elements'],
+  },
   note_delete_file: {
     titleKey: 'record.chat.input.agent.confirmation.tools.delete_markdown_file.title',
     descriptionKey: 'record.chat.input.agent.confirmation.tools.delete_markdown_file.description',
@@ -99,6 +111,33 @@ const TOOL_CONFIRMATION_DISPLAY: Record<string, ToolConfirmationDisplayConfig> =
     titleKey: 'record.chat.input.agent.confirmation.fallback.title',
     descriptionKey: 'record.chat.input.agent.confirmation.fallback.description',
     summaryFields: ['folderPath'],
+  },
+  midscene_act: {
+    titleKey: 'record.chat.input.agent.confirmation.tools.midscene_act.title',
+    descriptionKey: 'record.chat.input.agent.confirmation.tools.midscene_act.description',
+    summaryFields: ['prompt', 'displayId'],
+  },
+  midscene_query: {
+    titleKey: 'record.chat.input.agent.confirmation.tools.midscene_query.title',
+    descriptionKey: 'record.chat.input.agent.confirmation.tools.midscene_query.description',
+    summaryFields: ['prompt', 'displayId'],
+  },
+  midscene_assert: {
+    titleKey: 'record.chat.input.agent.confirmation.tools.midscene_assert.title',
+    descriptionKey: 'record.chat.input.agent.confirmation.tools.midscene_assert.description',
+    summaryFields: ['prompt', 'message'],
+  },
+  midscene_test_flow: {
+    titleKey: 'record.chat.input.agent.confirmation.tools.midscene_test_flow.title',
+    descriptionKey: 'record.chat.input.agent.confirmation.tools.midscene_test_flow.description',
+    summaryFields: ['title', 'steps'],
+    contentFields: ['steps'],
+  },
+  midscene_document_flow: {
+    titleKey: 'record.chat.input.agent.confirmation.tools.midscene_document_flow.title',
+    descriptionKey: 'record.chat.input.agent.confirmation.tools.midscene_document_flow.description',
+    summaryFields: ['title', 'noteFileName', 'steps'],
+    contentFields: ['steps'],
   },
   skill_execute_script: {
     titleKey: 'record.chat.input.agent.confirmation.tools.execute_skill_script.title',

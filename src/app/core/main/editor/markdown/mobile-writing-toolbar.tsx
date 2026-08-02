@@ -71,6 +71,7 @@ type MobileWritingToolbarAction =
   | 'insert-mermaid-pie'
   | 'insert-mermaid-er'
   | 'insert-mermaid-journey'
+  | 'insert-mermaid-timeline'
 
 interface MobileWritingToolbarProps {
   activeActions?: string[]
@@ -149,6 +150,7 @@ const SECONDARY_ITEMS: Record<Exclude<MobileWritingToolbarMenu, 'root'>, Toolbar
     { kind: 'action', action: 'insert-mermaid-pie', label: 'Pie chart', icon: PieChart },
     { kind: 'action', action: 'insert-mermaid-er', label: 'ER diagram', icon: Database },
     { kind: 'action', action: 'insert-mermaid-journey', label: 'User journey', icon: Map },
+    { kind: 'action', action: 'insert-mermaid-timeline', label: 'Timeline', icon: Calendar },
   ],
 }
 

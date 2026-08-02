@@ -7,6 +7,9 @@ export type CanvasAiPreset =
   | 'mindmap'
   | 'orgChart'
   | 'classDiagram'
+  | 'timeline'
+  | 'stateDiagram'
+  | 'erDiagram'
 
 export const CANVAS_AI_PRESETS: readonly CanvasAiPreset[] = [
   'mindmap',
@@ -15,6 +18,9 @@ export const CANVAS_AI_PRESETS: readonly CanvasAiPreset[] = [
   'sequence',
   'orgChart',
   'classDiagram',
+  'timeline',
+  'stateDiagram',
+  'erDiagram',
 ] as const
 
 const DIAGRAM_KIND_HINT: Record<CanvasAiPreset, string> = {
@@ -24,6 +30,9 @@ const DIAGRAM_KIND_HINT: Record<CanvasAiPreset, string> = {
   sequence: 'Use diagramKind="sequence". Left-to-right participants or steps with labeled interaction edges.',
   orgChart: 'Use diagramKind="orgChart". Root at the top, reporting lines downward, one parent per role when possible.',
   classDiagram: 'Use diagramKind="classDiagram". Entities as process/text nodes; association edges with labels such as extends or uses.',
+  timeline: 'Use diagramKind="timeline". Stages left-to-right with short labels; connect consecutive stages only.',
+  stateDiagram: 'Use diagramKind="stateDiagram". States as process nodes, transitions as labeled edges; use terminator for start/end when helpful.',
+  erDiagram: 'Use diagramKind="erDiagram". Entities as process or database nodes; relationship edges with cardinality labels (1, N, etc.).',
 }
 
 export function buildCanvasAiPrompt(options: {

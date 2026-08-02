@@ -1,6 +1,7 @@
 import mitt from 'mitt'
 import type { OnboardingStepId } from '@/app/core/main/editor/onboarding-state'
 import type { CanvasDocument } from '@/types/canvas'
+import type { ExcalidrawSceneFile } from '@/lib/excalidraw/file-format'
 
 //
 interface Events {
@@ -154,6 +155,7 @@ interface Events {
   'canvas-agent-preview': { operations: unknown[] };
   'canvas-agent-preview-clear': void;
   'canvas-auto-layout': { recordHistory?: boolean };
+  'excalidraw-scene-replace': { filePath: string; scene: ExcalidrawSceneFile };
   'editor-replace': {
     content?: string;
     range?: { from: number; to: number };

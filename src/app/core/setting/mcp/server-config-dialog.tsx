@@ -211,7 +211,11 @@ export function ServerConfigDialog({
           try {
             await mcpServerManager.reconnectServer(config)
           } catch (error) {
-            console.error('Failed to reconnect after save:', error)
+            const message = error instanceof Error ? error.message : String(error)
+            toast({
+              description: t('connectFailed', { name: config.name, error: message }),
+              variant: 'destructive',
+            })
           }
         }
       } else {
@@ -222,7 +226,11 @@ export function ServerConfigDialog({
           try {
             await mcpServerManager.connectServer(config)
           } catch (error) {
-            console.error('Failed to auto-connect after save:', error)
+            const message = error instanceof Error ? error.message : String(error)
+            toast({
+              description: t('connectFailed', { name: config.name, error: message }),
+              variant: 'destructive',
+            })
           }
         }
       }

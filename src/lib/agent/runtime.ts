@@ -13,6 +13,7 @@ import { skillManager } from '@/lib/skills'
 import { buildMcpAgentToolCatalog } from '@/lib/mcp/agent-tools'
 import { agentDebugLog, previewText } from './debug-log'
 import { getRagAgentPolicy } from '@/lib/rag-agent-policy'
+import { isMidsceneAutomationAvailableSync, loadMidsceneSettings } from '@/lib/midscene/settings'
 import type {
   AgentChange,
   AgentContextSnapshot,
@@ -593,6 +594,11 @@ function selectToolsForContext(
     selectedTools = selectedTools.filter((tool) => tool.category !== 'image')
   }
 
+  // Midscene tools stay registered but are only offered after explicit Automations opt-in.
+  if (!isMidsceneAutomationAvailableSync()) {
+    selectedTools = selectedTools.filter((tool) => !tool.name.startsWith('midscene_'))
+  }
+
   return selectedTools
 }
 
@@ -723,6 +729,7 @@ export class AgentRuntime {
     })
 
     const ragAgentPolicy = await getRagAgentPolicy()
+    await loadMidsceneSettings()
     const allTools = [...agentToolRegistry.listTools(), ...mcpToolCatalog.directTools]
       .filter(tool =>
         (ragAgentPolicy.automaticSearchEnabled || tool.name !== 'note_search_files')

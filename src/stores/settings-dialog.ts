@@ -13,6 +13,7 @@ export type SettingSection =
   | 'rag'
   | 'mcp'
   | 'skills'
+  | 'automations'
   | 'prompt'
   | 'memories'
   | 'template'
@@ -37,6 +38,7 @@ export const settingSections: SettingSection[] = [
   'prompt',
   'mcp',
   'skills',
+  'automations',
   'template',
   'sync',
   'imageHosting',

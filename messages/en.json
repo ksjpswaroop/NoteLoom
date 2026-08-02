@@ -250,19 +250,45 @@
     },
     "webSearch": {
       "title": "Web Search",
-      "desc": "Configure NoteLoom's three-layer web search strategy. AI decides when a search is needed.",
+      "desc": "Configure NoteLoom's layered web search strategy. AI decides when a search is needed.",
       "nativeEnabled": "Enable native model search",
       "thirdPartyEnabled": "Enable third-party search",
+      "wigoloEnabled": "Enable wigolo local search",
       "basicEnabled": "Enable no-key search",
       "nativeLayerTitle": "Native model search",
       "nativeLayerDesc": "When supported, the current model's built-in web search is used first.",
       "thirdPartyLayerTitle": "Third-party API search",
-      "thirdPartyLayerDesc": "When native search is unavailable, configured services are tried in the order below.",
+      "thirdPartyLayerDesc": "When native and wigolo search are unavailable, configured services are tried in the order below.",
+      "wigoloLayerTitle": "Wigolo (local)",
+      "wigoloLayerDesc": "Preferred local-first web search. NoteLoom connects to a running daemon or starts a managed copy in app data — no terminal required.",
+      "wigoloManagedBy": "Managed local service",
+      "wigoloStatusLabel": "Status",
+      "wigoloStatusRunning": "Running",
+      "wigoloStatusStarting": "Starting",
+      "wigoloStatusConnectedExternal": "Connected external",
+      "wigoloStatusStopped": "Stopped",
+      "wigoloStatusError": "Error",
+      "wigoloStatusUnavailable": "Unavailable",
+      "wigoloStart": "Start",
+      "wigoloStop": "Stop",
+      "wigoloRefreshing": "Refreshing status…",
+      "wigoloStartSuccess": "Wigolo is ready ({status}).",
+      "wigoloStartFailed": "Could not start wigolo: {message}",
+      "wigoloStopSuccess": "Managed wigolo stopped.",
+      "wigoloStopFailed": "Could not stop wigolo: {message}",
+      "wigoloBaseUrl": "Daemon URL",
+      "wigoloBaseUrlPlaceholder": "http://127.0.0.1:3333",
+      "wigoloApiToken": "API token (optional)",
+      "wigoloApiTokenPlaceholder": "Required only when the daemon enforces a bearer token",
+      "wigoloSetupGuide": "Docs",
+      "wigoloShowToken": "Show API token",
+      "wigoloHideToken": "Hide API token",
       "basicLayerTitle": "No-key search",
-      "basicLayerDesc": "When the first two layers are unavailable, try Bing, DuckDuckGo, Sogou, 360, and Baidu.",
+      "basicLayerDesc": "When earlier layers are unavailable, try Bing, DuckDuckGo, Sogou, 360, and Baidu.",
       "fallbackWhenUnavailable": "Automatically fall back when the previous layer is unavailable",
       "fallbackWhenNativeDisabled": "Native model search is disabled; fall back directly",
       "fallbackWhenDisabled": "Third-party search is disabled; fall back directly",
+      "fallbackWhenWigoloDisabled": "Wigolo local search is disabled; fall back directly",
       "dragProvider": "Drag to change the priority of {provider}",
       "testConnection": "Test connection",
       "testing": "Testing",
@@ -271,7 +297,8 @@
       "getApiKey": "Get key",
       "showApiKey": "Show API key",
       "hideApiKey": "Hide API key",
-      "providerApiKeyPlaceholder": "Enter {provider} API key"
+      "providerApiKeyPlaceholder": "Enter {provider} API key",
+      "wigoloFixTip": "Fix: {tip}"
     },
     "rag": {
       "title": "Knowledge Base",
@@ -410,8 +437,15 @@
       "connecting": "Connecting",
       "disconnected": "Disconnected",
       "error": "Error",
+      "connect": "Connect",
+      "disconnect": "Disconnect",
+      "reconnect": "Reconnect",
+      "connectSuccess": "Connected to {name}",
+      "disconnectSuccess": "Disconnected {name}",
+      "connectFailed": "Failed to connect to {name}: {error}",
+      "disconnectFailed": "Failed to disconnect {name}: {error}",
       "tools": "Tools",
-      "noServers": "MCP service not enabled",
+      "noServers": "No MCP servers configured",
       "noServersFound": "No matching servers found",
       "serverAdded": "Server added successfully",
       "serverUpdated": "Server updated successfully",
@@ -646,22 +680,32 @@
         "placeholder": "Enter Mermaid diagram code...",
         "preview": "Preview",
         "done": "Done",
+        "export": "Export diagram",
+        "exportPng": "Export PNG",
+        "exportSvg": "Export SVG",
+        "exportPngSuccess": "PNG exported",
+        "exportSvgSuccess": "SVG exported",
+        "exportFailed": "Diagram export failed",
         "diagramTypes": {
           "flowchart": "Flowchart",
+          "mindmap": "Mind map",
           "sequence": "Sequence",
           "classDiagram": "Class Diagram",
           "stateDiagram": "State Diagram",
           "er": "ER Diagram",
+          "timeline": "Timeline",
           "gantt": "Gantt",
           "pie": "Pie Chart",
           "journey": "Journey"
         },
         "templates": {
           "flowchart": "graph TD\n    A[Start] --> B[Process]\n    B --> C[End]",
+          "mindmap": "mindmap\n  Root\n    Branch A\n      Detail A1\n      Detail A2\n    Branch B\n      Detail B1\n    Branch C",
           "sequence": "sequenceDiagram\n    participant Alice\n    participant Bob\n    Alice->>Bob: Hello\n    Bob-->>Alice: Reply",
           "classDiagram": "classDiagram\n    Animal <|-- Duck\n    Animal <|-- Fish\n    Animal : +int age\n    Animal : +String gender",
           "stateDiagram": "stateDiagram-v2\n    [*] --> Active\n    Active --> [*]",
           "er": "erDiagram\n    CUSTOMER ||--o{ ORDER : places\n    CUSTOMER ||--o{ DELIVERY-ADDRESS : uses",
+          "timeline": "timeline\n    title Product Roadmap\n    section 2024\n      Research : Plan\n      Build : MVP\n    section 2025\n      Launch : GA",
           "gantt": "gantt\n    title Project Plan\n    dateFormat YYYY-MM-DD\n    section Phase 1\n    Task1 :a1, 2024-01-01, 30d\n    section Phase 2\n    Task2 :after a1, 20d",
           "pie": "pie title Resource Allocation\n    \"CPU\" : 45\n    \"Memory\" : 30\n    \"Storage\" : 25",
           "journey": "journey\n    title My Daily Work\n    section Morning\n    Commute : 7:00, 5\n    Work : 9:00, 8"
@@ -2299,7 +2343,70 @@
     },
     "searchPlaceholder": "Search settings...",
     "noSearchResults": "No matching settings found",
-    "title": "Settings"
+    "title": "Settings",
+    "automations": {
+      "title": "Automations",
+      "desc": "Optional Midscene computer use for desktop control, app testing, and step-by-step documentation with screenshots. Disabled by default and never replaces the normal note agent.",
+      "loading": "Loading Automations…",
+      "desktopOnly": "Midscene Automations require the NoteLoom desktop app on macOS, Windows, or Linux.",
+      "privacyTitle": "Privacy and control warning",
+      "privacyDesc": "When enabled, Midscene can move your mouse, type on your keyboard, and capture your screen. Screenshots are sent to the vision model provider you configure. Do not enable this on shared or sensitive desktops.",
+      "enableTitle": "Enable Midscene",
+      "enableDesc": "Automations stay off until you accept the warning and turn the switch on. NoteLoom does not auto-start Midscene on launch.",
+      "optInTitle": "Safety opt-in",
+      "optInDesc": "Confirm that you understand Midscene will control the desktop and send screenshots to your model provider.",
+      "optInAccepted": "Accepted",
+      "acceptOptIn": "I understand — enable Automations",
+      "optInRequiredTitle": "Opt-in required",
+      "optInRequiredDesc": "Accept the safety warning before enabling or running Midscene Automations.",
+      "optInAcceptedToast": "Automations safety opt-in saved",
+      "toggleTitle": "Enable Automations",
+      "toggleDesc": "When on, the agent may offer Midscene tools after confirmation. Capture-first notes remain the default workflow.",
+      "enabledToast": "Automations enabled",
+      "disabledToast": "Automations disabled",
+      "runtimeTitle": "Runtime",
+      "runtimeDesc": "Optional automation runtime installed into NoteLoom app data (same local-services manager as Wigolo). Off by default; never auto-starts on launch.",
+      "statusLabel": "Status",
+      "statusUnknown": "Status unavailable",
+      "statusError": "Could not read Midscene status",
+      "runtimeDir": "Runtime directory",
+      "refresh": "Refresh",
+      "install": "Install Runtime",
+      "reinstall": "Reinstall Runtime",
+      "installSuccess": "Midscene runtime is installed",
+      "installFailed": "Midscene install failed",
+      "openPermissions": "Open macOS Permissions",
+      "modelTitle": "Vision model",
+      "modelDesc": "Midscene requires a vision-capable model. These values map to MIDSCENE_MODEL_API_KEY, MIDSCENE_MODEL_NAME, MIDSCENE_MODEL_BASE_URL, and MIDSCENE_MODEL_FAMILY.",
+      "modelName": "Model name",
+      "modelFamily": "Model family",
+      "modelBaseUrl": "Base URL",
+      "modelApiKey": "API key",
+      "showKey": "Show API key",
+      "hideKey": "Hide API key",
+      "saveModel": "Save model settings",
+      "modelSaved": "Midscene model settings saved",
+      "quickDocTitle": "Generate step-by-step docs",
+      "quickDocDesc": "One action per line. Midscene runs each step, captures a screenshot, and writes a Markdown guide under app data (and can import it into workspace automations/).",
+      "quickDocPlaceholder": "Open the app\nClick Export\nConfirm the dialog",
+      "runDoc": "Generate documentation",
+      "docSuccess": "Documentation generated",
+      "docFailed": "Documentation flow failed",
+      "quickTestTitle": "Run a test flow",
+      "quickTestDesc": "Use lines like act: … or assert: …. Saves a pass/fail report with optional screenshots.",
+      "quickTestPlaceholder": "assert: the main window is visible\nact: open Settings\nassert: Settings is visible",
+      "runTest": "Run test",
+      "testPassed": "Test passed",
+      "testFailed": "Test failed",
+      "progress": {
+        "preparing": "Preparing Midscene runtime…",
+        "runningDoc": "Running documentation flow…",
+        "runningTest": "Running test flow…"
+      },
+      "managedHint": "Uses the NoteLoom local-services manager (app data). See docs/local-services.md.",
+      "optionalOff": "Optional — off",
+      "fixTip": "Fix: {tip}"
+    }
   },
   "record": {
     "trash": {
@@ -3084,6 +3191,14 @@
                 "title": "Create canvas",
                 "description": "Create a new native canvas and open it so AI can generate a diagram."
               },
+              "excalidraw_create": {
+                "title": "Create Excalidraw sketch",
+                "description": "Create a workspace .excalidraw whiteboard file and open it for editing."
+              },
+              "excalidraw_update_elements": {
+                "title": "Update Excalidraw sketch",
+                "description": "Preview the Excalidraw elements AI will write into the sketch file."
+              },
               "delete_markdown_file": {
                 "title": "Delete file",
                 "description": "The selected file will be permanently deleted."
@@ -3116,6 +3231,26 @@
                   "executable-scripts": "The Skill contains executable scripts. Running them will still require separate confirmation.",
                   "symbolic-links": "The Skill contains {count} symbolic link(s). They will be skipped if installation continues."
                 }
+              },
+              "midscene_act": {
+                "title": "Allow desktop control?",
+                "description": "Midscene will move the mouse/keyboard on your computer for this natural-language action. Screenshots may be sent to your configured model provider."
+              },
+              "midscene_query": {
+                "title": "Allow desktop screen query?",
+                "description": "Midscene will capture the screen and send it to your vision model to answer this query."
+              },
+              "midscene_assert": {
+                "title": "Allow desktop assertion?",
+                "description": "Midscene will capture the screen and verify this condition with your vision model."
+              },
+              "midscene_test_flow": {
+                "title": "Run Midscene test flow?",
+                "description": "Midscene will control the desktop through multiple act/assert steps and save a pass/fail report."
+              },
+              "midscene_document_flow": {
+                "title": "Generate step-by-step docs?",
+                "description": "Midscene will control the desktop, capture screenshots for each step, and write a Markdown how-to note. Screenshots go to your model provider."
               }
             }
           }
@@ -3132,38 +3267,8 @@
           "loading": "Loading...",
           "empty": "No matching results",
           "commands": {
-            "title": "Quick commands",
-            "placeholder": "Search commands...",
-            "summarize": {
-              "label": "Summarize",
-              "description": "Extract key points and conclusions",
-              "prompt": "Summarize the following content and extract the key points and conclusions:"
-            },
-            "organize": {
-              "label": "Organize as note",
-              "description": "Create structured Markdown",
-              "prompt": "Organize the following content into a clear, structured Markdown note:"
-            },
-            "rewrite": {
-              "label": "Polish",
-              "description": "Improve wording without changing meaning",
-              "prompt": "Polish the following content while preserving its meaning:"
-            },
-            "translate": {
-              "label": "Translate",
-              "description": "Translate into a chosen language",
-              "prompt": "Translate the following content into:"
-            },
-            "searchNotes": {
-              "label": "Search notes",
-              "description": "Find related content in your knowledge base",
-              "prompt": "Search my note knowledge base and answer:"
-            },
-            "createNote": {
-              "label": "Create note",
-              "description": "Create a structured Markdown note",
-              "prompt": "Create a new Markdown note based on these requirements:"
-            }
+            "title": "Slash commands",
+            "placeholder": "Filter commands..."
           },
           "skills": {
             "title": "Skills",
@@ -3408,7 +3513,13 @@
         "orgChart": "Org chart",
         "orgChartPrompt": "Create an organization chart with a root role and clear reporting lines",
         "classDiagram": "Class diagram",
-        "classDiagramPrompt": "Create a class/relationship diagram with named entities and labeled associations"
+        "classDiagramPrompt": "Create a class/relationship diagram with named entities and labeled associations",
+        "timeline": "Timeline",
+        "timelinePrompt": "Create a left-to-right timeline of stages or milestones",
+        "stateDiagram": "State diagram",
+        "stateDiagramPrompt": "Create a state machine with named states and labeled transitions",
+        "erDiagram": "ER diagram",
+        "erDiagramPrompt": "Create an entity-relationship diagram with entities and cardinality-labeled associations"
       },
       "aiPlaceholder": "e.g. Mind map of note-taking workflows with branches for capture, organize, and review",
       "aiHint": "Sends a prompt to Chat Agent. Approve the canvas tool preview before changes apply."
@@ -3950,6 +4061,7 @@
         "loadingSync": "Loading sync info",
         "configSync": "Configure Sync",
         "newArticle": "New Note",
+        "newSketch": "New Sketch",
         "newFolder": "New Folder",
         "refresh": "Refresh",
         "toggleFolders": "Toggle Folders",
@@ -4356,7 +4468,7 @@
   "mcp": {
     "selectServers": "MCP Servers",
     "searchServers": "Search servers...",
-    "noServers": "MCP service not enabled",
+    "noServers": "No MCP servers configured",
     "noServersFound": "No matching servers found",
     "addServer": "Add server...",
     "goToSettings": "Go to Settings",
@@ -4365,7 +4477,9 @@
     "confirm": "Confirm",
     "tools": "tools",
     "connecting": "Connecting",
-    "disconnected": "Disconnected"
+    "disconnected": "Disconnected",
+    "error": "Error",
+    "connected": "Connected"
   },
   "recording": {
     "title": "Voice Recording",
@@ -4551,6 +4665,12 @@
       "preview": "Preview",
       "done": "Done",
       "title": "Diagram type",
+      "export": "Export diagram",
+      "exportPng": "Export PNG",
+      "exportSvg": "Export SVG",
+      "exportPngSuccess": "PNG exported",
+      "exportSvgSuccess": "SVG exported",
+      "exportFailed": "Diagram export failed",
       "diagramTypes": {
         "flowchart": "Flowchart",
         "mindmap": "Mind map",
@@ -4558,6 +4678,7 @@
         "classDiagram": "Class Diagram",
         "stateDiagram": "State Diagram",
         "er": "ER Diagram",
+        "timeline": "Timeline",
         "gantt": "Gantt",
         "pie": "Pie Chart",
         "journey": "Journey"
@@ -4569,6 +4690,7 @@
         "classDiagram": "classDiagram\n    Animal <|-- Duck\n    Animal <|-- Fish\n    Animal : +int age\n    Animal : +String gender",
         "stateDiagram": "stateDiagram-v2\n    [*] --> Active\n    Active --> [*]",
         "er": "erDiagram\n    CUSTOMER ||--o{ ORDER : places\n    CUSTOMER ||--o{ DELIVERY-ADDRESS : uses",
+        "timeline": "timeline\n    title Product Roadmap\n    section 2024\n      Research : Plan\n      Build : MVP\n    section 2025\n      Launch : GA",
         "gantt": "gantt\n    title Project Plan\n    dateFormat YYYY-MM-DD\n    section Phase 1\n    Task1 :a1, 2024-01-01, 30d\n    section Phase 2\n    Task2 :after a1, 20d",
         "pie": "pie title Resource Allocation\n    \"CPU\" : 45\n    \"Memory\" : 30\n    \"Storage\" : 25",
         "journey": "journey\n    title My Daily Work\n    section Morning\n    Commute : 7:00, 5\n    Work : 9:00, 8"
@@ -4645,7 +4767,9 @@
         "erDiagram": "ER Diagram",
         "erDiagramDesc": "Insert an entity relationship diagram",
         "journey": "Journey Map",
-        "journeyDesc": "Insert a user journey map"
+        "journeyDesc": "Insert a user journey map",
+        "timeline": "Timeline",
+        "timelineDesc": "Insert a Mermaid timeline"
       },
       "imageUpload": {
         "success": "Upload successful",

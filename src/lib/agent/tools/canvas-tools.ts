@@ -28,6 +28,8 @@ const DIAGRAM_KINDS = [
   'orgChart',
   'classDiagram',
   'timeline',
+  'stateDiagram',
+  'erDiagram',
   'generic',
 ] as const
 
@@ -58,7 +60,16 @@ function isCanvasProjectType(value: string): value is CanvasProjectType {
 function layoutDirectionForDiagramKind(kind: DiagramKind | null): 'TB' | 'LR' | null {
   if (!kind) return null
   if (kind === 'mindmap' || kind === 'sequence' || kind === 'timeline') return 'LR'
-  if (kind === 'orgChart' || kind === 'flowchart' || kind === 'architecture' || kind === 'classDiagram') return 'TB'
+  if (
+    kind === 'orgChart'
+    || kind === 'flowchart'
+    || kind === 'architecture'
+    || kind === 'classDiagram'
+    || kind === 'stateDiagram'
+    || kind === 'erDiagram'
+  ) {
+    return 'TB'
+  }
   return null
 }
 
@@ -356,7 +367,7 @@ const createCanvasDiagramTool: AgentTool = {
       diagramKind: {
         type: 'string',
         enum: [...DIAGRAM_KINDS],
-        description: 'Diagram style hint used for layout. Use mindmap for radial/tree mind maps, orgChart for hierarchy, flowchart for process flows, classDiagram for entity relationships.',
+        description: 'Diagram style hint used for layout. Use mindmap for radial/tree mind maps, orgChart for hierarchy, flowchart for process flows, sequence for interaction flows, classDiagram/erDiagram for entity relationships, stateDiagram for states/transitions, timeline for stages.',
       },
       nodes: {
         type: 'array',

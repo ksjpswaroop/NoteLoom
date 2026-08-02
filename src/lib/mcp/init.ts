@@ -7,27 +7,21 @@ import { useMcpStore } from '@/stores/mcp'
  */
 export async function initMcp() {
   try {
-    // MCP
     await useMcpStore.getState().initMcpData()
-    
-    // MCP （）
+    // Only connects servers the user has configured and left enabled.
     await mcpIntegration.initialize()
-    
-    // MCP
-  } catch {
-    //
+  } catch (error) {
+    console.error('[MCP] Failed to initialize MCP on launch:', error)
   }
 }
 
 /**
- * MCP 
- * 
+ * Disconnect all MCP servers (e.g. app teardown).
  */
 export async function cleanupMcp() {
   try {
     await mcpIntegration.cleanup()
-    // MCP
-  } catch {
-    //
+  } catch (error) {
+    console.error('[MCP] Failed to clean up MCP connections:', error)
   }
 }

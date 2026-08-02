@@ -373,6 +373,7 @@ export const insertAtCursorTool: Tool = {
 **Use Cases:**
 - AI generates content and wants to insert at cursor
 - Insert AI response after user's selected text
+- Insert an inline Mermaid diagram as a fenced \`\`\`mermaid block (flowchart, mindmap, sequenceDiagram, classDiagram, stateDiagram-v2, erDiagram, gantt, pie, journey, etc.)
 
 **Parameters:**
 - \`content\`: Content to insert (Markdown format supported)

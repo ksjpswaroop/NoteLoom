@@ -1,3 +1,5 @@
+import { mcpServerManager } from '@/lib/mcp/server-manager'
+import { useMcpStore } from '@/stores/mcp'
 import { agentToolRegistry } from '../tool-registry'
 import type { AgentTool } from '../types'
 
@@ -13,9 +15,29 @@ export function getAllToolsSync(): AgentTool[] {
   return agentToolRegistry.listTools()
 }
 
+/**
+ * Ensure selected, enabled MCP servers are connected before an agent turn.
+ * Tools are resolved live from the MCP store/catalog — this only repairs connections.
+ */
 export async function reloadMcpTools(): Promise<void> {
-  // MCP tools are exposed through mcp_call_tool and the prompt-side catalog,
-  // so there is no runtime cache to refresh here.
+  const store = useMcpStore.getState()
+  await store.initMcpData()
+
+  const latest = useMcpStore.getState()
+  for (const serverId of latest.selectedServerIds) {
+    const server = latest.servers.find((entry) => entry.id === serverId)
+    if (!server?.enabled) continue
+
+    const status = latest.getServerState(serverId)?.status
+    if (status === 'connected' || status === 'connecting') continue
+
+    try {
+      await mcpServerManager.connectServer(server)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
+      console.error(`[MCP] Failed to connect selected server "${server.name}":`, message)
+    }
+  }
 }
 
 export function getToolByName(name: string): AgentTool | undefined {
@@ -45,3 +67,4 @@ export * from './folder-tools'
 export * from './system-tools'
 export * from './memory-tools'
 export * from './editor-tools'
+export * from './midscene-tools'

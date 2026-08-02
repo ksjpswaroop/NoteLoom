@@ -5,18 +5,24 @@ import { ReactNodeViewRenderer, NodeViewWrapper, ReactNodeViewProps } from '@tip
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
 import mermaid from 'mermaid'
-import { Code, Check } from 'lucide-react'
+import { Check, Code, Download, FileCode, FileImage, Loader2 } from 'lucide-react'
 import { ResponsiveSelect } from '@/components/responsive-select'
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Textarea } from '@/components/ui/textarea'
+import { toast } from '@/hooks/use-toast'
+import {
+  ensureMermaidInitialized,
+  exportMermaidDiagram,
+  type MermaidExportFormat,
+} from '@/lib/mermaid/export-diagram'
 
-// Initialize mermaid
-mermaid.initialize({
-  startOnLoad: false,
-  theme: 'default',
-  securityLevel: 'loose',
-  fontFamily: 'inherit',
-})
+ensureMermaidInitialized()
 
 // Diagram type configuration with icons
 const DIAGRAM_TYPES = [
@@ -26,6 +32,7 @@ const DIAGRAM_TYPES = [
   { type: 'classDiagram', labelKey: 'classDiagram', icon: 'Layers', alias: ['class', 'classDiagram'] },
   { type: 'stateDiagram', labelKey: 'stateDiagram', icon: 'Activity', alias: ['state', 'stateDiagram', 'stateDiagram-v2'] },
   { type: 'er', labelKey: 'erDiagram', icon: 'Database', alias: ['er', 'erDiagram'] },
+  { type: 'timeline', labelKey: 'timeline', icon: 'Clock', alias: ['timeline'] },
   { type: 'gantt', labelKey: 'gantt', icon: 'Calendar', alias: ['gantt'] },
   { type: 'pie', labelKey: 'pie', icon: 'PieChart', alias: ['pie'] },
   { type: 'journey', labelKey: 'journey', icon: 'Map', alias: ['journey', 'gitGraph'] },
@@ -53,7 +60,9 @@ function MermaidDiagramView({ node, updateAttributes }: ReactNodeViewProps) {
   const [diagramType, setDiagramType] = useState(node.attrs.type || 'flowchart')
   const [svg, setSvg] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [exporting, setExporting] = useState<MermaidExportFormat | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const renderRequestRef = useRef(0)
 
   const renderDiagram = useCallback(async () => {
     if (!code.trim()) {
@@ -62,14 +71,18 @@ function MermaidDiagramView({ node, updateAttributes }: ReactNodeViewProps) {
       return
     }
 
+    const requestId = ++renderRequestRef.current
     setError(null)
+    ensureMermaidInitialized()
 
     try {
-      mermaid.parse(code)
-      const id = `mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      await mermaid.parse(code)
+      const id = `mermaid-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
       const { svg: renderedSvg } = await mermaid.render(id, code)
+      if (requestId !== renderRequestRef.current) return
       setSvg(renderedSvg)
     } catch (err) {
+      if (requestId !== renderRequestRef.current) return
       const message = err instanceof Error ? err.message : t('renderError')
       setError(message)
       setSvg('')
@@ -77,8 +90,8 @@ function MermaidDiagramView({ node, updateAttributes }: ReactNodeViewProps) {
   }, [code, t])
 
   useEffect(() => {
-    renderDiagram()
-  }, [])
+    void renderDiagram()
+  }, [renderDiagram])
 
   useEffect(() => {
     const detected = detectDiagramType(code)
@@ -87,12 +100,11 @@ function MermaidDiagramView({ node, updateAttributes }: ReactNodeViewProps) {
     }
   }, [code, diagramType])
 
-  //
   useEffect(() => {
     if (!isEditing) {
-      renderDiagram()
+      void renderDiagram()
     }
-  }, [isEditing])
+  }, [isEditing, renderDiagram])
 
   const handleUpdate = () => {
     updateAttributes({ code, type: diagramType })
@@ -110,6 +122,25 @@ function MermaidDiagramView({ node, updateAttributes }: ReactNodeViewProps) {
     }
   }
 
+  const handleExport = async (format: MermaidExportFormat) => {
+    if (!code.trim() || exporting) return
+    setExporting(format)
+    try {
+      const exported = await exportMermaidDiagram(code, format, `mermaid-${diagramType}`)
+      if (exported) {
+        toast({ title: t(format === 'png' ? 'exportPngSuccess' : 'exportSvgSuccess') })
+      }
+    } catch (err) {
+      toast({
+        title: t('exportFailed'),
+        description: err instanceof Error ? err.message : String(err),
+        variant: 'destructive',
+      })
+    } finally {
+      setExporting(null)
+    }
+  }
+
   const getLabel = (key: string) => {
     return t(`diagramTypes.${key}`)
   }
@@ -119,7 +150,7 @@ function MermaidDiagramView({ node, updateAttributes }: ReactNodeViewProps) {
       {/* Preview Mode */}
       {!isEditing && (
         <div
-          className="mermaid-preview rounded-lg border border-border bg-card overflow-x-auto cursor-pointer"
+          className="mermaid-preview relative rounded-lg border border-border bg-card overflow-x-auto cursor-pointer"
           onClick={() => setIsEditing(true)}
         >
           {error ? (
@@ -131,7 +162,7 @@ function MermaidDiagramView({ node, updateAttributes }: ReactNodeViewProps) {
           ) : svg ? (
             <div
               ref={containerRef}
-              className="mermaid-svg p-4 flex justify-center"
+              className="mermaid-svg p-4 flex justify-center [&_svg]:max-w-full"
               dangerouslySetInnerHTML={{ __html: svg }}
             />
           ) : (
@@ -140,14 +171,66 @@ function MermaidDiagramView({ node, updateAttributes }: ReactNodeViewProps) {
             </div>
           )}
 
-          <div className="mermaid-overlay opacity-0 hover:opacity-100 transition-opacity absolute top-2 right-2">
+          <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 transition-opacity hover:opacity-100 focus-within:opacity-100 [.mermaid-preview:hover_&]:opacity-100">
+            {svg && !error && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="size-8 bg-background/90 shadow-sm"
+                    disabled={exporting !== null}
+                    onClick={(e) => e.stopPropagation()}
+                    title={t('export')}
+                  >
+                    {exporting ? (
+                      <Loader2 className="size-4 animate-spin text-[#3b82f6]" />
+                    ) : (
+                      <Download className="size-4 text-[#3b82f6]" />
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                  <DropdownMenuItem
+                    disabled={exporting !== null}
+                    onSelect={(event) => {
+                      event.preventDefault()
+                      void handleExport('png')
+                    }}
+                  >
+                    {exporting === 'png' ? (
+                      <Loader2 className="size-4 animate-spin text-[#3b82f6]" />
+                    ) : (
+                      <FileImage className="size-4 text-[#3b82f6]" />
+                    )}
+                    <span>{t('exportPng')}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    disabled={exporting !== null}
+                    onSelect={(event) => {
+                      event.preventDefault()
+                      void handleExport('svg')
+                    }}
+                  >
+                    {exporting === 'svg' ? (
+                      <Loader2 className="size-4 animate-spin text-[#3b82f6]" />
+                    ) : (
+                      <FileCode className="size-4 text-[#3b82f6]" />
+                    )}
+                    <span>{t('exportSvg')}</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
             <Button
-              variant="ghost"
+              variant="secondary"
               size="icon"
+              className="size-8 bg-background/90 shadow-sm"
               onClick={(e) => {
                 e.stopPropagation()
                 setIsEditing(true)
               }}
+              title={t('clickToEdit')}
             >
               <Code className="size-4" />
             </Button>
@@ -171,6 +254,47 @@ function MermaidDiagramView({ node, updateAttributes }: ReactNodeViewProps) {
             />
 
             <div className="flex-1" />
+
+            {code.trim() && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    disabled={exporting !== null}
+                    title={t('export')}
+                  >
+                    {exporting ? (
+                      <Loader2 className="size-4 animate-spin text-[#3b82f6]" />
+                    ) : (
+                      <Download className="size-4 text-[#3b82f6]" />
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    disabled={exporting !== null}
+                    onSelect={(event) => {
+                      event.preventDefault()
+                      void handleExport('png')
+                    }}
+                  >
+                    <FileImage className="size-4 text-[#3b82f6]" />
+                    <span>{t('exportPng')}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    disabled={exporting !== null}
+                    onSelect={(event) => {
+                      event.preventDefault()
+                      void handleExport('svg')
+                    }}
+                  >
+                    <FileCode className="size-4 text-[#3b82f6]" />
+                    <span>{t('exportSvg')}</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
 
             <Button
               variant="ghost"

@@ -228,7 +228,7 @@ async function createMarkdownLinksForFilePaths(paths: string[], currentFilePath:
 
 // : Mermaid
 const createMermaidCommand = (
-  type: 'flowchart' | 'mindmap' | 'sequence' | 'gantt' | 'classDiagram' | 'stateDiagram' | 'pie' | 'er' | 'journey'
+  type: 'flowchart' | 'mindmap' | 'sequence' | 'gantt' | 'classDiagram' | 'stateDiagram' | 'pie' | 'er' | 'journey' | 'timeline'
 ) => ({
   command: ({ editor, range }: { editor: Editor; range: Range }) => {
     editor.chain().focus().deleteRange(range).run()
@@ -339,6 +339,8 @@ export interface SlashCommandTranslations {
     erDiagramDesc: string
     journey: string
     journeyDesc: string
+    timeline: string
+    timelineDesc: string
   }
   imageUpload: {
     success: string
@@ -439,6 +441,8 @@ export const suggestionItems = (t?: SlashCommandTranslations): SlashCommandItem[
       erDiagramDesc: 'Insert entity-relationship diagram',
       journey: 'Journey map',
       journeyDesc: 'Insert user journey map',
+      timeline: 'Timeline',
+      timelineDesc: 'Insert a Mermaid timeline',
     },
     imageUpload: {
       success: 'Upload succeeded',
@@ -839,6 +843,14 @@ export const suggestionItems = (t?: SlashCommandTranslations): SlashCommandItem[
       group: tr.groups.chart,
       searchTerms: ['mermaid', 'journey'],
       ...createMermaidCommand('journey'),
+    },
+    {
+      title: tr.items.timeline,
+      description: tr.items.timelineDesc,
+      icon: <Calendar className="w-4 h-4" />,
+      group: tr.groups.chart,
+      searchTerms: ['mermaid', 'timeline', 'schedule', 'milestones'],
+      ...createMermaidCommand('timeline'),
     },
   ]
 

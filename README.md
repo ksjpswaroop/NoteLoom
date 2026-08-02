@@ -13,7 +13,7 @@ A local-first Markdown app that turns scattered records into clear notes with AI
 - **Dual capture shortcuts** — `⌘⇧T` text, `⌘⇧V` voice
 - Full NoteGen surface: editor, AI chat/agent, RAG, canvas, MCP, Skills, sync
 
-See [`PRD.md`](./PRD.md) and [`docs/CONSOLIDATION_MANIFEST.md`](./docs/CONSOLIDATION_MANIFEST.md).
+See [`PRD.md`](./PRD.md), [`docs/CONSOLIDATION_MANIFEST.md`](./docs/CONSOLIDATION_MANIFEST.md), and [`docs/mcp.md`](./docs/mcp.md) for MCP setup.
 
 ## Requirements
 

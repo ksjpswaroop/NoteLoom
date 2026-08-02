@@ -113,6 +113,8 @@ export const SlashMenu = forwardRef<SlashMenuRef, SlashMenuProps>(({ editor, que
       erDiagramDesc: t('items.erDiagramDesc'),
       journey: t('items.journey'),
       journeyDesc: t('items.journeyDesc'),
+      timeline: t('items.timeline'),
+      timelineDesc: t('items.timelineDesc'),
     },
     imageUpload: {
       success: t('imageUpload.success'),

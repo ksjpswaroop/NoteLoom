@@ -10,13 +10,8 @@ import {
 } from "react"
 import {
   FileText,
-  Languages,
-  ListTree,
   Package,
   Palette,
-  Search,
-  FilePlus2,
-  WandSparkles,
   type LucideIcon,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
@@ -34,6 +29,11 @@ import useCanvasStore from "@/stores/canvas"
 import { useSkillsStore } from "@/stores/skills"
 import type { CanvasProject } from "@/types/canvas"
 import type { SkillMetadata } from "@/lib/skills/types"
+import {
+  CHAT_SLASH_COMMANDS,
+  filterChatSlashCommands,
+  resolveChatSlashPrompt,
+} from "./chat-slash-commands"
 
 export type ComposerMenuMode = "command" | "resource"
 
@@ -59,20 +59,14 @@ interface ComposerMenuItem {
   label: string
   description: string
   searchText?: string
+  slash?: string
   icon: LucideIcon
   iconClassName?: string
   meta?: string
   onSelect: () => void
 }
 
-const COMMANDS = [
-  { key: "summarize", icon: ListTree },
-  { key: "organize", icon: WandSparkles },
-  { key: "rewrite", icon: WandSparkles },
-  { key: "translate", icon: Languages },
-  { key: "searchNotes", icon: Search },
-  { key: "createNote", icon: FilePlus2 },
-] as const
+const SELECTION_CLASS = "bg-[#3b82f6]/15 text-foreground ring-1 ring-inset ring-[#3b82f6]/40"
 
 function normalizeSearchText(value: string) {
   return value
@@ -107,6 +101,7 @@ export const ChatComposerMenu = forwardRef<
   const [loading, setLoading] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(0)
   const selectedItemRef = useRef<HTMLButtonElement>(null)
+  const listboxId = "chat-composer-menu-listbox"
 
   useEffect(() => {
     if (mode !== "resource") return
@@ -143,27 +138,37 @@ export const ChatComposerMenu = forwardRef<
 
   const items = useMemo<ComposerMenuItem[]>(() => {
     if (mode === "command") {
-      return [
-        ...COMMANDS.map(({ key, icon }) => ({
-          key: `command:${key}`,
-          group: t("commands.title"),
-          label: t(`commands.${key}.label`),
-          description: t(`commands.${key}.description`),
-          icon,
-          onSelect: () => onCommandSelect(t(`commands.${key}.prompt`)),
-        })),
-        ...(skillsEnabled ? skills : [])
-          .filter(skill => skill.enabled !== false && skill.userInvocable !== false)
-          .map(skill => ({
-            key: `skill:${skill.id}`,
-            group: t("skills.title"),
-            label: skill.name,
-            description: skill.description,
-            icon: Package,
-            meta: t(`skills.scope.${skill.scope}`),
-            onSelect: () => onSkillSelect(skill),
-          })),
-      ]
+      const commands = filterChatSlashCommands(CHAT_SLASH_COMMANDS, query).map(command => ({
+        key: `command:${command.id}`,
+        group: command.group,
+        label: command.label,
+        description: command.description,
+        slash: `/${command.id}`,
+        searchText: [command.id, ...(command.aliases || [])].join(" "),
+        icon: command.icon,
+        onSelect: () => onCommandSelect(resolveChatSlashPrompt(command)),
+      }))
+
+      const skillQuery = normalizeSearchText(query)
+      const skillTerms = skillQuery.split(/\s+/).filter(Boolean)
+      const skillItems = (skillsEnabled ? skills : [])
+        .filter(skill => skill.enabled !== false && skill.userInvocable !== false)
+        .filter(skill => {
+          if (skillTerms.length === 0) return true
+          const haystack = normalizeSearchText(`${skill.name} ${skill.description}`)
+          return skillTerms.every(term => haystack.includes(term))
+        })
+        .map(skill => ({
+          key: `skill:${skill.id}`,
+          group: t("skills.title"),
+          label: skill.name,
+          description: skill.description,
+          icon: Package,
+          meta: t(`skills.scope.${skill.scope}`),
+          onSelect: () => onSkillSelect(skill),
+        }))
+
+      return [...commands, ...skillItems]
     }
 
     if (mode !== "resource") return []
@@ -211,6 +216,7 @@ export const ChatComposerMenu = forwardRef<
     onRecordSelect,
     onSkillSelect,
     projects,
+    query,
     records,
     skills,
     skillsEnabled,
@@ -218,6 +224,11 @@ export const ChatComposerMenu = forwardRef<
   ])
 
   const filteredItems = useMemo(() => {
+    if (mode === "command") {
+      // Commands and skills are already filtered above so slash aliases match reliably.
+      return items
+    }
+
     const queryTerms = normalizeSearchText(query).split(/\s+/).filter(Boolean)
     if (queryTerms.length === 0) return items
 
@@ -227,7 +238,7 @@ export const ChatComposerMenu = forwardRef<
       )
       return queryTerms.every(term => searchableText.includes(term))
     })
-  }, [items, query])
+  }, [items, mode, query])
 
   const groups = useMemo(
     () => Array.from(new Set(filteredItems.map(item => item.group))),
@@ -237,6 +248,12 @@ export const ChatComposerMenu = forwardRef<
   useEffect(() => {
     setSelectedIndex(0)
   }, [mode, query])
+
+  useEffect(() => {
+    if (selectedIndex >= filteredItems.length) {
+      setSelectedIndex(Math.max(0, filteredItems.length - 1))
+    }
+  }, [filteredItems.length, selectedIndex])
 
   useEffect(() => {
     selectedItemRef.current?.scrollIntoView({ block: "nearest" })
@@ -262,11 +279,17 @@ export const ChatComposerMenu = forwardRef<
 
   if (mode === null) return null
 
+  const activeOptionId = filteredItems[selectedIndex]
+    ? `${listboxId}-option-${selectedIndex}`
+    : undefined
+
   return (
     <div
+      id={listboxId}
       className="absolute inset-x-1 bottom-[calc(100%+0.375rem)] z-30 max-h-[min(22rem,46vh)] overflow-y-auto rounded-xl border bg-popover p-1.5 text-popover-foreground shadow-lg"
       role="listbox"
       aria-label={mode === "command" ? t("commands.title") : t("resources.title")}
+      aria-activedescendant={activeOptionId}
     >
       {loading && filteredItems.length === 0 ? (
         <div className="px-2 py-4 text-center text-xs text-muted-foreground">
@@ -279,7 +302,7 @@ export const ChatComposerMenu = forwardRef<
       ) : (
         <div className="flex flex-col gap-0.5">
           {groups.map(group => (
-            <div key={group} className="flex flex-col">
+            <div key={group} role="group" aria-label={group} className="flex flex-col">
               <div className="px-2 py-1 text-[11px] font-medium text-muted-foreground">
                 {group}
               </div>
@@ -287,17 +310,19 @@ export const ChatComposerMenu = forwardRef<
                 if (item.group !== group) return null
                 const Icon = item.icon
                 const selected = selectedIndex === index
+                const optionId = `${listboxId}-option-${index}`
 
                 return (
                   <Button
                     key={item.key}
+                    id={optionId}
                     ref={selected ? selectedItemRef : undefined}
                     type="button"
                     variant="ghost"
                     size="sm"
                     className={cn(
-                      "w-full justify-start rounded-lg",
-                      selected && "bg-muted"
+                      "h-auto min-h-8 w-full justify-start rounded-lg px-2 py-1.5",
+                      selected && SELECTION_CLASS
                     )}
                     role="option"
                     aria-selected={selected}
@@ -307,23 +332,30 @@ export const ChatComposerMenu = forwardRef<
                   >
                     <Icon
                       data-icon="inline-start"
-                      className={item.iconClassName}
+                      className={cn("size-3.5 shrink-0", item.iconClassName)}
                     />
-                    <span className="flex min-w-0 flex-1 items-baseline gap-1.5">
-                      <span className="shrink-0 truncate text-xs font-medium">
-                        {item.label}
+                    <span className="flex min-w-0 flex-1 flex-col items-start gap-0.5 text-left">
+                      <span className="flex w-full min-w-0 items-baseline gap-1.5">
+                        {item.slash ? (
+                          <span className="shrink-0 font-mono text-[11px] text-[#3b82f6]">
+                            {item.slash}
+                          </span>
+                        ) : null}
+                        <span className="truncate text-xs font-medium">
+                          {item.label}
+                        </span>
+                        {item.meta ? (
+                          <span className="ml-auto shrink-0 text-[11px] font-normal text-muted-foreground">
+                            {item.meta}
+                          </span>
+                        ) : null}
                       </span>
                       {item.description ? (
-                        <span className="ml-auto truncate text-right text-[11px] font-normal text-muted-foreground">
+                        <span className="w-full truncate text-[11px] font-normal text-muted-foreground">
                           {item.description}
                         </span>
                       ) : null}
                     </span>
-                    {item.meta ? (
-                      <span className="ml-auto shrink-0 text-[11px] font-normal text-muted-foreground">
-                        {item.meta}
-                      </span>
-                    ) : null}
                   </Button>
                 )
               })}

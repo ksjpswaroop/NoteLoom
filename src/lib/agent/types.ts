@@ -56,6 +56,7 @@ export type AgentToolCategory =
   | 'attachment'
   | 'image'
   | 'canvas'
+  | 'excalidraw'
   | 'web'
 
 export type AgentToolRisk =

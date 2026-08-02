@@ -8,8 +8,12 @@ mod device;
 mod fonts;
 #[cfg(target_os = "ios")]
 mod ios_ocr;
+#[cfg(not(any(target_os = "android", target_os = "ios")))]
+mod local_services;
 mod mcp;
 mod mcp_runtime;
+#[cfg(not(any(target_os = "android", target_os = "ios")))]
+mod midscene;
 mod mobile_system_bars;
 mod notion_import;
 mod ocr_packages;
@@ -29,6 +33,16 @@ use ai::{
 use backup::{export_app_data, import_app_data, import_app_data_from_file};
 use device::get_device_id;
 use fonts::list_system_fonts;
+#[cfg(not(any(target_os = "android", target_os = "ios")))]
+use local_services::{
+    local_service_ensure, local_service_list, local_service_status, local_service_stop,
+    LocalServiceManager,
+};
+#[cfg(not(any(target_os = "android", target_os = "ios")))]
+use midscene::{
+    cancel_midscene, ensure_midscene, inspect_midscene, prompt_midscene_permissions, run_midscene,
+    MidsceneProcessManager,
+};
 use mcp::{
     send_mcp_message, send_mcp_notification, start_mcp_stdio_server, stop_mcp_server,
     McpServerManager,
@@ -71,7 +85,10 @@ pub fn run() {
         .manage(RemoteSkillManager::default());
 
     #[cfg(not(any(target_os = "android", target_os = "ios")))]
-    let builder = builder.manage(SkillProcessManager::default());
+    let builder = builder
+        .manage(SkillProcessManager::default())
+        .manage(LocalServiceManager::new())
+        .manage(MidsceneProcessManager::default());
 
     #[cfg(target_os = "android")]
     let builder = builder.plugin(android_ocr::init());
@@ -129,6 +146,24 @@ pub fn run() {
             ensure_parakeet_stt,
             #[cfg(not(any(target_os = "android", target_os = "ios")))]
             transcribe_with_parakeet,
+            #[cfg(not(any(target_os = "android", target_os = "ios")))]
+            local_service_list,
+            #[cfg(not(any(target_os = "android", target_os = "ios")))]
+            local_service_status,
+            #[cfg(not(any(target_os = "android", target_os = "ios")))]
+            local_service_ensure,
+            #[cfg(not(any(target_os = "android", target_os = "ios")))]
+            local_service_stop,
+            #[cfg(not(any(target_os = "android", target_os = "ios")))]
+            inspect_midscene,
+            #[cfg(not(any(target_os = "android", target_os = "ios")))]
+            ensure_midscene,
+            #[cfg(not(any(target_os = "android", target_os = "ios")))]
+            run_midscene,
+            #[cfg(not(any(target_os = "android", target_os = "ios")))]
+            cancel_midscene,
+            #[cfg(not(any(target_os = "android", target_os = "ios")))]
+            prompt_midscene_permissions,
             printing::print_webview,
             mobile_system_bars::set_mobile_system_bars,
             system_trash::move_paths_to_trash,

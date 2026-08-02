@@ -46,7 +46,9 @@ import { saveMemoryTool, listMemoriesTool, deleteMemoryTool, clearMemoriesTool }
 import { attachmentTools } from './tools/attachment-tools'
 import { imageTools } from './tools/image-tools'
 import { canvasTools } from './tools/canvas-tools'
+import { excalidrawTools } from './tools/excalidraw-tools'
 import { webTools } from './tools/web-tools'
+import { midsceneTools } from './tools/midscene-tools'
 import {
   executeRegisteredSkillScript,
   executeSkillScriptTool,
@@ -1973,7 +1975,7 @@ function buildTools(): AgentTool[] {
     adaptLegacyTool({
       name: 'editor_insert_at_cursor',
       title: 'Insert at cursor',
-      description: 'Insert Markdown at the current editor cursor. Avoid this for quoted chat selections because chat focus can make cursor position unreliable.',
+      description: 'Insert Markdown at the current editor cursor. For inline diagrams, insert a complete fenced ```mermaid block (flowchart, mindmap, sequenceDiagram, classDiagram, stateDiagram-v2, erDiagram, gantt, pie, journey, etc.). Avoid this for quoted chat selections because chat focus can make cursor position unreliable.',
       category: 'editor',
       risk: 'editor-write',
       legacy: insertAtCursorTool,
@@ -2013,7 +2015,7 @@ function buildTools(): AgentTool[] {
     adaptLegacyTool({
       name: 'editor_replace_lines',
       title: 'Replace editor lines',
-      description: 'Replace one contiguous range of exact 1-based editor lines with complete Markdown in replaceContent. Preserve structural markers such as "# ", "- ", and "> ". Prefer this for a single current-document line, section, or block edit.',
+      description: 'Replace one contiguous range of exact 1-based editor lines with complete Markdown in replaceContent. Preserve structural markers such as "# ", "- ", and "> ". Prefer this for a single current-document line, section, block, or ```mermaid diagram edit.',
       category: 'editor',
       risk: 'editor-write',
       legacy: replaceEditorContentTool,
@@ -2330,9 +2332,11 @@ function buildTools(): AgentTool[] {
     buildMcpReadResourceTool(),
     buildMcpCallTool(),
     ...canvasTools,
+    ...excalidrawTools,
     ...attachmentTools,
     ...imageTools,
     ...webTools,
+    ...midsceneTools,
   ]
 }
 

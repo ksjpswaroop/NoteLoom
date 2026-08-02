@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Kbd } from "@/components/ui/kbd";
 import useArticleStore, { DirTree } from "@/stores/article";
 import { BaseDirectory, exists, rename, writeTextFile } from "@tauri-apps/plugin-fs";
-import { Copy, Database, Download, File, FileCode, FileImage, FileJson, FileText, FileType, FileUp, FolderOpen, ImageIcon, LoaderCircle, RefreshCwOff, Trash2, Type } from "lucide-react"
+import { Copy, Database, Download, File, FileCode, FileImage, FileJson, FileText, FileType, FileUp, FolderOpen, ImageIcon, LoaderCircle, PencilRuler, RefreshCwOff, Trash2, Type } from "lucide-react"
 import { useEffect, useRef, useState, useCallback } from "react";
 import { ask } from '@tauri-apps/plugin-dialog';
 import { platform } from '@tauri-apps/plugin-os';
@@ -208,6 +208,9 @@ export function FileItem({
   }
 
   const renderFileTypeIcon = () => {
+    if (item.name.match(/\.excalidraw$/i)) {
+      return <PencilRuler className={`${iconSize} shrink-0 text-[#3b82f6]`} />
+    }
     if (item.name.match(/\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i)) {
       return <ImageIcon className={`${iconSize} shrink-0`} />
     }

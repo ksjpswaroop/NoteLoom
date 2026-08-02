@@ -16,6 +16,7 @@ import { StreamdownRenderer } from '@/components/markdown/streamdown-renderer'
 import { checkIsTauri } from '@/lib/check'
 import { markdownToDocxBlob } from '@/lib/markdown-to-docx'
 import { resolveImagePathFromMarkdown } from '@/lib/markdown-image-path'
+import { renderMermaidPngDataUrl } from '@/lib/mermaid/export-diagram'
 import { convertImageByWorkspace } from '@/lib/utils'
 import { getFilePathOptions } from '@/lib/workspace'
 import { shouldTransformImageSrcToWorkspaceAsset } from './image-src'
@@ -170,6 +171,12 @@ const EXPORT_DOCUMENT_STYLES = `
   .notegen-export canvas {
     max-width: 100%;
     height: auto;
+  }
+
+  .notegen-export img[alt="Mermaid diagram"] {
+    display: block;
+    margin: 1rem auto;
+    background: #ffffff;
   }
 
   @media print {
@@ -408,7 +415,44 @@ async function waitForDocumentResources(frameDocument: Document) {
   await frameDocument.fonts?.ready
 }
 
+const MERMAID_FENCE_PATTERN = /```mermaid[ \t]*\r?\n([\s\S]*?)\r?\n```/g
+
+/**
+ * Replace fenced ```mermaid blocks with PNG data-URL images so Streamdown /
+ * html-to-image export matches the on-screen TipTap Mermaid preview.
+ */
+async function embedMermaidDiagramsInMarkdown(markdown: string): Promise<string> {
+  const pattern = new RegExp(MERMAID_FENCE_PATTERN.source, 'g')
+  const parts: string[] = []
+  let lastIndex = 0
+  let match: RegExpExecArray | null
+
+  while ((match = pattern.exec(markdown)) !== null) {
+    parts.push(markdown.slice(lastIndex, match.index))
+    const code = match[1]?.trim() || ''
+    if (!code) {
+      parts.push(match[0])
+    } else {
+      try {
+        const dataUrl = await renderMermaidPngDataUrl(code)
+        parts.push(`\n\n![Mermaid diagram](${dataUrl})\n\n`)
+      } catch {
+        parts.push(match[0])
+      }
+    }
+    lastIndex = match.index + match[0].length
+  }
+
+  parts.push(markdown.slice(lastIndex))
+  return parts.join('')
+}
+
+async function prepareExportMarkdown(markdown: string) {
+  return embedMermaidDiagramsInMarkdown(markdown)
+}
+
 async function renderMarkdownToHtml(markdown: string, sourcePath?: string) {
+  const prepared = await prepareExportMarkdown(markdown)
   const container = document.createElement('div')
   container.style.position = 'fixed'
   container.style.left = '-10000px'
@@ -422,7 +466,7 @@ async function renderMarkdownToHtml(markdown: string, sourcePath?: string) {
 
   try {
     flushSync(() => {
-      root.render(createElement(StreamdownRenderer, { markdown }))
+      root.render(createElement(StreamdownRenderer, { markdown: prepared }))
     })
     await waitForAnimationFrame()
 
@@ -722,7 +766,7 @@ async function printExportDocument(source: MarkdownExportSource, options?: Markd
 }
 
 async function renderMarkdownToPngBytes(source: MarkdownExportSource) {
-  const markdown = await getValue(source.markdown)
+  const markdown = await prepareExportMarkdown(await getValue(source.markdown))
   const styles = await collectExportStyles()
   const container = document.createElement('div')
   container.className = 'notegen-export'

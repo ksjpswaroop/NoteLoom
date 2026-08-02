@@ -34,6 +34,8 @@ import {
   ChevronUp,
   FileJson,
   PlugZap,
+  RefreshCw,
+  Unplug,
 } from 'lucide-react'
 import { useMcpStore } from '@/stores/mcp'
 import { ServerConfigDialog } from './server-config-dialog'
@@ -78,6 +80,19 @@ export function ServerList({ mobile = false }: { mobile?: boolean }) {
   const [serverToDelete, setServerToDelete] = useState<string | null>(null)
   const [expandedServers, setExpandedServers] = useState<Set<string>>(new Set())
   const [testingAll, setTestingAll] = useState(false)
+  const [busyServerIds, setBusyServerIds] = useState<Set<string>>(new Set())
+
+  const setServerBusy = (serverId: string, busy: boolean) => {
+    setBusyServerIds(prev => {
+      const next = new Set(prev)
+      if (busy) next.add(serverId)
+      else next.delete(serverId)
+      return next
+    })
+  }
+
+  const connectionErrorMessage = (error: unknown) =>
+    error instanceof Error ? error.message : String(error)
   
   const handleAddServer = () => {
     setEditingServer(null)
@@ -94,6 +109,39 @@ export function ServerList({ mobile = false }: { mobile?: boolean }) {
     setDeleteDialogOpen(true)
   }
 
+  const handleConnectServer = async (server: MCPServerConfig) => {
+    setServerBusy(server.id, true)
+    try {
+      await mcpServerManager.connectServer({ ...server, enabled: true })
+      if (!server.enabled) {
+        await updateServer(server.id, { enabled: true })
+      }
+      toast({ description: t('connectSuccess', { name: server.name }) })
+    } catch (error) {
+      toast({
+        description: t('connectFailed', { name: server.name, error: connectionErrorMessage(error) }),
+        variant: 'destructive',
+      })
+    } finally {
+      setServerBusy(server.id, false)
+    }
+  }
+
+  const handleDisconnectServer = async (server: MCPServerConfig) => {
+    setServerBusy(server.id, true)
+    try {
+      await mcpServerManager.disconnectServer(server.id)
+      toast({ description: t('disconnectSuccess', { name: server.name }) })
+    } catch (error) {
+      toast({
+        description: t('disconnectFailed', { name: server.name, error: connectionErrorMessage(error) }),
+        variant: 'destructive',
+      })
+    } finally {
+      setServerBusy(server.id, false)
+    }
+  }
+
   const handleServerEnabledChange = async (server: MCPServerConfig, enabled: boolean) => {
     if (!enabled) {
       await mcpServerManager.disconnectServer(server.id)
@@ -102,10 +150,17 @@ export function ServerList({ mobile = false }: { mobile?: boolean }) {
     await updateServer(server.id, { enabled })
 
     if (enabled) {
+      setServerBusy(server.id, true)
       try {
         await mcpServerManager.connectServer({ ...server, enabled: true })
+        toast({ description: t('connectSuccess', { name: server.name }) })
       } catch (error) {
-        console.error('Failed to connect MCP server:', error)
+        toast({
+          description: t('connectFailed', { name: server.name, error: connectionErrorMessage(error) }),
+          variant: 'destructive',
+        })
+      } finally {
+        setServerBusy(server.id, false)
       }
     }
   }
@@ -221,6 +276,10 @@ export function ServerList({ mobile = false }: { mobile?: boolean }) {
             {servers.map((server) => {
               const state = getServerState(server.id)
               const toolCount = state?.tools.length || 0
+              const status = state?.status || 'disconnected'
+              const isBusy = busyServerIds.has(server.id) || status === 'connecting'
+              const isConnected = status === 'connected'
+              const canConnect = status !== 'connected' && status !== 'connecting'
 
               const isExpanded = expandedServers.has(server.id)
               const hasTools = toolCount > 0
@@ -228,6 +287,32 @@ export function ServerList({ mobile = false }: { mobile?: boolean }) {
                 ? server.command && `${server.command} ${server.args?.join(' ') || ''}`.trim()
                 : server.url
               const safeEndpoint = endpoint ? redactSensitiveEndpoint(endpoint) : endpoint
+              const connectionActions = (
+                <>
+                  {isConnected ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={isBusy}
+                      onClick={() => handleDisconnectServer(server)}
+                    >
+                      {isBusy ? <Spinner data-icon="inline-start" /> : <Unplug data-icon="inline-start" />}
+                      {t('disconnect')}
+                    </Button>
+                  ) : (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={isBusy}
+                      onClick={() => handleConnectServer(server)}
+                      className="border-[#3b82f6]/40 text-[#3b82f6] hover:bg-[#3b82f6]/10 hover:text-[#3b82f6]"
+                    >
+                      {isBusy ? <Spinner data-icon="inline-start" /> : <RefreshCw data-icon="inline-start" />}
+                      {status === 'error' ? t('reconnect') : t('connect')}
+                    </Button>
+                  )}
+                </>
+              )
 
               if (mobile) {
                 return (
@@ -253,48 +338,56 @@ export function ServerList({ mobile = false }: { mobile?: boolean }) {
                       />
                     </div>
 
-                    <div className="flex w-full items-center justify-between gap-3 border-t border-border/60 pt-3">
-                      <div className="flex min-w-0 flex-wrap items-center gap-2">
-                        <Badge
-                          variant={state?.status === 'error'
-                            ? 'destructive'
-                            : state?.status === 'connected'
-                              ? 'secondary'
-                              : 'outline'}
-                        >
-                          {getStatusText(server.id)}
-                        </Badge>
-                        {hasTools && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => toggleServerExpanded(server.id)}
+                    <div className="flex w-full flex-col gap-2 border-t border-border/60 pt-3">
+                      <div className="flex w-full items-center justify-between gap-3">
+                        <div className="flex min-w-0 flex-wrap items-center gap-2">
+                          <Badge
+                            variant={status === 'error'
+                              ? 'destructive'
+                              : status === 'connected'
+                                ? 'secondary'
+                                : 'outline'}
                           >
-                            <Wrench data-icon="inline-start" />
-                            {toolCount} {t('tools')}
-                            {isExpanded ? <ChevronUp data-icon="inline-end" /> : <ChevronDown data-icon="inline-end" />}
+                            {getStatusText(server.id)}
+                          </Badge>
+                          {hasTools && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => toggleServerExpanded(server.id)}
+                            >
+                              <Wrench data-icon="inline-start" />
+                              {toolCount} {t('tools')}
+                              {isExpanded ? <ChevronUp data-icon="inline-end" /> : <ChevronDown data-icon="inline-end" />}
+                            </Button>
+                          )}
+                        </div>
+                        <div className="flex shrink-0 items-center gap-1">
+                          <Button
+                            size="icon-sm"
+                            variant="ghost"
+                            aria-label={t('editServer')}
+                            onClick={() => handleEditServer(server)}
+                          >
+                            <Pencil />
                           </Button>
-                        )}
+                          <Button
+                            size="icon-sm"
+                            variant="ghost"
+                            className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                            aria-label={t('delete')}
+                            onClick={() => handleDeleteClick(server.id)}
+                          >
+                            <Trash2 />
+                          </Button>
+                        </div>
                       </div>
-                      <div className="flex shrink-0 items-center gap-1">
-                        <Button
-                          size="icon-sm"
-                          variant="ghost"
-                          aria-label={t('editServer')}
-                          onClick={() => handleEditServer(server)}
-                        >
-                          <Pencil />
-                        </Button>
-                        <Button
-                          size="icon-sm"
-                          variant="ghost"
-                          className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                          aria-label={t('delete')}
-                          onClick={() => handleDeleteClick(server.id)}
-                        >
-                          <Trash2 />
-                        </Button>
-                      </div>
+                      {(canConnect || isConnected) && (
+                        <div className="flex flex-wrap gap-2">{connectionActions}</div>
+                      )}
+                      {status === 'error' && state?.error && (
+                        <p className="break-words text-xs text-destructive">{state.error}</p>
+                      )}
                     </div>
 
                     {hasTools && isExpanded && state && (
@@ -356,16 +449,17 @@ export function ServerList({ mobile = false }: { mobile?: boolean }) {
                     </Button>
                   </ItemActions>
                   <ItemFooter className="flex-col items-stretch gap-3">
-                    <div className="flex flex-wrap items-center gap-4 text-sm">
+                    <div className="flex flex-wrap items-center gap-3 text-sm">
                       <Badge
-                        variant={state?.status === 'error'
+                        variant={status === 'error'
                           ? 'destructive'
-                          : state?.status === 'connected'
+                          : status === 'connected'
                             ? 'secondary'
                             : 'outline'}
                       >
                         {getStatusText(server.id)}
                       </Badge>
+                      {(canConnect || isConnected) && connectionActions}
                       {hasTools && (
                         <Button
                           variant="ghost"
@@ -378,6 +472,9 @@ export function ServerList({ mobile = false }: { mobile?: boolean }) {
                         </Button>
                       )}
                     </div>
+                    {status === 'error' && state?.error && (
+                      <p className="break-words text-xs text-destructive">{state.error}</p>
+                    )}
                     {hasTools && isExpanded && state && (
                       <ItemGroup className="gap-2">
                         {state.tools.map((tool, index) => (

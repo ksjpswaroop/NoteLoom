@@ -13,8 +13,10 @@ mod file_open;
 mod fonts;
 mod fuzzy_search;
 mod keywords;
+mod local_services;
 mod mcp;
 mod mcp_runtime;
+mod midscene;
 mod notion_import;
 mod ocr_packages;
 mod parakeet_stt;
@@ -36,6 +38,14 @@ use device::get_device_id;
 use fonts::list_system_fonts;
 use fuzzy_search::{fuzzy_search, fuzzy_search_parallel};
 use keywords::rank_keywords;
+use local_services::{
+    local_service_ensure, local_service_list, local_service_status, local_service_stop,
+    LocalServiceManager,
+};
+use midscene::{
+    cancel_midscene, ensure_midscene, inspect_midscene, prompt_midscene_permissions, run_midscene,
+    MidsceneProcessManager,
+};
 use mcp::{
     send_mcp_message, send_mcp_notification, start_mcp_stdio_server, stop_mcp_server,
     McpServerManager,
@@ -60,6 +70,7 @@ use skill_runtime::{
 use skills::{
     import_skill, import_skill_zip, install_skill_package, uninstall_skill, validate_skill_package,
 };
+use tauri::Manager;
 use tray::update_tray_record_toolbar_config;
 
 fn main() {
@@ -80,6 +91,8 @@ fn main() {
         .manage(AiRequestManager::new())
         .manage(SkillProcessManager::default())
         .manage(RemoteSkillManager::default())
+        .manage(LocalServiceManager::new())
+        .manage(MidsceneProcessManager::default())
         // 系统级插件
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_os::init())
@@ -139,6 +152,15 @@ fn main() {
             inspect_parakeet_stt,
             ensure_parakeet_stt,
             transcribe_with_parakeet,
+            local_service_list,
+            local_service_status,
+            local_service_ensure,
+            local_service_stop,
+            inspect_midscene,
+            ensure_midscene,
+            run_midscene,
+            cancel_midscene,
+            prompt_midscene_permissions,
             printing::print_webview,
             file_open::drain_pending_open_files,
             system_trash::move_paths_to_trash,
@@ -161,6 +183,9 @@ fn main() {
             }
             tauri::RunEvent::Exit => {
                 cleanup_temp_screenshot_dir(&app_handle);
+                if let Some(manager) = app_handle.try_state::<LocalServiceManager>() {
+                    local_services::stop_owned_services_sync(manager.inner());
+                }
             }
             _ => {}
         });

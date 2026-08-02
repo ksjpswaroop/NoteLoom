@@ -31,6 +31,7 @@ import RagSettingPage from '../rag/page'
 import RecordSettingPage from '../record/page'
 import ShortcutsPage from '../shortcuts/page'
 import SkillsSettingPage from '../skills/page'
+import AutomationsSettingPage from '../automations/page'
 import SyncPage from '../sync/page'
 import TemplatePage from '../template/page'
 import WebSearchSettingPage from '../webSearch/page'
@@ -49,6 +50,7 @@ const settingPages: Record<SettingSection, ComponentType> = {
   rag: RagSettingPage,
   mcp: McpSettingPage,
   skills: SkillsSettingPage,
+  automations: AutomationsSettingPage,
   prompt: PromptSettingPage,
   memories: MemoriesSettingsPage,
   template: TemplatePage,

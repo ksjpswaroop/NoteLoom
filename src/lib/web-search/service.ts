@@ -2,11 +2,17 @@ import { fetch as httpFetch } from '@tauri-apps/plugin-http'
 import type { AiConfig, WebSearchProvider } from '@/app/core/setting/config'
 import { getAISettings } from '@/lib/ai/utils'
 import { invokeAiJson, resolveAiRequestConfig } from '@/lib/ai/tauri-client'
+import { ensureService, ensureWigoloForSearch, getLocalServiceFixTip } from '@/lib/local-services'
 import { capturePublicWebPage } from '@/lib/web-capture/service'
 import type { WebPageResponse, WebSearchResponse, WebSearchSource } from './types'
-import { normalizeWebSearchProviderOrder } from './settings'
+import {
+  DEFAULT_WIGOLO_BASE_URL,
+  normalizeWebSearchProviderOrder,
+  normalizeWigoloBaseUrl,
+} from './settings'
 
 const SEARCH_TIMEOUT_MS = 7_000
+const WIGOLO_SEARCH_TIMEOUT_MS = 60_000
 const TOTAL_SEARCH_TIMEOUT_MS = 20_000
 const MAX_PAGE_CHARACTERS = 18_000
 const MAX_SEARCH_RESULTS = 8
@@ -341,6 +347,109 @@ export async function checkWebSearchProvider(
   )
 }
 
+function wigoloAuthHeaders(apiToken?: string): HeadersInit {
+  const token = apiToken?.trim()
+  return token
+    ? {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      }
+    : { 'Content-Type': 'application/json' }
+}
+
+async function searchWithWigolo(
+  query: string,
+  options: {
+    baseUrl?: string
+    apiToken?: string
+  } = {},
+  signal?: AbortSignal
+): Promise<WebSearchResponse> {
+  const baseUrl = normalizeWigoloBaseUrl(options.baseUrl || DEFAULT_WIGOLO_BASE_URL)
+  const payload = await fetchJson(
+    `${baseUrl}/v1/search`,
+    {
+      method: 'POST',
+      headers: wigoloAuthHeaders(options.apiToken),
+      body: JSON.stringify({
+        query,
+        max_results: MAX_SEARCH_RESULTS,
+        search_depth: 'fast',
+      }),
+    },
+    signal,
+    WIGOLO_SEARCH_TIMEOUT_MS
+  )
+
+  const root = asRecord(payload)
+  const rawSources = asArray(root?.results)
+  const sources = normalizeSources(rawSources.flatMap((item) => {
+    const source = sourceFromRecord(item, {
+      title: ['title', 'name'],
+      url: ['url', 'link'],
+      snippet: ['excerpt', 'snippet', 'content', 'description', 'text'],
+      publishedAt: ['published_date', 'publishedDate', 'published_at'],
+    })
+    return source ? [source] : []
+  }))
+
+  if (sources.length === 0) {
+    throw new Error('wigolo returned no usable search results')
+  }
+
+  const answer = firstString(root, ['answer', 'summary'])
+  return {
+    query,
+    provider: 'wigolo',
+    answer: answer || undefined,
+    sources,
+  }
+}
+
+export async function checkWigoloWebSearch(
+  options: {
+    baseUrl?: string
+    apiToken?: string
+  } = {},
+  signal?: AbortSignal
+) {
+  const baseUrl = normalizeWigoloBaseUrl(options.baseUrl || DEFAULT_WIGOLO_BASE_URL)
+  try {
+    await ensureService('wigolo', {
+      baseUrl,
+      apiToken: options.apiToken,
+      installIfNeeded: true,
+      startIfNeeded: true,
+    })
+  } catch (error) {
+    if (signal?.aborted) throw error
+    const message = error instanceof Error ? error.message : String(error)
+    const tip = getLocalServiceFixTip(message)
+    if (tip) {
+      throw new Error(`${message} ${tip}`)
+    }
+    // Fall through to health/search probe so users still get a concrete error.
+  }
+
+  try {
+    const health = await fetchJson(
+      `${baseUrl}/health`,
+      { method: 'GET', headers: { Accept: 'application/json' } },
+      signal,
+      SEARCH_TIMEOUT_MS
+    )
+    const status = firstString(asRecord(health), ['status'])
+    if (status && status !== 'healthy' && status !== 'ok' && status !== 'degraded') {
+      throw new Error(`wigolo health status: ${status}`)
+    }
+  } catch (error) {
+    if (signal?.aborted) throw error
+    // Health is best-effort; fall through to a real search probe.
+  }
+
+  return searchWithWigolo('NoteLoom web search', options, signal)
+}
+
 interface HtmlSearchEngine {
   provider: WebSearchResponse['provider']
   url: (query: string) => string
@@ -471,23 +580,45 @@ export async function searchWeb(query: string, signal?: AbortSignal): Promise<We
   if (!normalizedQuery) throw new Error('Search query is required')
   if (normalizedQuery.length > 500) throw new Error('Search query is too long')
 
+  const config = await getAISettings()
+  if (!config?.enableWebSearch) {
+    throw new Error('Web search is not enabled for the current model')
+  }
+
+  if (config.enableNativeWebSearch !== false) {
+    try {
+      const nativeResult = await searchWithNativeModel(config, normalizedQuery, signal)
+      if (nativeResult) return nativeResult
+    } catch {
+      // A reachable but temporarily failing native search must not prevent the
+      // user-configured or local fallback providers from running.
+    }
+  }
+
+  // Prefer the local wigolo daemon (keyless) before metered third-party APIs.
+  // Ensure/start can take longer than the shared fallback budget, so it runs
+  // outside TOTAL_SEARCH_TIMEOUT_MS.
+  if (config.enableWigoloWebSearch !== false) {
+    try {
+      await ensureWigoloForSearch({
+        baseUrl: config.wigoloBaseUrl,
+        apiToken: config.wigoloApiToken,
+      })
+      return await searchWithWigolo(
+        normalizedQuery,
+        {
+          baseUrl: config.wigoloBaseUrl,
+          apiToken: config.wigoloApiToken,
+        },
+        signal
+      )
+    } catch {
+      // Fall through when the daemon is down, unauthorized, or empty.
+    }
+  }
+
   const totalTimeout = createTimeoutSignal(signal, TOTAL_SEARCH_TIMEOUT_MS)
   try {
-    const config = await getAISettings()
-    if (!config?.enableWebSearch) {
-      throw new Error('Web search is not enabled for the current model')
-    }
-
-    if (config.enableNativeWebSearch !== false) {
-      try {
-        const nativeResult = await searchWithNativeModel(config, normalizedQuery, totalTimeout.signal)
-        if (nativeResult) return nativeResult
-      } catch {
-        // A reachable but temporarily failing native search must not prevent the
-        // user-configured or local fallback providers from running.
-      }
-    }
-
     if (config.enableThirdPartyWebSearch !== false) {
       const providerOrder = normalizeWebSearchProviderOrder(config.webSearchProviderOrder)
       const configuredProviders = providerOrder.flatMap((provider) => {
@@ -500,7 +631,7 @@ export async function searchWeb(query: string, signal?: AbortSignal): Promise<We
         try {
           return await searchWithConfiguredProvider(provider, apiKey, normalizedQuery, totalTimeout.signal)
         } catch {
-          // Try the next configured provider before the no-key search layer.
+          // Try the next configured provider before the HTML no-key layer.
         }
       }
     }

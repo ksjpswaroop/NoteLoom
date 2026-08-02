@@ -55,9 +55,14 @@ const MARKDOWN_EXTENSIONS = new Set([
 ])
 
 const IMAGE_EXTENSIONS = new Set(['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'])
+const EXCALIDRAW_EXTENSIONS = new Set(['excalidraw'])
 const ONBOARDING_PROGRESS_STORE_KEY = 'desktopOnboardingProgress'
 const CanvasEditor = dynamic(
   () => import('../canvas/canvas-editor').then(module => module.CanvasEditor),
+  { ssr: false }
+)
+const ExcalidrawEditor = dynamic(
+  () => import('../excalidraw/excalidraw-editor').then(module => module.ExcalidrawEditor),
   { ssr: false }
 )
 
@@ -221,7 +226,7 @@ export function EditorLayout() {
   }, [])
 
   // Get item type based on path
-  const getItemType = useCallback((path: string): 'markdown' | 'image' | 'folder' | 'unknown' => {
+  const getItemType = useCallback((path: string): 'markdown' | 'image' | 'excalidraw' | 'folder' | 'unknown' => {
     if (!path) return 'unknown'
 
     // First check if it's a folder
@@ -232,6 +237,9 @@ export function EditorLayout() {
     const extension = path.split('.').pop()?.toLowerCase()
     if (!extension) return 'unknown'
 
+    if (EXCALIDRAW_EXTENSIONS.has(extension)) {
+      return 'excalidraw'
+    }
     if (MARKDOWN_EXTENSIONS.has(extension)) {
       return 'markdown'
     }
@@ -268,7 +276,7 @@ export function EditorLayout() {
     const extension = path.split('.').pop()?.toLowerCase()
     if (!extension) return false
 
-    const validExtensions = ['md', 'txt', 'markdown', 'py', 'js', 'ts', 'jsx', 'tsx', 'css', 'scss', 'less', 'html', 'xml', 'json', 'yaml', 'yml', 'sh', 'bash', 'java', 'c', 'cpp', 'h', 'go', 'rs', 'sql', 'rb', 'php', 'vue', 'svelte', 'astro', 'toml', 'ini', 'conf', 'cfg', 'gitignore', 'env', 'example', 'template', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg']
+    const validExtensions = ['md', 'txt', 'markdown', 'py', 'js', 'ts', 'jsx', 'tsx', 'css', 'scss', 'less', 'html', 'xml', 'json', 'yaml', 'yml', 'sh', 'bash', 'java', 'c', 'cpp', 'h', 'go', 'rs', 'sql', 'rb', 'php', 'vue', 'svelte', 'astro', 'toml', 'ini', 'conf', 'cfg', 'gitignore', 'env', 'example', 'template', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'excalidraw']
 
     if (!validExtensions.includes(extension)) return false
 
@@ -671,6 +679,9 @@ export function EditorLayout() {
         )}
         {itemType === 'image' && (
           <ImageEditor filePath={tab.path} />
+        )}
+        {itemType === 'excalidraw' && (
+          <ExcalidrawEditor key={tab.path} filePath={tab.path} />
         )}
         {itemType === 'markdown' && (
           <MdEditor

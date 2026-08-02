@@ -1320,6 +1320,12 @@ Examples:
             disabled={!primaryModel}
             value={text}
             onChange={handleComposerTextChange}
+            role="combobox"
+            aria-autocomplete="list"
+            aria-expanded={Boolean(composerMenu)}
+            aria-controls={composerMenu ? "chat-composer-menu-listbox" : undefined}
+            aria-haspopup="listbox"
+            aria-label={defaultPlaceholder}
             placeholder={loading ? steeringPlaceholder : defaultPlaceholder}
             onKeyDown={(e) => {
               const textarea = e.target as HTMLTextAreaElement
@@ -1338,7 +1344,7 @@ Examples:
                   composerMenuRef.current?.moveSelection(-1)
                   return
                 }
-                if (e.key === "Enter") {
+                if (e.key === "Enter" || e.key === "Tab") {
                   e.preventDefault()
                   composerMenuRef.current?.selectCurrent()
                   return
