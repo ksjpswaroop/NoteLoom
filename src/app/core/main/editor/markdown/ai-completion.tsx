@@ -64,7 +64,7 @@ export function AICompletionPopup({ items, onSelect, onDismiss }: {
     >
       <div className="flex items-center gap-2 px-3 py-2 bg-[hsl(var(--muted))] border-b border-[hsl(var(--border))]">
         <Sparkles size={14} className="text-[hsl(var(--primary))]" />
-        <span className="text-xs font-medium text-[hsl(var(--muted-foreground))]">AI 建议</span>
+        <span className="text-xs font-medium text-[hsl(var(--muted-foreground))]">AI suggestion</span>
       </div>
       <div className="max-h-[200px] overflow-y-auto">
         {items.map((item, index) => (
@@ -84,7 +84,7 @@ export function AICompletionPopup({ items, onSelect, onDismiss }: {
         ))}
       </div>
       <div className="flex items-center justify-between px-3 py-1.5 bg-[hsl(var(--muted))] border-t border-[hsl(var(--border))]">
-        <span className="text-xs text-[hsl(var(--muted-foreground))]">↑↓ 选择</span>
+        <span className="text-xs text-[hsl(var(--muted-foreground))]">↑↓ Select</span>
         <button onClick={onDismiss} className="text-xs hover:text-[hsl(var(--foreground))]">
           <X size={12} />
         </button>
@@ -159,7 +159,7 @@ export function useAIAutocomplete({ editor, isEnabled, onComplete }: AICompletio
     // Show loading state
     const rect = editor.view.coordsAtPos(from) as DOMRect
     showPopup([
-      { text: '正在思考...', icon: <Sparkles size={14} className="animate-pulse" /> }
+      { text: 'Thinking...', icon: <Sparkles size={14} className="animate-pulse" /> }
     ], rect)
 
     try {

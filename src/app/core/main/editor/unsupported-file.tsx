@@ -26,7 +26,7 @@ export function UnsupportedFile({ filePath }: UnsupportedFileProps) {
 
   const fileName = filePath.split('/').pop() || filePath
 
-  // 获取完整文件路径
+  //
   useEffect(() => {
     const fetchFullPath = async () => {
       try {
@@ -44,7 +44,7 @@ export function UnsupportedFile({ filePath }: UnsupportedFileProps) {
     fetchFullPath()
   }, [filePath])
 
-  // 获取文件元信息
+  //
   useEffect(() => {
     let cancelled = false
 
@@ -59,8 +59,8 @@ export function UnsupportedFile({ filePath }: UnsupportedFileProps) {
           ? await exists(pathOptions.path, { baseDir: pathOptions.baseDir })
           : await exists(pathOptions.path)
 
-        // 同步列表中可能暂时存在尚未下载的远程路径。它不是本地文件，
-        // 因此没有可读取的元数据，也不应作为错误上报。
+        // 。，
+        // ，。
         if (!fileExists || cancelled) {
           return
         }
@@ -98,7 +98,7 @@ export function UnsupportedFile({ filePath }: UnsupportedFileProps) {
     }
   }, [filePath])
 
-  // 格式化文件大小
+  //
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 B'
     const k = 1024
@@ -107,23 +107,23 @@ export function UnsupportedFile({ filePath }: UnsupportedFileProps) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
   }
 
-  // 格式化时间
+  //
   const formatDate = (timestamp: number | null): string => {
     if (!timestamp) return '-'
     return new Date(timestamp).toLocaleString()
   }
 
-  // 用外部程序打开
+  //
   const handleOpenExternal = async () => {
     try {
       const workspace = await getWorkspacePath()
 
       if (workspace.isCustom) {
-        // 自定义工作区：使用绝对路径
+        // ：
         const pathOptions = await getFilePathOptions(filePath)
         await openPath(pathOptions.path)
       } else {
-        // 默认工作区：使用 AppData 目录
+        // ： AppData
         const appDir = await appDataDir()
         const { join } = await import('@tauri-apps/api/path')
         await openPath(await join(appDir, 'article', filePath))
@@ -133,7 +133,7 @@ export function UnsupportedFile({ filePath }: UnsupportedFileProps) {
     }
   }
 
-  // 打开文件目录
+  //
   const handleOpenDirectory = async () => {
     try {
       const workspace = await getWorkspacePath()
@@ -155,7 +155,7 @@ export function UnsupportedFile({ filePath }: UnsupportedFileProps) {
   return (
     <div className="flex-1 flex flex-col items-center justify-center h-full bg-background p-8">
       <div className="max-w-lg w-full space-y-6">
-        {/* 文件名和图标 */}
+        {}
         <div className="flex items-center gap-3">
           <File className="w-8 h-8 text-muted-foreground" />
           <div className="flex-1 min-w-0">
@@ -165,7 +165,7 @@ export function UnsupportedFile({ filePath }: UnsupportedFileProps) {
   title={fullPath || filePath}
   onClick={async () => {
     await navigator.clipboard.writeText(fullPath || filePath)
-    toast({ title: t('pathCopied') || '路径已复制' })
+    toast({ title: t('pathCopied') || 'Path copied' })
   }}
 >
   {fullPath || filePath}
@@ -173,7 +173,7 @@ export function UnsupportedFile({ filePath }: UnsupportedFileProps) {
           </div>
         </div>
 
-        {/* 元信息 */}
+        {}
         <div className="bg-card rounded-lg border p-4 space-y-3">
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">{t('fileSize')}</span>
@@ -195,7 +195,7 @@ export function UnsupportedFile({ filePath }: UnsupportedFileProps) {
           </div>
         </div>
 
-        {/* 操作按钮 */}
+        {}
         <div className="flex gap-3">
           <button
             onClick={handleOpenExternal}

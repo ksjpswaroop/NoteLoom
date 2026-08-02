@@ -1,31 +1,31 @@
 /**
- * 将音频 Blob 转换为 WAV 格式
+ * Blob WAV 
  */
 export async function convertToWav(audioBlob: Blob): Promise<Blob> {
   try {
-    // 创建 Audio Context
+    // Audio Context
     const audioContext = new AudioContext()
     
-    // 读取音频数据
+    //
     const arrayBuffer = await audioBlob.arrayBuffer()
     const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
     
-    // 转换为 WAV
+    // WAV
     const wavBlob = audioBufferToWav(audioBuffer)
     
-    // 关闭 Audio Context
+    // Audio Context
     audioContext.close()
     
     return wavBlob
   } catch (error) {
-    console.error('音频转换失败:', error)
-    // 如果转换失败，返回原始 Blob
+    console.error('Audio conversion failed:', error)
+    // ， Blob
     return audioBlob
   }
 }
 
 /**
- * 将 AudioBuffer 转换为 WAV Blob
+ * AudioBuffer WAV Blob
  */
 function audioBufferToWav(audioBuffer: AudioBuffer): Blob {
   const numberOfChannels = audioBuffer.numberOfChannels
@@ -46,7 +46,7 @@ function audioBufferToWav(audioBuffer: AudioBuffer): Blob {
   const buffer = new ArrayBuffer(44 + result.length * 2)
   const view = new DataView(buffer)
   
-  // WAV 文件头
+  // WAV
   writeString(view, 0, 'RIFF')
   view.setUint32(4, 36 + result.length * 2, true)
   writeString(view, 8, 'WAVE')
@@ -61,7 +61,7 @@ function audioBufferToWav(audioBuffer: AudioBuffer): Blob {
   writeString(view, 36, 'data')
   view.setUint32(40, result.length * 2, true)
   
-  // 写入音频数据
+  //
   floatTo16BitPCM(view, 44, result)
   
   return new Blob([buffer], { type: 'audio/wav' })

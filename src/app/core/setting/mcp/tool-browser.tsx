@@ -29,7 +29,7 @@ export function ToolBrowser() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isOpen, setIsOpen] = useState(false)
   
-  // 获取所有工具
+  //
   const allTools = servers.flatMap(server => {
     const state = getServerState(server.id)
     if (!state || state.status !== 'connected') return []
@@ -41,7 +41,7 @@ export function ToolBrowser() {
     }))
   })
   
-  // 过滤工具
+  //
   const filteredTools = allTools.filter(({ tool }) => {
     if (!searchQuery.trim()) return true
     const query = searchQuery.toLowerCase()
@@ -79,7 +79,7 @@ export function ToolBrowser() {
         
         <CollapsibleContent asChild>
           <ItemFooter className="flex-col items-stretch gap-3">
-          {/* 搜索框 */}
+          {/* */}
           <InputGroup>
             <InputGroupInput
               value={searchQuery}
@@ -89,7 +89,7 @@ export function ToolBrowser() {
             <InputGroupAddon><Search /></InputGroupAddon>
           </InputGroup>
           
-          {/* 工具列表 */}
+          {/* */}
           {filteredTools.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-4">
               {t('noToolsFound')}

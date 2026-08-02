@@ -59,10 +59,10 @@ export function EmptyState({
     })
   }
 
-  // 注册快捷键
+  //
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Cmd/Ctrl + N 创建笔记
+      // Cmd/Ctrl + N
       if ((e.metaKey || e.ctrlKey) && e.key === 'n') {
         e.preventDefault()
         void handleCreateNote()
@@ -73,7 +73,7 @@ export function EmptyState({
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [newFile, setLeftSidebarTab])
 
-  // 读取文本 / 语音记录快捷键
+  // /
   useEffect(() => {
     const formatShortcut = (value: string) =>
       value
@@ -100,7 +100,7 @@ export function EmptyState({
       const selected = await open({
         directory: true,
         multiple: false,
-        title: '选择工作区目录'
+        title: 'Translated message'
       })
       
       if (selected && typeof selected === 'string') {
@@ -108,10 +108,10 @@ export function EmptyState({
         await store.set('workspacePath', selected)
         await store.save()
         
-        // 添加到历史记录
+        //
         await addWorkspaceHistory(selected)
         
-        // 重新加载页面以应用新工作区
+        //
         window.location.reload()
       }
     } catch (error) {
@@ -120,7 +120,7 @@ export function EmptyState({
   }
 
   const handleOpenRecord = () => {
-    // 触发文本记录弹窗
+    //
     emitter.emit('quickRecordTextHandler')
   }
 
@@ -129,7 +129,7 @@ export function EmptyState({
   }
 
   const handleGlobalSearch = () => {
-    // 触发全局搜索弹窗 (Cmd/Ctrl + F)
+    // (Cmd/Ctrl + F)
     const event = new KeyboardEvent('keydown', {
       key: 'f',
       metaKey: true,
@@ -215,13 +215,13 @@ export function EmptyState({
         <EmptyHeader className="mx-auto gap-3 text-center text-balance">
           <div className="flex items-center justify-center gap-3 mb-2">
             <Image 
-              src="/app-icon.png" 
+              src="/logo.svg" 
               alt="NoteLoom" 
               width={60}
               height={60}
-              className="w-10 h-10 dark:invert"
+              className="w-10 h-10 rounded-[22%]"
             />
-            <h1 className="text-4xl font-bold tracking-tight">
+            <h1 className="noteloom-brand-wordmark text-4xl font-bold tracking-tight">
               NoteLoom
             </h1>
           </div>

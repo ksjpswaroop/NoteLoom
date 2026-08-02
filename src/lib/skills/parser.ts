@@ -1,8 +1,8 @@
 /**
- * SKILL.md 文件解析器
+ * SKILL.md 
  *
- * 解析 SKILL.md 文件，提取 YAML 前置元数据和 Markdown 内容。
- * 遵循 Agent Skills 官方规范: https://agentskills.io/specification
+ * SKILL.md ， YAML Markdown 。
+ * Agent Skills : https://agentskills.io/specification
  */
 
 import {
@@ -15,17 +15,17 @@ import {
 import { parse as parseYaml } from 'yaml'
 
 // ============================================================================
-// 解析函数
+//
 // ============================================================================
 
 /**
- * 解析 SKILL.md 文件内容
+ * SKILL.md 
  *
- * @param content - SKILL.md 文件的原始内容
- * @returns 解析后的 Skill 文件对象
+ * @param content - SKILL.md 
+ * @returns Skill 
  */
 export function parseSkillFile(content: string): ParsedSkillFile {
-  // 检查是否包含 YAML 前置
+  // YAML
   if (!content.startsWith('---')) {
     return {
       metadata: {
@@ -37,7 +37,7 @@ export function parseSkillFile(content: string): ParsedSkillFile {
     }
   }
 
-  // 提取 YAML 前置部分
+  // YAML
   const yamlEnd = content.indexOf('\n---', 3)
   if (yamlEnd === -1) {
     throw new Error('Invalid SKILL.md: YAML frontmatter not properly closed')
@@ -46,7 +46,7 @@ export function parseSkillFile(content: string): ParsedSkillFile {
   const yamlContent = content.slice(3, yamlEnd).trim()
   const markdownContent = content.slice(yamlEnd + 4).trim()
 
-  // 解析 YAML 元数据
+  // YAML
   const metadata = parseYamlMetadata(yamlContent)
 
   return {
@@ -57,10 +57,10 @@ export function parseSkillFile(content: string): ParsedSkillFile {
 }
 
 /**
- * 解析 YAML 元数据
+ * YAML 
  *
- * @param yamlContent - YAML 格式的元数据内容
- * @returns 解析后的元数据对象
+ * @param yamlContent - YAML 
+ * @returns 
  */
 function parseYamlMetadata(yamlContent: string): SkillYamlMetadata {
   const parsed: unknown = parseYaml(yamlContent)
@@ -102,15 +102,15 @@ function parseYamlMetadata(yamlContent: string): SkillYamlMetadata {
 }
 
 // ============================================================================
-// 生成函数
+//
 // ============================================================================
 
 /**
- * 将 Skill 内容序列化为 SKILL.md 文件格式
+ * Skill SKILL.md 
  *
- * @param metadata - Skill 元数据
- * @param instructions - 指令内容
- * @returns SKILL.md 文件内容
+ * @param metadata - Skill 
+ * @param instructions - 
+ * @returns SKILL.md 
  */
 export function serializeSkillFile(
   metadata: SkillYamlMetadata,
@@ -118,11 +118,11 @@ export function serializeSkillFile(
 ): string {
   const yamlLines: string[] = ['---']
 
-  // 必填字段
+  //
   yamlLines.push(`name: ${metadata.name}`)
   yamlLines.push(`description: ${metadata.description}`)
 
-  // 可选字段 (官方规范)
+  // ()
   if (metadata.license) {
     yamlLines.push(`license: ${metadata.license}`)
   }
@@ -131,7 +131,7 @@ export function serializeSkillFile(
     yamlLines.push(`compatibility: ${metadata.compatibility}`)
   }
 
-  // metadata 字段
+  // metadata
   if (metadata.metadata && Object.keys(metadata.metadata).length > 0) {
     yamlLines.push(`metadata:`)
     for (const [key, value] of Object.entries(metadata.metadata)) {
@@ -139,7 +139,7 @@ export function serializeSkillFile(
     }
   }
 
-  // allowedTools (官方规范使用空格分隔)
+  // allowedTools ()
   if (metadata.allowedTools && metadata.allowedTools.length > 0) {
     const toolsValue = Array.isArray(metadata.allowedTools)
       ? metadata.allowedTools.join(' ')
@@ -147,7 +147,7 @@ export function serializeSkillFile(
     yamlLines.push(`allowed-tools: ${toolsValue}`)
   }
 
-  // 扩展字段 (向后兼容)
+  // ()
   if (metadata.version && !metadata.metadata?.version) {
     yamlLines.push(`version: ${metadata.version}`)
   }
@@ -166,20 +166,20 @@ export function serializeSkillFile(
 
   yamlLines.push('---')
 
-  // Markdown 内容
+  // Markdown
   const content = yamlLines.join('\n') + '\n\n' + instructions.trim() + '\n'
 
   return content
 }
 
 // ============================================================================
-// 辅助函数
+//
 // ============================================================================
 
 /**
- * 从目录名生成 Skill ID
+ * Skill ID
  *
- * @param directoryName - Skill 目录名
+ * @param directoryName - Skill 
  * @returns Skill ID (kebab-case)
  */
 export function generateSkillId(directoryName: string): string {
@@ -190,16 +190,16 @@ export function generateSkillId(directoryName: string): string {
 }
 
 /**
- * 验证 Skill ID 格式
+ * Skill ID 
  *
- * 官方规范要求：
- * - 1-64 字符
- * - 只能包含小写字母、数字和连字符
- * - 不能以连字符开头或结尾
- * - 不能包含连续的连字符
+ * ：
+ * - 1-64 
+ * - 、
+ * - 
+ * - 
  *
  * @param id - Skill ID
- * @returns 是否有效
+ * @returns 
  */
 export function isValidSkillId(id: string): boolean {
   if (id.length < 1 || id.length > 64) {
@@ -215,10 +215,10 @@ export function isValidSkillId(id: string): boolean {
 }
 
 /**
- * 验证 name 字段格式 (官方规范)
+ * name ()
  *
- * @param name - Skill 名称
- * @returns 是否有效
+ * @param name - Skill 
+ * @returns 
  */
 export function isValidSkillName(name: string): boolean {
   if (name.length < 1 || name.length > 64) {
@@ -230,38 +230,38 @@ export function isValidSkillName(name: string): boolean {
   if (name.includes('--')) {
     return false
   }
-  // 只能包含 unicode 小写字母数字和连字符
+  // unicode
   return /^[\p{Ll}0-9-]+$/u.test(name)
 }
 
 /**
- * 验证 description 字段格式 (官方规范)
+ * description ()
  *
- * @param description - Skill 描述
- * @returns 是否有效
+ * @param description - Skill 
+ * @returns 
  */
 export function isValidSkillDescription(description: string): boolean {
   return description.length >= 1 && description.length <= 1024
 }
 
 /**
- * 检测脚本类型
+ * 
  *
- * @param filename - 脚本文件名
- * @param content - 脚本内容 (可选，用于 shebang 检测)
- * @returns 脚本类型或 null
+ * @param filename - 
+ * @param content - (， shebang )
+ * @returns null
  */
 export function detectScriptType(filename: string, content?: string): ScriptType | null {
   const ext = filename.substring(filename.lastIndexOf('.')).toLowerCase()
 
-  // 通过扩展名检测
+  //
   for (const [type, extensions] of Object.entries(SCRIPT_EXTENSIONS)) {
     if (extensions.includes(ext)) {
       return type as ScriptType
     }
   }
 
-  // 通过 shebang 检测
+  // shebang
   if (content) {
     const firstLine = content.split('\n')[0].trim()
     for (const [type, shebangs] of Object.entries(SCRIPT_SHEBANG)) {
@@ -275,13 +275,13 @@ export function detectScriptType(filename: string, content?: string): ScriptType
 }
 
 /**
- * 从 SKILL.md 内容中提取引用链接
+ * SKILL.md 
  *
- * 查找 Markdown 格式的链接: [text](path.md)
- * 支持官方规范的相对路径引用
+ * Markdown : [text](path.md)
+ * 
  *
- * @param content - Markdown 内容
- * @returns 引用文件路径数组
+ * @param content - Markdown 
+ * @returns 
  */
 export function extractReferenceLinks(content: string): string[] {
   const linkRegex = /\[([^\]]+)\]\(([^)]+\.md)\)/g
@@ -296,12 +296,12 @@ export function extractReferenceLinks(content: string): string[] {
 }
 
 /**
- * 从 SKILL.md 内容中提取脚本引用
+ * SKILL.md 
  *
- * 查找类似 "Run the extraction script: scripts/extract.py" 的文本
+ * "Run the extraction script: scripts/extract.py" 
  *
- * @param content - Markdown 内容
- * @returns 脚本路径数组
+ * @param content - Markdown 
+ * @returns 
  */
 export function extractScriptReferences(content: string): string[] {
   const patterns = [

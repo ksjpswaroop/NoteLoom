@@ -40,7 +40,7 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { SettingSection } from '../components/setting-base'
 
-// 工具配置：图标和描述键
+// ：
 const TOOL_CONFIGS = {
   text: {
     icon: <CopySlash />,
@@ -79,7 +79,7 @@ const TOOL_CONFIGS = {
   },
 }
 
-// 可排序的工具栏项组件
+//
 interface SortableItemProps {
   item: RecordToolbarItem
   config: typeof TOOL_CONFIGS[keyof typeof TOOL_CONFIGS]
@@ -139,7 +139,7 @@ export function ToolbarSettings() {
   const t = useTranslations()
   const { recordToolbarConfig, setRecordToolbarConfig } = useSettingStore()
 
-  // 拖拽传感器配置
+  //
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -155,7 +155,7 @@ export function ToolbarSettings() {
     await setRecordToolbarConfig(newConfig)
   }
 
-  // 处理拖拽结束
+  //
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event
 
@@ -171,7 +171,7 @@ export function ToolbarSettings() {
     }
   }
 
-  // 按排序展示工具（过滤掉不在 TOOL_CONFIGS 中的项）
+  // （ TOOL_CONFIGS ）
   const sortedConfig = [...recordToolbarConfig]
     .filter(item => item.id in TOOL_CONFIGS)
     .sort((a, b) => a.order - b.order)

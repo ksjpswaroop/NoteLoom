@@ -429,23 +429,23 @@ export const ChatInput = React.memo(function ChatInput() {
     }
   }
 
-  // 添加输入到历史记录
+  //
   function addToHistory(input: string) {
     if (!input.trim() || isTemporaryConversation) return
     
     const newHistory = [input, ...(inputHistory || []).filter(item => item !== input)]
-    // 限制历史记录数量为50条
+    // 50
     const limitedHistory = newHistory.slice(0, 50)
     setInputHistory(limitedHistory)
   }
 
-  // 处理历史记录导航
+  //
   function navigateHistory(direction: 'up' | 'down', currentText: string) {
     if (!inputHistory || inputHistory.length === 0) return
 
     let newIndex: number
     if (direction === 'up') {
-      // 保存当前输入内容（第一次向上时）
+      // （）
       if (historyIndex === -1) {
         setTempInput(currentText)
       }
@@ -463,14 +463,14 @@ export const ChatInput = React.memo(function ChatInput() {
     setHistoryIndex(newIndex)
 
     if (newIndex === -1) {
-      // 恢复到原本输入的内容
+      //
       setText(tempInput)
     } else {
       setText(inputHistory[newIndex])
     }
   }
 
-  // 移除关联文件
+  //
   function removeLinkedFile() {
     setLinkedResource(null)
     setChatLinkedResource(null)
@@ -696,13 +696,13 @@ export const ChatInput = React.memo(function ChatInput() {
         return
       }
 
-      // 移动端使用 HTML5 file input
+      // HTML5 file input
       if (isMobileDevice_) {
         imageInputRef.current?.click()
         return
       }
 
-      // PC端使用 Tauri dialog
+      // PC Tauri dialog
       const { open } = await import('@tauri-apps/plugin-dialog')
       const selected = await open({
         multiple: true,
@@ -765,7 +765,7 @@ export const ChatInput = React.memo(function ChatInput() {
     }
   }
 
-  // 移动端图片选择，交给系统决定从相册还是相机获取
+  // ，
   async function handleSelectFromGallery() {
     if (attachedImages.length >= MAX_IMAGE_ATTACHMENTS) {
       showImageFailureToast(t('record.chat.input.imageAttachment.maxCount', {
@@ -782,7 +782,7 @@ export const ChatInput = React.memo(function ChatInput() {
     }
   }
 
-  // 处理移动端文件选择
+  //
   async function handleImageInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     try {
       const files = event.target.files
@@ -800,7 +800,7 @@ export const ChatInput = React.memo(function ChatInput() {
       const newImages = await buildAttachmentsFromBrowserFiles(selectedFiles, 'file', remainingCount)
       appendImageAttachments(newImages, 'selectSuccess')
       
-      // 重置 input
+      // input
       event.target.value = ''
     } catch (error) {
       console.error('Error in handleImageInputChange:', error)
@@ -912,7 +912,7 @@ export const ChatInput = React.memo(function ChatInput() {
     appendImageAttachments(newImages, 'dropSuccess')
   }
 
-  // 处理发送后的清理工作
+  //
   function handleSent() {
     if (onboardingAgentPromptArmedRef.current) {
       onboardingAgentPromptArmedRef.current = false
@@ -951,7 +951,7 @@ export const ChatInput = React.memo(function ChatInput() {
     emitter.on('insert-quote', (event: unknown) => {
       const data = event as PendingQuote
       setPendingQuote(data)
-      // 延迟聚焦到输入框
+      //
       setTimeout(() => {
         textareaRef.current?.focus()
       }, 50)
@@ -997,7 +997,7 @@ export const ChatInput = React.memo(function ChatInput() {
     })
   }, [applyTypedText, onboardingPromptDraft, setOnboardingPromptDraft])
 
-  // 生成文件的行号预览（用于 AI 对话）
+  // （ AI ）
   async function generateFilePreview(filePath: string, isCustom: boolean, preferEditorContent: boolean = false): Promise<string> {
     try {
       if (preferEditorContent) {
@@ -1020,31 +1020,31 @@ export const ChatInput = React.memo(function ChatInput() {
           const numberedLines = editorContent.numberedLines.split('\n')
           const previewLines = numberedLines.slice(0, 100)
           const totalLines = editorContent.totalLines || numberedLines.length
-          const truncatedNote = totalLines > 100 ? `\n... (共 ${totalLines} 行，后 ${totalLines - 100} 行省略)` : ''
+          const truncatedNote = totalLines > 100 ? `\n... ( ${totalLines} ， ${totalLines - 100} )` : ''
 
-          return `已关联当前编辑器文件：${filePath.split('/').pop() || filePath}
-你可以直接基于下面的行号和版本使用 editor_replace_lines。
+          return `Linked current editor file: ${filePath.split('/').pop() || filePath}
+You can use editor_replace_lines directly with the line numbers and version below.
 
-编辑器版本：v${editorContent.version}
-行号预览：
+Editor version: v${editorContent.version}
+Line preview:
 \`\`\`
 ${previewLines.join('\n')}
 \`\`\`${truncatedNote}
 
-优先使用：
-- 修改某个区块/列表：editor_replace_lines({startLine: 4, endLine: 5, replaceContent: "新内容", version: ${editorContent.version}})
-- 仅在有精确选区位置时才使用 from/to
+Prefer:
+- Edit a block/list: editor_replace_lines({startLine: 4, endLine: 5, replaceContent: "new content", version: ${editorContent.version}})
+- Only use from/to when you have an exact selection range
 `
         }
       }
 
-      // 检查文件是否存在
+      //
       const fileExists = isCustom
         ? await exists(filePath)
         : await exists(filePath, { baseDir: BaseDirectory.AppData })
 
       if (!fileExists) {
-        return `文件 ${filePath.split('/').pop() || filePath} 不存在或已被删除`
+        return `File ${filePath.split('/').pop() || filePath}`
       }
 
       let content: string
@@ -1062,27 +1062,27 @@ ${previewLines.join('\n')}
       })
 
       const totalLines = lines.length
-      const truncatedNote = totalLines > 100 ? `\n... (共 ${totalLines} 行，后 ${totalLines - 100} 行省略)` : ''
+      const truncatedNote = totalLines > 100 ? `\n... ( ${totalLines} ， ${totalLines - 100} )` : ''
 
-      return `已关联文件：${filePath.split('/').pop() || filePath}
-如需修改这个非当前编辑器文件，请基于完整内容生成更新后的 Markdown，并使用 note_update_file 写入。
+      return `Linked file: ${filePath.split('/').pop() || filePath}
+To edit this non-active file, generate updated Markdown from the full content and write it with note_update_file.
 
-行号预览：
+Line preview:
 \`\`\`
 ${previewLines.join('\n')}
 \`\`\`${truncatedNote}
 
-使用示例：
-- 更新文件：note_update_file({filePath: "${filePath}", content: "完整更新后的 Markdown"})
+Examples:
+- Update file: note_update_file({filePath: "${filePath}", content: "updated Markdown"})
 `
     } catch (error) {
-      console.error('生成文件预览失败:', error)
-      return `已关联文件：${filePath.split('/').pop() || filePath}
-（无法读取文件内容）`
+      console.error('File Failed', error)
+      return `Linked file: ${filePath.split('/').pop() || filePath}
+(Unable to read file content)`
     }
   }
 
-  // 自动关联当前打开的 markdown 文件或文件夹
+  // markdown
   useEffect(() => {
     let cancelled = false
 
@@ -1133,12 +1133,12 @@ ${previewLines.join('\n')}
       const workspace = await getWorkspacePath()
       if (cancelled) return
 
-      // 检查是否是支持的文件类型（包括 markdown、代码文件等）
+      // （ markdown、）
       if (activeTabPath.match(/\.(md|txt|markdown|py|js|ts|jsx|tsx|css|scss|less|html|xml|json|yaml|yml|sh|bash|java|c|cpp|h|go|rs|sql|rb|php|vue|svelte|astro|toml|ini|conf|cfg|gitignore|env|example|template)$/i)) {
-        // 文件关联逻辑
+        //
         const fileName = activeTabPath.split('/').pop() || activeTabPath
 
-        // 构建完整路径
+        //
         let fullPath: string
         if (workspace.isCustom) {
           const pathParts = activeTabPath.split('/')
@@ -1157,15 +1157,15 @@ ${previewLines.join('\n')}
         setChatLinkedResource(resource)
         setLinkedResourcePreview(null)
 
-        // 生成并设置文件预览
+        //
         const preview = await generateFilePreview(fullPath, workspace.isCustom, activeTabPath === resource.relativePath)
         if (cancelled) return
         setLinkedResourcePreview(preview)
       } else if (!activeTabPath.includes('.')) {
-        // 文件夹关联逻辑 - 只有当路径不包含 . 时才可能是文件夹
+        // - .
         const folderName = activeTabPath.split('/').pop() || activeTabPath
 
-        // 构建完整路径
+        //
         let fullPath: string
         if (workspace.isCustom) {
           const pathParts = activeTabPath.split('/')
@@ -1174,7 +1174,7 @@ ${previewLines.join('\n')}
           fullPath = activeTabPath
         }
 
-        // 计算文件夹中的文件数量和索引状态
+        //
         const { collectMarkdownFiles } = await import('@/lib/files')
         const files = await collectMarkdownFiles(activeTabPath)
         if (cancelled) return
@@ -1183,7 +1183,7 @@ ${previewLines.join('\n')}
           vectorIndexedFiles.has(f.path)
         ).length
 
-        // 只有在有索引文件时才关联文件夹
+        //
         if (indexedCount > 0) {
           const resource = {
             name: folderName,
@@ -1195,17 +1195,17 @@ ${previewLines.join('\n')}
           setActiveTabContext(null)
           setLinkedResource(resource)
           setChatLinkedResource(resource)
-          // 文件夹不生成行号预览
+          //
           setLinkedResourcePreview(null)
         } else {
-          // 没有索引文件，清除关联
+          // ，
           setActiveTabContext(null)
           setLinkedResource(null)
           setChatLinkedResource(null)
           setLinkedResourcePreview(null)
         }
       } else {
-        // 不支持的文件类型（如 .docx, .pdf 等），不进行关联
+        // （ .docx, .pdf ），
         setActiveTabContext(null)
         setLinkedResource(null)
         setChatLinkedResource(null)
@@ -1227,7 +1227,7 @@ ${previewLines.join('\n')}
         isMobile ? "px-2 pb-1 pt-0" : "p-1"
       )}
     >
-      {/* 移动端图片选择 */}
+      {/* */}
       {isMobileDevice_ && (
         <input
           ref={imageInputRef}
@@ -1360,7 +1360,7 @@ ${previewLines.join('\n')}
                   navigateHistory('up', text)
                 } else if (isAtEnd) {
                   e.preventDefault()
-                  // 移动光标到开头
+                  //
                   textarea.setSelectionRange(0, 0)
                 }
               }
@@ -1370,7 +1370,7 @@ ${previewLines.join('\n')}
                   navigateHistory('down', text)
                 } else if (isAtEnd) {
                   e.preventDefault()
-                  // 移动光标到开头
+                  //
                   textarea.setSelectionRange(0, 0)
                 }
               }

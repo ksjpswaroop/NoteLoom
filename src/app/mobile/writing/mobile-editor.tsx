@@ -26,7 +26,7 @@ export function MobileEditor({ onEditorReady }: MobileEditorProps) {
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const isSavingRef = useRef(false)
 
-  // 监听 activeFilePath 变化
+  // activeFilePath
   useEffect(() => {
     if (activeFilePath && activeFilePath !== activePathRef.current) {
       activePathRef.current = activeFilePath
@@ -40,7 +40,7 @@ export function MobileEditor({ onEditorReady }: MobileEditorProps) {
     }
   }, [activeFilePath])
 
-  // 加载文件内容
+  //
   const loadFile = useCallback(async (path: string) => {
     if (!path) return
 
@@ -74,7 +74,7 @@ export function MobileEditor({ onEditorReady }: MobileEditorProps) {
     }
   }, [setCurrentArticle])
 
-  // 保存文件
+  //
   const doSave = useCallback(async () => {
     const path = activePathRef.current
     const newContent = contentRef.current
@@ -100,7 +100,7 @@ export function MobileEditor({ onEditorReady }: MobileEditorProps) {
     }
   }, [setCurrentArticle, isEditorReady])
 
-  // 处理内容变化
+  //
   const handleContentChange = useCallback((newContent: string) => {
     setContent(newContent)
     contentRef.current = newContent
@@ -114,12 +114,12 @@ export function MobileEditor({ onEditorReady }: MobileEditorProps) {
     }, 500)
   }, [doSave])
 
-  // 处理编辑器就绪
+  //
   const handleEditorReady = useCallback(() => {
     setIsEditorReady(true)
   }, [])
 
-  // 清理定时器
+  //
   useEffect(() => {
     return () => {
       onEditorReady?.(null)
@@ -129,7 +129,7 @@ export function MobileEditor({ onEditorReady }: MobileEditorProps) {
     }
   }, [onEditorReady])
 
-  // 显示加载状态
+  //
   if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center">

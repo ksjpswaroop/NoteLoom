@@ -16,7 +16,7 @@ export default function DownloadFolder({ item, mobile = false }: { item: DirTree
 
   const { loadFileTree, setEntryLoading, setEntrySyncError } = useArticleStore()
 
-  // 下载远程文件夹下的全部文件类型
+  //
   async function handleSyncFolder() {
     if (isSyncing) return
     const sync = await getSyncConfiguration()
@@ -26,11 +26,11 @@ export default function DownloadFolder({ item, mobile = false }: { item: DirTree
       return
     }
 
-    // 检查是否真的是目录（防止误将文件当作目录处理）
+    // （）
     if (!item.isDirectory) {
       toast({
-        title: '不是目录',
-        description: '只能下载目录',
+        title: 'Not a directory',
+        description: 'Translated message',
         variant: 'destructive'
       });
       return;
@@ -75,7 +75,7 @@ export default function DownloadFolder({ item, mobile = false }: { item: DirTree
         duration: 5000,
       })
     } finally {
-      // 刷新文件树以更新本地状态
+      //
       try {
         await loadFileTree()
         if (syncError) setEntrySyncError(folderPath, syncError)

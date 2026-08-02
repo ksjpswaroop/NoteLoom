@@ -20,7 +20,7 @@ function preserveContinuationTail(content: string, enabled: boolean) {
 }
 
 /**
- * 获取最后一次清除后的消息
+ * 
  */
 export function getChatsAfterLastClear<T extends ChatLike>(chats: T[]): T[] {
   const lastClearIndex = chats.findLastIndex(c => c.type === 'clear')
@@ -28,7 +28,7 @@ export function getChatsAfterLastClear<T extends ChatLike>(chats: T[]): T[] {
 }
 
 /**
- * 构建用于 AI 的消息历史
+ * AI 
  */
 export function buildChatHistoryForAI(chats: ChatLike[], systemPrompt?: string): MessageLike[] {
   const chatsAfterClear = getChatsAfterLastClear(chats)
@@ -58,7 +58,7 @@ export function buildChatHistoryForAI(chats: ChatLike[], systemPrompt?: string):
 }
 
 /**
- * 构建包含对话历史的完整 messages 数组
+ * messages 
  */
 export function buildMessagesWithHistory(
   chats: ChatLike[],
@@ -90,7 +90,7 @@ export function buildMessagesWithHistory(
   if (options?.conversationSummary) {
     messages.push({
       role: 'system',
-      content: `以下是较早对话的锚定摘要，仅用于恢复上下文。摘要可能省略细节；如果它与最近原始消息冲突，以最近原始消息为准。
+      content: `Below is an anchor summary of earlier conversation, used only to restore context. The summary may omit details; if it conflicts with recent raw messages, trust the recent raw messages.
 
 <conversation-summary>
 ${options.conversationSummary}

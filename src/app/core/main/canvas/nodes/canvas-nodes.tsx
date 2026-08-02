@@ -312,7 +312,7 @@ export const StoredDataNode = memo(function StoredDataNode({ id, data, selected 
 export const TextCanvasNode = memo(function TextCanvasNode({ id, data }: NodeProps<FlowCanvasNode>) {
   return (
     <div style={data.color && data.color !== 'transparent' ? { color: data.color } : undefined} className={cn('min-w-24 rounded-md px-2 py-1 text-sm text-foreground in-[.selected]:ring-1 in-[.selected]:ring-ring', previewClassName(data.previewState))}>
-      <EditableLabel id={id} value={data.label ?? '文本'} />
+      <EditableLabel id={id} value={data.label ?? 'Text'} />
     </div>
   )
 })
@@ -335,7 +335,7 @@ export const NoteCanvasNode = memo(function NoteCanvasNode({ data }: NodeProps<F
       <BaseNodeContent className="gap-1">
         <span className="flex items-center gap-2 text-sm font-medium">
           <FileText className="size-4 shrink-0 text-muted-foreground" />
-          <span className="truncate">{data.label || filePath.split('/').pop() || '笔记'}</span>
+          <span className="truncate">{data.label || filePath.split('/').pop() || 'Note'}</span>
         </span>
         <span className="truncate text-xs text-muted-foreground">{filePath}</span>
       </BaseNodeContent>
@@ -448,7 +448,7 @@ export const LinkCanvasNode = memo(function LinkCanvasNode({ id, data }: NodePro
       <BaseNodeContent className="gap-1">
         <span className="flex items-center gap-2 text-sm font-medium">
           <ExternalLink className="shrink-0 text-muted-foreground" />
-          <EditableLabel id={id} value={data.label ?? '网页链接'} className="text-left" />
+          <EditableLabel id={id} value={data.label ?? 'Web link'} className="text-left" />
         </span>
         <span className="truncate text-xs text-muted-foreground">{data.url}</span>
       </BaseNodeContent>
@@ -472,7 +472,7 @@ export const TodoCanvasNode = memo(function TodoCanvasNode({ id, data }: NodePro
         </button>
         <EditableLabel
           id={id}
-          value={data.label ?? '待办事项'}
+          value={data.label ?? 'Todo'}
           className={cn('text-left', data.checked && 'text-muted-foreground line-through')}
         />
       </BaseNodeContent>
@@ -526,7 +526,7 @@ export const GroupCanvasNode = memo(function GroupCanvasNode({ id, data, selecte
         onResizeStart={() => emitter.emit('canvas-history-checkpoint')}
       />
       <div className="absolute left-3 top-2 max-w-[calc(100%-1.5rem)] text-sm font-medium text-muted-foreground">
-        <EditableLabel id={id} value={data.label ?? '分组'} className="text-left" />
+        <EditableLabel id={id} value={data.label ?? 'Group'} className="text-left" />
       </div>
     </div>
   )

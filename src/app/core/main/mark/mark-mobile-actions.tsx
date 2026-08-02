@@ -53,7 +53,7 @@ export function MarkMobileActions({
   const t = useTranslations()
   const isMobile = useIsMobile()
 
-  // 只在移动端显示
+  //
   if (!isMobile) return null
 
   return (

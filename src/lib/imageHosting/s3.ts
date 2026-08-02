@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid';
 import type { S3Config } from './types';
 import { buildObjectStorageUrl } from './object-storage-presets';
 
-// 生成 AWS 签名 V4 (使用 Web Crypto API)
+// AWS V4 ( Web Crypto API)
 async function generateSignature(
   method: string,
   url: string,
@@ -18,18 +18,18 @@ async function generateSignature(
   const dateStamp = date.toISOString().slice(0, 10).replace(/-/g, '');
   const amzDate = date.toISOString().replace(/[:\-]|\.\d{3}/g, '');
   
-  // 必须将 x-amz-date 加入 headers 参与签名
+  // x-amz-date headers
   headers['x-amz-date'] = amzDate;
   
-  // 创建规范请求
-  // 必须对路径进行 URI 编码，但要保留斜杠
+  //
+  // URI ，
   const canonicalUri = new URL(url).pathname
     .split('/')
     .map((part) => encodeURIComponent(decodeURIComponent(part)))
     .join('/');
   const canonicalQuerystring = '';
 
-  // AWS V4 签名要求 Headers 的 Key 必须全部转为小写
+  // AWS V4 Headers Key
   const canonicalHeaders = Object.keys(headers)
     .sort()
     .map(key => `${key.toLowerCase()}:${headers[key].trim()}\n`)
@@ -40,7 +40,7 @@ async function generateSignature(
     .map(key => key.toLowerCase())
     .join(';');
   
-  // 使用 Web Crypto API 计算 SHA256
+  // Web Crypto API SHA256
   const payloadHash = await crypto.subtle.digest('SHA-256', payload);
   const payloadHashHex = Array.from(new Uint8Array(payloadHash))
     .map(b => b.toString(16).padStart(2, '0'))
@@ -55,7 +55,7 @@ async function generateSignature(
     payloadHashHex
   ].join('\n');
   
-  // 创建字符串以供签名
+  //
   const credentialScope = `${dateStamp}/${config.region}/s3/aws4_request`;
   const stringToSign = [
     algorithm,
@@ -64,7 +64,7 @@ async function generateSignature(
     await sha256Hex(canonicalRequest)
   ].join('\n');
   
-  // 计算签名
+  //
   const signingKey = await getSignatureKey(config.secretAccessKey, dateStamp, config.region, 's3');
   const signature = await hmacSha256Hex(signingKey, stringToSign);
   
@@ -75,7 +75,7 @@ async function generateSignature(
   };
 }
 
-// Web Crypto API 辅助函数
+// Web Crypto API
 async function sha256Hex(data: string): Promise<string> {
   const encoder = new TextEncoder();
   const hash = await crypto.subtle.digest('SHA-256', encoder.encode(data));
@@ -99,7 +99,7 @@ async function hmacSha256Hex(key: CryptoKey, data: string): Promise<string> {
 async function getSignatureKey(key: string, dateStamp: string, regionName: string, serviceName: string): Promise<CryptoKey> {
   const encoder = new TextEncoder();
   
-  // 导入初始密钥
+  //
   const kSecret = await crypto.subtle.importKey(
     'raw',
     encoder.encode('AWS4' + key),
@@ -149,7 +149,7 @@ async function getSignatureKey(key: string, dateStamp: string, regionName: strin
   );
 }
 
-// 测试 S3 连接
+// S3
 export async function testS3Connection(config: S3Config): Promise<boolean> {
   try {
     const store = await Store.load('store.json');
@@ -170,13 +170,13 @@ export async function testS3Connection(config: S3Config): Promise<boolean> {
       'X-Amz-Content-Sha256': payloadHashHex
     };
     
-    // 使用 GET 请求代替 HEAD，以便在出错时能获取具体的 XML 错误信息
+    // GET HEAD， XML
     const method = 'GET';
     const { authorization, amzDate } = await generateSignature(method, url, headers, emptyPayload, config);
     
     const requestHeaders = new Headers();
     requestHeaders.append('Authorization', authorization);
-    // 注意：fetch 请求头的键不区分大小写，但为了与签名完全一致，建议保持一致
+    // ：fetch ，，
     requestHeaders.append('X-Amz-Date', amzDate);
     requestHeaders.append('X-Amz-Content-Sha256', payloadHashHex);
     
@@ -190,7 +190,7 @@ export async function testS3Connection(config: S3Config): Promise<boolean> {
         return true;
     }
 
-    // 如果 GET (ListObjects) 失败（可能是只有写权限），尝试 PUT 一个测试文件
+    // GET (ListObjects) （）， PUT
     if (response.status === 403) {
         console.warn('ListObjects (GET) failed with 403, trying PutObject to verify write permission...');
         
@@ -241,7 +241,7 @@ export async function testS3Connection(config: S3Config): Promise<boolean> {
   } catch (error) {
     console.error('S3 connection test failed:', error);
     
-    // 尝试提取更有用的错误信息
+    //
     const errorMessage = (error as Error).message || String(error);
     if (errorMessage.includes('error sending request')) {
        console.warn('Network Error Details: Please check your Endpoint, Region, and Proxy settings. URL might be malformed.');
@@ -251,7 +251,7 @@ export async function testS3Connection(config: S3Config): Promise<boolean> {
   }
 }
 
-// 上传图片到 S3
+// S3
 export async function uploadImageByS3(file: File): Promise<string | undefined> {
   try {
     const store = await Store.load('store.json');
@@ -259,8 +259,8 @@ export async function uploadImageByS3(file: File): Promise<string | undefined> {
     
     if (!config) {
       toast({
-        title: 'S3 配置错误',
-        description: '请先配置 S3 参数',
+        title: 'S3 configuration error',
+        description: 'Configure S3 settings first',
         variant: 'destructive',
       });
       return undefined;
@@ -269,18 +269,18 @@ export async function uploadImageByS3(file: File): Promise<string | undefined> {
     const proxyUrl = await store.get<string>('proxy')
     const proxy: Proxy | undefined = proxyUrl ? { all: proxyUrl } : undefined
 
-    // 生成文件名
+    //
     const id = uuid();
     const ext = file.name.split('.').pop() || 'jpg';
     const filename = `${id}.${ext}`.replace(/\s/g, '_');
     
-    // 处理 pathPrefix，移除末尾的斜杠以防止双斜杠问题
+    // pathPrefix，
     const prefix = config.pathPrefix ? config.pathPrefix.trim().replace(/\/+$/, '') : '';
     const key = prefix ? `${prefix}/${filename}` : filename;
     
-    // 准备上传
+    //
     const url = buildObjectStorageUrl(config, key);
-    // 读取文件内容
+    //
     const arrayBuffer = await file.arrayBuffer();
     const uint8Array = new Uint8Array(arrayBuffer);
     
@@ -306,7 +306,7 @@ export async function uploadImageByS3(file: File): Promise<string | undefined> {
     });
     
     if (response.status === 200 || response.status === 204) {
-      // 返回访问 URL
+      // URL
       if (config.customDomain) {
         const domain = config.customDomain.trim().replace(/\/+$/, '');
         return `${domain}/${key}`;
@@ -320,7 +320,7 @@ export async function uploadImageByS3(file: File): Promise<string | undefined> {
     
   } catch (error) {
     toast({
-      title: '上传失败',
+      title: 'Upload failed',
       description: (error as Error).message,
       variant: 'destructive',
     });

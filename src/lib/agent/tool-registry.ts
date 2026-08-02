@@ -86,7 +86,7 @@ function asObject(input: unknown): Record<string, unknown> {
 function resultFromLegacy(result: ToolResult): AgentToolResult {
   return {
     ok: result.success,
-    message: result.message || result.error || (result.success ? '工具执行成功' : '工具执行失败'),
+    message: result.message || result.error || (result.success ? 'Tool execution succeeded' : 'Tool execution failed'),
     data: result.data,
     error: result.error,
   }
@@ -100,7 +100,7 @@ async function executeAgentNoteSearch(
   if (!policy.automaticSearchEnabled) {
     return {
       ok: false,
-      message: '用户已在知识库设置中关闭 AI 自动参考笔记。本次无法搜索其他笔记。',
+      message: 'The user disabled AI auto-reference notes in knowledge base settings. Other notes cannot be searched this turn.',
       error: 'AUTOMATIC_NOTE_SEARCH_DISABLED',
     }
   }
@@ -161,13 +161,13 @@ async function executeAgentNoteSearch(
     }
   }
 
-  // 检索层只提供少量通用候选，不解释业务语义。
-  // 相关性、冲突、时效性与最终证据选择由 Agent 模型判断。
+  // ，。
+  // 、、 Agent 。
   const selected = candidates.slice(0, 3)
 
   return {
     ...normalized,
-    message: `已筛选出 ${selected.length} 个最相关的笔记来源`,
+    message: `Selected ${selected.length} most relevant note sources`,
     data: selected,
   }
 }
@@ -203,8 +203,8 @@ function rejectGeneratedSkillRuntimeFile(input: Record<string, unknown>): AgentT
   return {
     ok: false,
     message: [
-      `已阻止在笔记工作区创建或修改 Skill 运行时代码：${filePath}。`,
-      '已安装的 Skill 资源是只读的；请使用 skill_read_resource 读取，并通过 skill_execute_script 执行已注册脚本。',
+      `Blocked creating or modifying Skill runtime code in the notes workspace: ${filePath}.`,
+      'Installed Skill resources are read-only; use skill_read_resource to read and skill_execute_script to run registered scripts.',
     ].join('\n'),
     error: 'RESERVED_SKILL_RUNTIME_PATH',
   }
@@ -215,7 +215,7 @@ function rejectGeneratedSkillRuntimeFolder(input: Record<string, unknown>): Agen
   if (!RESERVED_SKILL_RUNTIME_PATH.test(folderPath)) return undefined
   return {
     ok: false,
-    message: `已阻止创建保留的 Skill 运行时目录：${folderPath}。Skill 资源只能通过 Skill 工具访问。`,
+    message: `Blocked creating a reserved Skill runtime directory: ${folderPath}. Skill resources are only accessible via Skill tools.`,
     error: 'RESERVED_SKILL_RUNTIME_PATH',
   }
 }
@@ -447,7 +447,7 @@ async function executeEditorTransaction(input: Record<string, unknown>): Promise
   if (!Array.isArray(transaction.operations) || transaction.operations.length === 0) {
     return {
       ok: false,
-      message: '缺少编辑操作。',
+      message: 'Missing edit operations.',
       error: 'operations must be a non-empty array',
     }
   }
@@ -466,14 +466,14 @@ async function executeEditorTransaction(input: Record<string, unknown>): Promise
   if (typeof transaction.version !== 'number') {
     return {
       ok: false,
-      message: '缺少编辑器版本 version，请使用执行开始时提供的版本。',
+      message: 'Missing editor version; use the version provided when execution started.',
       error: 'EDITOR_VERSION_REQUIRED',
     }
   }
   if (transaction.version !== state.version) {
     return {
       ok: false,
-      message: `编辑器内容版本已变化：请求版本 ${transaction.version}，当前版本 ${state.version}。请重新读取编辑器状态后再修改。`,
+      message: `Editor content version changed: requested ${transaction.version}, current ${state.version}. Re-read editor state before editing.`,
       error: 'EDITOR_VERSION_MISMATCH',
       data: { expectedVersion: transaction.version, currentVersion: state.version },
     }
@@ -492,7 +492,7 @@ async function executeEditorTransaction(input: Record<string, unknown>): Promise
   if (after === before) {
     return {
       ok: true,
-      message: '编辑器内容无需修改。',
+      message: 'Editor content needs no changes.',
       data: { unchanged: true },
     }
   }
@@ -538,13 +538,13 @@ async function executeEditorLegacyWrite(input: Record<string, unknown>, legacy: 
         ...(normalized.data && typeof normalized.data === 'object' ? normalized.data : {}),
         unchanged: true,
       },
-      message: `${normalized.message}\n编辑器内容已是目标状态，无需重复修改。`,
+      message: `${normalized.message}\nEditor content is already the target state; no further changes needed.`,
     }
   }
   if (before === undefined || after === undefined) {
     return {
       ok: false,
-      message: '编辑器操作已返回，但无法验证操作后的内容。为避免重复写入，已停止自动重试。',
+      message: 'Editor operation returned but post-edit content could not be verified. Auto-retry stopped to avoid duplicate writes.',
       error: 'EDITOR_CHANGE_VERIFICATION_FAILED',
     }
   }
@@ -576,7 +576,7 @@ async function executeReadFileFromEditor(input: Record<string, unknown>): Promis
   if (!requestedFilePath) {
     return {
       ok: false,
-      message: 'filePath 必须是检索结果返回的非空工作区相对路径。',
+      message: 'filePath must be a non-empty workspace-relative path from search results.',
       error: 'INVALID_NOTE_FILE_PATH',
     }
   }
@@ -587,7 +587,7 @@ async function executeReadFileFromEditor(input: Record<string, unknown>): Promis
   } catch (error) {
     return {
       ok: false,
-      message: `无法读取该路径：${String(error)}`,
+      message: `Unable to read path: ${String(error)}`,
       error: 'INVALID_NOTE_FILE_PATH',
     }
   }
@@ -611,14 +611,14 @@ async function executeReadFileFromEditor(input: Record<string, unknown>): Promis
   if (typeof editorState.markdown !== 'string') {
     return {
       ok: false,
-      message: '当前编辑器没有返回可读取的 Markdown 内容。',
+      message: 'The current editor returned no readable Markdown content.',
       error: 'EDITOR_CONTENT_UNAVAILABLE',
     }
   }
 
   return {
     ok: true,
-    message: `已从实时编辑器读取当前文件: ${filePath}`,
+    message: `Read the current file from the live editor: ${filePath}`,
     data: {
       filePath,
       content: editorState.markdown,
@@ -634,7 +634,7 @@ async function executeReadFilesBatch(input: Record<string, unknown>): Promise<Ag
   if (!Array.isArray(input.filePaths) || input.filePaths.length === 0) {
     return {
       ok: false,
-      message: 'filePaths 必须包含至少一个由笔记检索返回的工作区相对路径。',
+      message: 'filePaths must include at least one workspace-relative path returned by note search.',
       error: 'EMPTY_NOTE_FILE_PATHS',
     }
   }
@@ -645,7 +645,7 @@ async function executeReadFilesBatch(input: Record<string, unknown>): Promise<Ag
   if (requestedPaths.length === 0) {
     return {
       ok: false,
-      message: 'filePaths 中没有可读取的路径。不要调用空批量读取。',
+      message: 'filePaths has no readable paths. Do not call an empty batch read.',
       error: 'EMPTY_NOTE_FILE_PATHS',
     }
   }
@@ -660,7 +660,7 @@ async function executeReadFilesBatch(input: Record<string, unknown>): Promise<Ag
   } catch (error) {
     return {
       ok: false,
-      message: `批量读取路径无效：${String(error)}`,
+      message: `Invalid batch-read path: ${String(error)}`,
       error: 'INVALID_NOTE_FILE_PATHS',
     }
   }
@@ -686,7 +686,7 @@ function parseIsoCalendarDate(value: string): number | undefined {
 
 const dateDifferenceTool: AgentTool = {
   name: 'calculate_date_difference',
-  title: '计算日期间隔',
+  title: 'Calculate date interval',
   description: 'Calculate the exact calendar-day difference between two ISO dates. Always use this tool after retrieving dates when the answer asks how many days apart they are; do not estimate or count mentally.',
   category: 'system',
   risk: 'read',
@@ -707,14 +707,14 @@ const dateDifferenceTool: AgentTool = {
     if (start === undefined || end === undefined) {
       return {
         ok: false,
-        message: '日期必须是真实有效的 YYYY-MM-DD 格式。',
+        message: 'Date must be a real valid YYYY-MM-DD value.',
         error: 'INVALID_ISO_DATE',
       }
     }
     const signedDays = Math.round((end - start) / 86_400_000)
     return {
       ok: true,
-      message: `${startDate} 到 ${endDate} 相隔 ${Math.abs(signedDays)} 个自然日。`,
+      message: `${startDate} to ${endDate} spans ${Math.abs(signedDays)} calendar days.`,
       data: {
         startDate,
         endDate,
@@ -727,7 +727,7 @@ const dateDifferenceTool: AgentTool = {
 
 const noteCiteSourcesTool: AgentTool = {
   name: 'note_cite_sources',
-  title: '确认回答来源',
+  title: 'Confirm answer sources',
   description: 'Mark the retrieved note candidates actually used as evidence in the final answer. Call this after evaluating candidates and before the final answer. Do not include merely retrieved, conflicting, irrelevant, or unused notes.',
   category: 'note',
   risk: 'read',
@@ -753,7 +753,7 @@ const noteCiteSourcesTool: AgentTool = {
     if (requestedPaths.length === 0) {
       return {
         ok: false,
-        message: 'filePaths 必须包含至少一个实际采用的检索候选路径。',
+        message: 'filePaths must include at least one retrieval candidate path actually used.',
         error: 'EMPTY_CITED_NOTE_PATHS',
       }
     }
@@ -764,13 +764,13 @@ const noteCiteSourcesTool: AgentTool = {
       ))
       return {
         ok: true,
-        message: `已确认 ${filePaths.length} 个回答来源。`,
+        message: `Confirmed ${filePaths.length} answer sources.`,
         data: { filePaths },
       }
     } catch (error) {
       return {
         ok: false,
-        message: `回答来源路径无效：${String(error)}`,
+        message: `Invalid answer source path: ${String(error)}`,
         error: 'INVALID_CITED_NOTE_PATHS',
       }
     }
@@ -808,7 +808,7 @@ async function executeCreateFileWithChange(input: Record<string, unknown>): Prom
       buildFileChange({
         target,
         after: asString(input.content),
-        summary: `创建文件 ${target}`,
+        summary: `Create file ${target}`,
       }),
     ],
   }
@@ -834,7 +834,7 @@ async function executeUpdateFileWithChange(input: Record<string, unknown>): Prom
     ) {
       return {
         ok: false,
-        message: '当前编辑器状态不完整，无法安全更新文件。',
+        message: 'Current editor state is incomplete; cannot safely update the file.',
         error: 'EDITOR_STATE_INCOMPLETE',
       }
     }
@@ -844,7 +844,7 @@ async function executeUpdateFileWithChange(input: Record<string, unknown>): Prom
     if (before === after) {
       return {
         ok: true,
-        message: `当前编辑器内容已是目标状态，无需重复更新: ${filePath}`,
+        message: `Current editor content is already the target state; no update needed: ${filePath}`,
         data: { filePath, source: 'editor', unchanged: true },
       }
     }
@@ -861,7 +861,7 @@ async function executeUpdateFileWithChange(input: Record<string, unknown>): Prom
 
     return {
       ...replaceResult,
-      message: `已通过实时编辑器更新当前文件: ${filePath}`,
+      message: `Updated the current file via the live editor: ${filePath}`,
       data: {
         ...(replaceResult.data && typeof replaceResult.data === 'object' ? replaceResult.data : {}),
         filePath,
@@ -891,7 +891,7 @@ async function executeUpdateFileWithChange(input: Record<string, unknown>): Prom
         target: filePath,
         before,
         after: asString(input.content),
-        summary: `更新文件 ${filePath}`,
+        summary: `Update file ${filePath}`,
       }),
     ],
   }
@@ -922,7 +922,7 @@ async function executeDeleteFileWithChange(input: Record<string, unknown>): Prom
       buildFileChange({
         target: filePath,
         before,
-        summary: `删除文件 ${filePath}`,
+        summary: `Delete file ${filePath}`,
         reversible: Boolean(before),
       }),
     ],
@@ -973,7 +973,7 @@ async function executeRenameFileWithChange(input: Record<string, unknown>): Prom
     changes: [
       buildFileChange({
         target: newPath,
-        summary: `重命名文件 ${oldPath} -> ${newPath}`,
+        summary: `Rename file ${oldPath} -> ${newPath}`,
       }),
     ],
   }
@@ -995,7 +995,7 @@ async function executeMoveFileWithChange(input: Record<string, unknown>): Promis
     changes: [
       buildFileChange({
         target: newPath,
-        summary: `移动文件 ${oldPath} -> ${newPath}`,
+        summary: `Move file ${oldPath} -> ${newPath}`,
       }),
     ],
   }
@@ -1016,7 +1016,7 @@ async function executeCopyFileWithChange(input: Record<string, unknown>): Promis
       buildFileChange({
         target: newPath,
         after: before,
-        summary: `复制文件 ${sourcePath} -> ${newPath}`,
+        summary: `Copy file ${sourcePath} -> ${newPath}`,
       }),
     ],
   }
@@ -1038,7 +1038,7 @@ async function executeFolderCreateWithChange(input: Record<string, unknown>): Pr
       buildStructuralChange({
         type: 'folder',
         target,
-        summary: `创建文件夹 ${target}`,
+        summary: `Create folder ${target}`,
       }),
     ],
   }
@@ -1061,7 +1061,7 @@ async function executeFolderDeleteWithChange(input: Record<string, unknown>): Pr
       buildStructuralChange({
         type: 'folder',
         target,
-        summary: `删除文件夹 ${target}`,
+        summary: `Delete folder ${target}`,
         reversible: false,
       }),
     ],
@@ -1101,7 +1101,7 @@ async function executeStructuralToolWithChange(
 
 const editorApplyTransactionTool: AgentTool = {
   name: 'editor_apply_transaction',
-  title: '应用编辑器事务',
+  title: 'Apply editor transaction',
   description: 'Apply line insertion or multiple non-overlapping line edits to the current Markdown editor in one approval. Operations accept only replace_lines, insert_before_line, or insert_after_line. Every insertion operation must include an integer line; use insert_after_line with line=totalLines to append at the end. Never use replace_range inside operations. Use editor_replace_lines for one contiguous replacement and editor_replace_range only for an exact quoted selection.',
   category: 'editor',
   risk: 'editor-write',
@@ -1139,7 +1139,7 @@ const editorApplyTransactionTool: AgentTool = {
 function buildSkillListTool(): AgentTool {
   return {
     name: 'skill_list',
-    title: '列出已安装 Skills',
+    title: 'List installed Skills',
     description: 'List every installed Skill, including disabled entries, with the exact skill_id and scope required by skill_uninstall. Call this before uninstalling when the target is unclear or the user asks to remove multiple or all Skills. Entries with removable=false must never be uninstalled.',
     category: 'skill',
     risk: 'read',
@@ -1181,7 +1181,7 @@ function buildSkillListTool(): AgentTool {
 function buildSkillLoadTool(): AgentTool {
   return {
     name: 'skill_load',
-    title: '加载 Skill',
+    title: 'Load Skill',
     description: 'Load one installed Skill atomically. Returns its complete instructions, read-only resource index, and exact registered script IDs. Load a matching Skill once, then act using the returned resources; do not call skill_list or reload it.',
     category: 'skill',
     risk: 'read',
@@ -1342,7 +1342,7 @@ const SKILL_PACKAGE_SCHEMA: JsonSchema = {
 function buildSkillValidatePackageTool(): AgentTool {
   return {
     name: 'skill_validate_package',
-    title: '校验 Skill 包',
+    title: 'Validate Skill package',
     description: 'Validate a complete proposed Skill package without changing files. Always call this before skill_install_package and fix every returned error.',
     category: 'skill',
     risk: 'read',
@@ -1372,7 +1372,7 @@ function buildSkillValidatePackageTool(): AgentTool {
 function buildSkillInstallPackageTool(): AgentTool {
   return {
     name: 'skill_install_package',
-    title: '安装 Skill 包',
+    title: 'Install Skill package',
     description: 'Atomically install a package that already passed skill_validate_package. This writes to NoteGen Skills, backs up an explicitly replaced version, reloads Skills, and requires write approval according to the current permission mode.',
     category: 'skill',
     risk: 'skill-install',
@@ -1388,7 +1388,7 @@ function buildSkillInstallPackageTool(): AgentTool {
           changes: [buildStructuralChange({
             type: 'folder',
             target: `${result.scope}:skills/${result.name}`,
-            summary: `${result.replaced ? '更新' : '安装'} Skill ${result.name}`,
+            summary: `${result.replaced ? 'Update' : 'Install'} Skill ${result.name}`,
           })],
         }
       } catch (error) {
@@ -1405,7 +1405,7 @@ function buildSkillInstallPackageTool(): AgentTool {
 function buildRemoteSkillSearchTool(): AgentTool {
   return {
     name: 'skill_search_remote',
-    title: '搜索第三方 Skill',
+    title: 'Search third-party Skills',
     description: 'Search public GitHub repositories for Agent Skills whose SKILL.md name or description matches the user request. GitHub must be connected. Use this only when the user asks to find or install a third-party Skill and has not already provided a source URL.',
     category: 'skill',
     risk: 'read',
@@ -1452,7 +1452,7 @@ function buildRemoteSkillSearchTool(): AgentTool {
 function buildRemoteSkillInspectTool(): AgentTool {
   return {
     name: 'skill_inspect_source',
-    title: '检查第三方 Skill',
+    title: 'Inspect third-party Skill',
     description: 'Download a GitHub, GitLab, Gitee, Codeberg/Gitea, or direct HTTPS ZIP source into an isolated cache, pin repository sources to a commit, validate the archive, and return an installation preview. Always call this before skill_install_source. The source may come from skill_search_remote or an explicit user-provided URL.',
     category: 'skill',
     risk: 'read',
@@ -1489,7 +1489,7 @@ function buildRemoteSkillInspectTool(): AgentTool {
 function buildRemoteSkillInstallTool(): AgentTool {
   return {
     name: 'skill_install_source',
-    title: '安装第三方 Skill',
+    title: 'Install third-party Skill',
     description: 'Open the app confirmation dialog, then install the exact immutable package represented by a recent skill_inspect_source preview. When the user has asked to install a Skill, call this tool immediately after inspection; never ask them to type or reply with confirmation. The runtime trusts only preview_id; the other fields exist solely to show the user what they are approving. This action always requires explicit approval in the dialog.',
     category: 'skill',
     risk: 'skill-install',
@@ -1567,7 +1567,7 @@ function buildRemoteSkillInstallTool(): AgentTool {
           changes: [buildStructuralChange({
             type: 'folder',
             target: `${result.scope}:skills/${result.name}`,
-            summary: `${result.replaced ? '更新' : '安装'}第三方 Skill ${result.name}`,
+            summary: `${result.replaced ? 'Update' : 'Install'} Skill ${result.name}`,
           })],
         }
       } catch (error) {
@@ -1584,7 +1584,7 @@ function buildRemoteSkillInstallTool(): AgentTool {
 function buildSkillUninstallTool(): AgentTool {
   return {
     name: 'skill_uninstall',
-    title: '移除 Skill',
+    title: 'Remove Skill',
     description: 'Remove one exact installed Skill after the app shows its inline confirmation panel. Use only when the user explicitly asks to remove or uninstall a Skill. Pass the exact skill_id and scope from the prompt catalog or skill_list; do not infer IDs from display names. Never ask the user to provide an ID or type a confirmation. Entries with removable=false cannot be removed.',
     category: 'skill',
     risk: 'delete',
@@ -1636,7 +1636,7 @@ function buildSkillUninstallTool(): AgentTool {
           changes: [buildStructuralChange({
             type: 'folder',
             target: `${scope}:skills/${skillId}`,
-            summary: `移除 Skill ${skill.metadata.name}`,
+            summary: `Remove Skill ${skill.metadata.name}`,
             reversible: false,
           })],
         }
@@ -1654,7 +1654,7 @@ function buildSkillUninstallTool(): AgentTool {
 function buildSkillReadResourceTool(): AgentTool {
   return {
     name: 'skill_read_resource',
-    title: '读取 Skill 资源',
+    title: 'Read Skill resource',
     description: 'Read one exact installed Skill resource listed by skill_load. Use this only when the complete instructions say a particular reference or script source is needed. Resources are read-only and must not be copied into the note workspace.',
     category: 'skill',
     risk: 'read',
@@ -1691,7 +1691,7 @@ function buildSkillReadResourceTool(): AgentTool {
 function buildMcpCallTool(): AgentTool {
   return {
     name: 'mcp_call_tool',
-    title: '调用 MCP 工具',
+    title: 'Call MCP tool',
     description: 'Call a selected MCP server tool. Use serverId and toolName exactly as shown in the MCP catalog.',
     category: 'mcp',
     risk: 'external',
@@ -1717,7 +1717,7 @@ function buildMcpCallTool(): AgentTool {
       if (!serverId || !toolName) {
         return {
           ok: false,
-          message: '缺少 MCP serverId 或 toolName。',
+          message: 'Missing MCP serverId or toolName.',
           error: 'serverId and toolName are required',
         }
       }
@@ -1741,7 +1741,7 @@ function buildMcpCallTool(): AgentTool {
 function buildMcpListResourcesTool(): AgentTool {
   return {
     name: 'mcp_list_resources',
-    title: '列出 MCP 资源',
+    title: 'List MCP resources',
     description: 'List resources exposed by selected and connected MCP servers. This reads resource metadata only.',
     category: 'mcp',
     risk: 'read',
@@ -1817,7 +1817,7 @@ function resolveSelectedMcpServer(
 function buildMcpListResourceTemplatesTool(): AgentTool {
   return {
     name: 'mcp_list_resource_templates',
-    title: '列出 MCP 资源模板',
+    title: 'List MCP resource templates',
     description: 'List parameterized resource templates from a selected MCP server. Omit server when only one server is selected.',
     category: 'mcp',
     risk: 'read',
@@ -1852,7 +1852,7 @@ function buildMcpListResourceTemplatesTool(): AgentTool {
 function buildMcpReadResourceTool(): AgentTool {
   return {
     name: 'mcp_read_resource',
-    title: '读取 MCP 资源',
+    title: 'Read MCP resource',
     description: 'Read one MCP resource by URI. Omit server when one selected server exposes the resource.',
     category: 'mcp',
     risk: 'read',
@@ -1891,7 +1891,7 @@ function buildMcpReadResourceTool(): AgentTool {
 function buildMcpListToolsTool(): AgentTool {
   return {
     name: 'mcp_list_tools',
-    title: '列出 MCP 工具',
+    title: 'List MCP tools',
     description: 'List configured MCP servers, selected servers, connection state, tools, and resources. This is read-only.',
     category: 'mcp',
     risk: 'read',
@@ -1939,8 +1939,8 @@ function buildMcpListToolsTool(): AgentTool {
       return {
         ok: true,
         message: servers.length
-          ? `找到 ${servers.length} 个 MCP 服务，其中 ${servers.filter((server) => server.selected).length} 个已选中。`
-          : '当前没有配置 MCP 服务。',
+          ? `Found ${servers.length} MCP servers, ${servers.filter((server) => server.selected).length} selected.`
+          : 'No MCP servers configured.',
         data: {
           servers,
           selectedServerIds,
@@ -1954,7 +1954,7 @@ function buildTools(): AgentTool[] {
   return [
     adaptLegacyTool({
       name: 'editor_get_state',
-      title: '读取编辑器状态',
+      title: 'Read editor state',
       description: 'Read the current Markdown editor content including unsaved changes, numberedLines, totalLines, and version. Use editor_replace_range, editor_replace_lines, or editor_apply_transaction for edits.',
       category: 'editor',
       risk: 'read',
@@ -1963,7 +1963,7 @@ function buildTools(): AgentTool[] {
     }),
     adaptLegacyTool({
       name: 'editor_get_selection',
-      title: '读取编辑器选区',
+      title: 'Read editor selection',
       description: 'Refresh the current editor selection with text, from/to offsets, and line numbers. The run-start selection is already provided in context when available; call this only after it becomes stale or is missing.',
       category: 'editor',
       risk: 'read',
@@ -1972,7 +1972,7 @@ function buildTools(): AgentTool[] {
     }),
     adaptLegacyTool({
       name: 'editor_insert_at_cursor',
-      title: '在光标处插入',
+      title: 'Insert at cursor',
       description: 'Insert Markdown at the current editor cursor. Avoid this for quoted chat selections because chat focus can make cursor position unreliable.',
       category: 'editor',
       risk: 'editor-write',
@@ -1991,7 +1991,7 @@ function buildTools(): AgentTool[] {
     }),
     adaptLegacyTool({
       name: 'editor_replace_range',
-      title: '替换编辑器选区',
+      title: 'Replace editor selection',
       description: 'Replace an exact editor character range using from/to offsets and content. Prefer this for explicit quoted selections.',
       category: 'editor',
       risk: 'editor-write',
@@ -2012,7 +2012,7 @@ function buildTools(): AgentTool[] {
     }),
     adaptLegacyTool({
       name: 'editor_replace_lines',
-      title: '替换编辑器行',
+      title: 'Replace editor lines',
       description: 'Replace one contiguous range of exact 1-based editor lines with complete Markdown in replaceContent. Preserve structural markers such as "# ", "- ", and "> ". Prefer this for a single current-document line, section, or block edit.',
       category: 'editor',
       risk: 'editor-write',
@@ -2034,7 +2034,7 @@ function buildTools(): AgentTool[] {
     editorApplyTransactionTool,
     adaptLegacyTool({
       name: 'note_list_files',
-      title: '列出笔记文件',
+      title: 'List note files',
       description: 'List Markdown files in the NoteGen workspace. Never use this tool to inspect a user-selected folder attachment; use attachment_list for attachments.',
       category: 'note',
       risk: 'read',
@@ -2043,14 +2043,14 @@ function buildTools(): AgentTool[] {
     }),
     adaptLegacyTool({
       name: 'note_list_files_by_date',
-      title: '按时间列出笔记文件',
+      title: 'List note files by date',
       category: 'note',
       risk: 'read',
       legacy: listMarkdownFilesByDateTool,
     }),
     adaptLegacyTool({
       name: 'note_read_file',
-      title: '读取笔记文件',
+      title: 'Read note file',
       description: 'Read a text-based NoteGen workspace file by canonical workspace-relative path. Pass a path returned by note_search_files unchanged. Search snippets often already contain enough evidence, so read only when more context is necessary. Never use this tool for a user-selected attachment; use attachment_read with its attachment ID.',
       category: 'note',
       risk: 'read',
@@ -2059,7 +2059,7 @@ function buildTools(): AgentTool[] {
     }),
     adaptLegacyTool({
       name: 'note_open_file',
-      title: '打开笔记文件',
+      title: 'Open note file',
       description: 'Open an existing NoteGen workspace note in the editor only when the user explicitly asks to open or switch to that note. Never use this tool to inspect, read, summarize, or analyze a user-selected attachment; use attachment_read for attachments.',
       category: 'note',
       risk: 'read',
@@ -2067,7 +2067,7 @@ function buildTools(): AgentTool[] {
     }),
     adaptLegacyTool({
       name: 'note_read_files_batch',
-      title: '批量读取笔记文件',
+      title: 'Batch-read note files',
       description: 'Read one or more notes using canonical workspace-relative paths returned by note_search_files. Never call this tool with an empty array, and do not reread files when search snippets already contain enough evidence.',
       category: 'note',
       risk: 'read',
@@ -2089,7 +2089,7 @@ function buildTools(): AgentTool[] {
     }),
     adaptLegacyTool({
       name: 'note_search_files',
-      title: '查找相关笔记',
+      title: 'Find related notes',
       description: [
         'Search the user’s NoteGen notes when the answer depends on their personal records, prior decisions, past writing, or information spread across notes.',
         'Decide automatically: search when the user asks about their notes, history, plans, opinions, or explicitly asks to find/compare/summarize recorded material. Do not search for general-knowledge questions or when the current open note already contains enough evidence. Respect explicit requests not to search other notes.',
@@ -2106,7 +2106,7 @@ function buildTools(): AgentTool[] {
     dateDifferenceTool,
     adaptLegacyTool({
       name: 'note_create_file',
-      title: '创建文件',
+      title: 'Create file',
       category: 'note',
       risk: 'file-create',
       legacy: createFileTool,
@@ -2115,7 +2115,7 @@ function buildTools(): AgentTool[] {
     }),
     adaptLegacyTool({
       name: 'note_update_file',
-      title: '更新笔记文件',
+      title: 'Update note file',
       category: 'note',
       risk: 'file-update',
       legacy: updateMarkdownFileTool,
@@ -2124,7 +2124,7 @@ function buildTools(): AgentTool[] {
     }),
     adaptLegacyTool({
       name: 'note_delete_file',
-      title: '删除笔记文件',
+      title: 'Delete note file',
       category: 'note',
       risk: 'delete',
       legacy: deleteMarkdownFileTool,
@@ -2132,7 +2132,7 @@ function buildTools(): AgentTool[] {
     }),
     adaptLegacyTool({
       name: 'note_rename_file',
-      title: '重命名笔记文件',
+      title: 'Rename note file',
       category: 'note',
       risk: 'file-update',
       legacy: renameFileTool,
@@ -2140,7 +2140,7 @@ function buildTools(): AgentTool[] {
     }),
     adaptLegacyTool({
       name: 'note_move_file',
-      title: '移动笔记文件',
+      title: 'Move note file',
       category: 'note',
       risk: 'file-update',
       legacy: moveFileTool,
@@ -2148,21 +2148,21 @@ function buildTools(): AgentTool[] {
     }),
     adaptLegacyTool({
       name: 'note_copy_file',
-      title: '复制笔记文件',
+      title: 'Copy note file',
       category: 'note',
       risk: 'file-create',
       legacy: copyFileTool,
       execute: executeCopyFileWithChange,
     }),
-    adaptLegacyTool({ name: 'folder_list', title: '列出文件夹', category: 'folder', risk: 'read', legacy: listFoldersTool }),
-    adaptLegacyTool({ name: 'folder_check_exists', title: '检查文件夹', category: 'folder', risk: 'read', legacy: checkFolderExistsTool }),
-    adaptLegacyTool({ name: 'folder_create', title: '创建文件夹', category: 'folder', risk: 'file-create', legacy: createFolderTool, beforeExecute: rejectGeneratedSkillRuntimeFolder, execute: executeFolderCreateWithChange }),
-    adaptLegacyTool({ name: 'folder_delete', title: '删除文件夹', category: 'folder', risk: 'delete', legacy: deleteFolderTool, execute: executeFolderDeleteWithChange }),
-    adaptLegacyTool({ name: 'tag_list', title: '列出标签', category: 'tag', risk: 'read', legacy: listTagsTool }),
-    adaptLegacyTool({ name: 'tag_search', title: '搜索标签', category: 'tag', risk: 'read', legacy: searchTagsTool }),
+    adaptLegacyTool({ name: 'folder_list', title: 'List folder', category: 'folder', risk: 'read', legacy: listFoldersTool }),
+    adaptLegacyTool({ name: 'folder_check_exists', title: 'Inspect folder', category: 'folder', risk: 'read', legacy: checkFolderExistsTool }),
+    adaptLegacyTool({ name: 'folder_create', title: 'Create folder', category: 'folder', risk: 'file-create', legacy: createFolderTool, beforeExecute: rejectGeneratedSkillRuntimeFolder, execute: executeFolderCreateWithChange }),
+    adaptLegacyTool({ name: 'folder_delete', title: 'Delete folder', category: 'folder', risk: 'delete', legacy: deleteFolderTool, execute: executeFolderDeleteWithChange }),
+    adaptLegacyTool({ name: 'tag_list', title: 'List tags', category: 'tag', risk: 'read', legacy: listTagsTool }),
+    adaptLegacyTool({ name: 'tag_search', title: 'Search tags', category: 'tag', risk: 'read', legacy: searchTagsTool }),
     adaptLegacyTool({
       name: 'tag_create',
-      title: '创建标签',
+      title: 'Create tag',
       category: 'tag',
       risk: 'medium',
       legacy: createTagTool,
@@ -2170,13 +2170,13 @@ function buildTools(): AgentTool[] {
         input,
         createTagTool,
         'tag',
-        (params) => `创建标签 ${asString(params.name)}`,
+        (params) => `Create tag ${asString(params.name)}`,
         (params, result) => resultDataPath(result, 'id') || asString(params.name)
       ),
     }),
     adaptLegacyTool({
       name: 'tag_update',
-      title: '更新标签',
+      title: 'Update tag',
       category: 'tag',
       risk: 'medium',
       legacy: updateTagTool,
@@ -2184,13 +2184,13 @@ function buildTools(): AgentTool[] {
         input,
         updateTagTool,
         'tag',
-        (params) => `更新标签 ${String(params.id ?? '')}`,
+        (params) => `Update tag ${String(params.id ?? '')}`,
         (params) => String(params.id ?? '')
       ),
     }),
     adaptLegacyTool({
       name: 'tag_delete',
-      title: '删除标签',
+      title: 'Delete tag',
       category: 'tag',
       risk: 'delete',
       legacy: deleteTagTool,
@@ -2198,16 +2198,16 @@ function buildTools(): AgentTool[] {
         input,
         deleteTagTool,
         'tag',
-        (params) => `删除标签 ${String(params.id ?? '')}`,
+        (params) => `Delete tag ${String(params.id ?? '')}`,
         (params) => String(params.id ?? ''),
         false
       ),
     }),
-    adaptLegacyTool({ name: 'mark_list', title: '读取记录', category: 'mark', risk: 'read', legacy: readMarksTool }),
-    adaptLegacyTool({ name: 'mark_search', title: '搜索记录', category: 'mark', risk: 'read', legacy: searchMarksTool }),
+    adaptLegacyTool({ name: 'mark_list', title: 'Read records', category: 'mark', risk: 'read', legacy: readMarksTool }),
+    adaptLegacyTool({ name: 'mark_search', title: 'Search records', category: 'mark', risk: 'read', legacy: searchMarksTool }),
     adaptLegacyTool({
       name: 'mark_create',
-      title: '创建记录',
+      title: 'Create record',
       category: 'mark',
       risk: 'medium',
       legacy: createMarkTool,
@@ -2215,13 +2215,13 @@ function buildTools(): AgentTool[] {
         input,
         createMarkTool,
         'mark',
-        (params) => `创建记录 ${asString(params.desc) || asString(params.content).slice(0, 24)}`,
+        (params) => `Create record ${asString(params.desc) || asString(params.content).slice(0, 24)}`,
         (params, result) => resultDataPath(result, 'id') || asString(params.desc) || asString(params.content).slice(0, 24)
       ),
     }),
     adaptLegacyTool({
       name: 'mark_update',
-      title: '更新记录',
+      title: 'Update record',
       category: 'mark',
       risk: 'medium',
       legacy: updateMarkTool,
@@ -2229,13 +2229,13 @@ function buildTools(): AgentTool[] {
         input,
         updateMarkTool,
         'mark',
-        (params) => `更新记录 ${String(params.id ?? '')}`,
+        (params) => `Update record ${String(params.id ?? '')}`,
         (params) => String(params.id ?? '')
       ),
     }),
     adaptLegacyTool({
       name: 'mark_delete',
-      title: '删除记录',
+      title: 'Delete record',
       category: 'mark',
       risk: 'delete',
       legacy: deleteMarkTool,
@@ -2243,15 +2243,15 @@ function buildTools(): AgentTool[] {
         input,
         deleteMarkTool,
         'mark',
-        (params) => `删除记录 ${String(params.id ?? '')}`,
+        (params) => `Delete record ${String(params.id ?? '')}`,
         (params) => String(params.id ?? ''),
         false
       ),
     }),
-    adaptLegacyTool({ name: 'memory_list', title: '列出记忆', category: 'memory', risk: 'read', legacy: listMemoriesTool }),
+    adaptLegacyTool({ name: 'memory_list', title: 'List memories', category: 'memory', risk: 'read', legacy: listMemoriesTool }),
     adaptLegacyTool({
       name: 'memory_create',
-      title: '创建记忆',
+      title: 'Create memory',
       category: 'memory',
       risk: 'memory-write',
       legacy: saveMemoryTool,
@@ -2259,13 +2259,13 @@ function buildTools(): AgentTool[] {
         input,
         saveMemoryTool,
         'memory',
-        (params) => `创建记忆 ${asString(params.content).slice(0, 24)}`,
+        (params) => `Create memory ${asString(params.content).slice(0, 24)}`,
         (params) => asString(params.content).slice(0, 48)
       ),
     }),
     adaptLegacyTool({
       name: 'memory_delete',
-      title: '删除记忆',
+      title: 'Delete memory',
       category: 'memory',
       risk: 'delete',
       legacy: deleteMemoryTool,
@@ -2273,14 +2273,14 @@ function buildTools(): AgentTool[] {
         input,
         deleteMemoryTool,
         'memory',
-        (params) => `删除记忆 ${String(params.id ?? '')}`,
+        (params) => `Delete memory ${String(params.id ?? '')}`,
         (params) => String(params.id ?? ''),
         false
       ),
     }),
     adaptLegacyTool({
       name: 'memory_clear_all',
-      title: '清空全部记忆',
+      title: 'Clear all memories',
       category: 'memory',
       risk: 'delete',
       legacy: clearMemoriesTool,
@@ -2288,7 +2288,7 @@ function buildTools(): AgentTool[] {
         input,
         clearMemoriesTool,
         'memory',
-        () => '清空全部记忆',
+        () => 'Clear all memories',
         () => 'all',
         false
       ),
@@ -2304,7 +2304,7 @@ function buildTools(): AgentTool[] {
     buildSkillUninstallTool(),
     adaptLegacyTool({
       name: 'skill_execute_script',
-      title: '执行 Skill 脚本',
+      title: 'Execute Skill script',
       description: 'Execute one registered, integrity-checked script from a loaded Skill. Arbitrary commands and generated runtime scripts are not supported.',
       category: 'skill',
       risk: 'script',
@@ -2315,7 +2315,7 @@ function buildTools(): AgentTool[] {
     }),
     adaptLegacyTool({
       name: 'skill_install_python_dependencies',
-      title: '安装 Skill Python 依赖',
+      title: 'Install Skill Python dependencies',
       description: 'After explicit user approval, install exact PyPI wheel packages into this Skill\'s isolated Python environment. URLs, paths, flags, and automatic installation are not supported.',
       category: 'skill',
       risk: 'script',

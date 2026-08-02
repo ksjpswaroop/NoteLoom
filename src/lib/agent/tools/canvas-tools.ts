@@ -43,13 +43,13 @@ function validateCanvasOperations(document: CanvasDocument, rawOperations: unkno
       const nodeType = asNonEmptyString(operation.nodeType)
       const label = asNonEmptyString(operation.label)
       if (!id || !nodeType || !label || !isFiniteNumber(operation.x) || !isFiniteNumber(operation.y)) {
-        return `${item} 添加节点时必须提供非空 id、nodeType、label，以及有限数值 x、y。`
+        return `${item} add_node requires non-empty id, nodeType, label, and finite x, y.`
       }
       if (!CANVAS_NODE_TYPES.includes(nodeType as typeof CANVAS_NODE_TYPES[number])) {
-        return `${item}.nodeType 必须是 ${CANVAS_NODE_TYPES.join('、')} 之一。`
+        return `${item}.nodeType must be one of ${CANVAS_NODE_TYPES.join('、')}.`
       }
       if (nodeIds.has(id)) {
-        return `${item}.id="${id}" 已存在；新节点必须使用唯一且稳定的 ID。`
+        return `${item}.id="${id}" already exists; new nodes must use unique, stable IDs.`
       }
       nodeIds.add(id)
       continue
@@ -58,14 +58,14 @@ function validateCanvasOperations(document: CanvasDocument, rawOperations: unkno
     if (type === 'update_node') {
       const id = asNonEmptyString(operation.id)
       if (!id || !nodeIds.has(id)) {
-        return `${item} 必须提供当前画布中真实存在的节点 id。`
+        return `${item} must provide a node id that actually exists on the current canvas.`
       }
       const hasUpdate = typeof operation.label === 'string'
         || typeof operation.description === 'string'
         || isFiniteNumber(operation.x)
         || isFiniteNumber(operation.y)
       if (!hasUpdate) {
-        return `${item} 至少需要提供 label、description、x、y 中的一项修改。`
+        return `${item} must provide at least one of label, description, x, y to update.`
       }
       continue
     }
@@ -73,7 +73,7 @@ function validateCanvasOperations(document: CanvasDocument, rawOperations: unkno
     if (type === 'delete_node') {
       const id = asNonEmptyString(operation.id)
       if (!id || !nodeIds.has(id)) {
-        return `${item} 必须提供当前画布中真实存在的节点 id。`
+        return `${item} must provide a node id that actually exists on the current canvas.`
       }
       nodeIds.delete(id)
       continue
@@ -84,16 +84,16 @@ function validateCanvasOperations(document: CanvasDocument, rawOperations: unkno
       const source = asNonEmptyString(operation.source)
       const target = asNonEmptyString(operation.target)
       if (!id || !source || !target) {
-        return `${item} 添加连线时必须提供非空 id、source 和 target。`
+        return `${item} add_edge requires non-empty id, source, and target.`
       }
       if (!nodeIds.has(source) || !nodeIds.has(target)) {
-        return `${item} 的 source 和 target 必须引用当前画布中存在或本批次先前已添加的节点 ID。`
+        return `${item} source and target must reference node IDs that exist on the current canvas or were added earlier in this batch.`
       }
       if (source === target) {
-        return `${item} 不能把节点连接到自身。`
+        return `${item} cannot connect a node to itself.`
       }
       if (edgeIds.has(id)) {
-        return `${item}.id="${id}" 已存在；新连线必须使用唯一且稳定的 ID。`
+        return `${item}.id="${id}" already exists; new edges must use unique, stable IDs.`
       }
       edgeIds.add(id)
       continue
@@ -102,13 +102,13 @@ function validateCanvasOperations(document: CanvasDocument, rawOperations: unkno
     if (type === 'delete_edge') {
       const id = asNonEmptyString(operation.id)
       if (!id || !edgeIds.has(id)) {
-        return `${item} 必须提供当前画布中真实存在的连线 id。`
+        return `${item} must provide an edge id that actually exists on the current canvas.`
       }
       edgeIds.delete(id)
       continue
     }
 
-    return `${item}.type 不是支持的画布操作。`
+    return `${item}.type is not a supported canvas operation.`
   }
 
   return null
@@ -150,16 +150,16 @@ async function executeCanvasOperations(
 ): Promise<AgentToolResult> {
   const { store, canvasId, document, project } = await getActiveCanvas(context.context.activeCanvasId)
   if (!canvasId || !document) {
-    return { ok: false, message: '当前没有打开的画布。', error: 'NO_ACTIVE_CANVAS' }
+    return { ok: false, message: 'No canvas is currently open.', error: 'NO_ACTIVE_CANVAS' }
   }
   if (operations.length === 0) {
-    return { ok: false, message: '没有提供可执行的画布操作。', error: 'EMPTY_OPERATIONS' }
+    return { ok: false, message: 'No executable canvas operations provided.', error: 'EMPTY_OPERATIONS' }
   }
   const validationError = validateCanvasOperations(document, operations)
   if (validationError) {
     return {
       ok: false,
-      message: `画布操作参数无效，整批未执行：${validationError}`,
+      message: `Invalid canvas operation arguments; batch not applied: ${validationError}`,
       error: 'INVALID_CANVAS_OPERATIONS',
     }
   }
@@ -169,7 +169,7 @@ async function executeCanvasOperations(
   if (result.applied !== operations.length) {
     return {
       ok: false,
-      message: '画布操作未能完整应用，整批未写入。',
+      message: 'Canvas operations could not be fully applied; nothing was written.',
       error: 'INCOMPLETE_CANVAS_OPERATIONS',
     }
   }
@@ -181,7 +181,7 @@ async function executeCanvasOperations(
 
   return {
     ok: true,
-    message: `已在画布“${project?.title || canvasId}”应用 ${result.applied} 项修改。`,
+    message: `Applied ${result.applied} changes on canvas “${project?.title || canvasId}”.`,
     data: summarizeDocument(result.document),
     changes: [{
       id: crypto.randomUUID(),
@@ -190,15 +190,15 @@ async function executeCanvasOperations(
       before,
       after: JSON.stringify(summarizeDocument(result.document)),
       reversible: true,
-      summary: `修改画布“${project?.title || canvasId}”`,
+      summary: `Edit canvas “${project?.title || canvasId}”`,
     }],
   }
 }
 
 const getCanvasStateTool: AgentTool = {
   name: 'canvas_get_state',
-  title: '读取当前画布',
-  description: '读取 NoteGen 当前打开的原生可视化画布，包括节点、连线、位置和设置。仅在用户要检查或操作当前画布时使用；一般性的图表、节点或连线问题不需要读取画布。',
+  title: 'Read current canvas',
+  description: 'Read the native visual canvas currently open in NoteGen, including nodes, edges, positions, and settings. Use only when the user wants to inspect or operate on the current canvas; general questions about diagrams, nodes, or edges do not require reading the canvas.',
   category: 'canvas',
   risk: 'read',
   inputSchema: {
@@ -210,11 +210,11 @@ const getCanvasStateTool: AgentTool = {
   execute: async (_input, context): Promise<AgentToolResult> => {
     const { canvasId, document, project } = await getActiveCanvas(context.context.activeCanvasId)
     if (!canvasId || !document) {
-      return { ok: false, message: '当前没有打开的画布。', error: 'NO_ACTIVE_CANVAS' }
+      return { ok: false, message: 'No canvas is currently open.', error: 'NO_ACTIVE_CANVAS' }
     }
     return {
       ok: true,
-      message: `已读取画布“${project?.title || canvasId}”，共 ${document.nodes.length} 个节点、${document.edges.length} 条连线。`,
+      message: `Read canvas “${project?.title || canvasId}”: ${document.nodes.length} nodes, ${document.edges.length} edges.`,
       data: { canvasId, title: project?.title || '', ...summarizeDocument(document) },
     }
   },
@@ -222,8 +222,8 @@ const getCanvasStateTool: AgentTool = {
 
 const createCanvasDiagramTool: AgentTool = {
   name: 'canvas_create_diagram',
-  title: '创建完整画布图表',
-  description: '在当前原生画布中一次创建由多个命名节点和连线组成的完整图表。新建流程图、思维导图或关系图时优先使用；不要拆成缺少名称或端点的操作。每个节点需要唯一 ID、类型、可见名称和坐标，每条连线用 source、target 精确引用这些节点 ID。',
+  title: 'Create a complete canvas diagram',
+  description: 'Create a complete diagram of named nodes and edges on the current native canvas in one call. Prefer this when building a new flowchart, mind map, or relationship diagram; do not split into operations that omit names or endpoints. Each node needs a unique ID, type, visible name, and coordinates; each edge must reference those node IDs exactly via source and target.',
   category: 'canvas',
   risk: 'editor-write',
   inputSchema: {
@@ -231,22 +231,22 @@ const createCanvasDiagramTool: AgentTool = {
     properties: {
       replaceExisting: {
         type: 'boolean',
-        description: '为 true 时先清空当前画布；为 false 时保留现有内容并追加图表。',
+        description: 'When true, clear the current canvas first; when false, keep existing content and append the diagram.',
       },
       nodes: {
         type: 'array',
-        description: '图表的全部节点。ID 在本次调用中必须唯一，并供 edges 原样引用。',
+        description: 'All nodes in the diagram. IDs must be unique in this call and referenced exactly by edges.',
         minItems: 1,
         items: {
           type: 'object',
           properties: {
-            id: { type: 'string', description: '唯一且稳定的节点 ID。' },
+            id: { type: 'string', description: 'Unique, stable node ID.' },
             nodeType: {
               type: 'string',
               enum: [...CANVAS_NODE_TYPES],
-              description: '节点形状。根据语义选择标准流程图图形，例如 process 步骤、decision 判断、terminator 开始结束、input-output 输入输出、document/multi-document 文档、predefined-process 子流程、manual-input 手动输入、preparation 准备、delay 延迟、display 显示、connector/off-page-connector 连接符、internal-storage/database/stored-data 数据存储、text 纯文本。',
+              description: 'Node shape. Pick a standard flowchart shape by meaning, for example process for steps, decision for branching, terminator for start/end, input-output for I/O, document/multi-document for documents, predefined-process for subprocesses, manual-input for manual input, preparation for preparation, delay for delay, display for display, connector/off-page-connector for connectors, internal-storage/database/stored-data for data storage, text for plain text.',
             },
-            label: { type: 'string', description: '显示在节点上的非空名称。' },
+            label: { type: 'string', description: 'Non-empty name shown on the node.' },
             description: { type: 'string' },
             x: { type: 'number' },
             y: { type: 'number' },
@@ -257,14 +257,14 @@ const createCanvasDiagramTool: AgentTool = {
       },
       edges: {
         type: 'array',
-        description: '图表的全部连线。source 和 target 必须原样引用 nodes 中的 ID。',
+        description: 'All edges in the diagram. source and target must reference IDs from nodes exactly as given.',
         items: {
           type: 'object',
           properties: {
-            id: { type: 'string', description: '唯一且稳定的连线 ID。' },
-            source: { type: 'string', description: '起点节点 ID。' },
-            target: { type: 'string', description: '终点节点 ID。' },
-            label: { type: 'string', description: '分支条件等可见连线名称。' },
+            id: { type: 'string', description: 'Unique, stable edge ID.' },
+            source: { type: 'string', description: 'Start node ID.' },
+            target: { type: 'string', description: 'End node ID.' },
+            label: { type: 'string', description: 'Visible edge label such as a branch condition.' },
           },
           required: ['id', 'source', 'target'],
           additionalProperties: false,
@@ -288,8 +288,8 @@ const createCanvasDiagramTool: AgentTool = {
 
 const applyCanvasOperationsTool: AgentTool = {
   name: 'canvas_apply_operations',
-  title: '编辑当前画布',
-  description: '增量编辑 NoteGen 当前打开的原生可视化画布，例如更新、移动或删除已有节点和连线。创建包含多个新节点和连线的完整图表时改用 canvas_create_diagram。所有操作会先整批校验，任何参数缺失时均不写入。',
+  title: 'Edit current canvas',
+  description: 'Incrementally edit the native visual canvas currently open in NoteGen—for example update, move, or delete existing nodes and edges. To create a full diagram with many new nodes and edges, use canvas_create_diagram instead. All operations are validated as a batch first; nothing is written if any argument is missing.',
   category: 'canvas',
   risk: 'editor-write',
   inputSchema: {
@@ -297,7 +297,7 @@ const applyCanvasOperationsTool: AgentTool = {
     properties: {
       operations: {
         type: 'array',
-        description: '按顺序执行的原子画布编辑。先添加节点，再用相同的稳定节点 ID 添加连线；任意一项无效时整批不执行。',
+        description: 'Atomic canvas edits applied in order. Add nodes first, then edges using the same stable node IDs; if any item is invalid the whole batch is skipped.',
         minItems: 1,
         items: {
           type: 'object',
@@ -305,20 +305,20 @@ const applyCanvasOperationsTool: AgentTool = {
             type: {
               type: 'string',
               enum: ['add_node', 'update_node', 'delete_node', 'add_edge', 'delete_edge', 'clear'],
-              description: '操作类型。不同类型所需字段由工具描述和运行时校验决定。',
+              description: 'Operation type. Required fields per type come from the tool description and runtime validation.',
             },
-            id: { type: 'string', description: '节点或连线的稳定 ID。除 clear 外均需要。' },
+            id: { type: 'string', description: 'Stable ID for a node or edge. Required except for clear.' },
             nodeType: {
               type: 'string',
               enum: [...CANVAS_NODE_TYPES],
-              description: 'add_node 的节点形状。',
+              description: 'Node shape for add_node.',
             },
             label: { type: 'string' },
             description: { type: 'string' },
             x: { type: 'number' },
             y: { type: 'number' },
-            source: { type: 'string', description: 'add_edge 的起点节点 ID。' },
-            target: { type: 'string', description: 'add_edge 的终点节点 ID。' },
+            source: { type: 'string', description: 'Start node ID for add_edge.' },
+            target: { type: 'string', description: 'End node ID for add_edge.' },
           },
           required: ['type'],
           additionalProperties: false,

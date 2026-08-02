@@ -1,6 +1,6 @@
 'use client';
 
-import SettingImageHosting from "@/app/core/setting/imageHosting/page";
+import { ImageHostingSettingsPage as SettingImageHosting } from "@/app/core/setting/imageHosting/image-hosting-settings-page";
 
 export default function ImageHostingPage() {
   return <SettingImageHosting mobile />

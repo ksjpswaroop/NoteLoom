@@ -39,7 +39,7 @@ export function FooterBar({
   const tSourceMode = useTranslations('settings.editor.sourceMode')
   const fileName = activeFilePath
     ? activeFilePath.split('/').pop() || activeFilePath
-    : '未命名'
+    : 'Untitled'
 
   if (isMobile) {
     return (

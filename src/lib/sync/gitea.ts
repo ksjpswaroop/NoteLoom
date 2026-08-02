@@ -16,7 +16,7 @@ import {
   GiteaFileContent
 } from './gitea.types';
 
-// 获取 Gitea 实例的 API 基础 URL
+// Gitea API URL
 
 function resolveUploadPath(path: string | undefined, filename: string | undefined, fallbackFilename: string) {
   if (filename) {
@@ -32,15 +32,15 @@ export async function getGiteaApiBaseUrl(): Promise<string> {
 
   if (instanceType === GiteaInstanceType.SELF_HOSTED) {
     let customUrl = await store.get<string>('giteaCustomUrl') || '';
-    // 移除末尾的斜杠，避免双斜杠问题
+    // ，
     customUrl = customUrl.replace(/\/+$/, '').trim();
 
-    // 验证自定义 URL 是否有效
+    // URL
     if (!customUrl) {
-      throw new Error('自建 Gitea 实例的 URL 未配置，请先在设置中填写 Gitea URL');
+      throw new Error('Gitea URL ， Gitea URL');
     }
 
-    // 确保 URL 包含协议
+    // URL
     if (!customUrl.startsWith('http://') && !customUrl.startsWith('https://')) {
       customUrl = 'http://' + customUrl;
     }
@@ -52,13 +52,13 @@ export async function getGiteaApiBaseUrl(): Promise<string> {
   return `${instance.baseUrl}/api/v1`;
 }
 
-// 获取通用请求头
+//
 async function getCommonHeaders(): Promise<any> {
   const store = await Store.load('store.json');
   const accessToken = await store.get<string>('giteaAccessToken');
 
   if (!accessToken) {
-    throw new Error('Gitea Access Token 未配置');
+    throw new Error('Gitea Access Token');
   }
 
   const headers = {
@@ -69,7 +69,7 @@ async function getCommonHeaders(): Promise<any> {
   return headers;
 }
 
-// 获取代理配置
+//
 async function getProxyConfig(): Promise<Proxy | undefined> {
   const store = await Store.load('store.json');
   const proxyUrl = await store.get<string>('proxy');
@@ -77,8 +77,8 @@ async function getProxyConfig(): Promise<Proxy | undefined> {
 }
 
 /**
- * 上传文件到 Gitea 仓库
- * @param params 上传参数
+ * Gitea 
+ * @param params 
  */
 export async function uploadFile({
   file,
@@ -100,7 +100,7 @@ export async function uploadFile({
     const giteaUsername = await store.get<string>('giteaUsername');
 
     if (!giteaUsername) {
-      throw new Error('Gitea 用户名未配置');
+      throw new Error('Gitea Username is not configured');
     }
 
     const id = uuid();
@@ -114,7 +114,7 @@ export async function uploadFile({
       hasSha: Boolean(sha),
     })
 
-    // 将内容转换为 Base64（Gitea API 要求）
+    // Base64（Gitea API ）
     const base64Content = encodeRemoteFileContent(file)
 
     const baseUrl = await getGiteaApiBaseUrl();
@@ -125,20 +125,20 @@ export async function uploadFile({
       branch: 'main',
       content: base64Content,
       message: message || `Upload ${filename || id}`,
-      // 设置提交时间为当前时间
+      //
       dates: {
         author: new Date().toISOString(),
         committer: new Date().toISOString()
       }
     };
 
-    // 如果是更新文件，需要添加 sha
+    // ， sha
     if (sha) {
       requestBody.sha = sha;
     }
 
     const url = `${baseUrl}/repos/${giteaUsername}/${repo}/contents/${normalizedPath}`;
-    // Gitea API: POST 创建新文件，PUT 更新现有文件
+    // Gitea API: POST ，PUT
     const method = sha ? 'PUT' : 'POST';
 
     const response = await fetch(url, {
@@ -157,16 +157,16 @@ export async function uploadFile({
       return null;
     }
 
-    // 422 表示文件已存在（需要 SHA 才能更新），返回 null 以便触发重试
+    // 422 （ SHA ）， null
     if (response.status === 422) {
       return null;
     }
 
-    // 404 表示文件不存在，尝试用 POST 创建新文件
+    // 404 ， POST
     if (response.status === 404) {
       const postMethod = 'POST';
       const postBody = { ...requestBody };
-      delete postBody.sha; // POST 不需要 sha
+      delete postBody.sha; // POST sha
 
       const postResponse = await fetch(url, {
         method: postMethod,
@@ -183,20 +183,20 @@ export async function uploadFile({
       const postErrorData = await postResponse.json();
       throw {
         status: postResponse.status,
-        message: postErrorData.message || '同步失败'
+        message: postErrorData.message || 'Sync failed'
       } as GiteaError;
     }
 
     const errorData = await response.json();
     throw {
       status: response.status,
-      message: errorData.message || '同步失败'
+      message: errorData.message || 'Sync failed'
     } as GiteaError;
 
   } catch (error) {
     toast({
-      title: '同步失败',
-      description: (error as GiteaError).message || '上传文件时发生错误',
+      title: 'File Error',
+      description: (error as GiteaError).message || 'File Error',
       variant: 'destructive',
     });
     throw error;
@@ -204,8 +204,8 @@ export async function uploadFile({
 }
 
 /**
- * 更新文件内容（获取文件 sha 后上传）
- * @param params 更新参数
+ * （ sha ）
+ * @param params 
  */
 export async function updateFileContent({
   path,
@@ -219,12 +219,12 @@ export async function updateFileContent({
   message?: string;
 }) {
   try {
-    // 先获取文件信息，获取 sha
+    // ， sha
     const fileInfo = await getFiles({ path, repo });
-    // getFiles 可能返回数组（目录）或对象（文件），需要检查类型
+    // getFiles （）（），
     const sha = fileInfo && !Array.isArray(fileInfo) ? fileInfo.sha : undefined;
 
-    // 调用 uploadFile 上传文件
+    // uploadFile
     return await uploadFile({
       file: content,
       filename: path.split('/').pop() || path,
@@ -235,8 +235,8 @@ export async function updateFileContent({
     });
   } catch (error) {
     toast({
-      title: '更新文件失败',
-      description: (error as GiteaError).message || '更新文件时发生错误',
+      title: 'UpdateFileFailed',
+      description: (error as GiteaError).message || 'UpdateFile Error',
       variant: 'destructive',
     });
     throw error;
@@ -244,8 +244,8 @@ export async function updateFileContent({
 }
 
 /**
- * 获取 Gitea 仓库文件列表
- * @param params 查询参数
+ * Gitea 
+ * @param params 
  */
 export async function getFiles({ path, repo, sha }: { path: string; repo: string; sha?: string }) {
   try {
@@ -260,14 +260,14 @@ export async function getFiles({ path, repo, sha }: { path: string; repo: string
     const headers = await getCommonHeaders();
     const proxy = await getProxyConfig();
 
-    // 对路径进行 URL 编码，处理特殊字符
+    // URL ，
     const encodedPath = buildRepoContentPath({ path });
     debugSyncPath('gitea.getFiles', {
       inputPath: path,
       encodedPath,
       sha,
     })
-    // Gitea API 使用 sha 参数来获取特定 commit/branch 的文件内容
+    // Gitea API sha commit/branch
     const shaParam = sha ? `?sha=${sha}` : '';
     const url = `${baseUrl}/repos/${giteaUsername}/${repo}/contents/${encodedPath}${shaParam}`;
 
@@ -280,18 +280,18 @@ export async function getFiles({ path, repo, sha }: { path: string; repo: string
     if (response.status >= 200 && response.status < 300) {
       const data = await response.json();
 
-      // 如果是单个文件，返回文件信息（包含 content）
+      // ，（ content）
       if (!Array.isArray(data)) {
         return {
           name: data.name,
           path: data.path,
           type: data.type === 'dir' ? 'dir' : 'file',
           sha: data.sha,
-          content: data.content || '', // 文件内容（base64）
+          content: data.content || '', // （base64）
         };
       }
 
-      // 如果是目录，返回文件列表
+      // ，
       return data.map((item: GiteaDirectoryItem) => {
         return {
           name: item.name,
@@ -302,24 +302,24 @@ export async function getFiles({ path, repo, sha }: { path: string; repo: string
       })
     }
 
-    // 文件或目录不存在，返回 null
+    // ， null
     if (response.status === 404) {
       return null
     }
 
-    // 401 或其他客户端错误，抛出错误
+    // 401 ，
     if (response.status >= 400 && response.status < 500) {
       const errorData = await response.json().catch(() => ({}));
       throw {
         status: response.status,
-        message: errorData.message || `获取文件列表失败: ${response.status}`
+        message: errorData.message || `FileListFailed: ${response.status}`
       } as GiteaError;
     }
 
     return null;
 
   } catch (error) {
-    // 重新抛出已处理的错误，静默处理其他错误
+    // ，
     if ((error as GiteaError).status) {
       throw error;
     }
@@ -328,8 +328,8 @@ export async function getFiles({ path, repo, sha }: { path: string; repo: string
 }
 
 /**
- * 删除 Gitea 仓库文件
- * @param params 删除参数
+ * Gitea 
+ * @param params 
  */
 export async function deleteFile({ path, sha, repo }: { path: string; sha?: string; repo: string }) {
   try {
@@ -337,7 +337,7 @@ export async function deleteFile({ path, sha, repo }: { path: string; sha?: stri
     const giteaUsername = await store.get<string>('giteaUsername');
     
     if (!giteaUsername) {
-      throw new Error('用户名未配置');
+      throw new Error('Username is not configured');
     }
 
     const baseUrl = await getGiteaApiBaseUrl();
@@ -346,7 +346,7 @@ export async function deleteFile({ path, sha, repo }: { path: string; sha?: stri
 
     const encodedPath = buildRepoContentPath({ path, preserveWhitespace: true })
 
-    // 如果没有 sha，先获取文件信息
+    // sha，
     let fileSha = sha;
     if (!fileSha) {
       const fileUrl = `${baseUrl}/repos/${giteaUsername}/${repo}/contents/${encodedPath}`;
@@ -382,22 +382,22 @@ export async function deleteFile({ path, sha, repo }: { path: string; sha?: stri
     const errorData = await response.json();
     throw {
       status: response.status,
-      message: errorData.message || '删除文件失败'
+      message: errorData.message || 'Failed to delete file'
     } as GiteaError;
 
   } catch (error) {
     toast({
-      title: '删除文件失败',
-      description: (error as GiteaError).message || '删除文件时发生错误',
+      title: 'Failed to delete file',
+      description: (error as GiteaError).message || 'File Error',
       variant: 'destructive',
     });
-    return null; // 确保在错误情况下也有返回值
+    return null; //
   }
 }
 
 /**
- * 获取文件提交历史
- * @param params 查询参数
+ * 
+ * @param params 
  */
 export async function getFileCommits({ path, repo }: { path: string; repo: string }) {
   try {
@@ -412,8 +412,8 @@ export async function getFileCommits({ path, repo }: { path: string; repo: strin
     const headers = await getCommonHeaders();
     const proxy = await getProxyConfig();
 
-    // Gitea API 需要指定分支（sha 参数），默认使用 main 分支
-    // 对 path 进行编码，避免特殊字符导致 404
+    // Gitea API （sha ）， main
+    // path ， 404
     const encodedPath = encodeURIComponent(path);
     const url = `${baseUrl}/repos/${giteaUsername}/${repo}/commits?sha=main&path=${encodedPath}&per_page=100`;
 
@@ -428,23 +428,23 @@ export async function getFileCommits({ path, repo }: { path: string; repo: strin
       return { data } as GiteaResponse<GiteaCommit[]>;
     }
     
-    // 404 或其他错误，静默返回 false（文件没有提交历史）
+    // 404 ， false（）
     return false;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
-    // 静默处理错误，不显示 toast
+    // ， toast
     return false;
   }
 }
 
 /**
- * 获取特定 commit 的文件内容
- * @param params 查询参数
+ * commit 
+ * @param params 
  */
 /**
- * 获取特定 commit 的文件内容（通过 Git tree API）
- * @param params 查询参数
+ * commit （ Git tree API）
+ * @param params 
  */
 export async function getFileContentFromCommit({ path, ref, repo }: { path: string; ref: string; repo: string }) {
   try {
@@ -452,14 +452,14 @@ export async function getFileContentFromCommit({ path, ref, repo }: { path: stri
     const giteaUsername = await store.get<string>('giteaUsername');
 
     if (!giteaUsername) {
-      throw new Error('用户名未配置');
+      throw new Error('Username is not configured');
     }
 
     const baseUrl = await getGiteaApiBaseUrl();
     const headers = await getCommonHeaders();
     const proxy = await getProxyConfig();
 
-    // 先获取 commit 信息，获取 tree SHA
+    // commit ， tree SHA
     const commitUrl = `${baseUrl}/repos/${giteaUsername}/${repo}/git/commits/${ref}`;
 
     const commitResponse = await fetch(commitUrl, {
@@ -473,14 +473,14 @@ export async function getFileContentFromCommit({ path, ref, repo }: { path: stri
     }
 
     const commitData = await commitResponse.json();
-    // tree SHA 在 commit.tree.sha
+    // tree SHA commit.tree.sha
     const treeSha = commitData.commit?.tree?.sha || commitData.tree?.sha;
 
     if (!treeSha) {
       return null;
     }
 
-    // 获取文件在 tree 中的路径
+    // tree
     const treeUrl = `${baseUrl}/repos/${giteaUsername}/${repo}/git/trees/${treeSha}?recursive=1`;
 
     const treeResponse = await fetch(treeUrl, {
@@ -494,14 +494,14 @@ export async function getFileContentFromCommit({ path, ref, repo }: { path: stri
     }
 
     const treeData = await treeResponse.json();
-    // 查找目标文件
+    //
     const fileEntry = treeData.tree?.find((item: any) => item.path === path);
 
     if (!fileEntry || fileEntry.type !== 'blob') {
       return null;
     }
 
-    // 获取文件内容
+    //
     const blobUrl = `${baseUrl}/repos/${giteaUsername}/${repo}/git/blobs/${fileEntry.sha}`;
 
     const blobResponse = await fetch(blobUrl, {
@@ -532,22 +532,22 @@ export async function getFileContent({ path, ref, repo }: { path: string; ref: s
     const giteaUsername = await store.get<string>('giteaUsername');
     
     if (!giteaUsername) {
-      throw new Error('用户名未配置');
+      throw new Error('Username is not configured');
     }
 
     const baseUrl = await getGiteaApiBaseUrl();
     const headers = await getCommonHeaders();
     const proxy = await getProxyConfig();
 
-    // 获取特定 commit 的文件内容，对 path 进行编码
-    // 与 getFiles 保持一致：对每个路径部分分别进行编码
+    // commit ， path
+    // getFiles ：
     const encodedPath = buildRepoContentPath({ path });
     debugSyncPath('gitea.getFileContent', {
       inputPath: path,
       encodedPath,
       ref,
     })
-    // Gitea API 使用 sha 参数而不是 ref 参数来获取特定 commit 的文件内容
+    // Gitea API sha ref commit
     const url = `${baseUrl}/repos/${giteaUsername}/${repo}/contents/${encodedPath}?sha=${ref}`;
 
     const response = await encodeFetch(url, {
@@ -574,13 +574,13 @@ export async function getFileContent({ path, ref, repo }: { path: string; ref: s
     const errorData = await response.text();
     throw {
       status: response.status,
-      message: errorData || '获取文件内容失败'
+      message: errorData || 'Failed to get file content'
     } as GiteaError;
 
   } catch (error) {
     toast({
-      title: '获取文件内容失败',
-      description: (error as GiteaError).message || '获取文件内容时发生错误',
+      title: 'Failed to get file content',
+      description: (error as GiteaError).message || 'File Error',
       variant: 'destructive',
     });
     throw error;
@@ -588,8 +588,8 @@ export async function getFileContent({ path, ref, repo }: { path: string; ref: s
 }
 
 /**
- * 获取 Gitea 用户信息
- * @param token 可选的访问令牌
+ * Gitea 
+ * @param token 
  */
 export async function getUserInfo(token?: string): Promise<GiteaUserInfo> {
   try {
@@ -597,7 +597,7 @@ export async function getUserInfo(token?: string): Promise<GiteaUserInfo> {
     const accessToken = token || await store.get<string>('giteaAccessToken');
     
     if (!accessToken) {
-      throw new Error('访问令牌未配置');
+      throw new Error('Access token is not configured');
     }
 
     const baseUrl = await getGiteaApiBaseUrl();
@@ -616,7 +616,7 @@ export async function getUserInfo(token?: string): Promise<GiteaUserInfo> {
     if (response.status >= 200 && response.status < 300) {
       const userInfo = await response.json() as GiteaUserInfo;
       
-      // 保存用户名到存储
+      //
       await store.set('giteaUsername', userInfo.login);
       await store.save();
       
@@ -626,13 +626,13 @@ export async function getUserInfo(token?: string): Promise<GiteaUserInfo> {
     const errorData = await response.json();
     throw {
       status: response.status,
-      message: errorData.message || '获取用户信息失败'
+      message: errorData.message || 'Failed to fetch user info'
     } as GiteaError;
 
   } catch (error) {
     toast({
-      title: '获取用户信息失败',
-      description: (error as GiteaError).message || '获取用户信息时发生错误',
+      title: 'Failed to fetch user info',
+      description: (error as GiteaError).message || 'Error',
       variant: 'destructive',
     });
     throw error;
@@ -640,8 +640,8 @@ export async function getUserInfo(token?: string): Promise<GiteaUserInfo> {
 }
 
 /**
- * 检查同步仓库状态
- * @param name 仓库名称
+ * 
+ * @param name 
  */
 export async function checkSyncRepoState(name: string): Promise<GiteaRepositoryInfo | null> {
   try {
@@ -649,14 +649,14 @@ export async function checkSyncRepoState(name: string): Promise<GiteaRepositoryI
     const giteaUsername = await store.get<string>('giteaUsername');
     
     if (!giteaUsername) {
-      throw new Error('用户名未配置');
+      throw new Error('Username is not configured');
     }
 
     const baseUrl = await getGiteaApiBaseUrl();
     const headers = await getCommonHeaders();
     const proxy = await getProxyConfig();
 
-    // 直接尝试获取仓库信息
+    //
     const repoUrl = `${baseUrl}/repos/${giteaUsername}/${name}`;
     
     const response = await fetch(repoUrl, {
@@ -677,7 +677,7 @@ export async function checkSyncRepoState(name: string): Promise<GiteaRepositoryI
     const errorData = await response.json();
     throw {
       status: response.status,
-      message: errorData.message || '检查仓库状态失败'
+      message: errorData.message || 'Failed'
     } as GiteaError;
 
   } catch (error) {
@@ -686,9 +686,9 @@ export async function checkSyncRepoState(name: string): Promise<GiteaRepositoryI
 }
 
 /**
- * 创建同步仓库
- * @param name 仓库名称
- * @param isPrivate 是否私有仓库
+ * 
+ * @param name 
+ * @param isPrivate 
  */
 export async function createSyncRepo(name: string, isPrivate: boolean = true): Promise<GiteaRepositoryInfo | null> {
   try {
@@ -698,7 +698,7 @@ export async function createSyncRepo(name: string, isPrivate: boolean = true): P
 
     const requestBody = {
       name: name,
-      description: `note-gen 同步仓库 - ${name}`,
+      description: `note-gen - ${name}`,
       private: isPrivate,
       auto_init: true,
       default_branch: 'main'
@@ -719,13 +719,13 @@ export async function createSyncRepo(name: string, isPrivate: boolean = true): P
     const errorData = await response.json();
     throw {
       status: response.status,
-      message: errorData.message || '创建仓库失败'
+      message: errorData.message || 'Failed to create repository'
     } as GiteaError;
 
   } catch (error) {
     toast({
-      title: '创建仓库失败',
-      description: (error as GiteaError).message || '创建仓库时发生错误',
+      title: 'Failed to create repository',
+      description: (error as GiteaError).message || 'Error',
       variant: 'destructive',
     });
     return null;

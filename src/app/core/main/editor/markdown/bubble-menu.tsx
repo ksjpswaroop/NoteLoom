@@ -43,7 +43,7 @@ import {
 
 const POPULAR_LANGUAGES = [
   { name: 'English', code: 'English', i18nKey: 'languages.English' },
-  { name: '日本語', code: 'Japanese', i18nKey: 'languages.Japanese' },
+  { name: 'Japanese', code: 'Japanese', i18nKey: 'languages.Japanese' },
   { name: '한국어', code: 'Korean', i18nKey: 'languages.Korean' },
   { name: 'Français', code: 'French', i18nKey: 'languages.French' },
   { name: 'Deutsch', code: 'German', i18nKey: 'languages.German' },
@@ -180,7 +180,7 @@ export function BubbleMenu({
     editor.commands.setTextSelection(position)
   }, [editor])
 
-  // 处理翻译
+  //
   const handleTranslate = useCallback(async (targetLanguage: string) => {
     const selectedText = getSelectedText(editor)
     if (!selectedText.trim()) {
@@ -200,7 +200,7 @@ export function BubbleMenu({
     setCustomTranslateLang('')
   }, [customTranslateLang, handleTranslate, t])
 
-  // 更新定位
+  //
   const updatePosition = useCallback(() => {
     const { selection } = editor.state
     const { from, to } = selection
@@ -215,7 +215,7 @@ export function BubbleMenu({
       return false
     }
 
-    // 应用启动或文件恢复时可能会还原一个非空选区，但这不是用户本次主动选择的文本。
+    // ，。
     if (!hasUserSelectionIntentRef.current) {
       if (hasTextSelection(editor)) {
         collapseSelection()
@@ -224,7 +224,7 @@ export function BubbleMenu({
       return false
     }
 
-    // 检查选区是否有效（空选区、光标位置、无实际文本内容都不显示）
+    // （、、）
     if (!hasTextSelection(editor)) {
       hideMenu()
       return false
@@ -237,19 +237,19 @@ export function BubbleMenu({
 
     const node = editor.state.doc.nodeAt(from)
 
-    // 检查是否是图片节点
+    //
     if (node?.type.name === 'image') {
       hideMenu()
       return false
     }
 
-    // 检查是否是数学公式节点，如果是则不显示 bubble menu
+    // ， bubble menu
     if (node?.type.name === 'inlineMath' || node?.type.name === 'blockMath') {
       hideMenu()
       return false
     }
 
-    // 获取编辑器元素和滚动容器
+    //
     const editorElement = editor.view.dom
     const scrollContainer = editorElement.parentElement
     if (!editorElement || !scrollContainer) {
@@ -262,16 +262,16 @@ export function BubbleMenu({
       const endCoords = editor.view.coordsAtPos(to)
       const containerBounds = scrollContainer.getBoundingClientRect()
 
-      // 转换为滚动容器内的相对坐标
+      //
       const anchorTop = Math.min(startCoords.top, endCoords.top) - containerBounds.top + scrollContainer.scrollTop
       const anchorBottom = Math.max(startCoords.bottom, endCoords.bottom) - containerBounds.top + scrollContainer.scrollTop
       const relativeLeft = startCoords.left - containerBounds.left + scrollContainer.scrollLeft
       const menuHeight = menuRef.current?.offsetHeight || 40
       const gap = 8
 
-      // 边界检测：left 在 [0, 容器宽度 - 菜单宽度] 范围内
+      // ：left [0, - ]
       const currentMenuWidth = menuRef.current?.offsetWidth || 360
-      // maxLeft 不能为负数
+      // maxLeft
       const maxLeft = Math.max(8, containerBounds.width - currentMenuWidth - 8)
       const left = Math.max(8, Math.min(relativeLeft, maxLeft))
 
@@ -458,28 +458,28 @@ export function BubbleMenu({
     updatePosition()
   }, [linkEditor, show, updatePosition])
 
-  // AI子菜单边界检测
+  // AI
   useEffect(() => {
     if (!showAISubmenu || !aiSubmenuRef.current) return
 
     const checkSubmenuBounds = () => {
       const rect = aiSubmenuRef.current!.getBoundingClientRect()
 
-      // 直接获取最新编辑器边界
+      //
       const editorElement = document.querySelector('.ProseMirror')
       if (!editorElement) return
 
       const editorBounds = editorElement.getBoundingClientRect()
       const padding = 8
 
-      // 检测右边界 - 基于编辑器边缘
+      // -
       if (rect.right > editorBounds.right - padding) {
         aiSubmenuRef.current!.setAttribute('data-right-edge', 'true')
       } else {
         aiSubmenuRef.current!.removeAttribute('data-right-edge')
       }
 
-      // 检测下边界 - 基于编辑器边缘
+      // -
       if (rect.bottom > editorBounds.bottom - padding) {
         aiSubmenuRef.current!.setAttribute('data-bottom-edge', 'true')
       } else {
@@ -491,21 +491,21 @@ export function BubbleMenu({
     return () => cancelAnimationFrame(raf)
   }, [showAISubmenu, show])
 
-  // 翻译子菜单边界检测
+  //
   useEffect(() => {
     if (!showTranslateSubmenu || !translateSubmenuRef.current) return
 
     const checkTranslateBounds = () => {
       const rect = translateSubmenuRef.current!.getBoundingClientRect()
 
-      // 直接获取最新编辑器边界
+      //
       const editorElement = document.querySelector('.ProseMirror')
       if (!editorElement) return
 
       const editorBounds = editorElement.getBoundingClientRect()
       const padding = 8
 
-      // 检测右边界 - 基于编辑器边缘
+      // -
       if (rect.right > editorBounds.right - padding) {
         translateSubmenuRef.current!.setAttribute('data-translate-submenu-right', 'true')
       } else {
@@ -723,7 +723,7 @@ export function BubbleMenu({
       <div
         className="flex items-center gap-1 rounded-lg bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10"
       >
-        {/* AI 操作 */}
+        {/* AI */}
         <div className="relative">
           <ToolbarButton
             active={showAISubmenu}
@@ -802,7 +802,7 @@ export function BubbleMenu({
 
         <ToolbarSeparator />
 
-        {/* 文本格式化 */}
+        {/* */}
         <div className="flex gap-0.5">
           <ToolbarButton active={isActive('bold')} onClick={toggleBold} title={t('bubbleMenu.bold')}><Bold /></ToolbarButton>
           <ToolbarButton active={isActive('italic')} onClick={toggleItalic} title={t('bubbleMenu.italic')}><Italic /></ToolbarButton>
@@ -818,7 +818,7 @@ export function BubbleMenu({
 
         <ToolbarSeparator />
 
-        {/* 块级元素 */}
+        {/* */}
         <div className="flex gap-0.5">
           <ToolbarButton active={isActive('blockquote')} onClick={toggleBlockquote} title={t('bubbleMenu.blockquote')}><Quote /></ToolbarButton>
           <ToolbarButton active={isActive('bulletList')} onClick={toggleBulletList} title={t('bubbleMenu.bulletList')}><List /></ToolbarButton>

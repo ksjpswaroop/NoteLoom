@@ -2,7 +2,7 @@ import { Store } from '@tauri-apps/plugin-store'
 import { confirm } from '@tauri-apps/plugin-dialog'
 
 /**
- * 冲突解决策略类型
+ * 
  */
 export type ConflictResolutionStrategy = 'local' | 'remote' | 'manual'
 
@@ -19,14 +19,14 @@ export interface SyncLock {
 }
 
 /**
- * 获取设备唯一标识
+ * 
  */
 export async function getDeviceId(): Promise<string> {
   const store = await Store.load('store.json')
   let deviceId = await store.get<string>('deviceId')
   
   if (!deviceId) {
-    // 生成设备唯一标识
+    //
     deviceId = `device_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
     await store.set('deviceId', deviceId)
     await store.save()
@@ -36,7 +36,7 @@ export async function getDeviceId(): Promise<string> {
 }
 
 /**
- * 获取用户名
+ * 
  */
 export async function getUserName(): Promise<string> {
   const store = await Store.load('store.json')
@@ -44,7 +44,7 @@ export async function getUserName(): Promise<string> {
 }
 
 /**
- * 检查文件是否被其他设备锁定
+ * 
  */
 export async function checkFileLock(filePath: string): Promise<SyncLock | null> {
   const store = await Store.load('store.json')
@@ -55,17 +55,17 @@ export async function checkFileLock(filePath: string): Promise<SyncLock | null> 
     return null
   }
   
-  // 检查锁是否过期（5分钟）
+  // （5）
   const now = Date.now()
   if (now - lock.timestamp > 5 * 60 * 1000) {
-    // 锁已过期，清除
+    // ，
     delete locks[filePath]
     await store.set('fileLocks', locks)
     await store.save()
     return null
   }
   
-  // 如果是当前设备的锁，忽略
+  // ，
   const currentDeviceId = await getDeviceId()
   if (lock.deviceId === currentDeviceId) {
     return null
@@ -75,26 +75,26 @@ export async function checkFileLock(filePath: string): Promise<SyncLock | null> 
 }
 
 /**
- * 获取文件锁
+ * 
  */
 export async function acquireFileLock(filePath: string): Promise<boolean> {
   const store = await Store.load('store.json')
   const locks = await store.get<Record<string, SyncLock>>('fileLocks') || {}
   
-  // 检查是否已被其他设备锁定
+  //
   const existingLock = locks[filePath]
   if (existingLock) {
     const currentDeviceId = await getDeviceId()
     if (existingLock.deviceId !== currentDeviceId) {
-      // 检查锁是否过期
+      //
       const now = Date.now()
       if (now - existingLock.timestamp <= 5 * 60 * 1000) {
-        return false // 锁仍然有效
+        return false //
       }
     }
   }
   
-  // 获取锁
+  //
   const deviceId = await getDeviceId()
   const userName = await getUserName()
   
@@ -112,7 +112,7 @@ export async function acquireFileLock(filePath: string): Promise<boolean> {
 }
 
 /**
- * 释放文件锁
+ * 
  */
 export async function releaseFileLock(filePath: string): Promise<void> {
   const store = await Store.load('store.json')
@@ -129,11 +129,11 @@ export async function releaseFileLock(filePath: string): Promise<void> {
 }
 
 /**
- * 检测和处理冲突
- * @param filePath 文件路径
- * @param localContent 本地内容
- * @param remoteContent 远程内容
- * @param strategy 可选的冲突解决策略，如果提供则直接使用该策略
+ * 
+ * @param filePath 
+ * @param localContent 
+ * @param remoteContent 
+ * @param strategy ，
  */
 export async function detectAndHandleConflict(
   filePath: string,
@@ -141,39 +141,39 @@ export async function detectAndHandleConflict(
   remoteContent: string,
   strategy?: ConflictResolutionStrategy
 ): Promise<ConflictResolution> {
-  // 如果内容相同，不是冲突
+  // ，
   if (localContent === remoteContent) {
-    return { action: 'keep_local', reason: '内容相同，无需处理' }
+    return { action: 'keep_local', reason: '，None' }
   }
 
-  // 如果提供了策略，直接使用策略解决
+  // ，
   if (strategy) {
     const result = await resolveConflict(filePath, localContent, remoteContent, strategy)
     if (result.resolved) {
       return {
         action: strategy === 'local' ? 'keep_local' : strategy === 'remote' ? 'keep_remote' : 'manual',
-        reason: `使用${strategy}策略解决冲突`
+        reason: `${strategy} Conflict`
       }
     } else {
-      return { action: 'manual', reason: '需要用户手动处理' }
+      return { action: 'manual', reason: 'Translated message' }
     }
   }
 
-  // 分析冲突类型
+  //
   const conflictType = analyzeConflictType(localContent, remoteContent)
 
   switch (conflictType) {
     case 'simple_addition':
-      // 简单的内容追加，可以自动合并
-      return { action: 'merge', reason: '检测到简单的内容追加，可以自动合并' }
+      // ，
+      return { action: 'merge', reason: '，' }
 
     case 'significant_change':
-      // 显著内容变化，需要用户选择
+      // ，
       return await promptUserForResolution(filePath, localContent, remoteContent)
 
     case 'format_only':
-      // 仅格式变化，保留远程版本
-      return { action: 'keep_remote', reason: '检测到格式变化，使用远程版本' }
+      // ，
+      return { action: 'keep_remote', reason: 'Format ，Use remote version' }
 
     default:
       return await promptUserForResolution(filePath, localContent, remoteContent)
@@ -181,13 +181,13 @@ export async function detectAndHandleConflict(
 }
 
 /**
- * 分析冲突类型
+ * 
  */
 function analyzeConflictType(localContent: string, remoteContent: string): 'simple_addition' | 'significant_change' | 'format_only' {
   const localLines = localContent.split('\n')
   const remoteLines = remoteContent.split('\n')
 
-  // 检查是否只是简单的追加
+  //
   if (localLines.length < remoteLines.length) {
     const localPrefix = remoteLines.slice(0, localLines.length).join('\n')
     if (localContent === localPrefix) {
@@ -195,7 +195,7 @@ function analyzeConflictType(localContent: string, remoteContent: string): 'simp
     }
   }
 
-  // 检查是否只是格式变化（去除空白字符后内容相同）
+  // （）
   const normalizedLocal = localContent.replace(/\s+/g, ' ').trim()
   const normalizedRemote = remoteContent.replace(/\s+/g, ' ').trim()
 
@@ -207,19 +207,19 @@ function analyzeConflictType(localContent: string, remoteContent: string): 'simp
 }
 
 /**
- * 导出分析冲突类型函数供外部使用
+ * 
  */
 export function analyzeConflictTypeExported(localContent: string, remoteContent: string): 'simple_addition' | 'significant_change' | 'format_only' {
   return analyzeConflictType(localContent, remoteContent)
 }
 
 /**
- * 根据策略解决冲突
- * @param filePath 文件路径
- * @param localContent 本地内容
- * @param remoteContent 远程内容
- * @param strategy 冲突解决策略
- * @returns 解决后的内容和是否已解决
+ * 
+ * @param filePath 
+ * @param localContent 
+ * @param remoteContent 
+ * @param strategy 
+ * @returns 
  */
 export async function resolveConflict(
   filePath: string,
@@ -233,13 +233,13 @@ export async function resolveConflict(
     case 'remote':
       return { content: remoteContent, resolved: true }
     case 'manual':
-      // 返回特殊标记，表示需要用户手动处理
+      // ，
       return { content: localContent, resolved: false }
   }
 }
 
 /**
- * 提示用户选择冲突解决方案
+ * 
  */
 async function promptUserForResolution(
   filePath: string,
@@ -247,33 +247,33 @@ async function promptUserForResolution(
   remoteContent: string
 ): Promise<ConflictResolution> {
   const choice = await confirm(
-    `文件 ${filePath} 存在冲突\n\n` +
-    `本地版本：${localContent.length} 字符\n` +
-    `远程版本：${remoteContent.length} 字符\n\n` +
-    `请选择如何处理：\n` +
-    `• 确定：保留本地版本\n` +
-    `• 取消：保留远程版本`,
+    `File ${filePath} Conflict\n\n` +
+    `Local ：${localContent.length} \n` +
+    `：${remoteContent.length} \n\n` +
+    `：\n` +
+    `• ：Keep local version\n` +
+    `• Cancel：`,
     { 
-      title: '同步冲突',
-      okLabel: '保留本地',
-      cancelLabel: '保留远程'
+      title: 'Sync conflict',
+      okLabel: 'Keep local',
+      cancelLabel: 'Keep remote'
     }
   )
   
   return {
     action: choice ? 'keep_local' : 'keep_remote',
-    reason: choice ? '用户选择保留本地版本' : '用户选择保留远程版本'
+    reason: choice ? 'Keep local version' : 'Translated message'
   }
 }
 
 /**
- * 智能合并简单冲突
+ * 
  */
 export function mergeSimpleContent(localContent: string, remoteContent: string): string {
   const localLines = localContent.split('\n')
   const remoteLines = remoteContent.split('\n')
   
-  // 如果远程内容包含本地内容，直接返回远程内容
+  // ，
   if (remoteLines.length >= localLines.length) {
     const localPrefix = remoteLines.slice(0, localLines.length).join('\n')
     if (localContent === localPrefix) {
@@ -281,7 +281,7 @@ export function mergeSimpleContent(localContent: string, remoteContent: string):
     }
   }
   
-  // 如果本地内容包含远程内容，返回本地内容
+  // ，
   if (localLines.length >= remoteLines.length) {
     const remotePrefix = localLines.slice(0, remoteLines.length).join('\n')
     if (remoteContent === remotePrefix) {
@@ -289,7 +289,7 @@ export function mergeSimpleContent(localContent: string, remoteContent: string):
     }
   }
   
-  // 尝试行级别的合并
+  //
   const mergedLines = [...localLines]
   for (const line of remoteLines) {
     if (!localLines.includes(line)) {
@@ -301,7 +301,7 @@ export function mergeSimpleContent(localContent: string, remoteContent: string):
 }
 
 /**
- * 定期清理过期的文件锁
+ * 
  */
 export async function cleanupExpiredLocks(): Promise<void> {
   const store = await Store.load('store.json')
@@ -311,7 +311,7 @@ export async function cleanupExpiredLocks(): Promise<void> {
   const expiredKeys: string[] = []
   
   for (const [filePath, lock] of Object.entries(locks)) {
-    if (now - lock.timestamp > 5 * 60 * 1000) { // 5分钟过期
+    if (now - lock.timestamp > 5 * 60 * 1000) { // 5
       expiredKeys.push(filePath)
     }
   }
@@ -326,7 +326,7 @@ export async function cleanupExpiredLocks(): Promise<void> {
 }
 
 /**
- * 获取文件的同步状态
+ * 
  */
 export async function getFileSyncStatus(filePath: string): Promise<{
   isLocked: boolean
@@ -335,10 +335,10 @@ export async function getFileSyncStatus(filePath: string): Promise<{
 }> {
   const store = await Store.load('store.json')
   
-  // 检查锁状态
+  //
   const lockInfo = await checkFileLock(filePath)
   
-  // 获取最后同步时间
+  //
   const syncTimes = await store.get<Record<string, number>>('lastSyncTimes') || {}
   const lastSyncTime = syncTimes[filePath]
   
@@ -350,7 +350,7 @@ export async function getFileSyncStatus(filePath: string): Promise<{
 }
 
 /**
- * 更新文件的同步时间
+ * 
  */
 export async function updateFileSyncTime(filePath: string): Promise<void> {
   const store = await Store.load('store.json')
@@ -362,7 +362,7 @@ export async function updateFileSyncTime(filePath: string): Promise<void> {
 }
 
 /**
- * 获取文件的恢复时间
+ * 
  */
 export async function getFileRestoreTime(filePath: string): Promise<number | undefined> {
   const store = await Store.load('store.json')
@@ -371,7 +371,7 @@ export async function getFileRestoreTime(filePath: string): Promise<number | und
 }
 
 /**
- * 更新文件的恢复时间
+ * 
  */
 export async function updateFileRestoreTime(filePath: string): Promise<void> {
   const store = await Store.load('store.json')

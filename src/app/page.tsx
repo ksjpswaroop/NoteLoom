@@ -11,14 +11,14 @@ export default function Home() {
     let currentPage = await store.get<string>('currentPage')
     
     if (isMobileDevice()) {
-      // 移动端逻辑
+      //
       if (currentPage?.includes('/mobile')) {
         router.push(currentPage || '/mobile/chat')
       } else {
         router.push('/mobile/chat')
       }
     } else {
-      // PC 端逻辑：将旧路径重定向到新的 /core/main
+      // PC ： /core/main
       if (currentPage === '/core/article' || currentPage === '/core/record') {
         currentPage = '/core/main'
         await store.set('currentPage', '/core/main')

@@ -16,9 +16,9 @@ export function ReadAloudControl({ chat, translatedContent }: ReadAloudControlPr
   const [isPlaying, setIsPlaying] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   
-  // 处理朗读/停止
+  // /
   async function handleTextToSpeech() {
-    // 如果正在播放，则停止播放
+    // ，
     if (isPlaying) {
       stopCurrentAudio()
       setIsPlaying(false)
@@ -26,38 +26,38 @@ export function ReadAloudControl({ chat, translatedContent }: ReadAloudControlPr
       return
     }
     
-    // 如果正在加载或没有内容，则返回
+    // ，
     if (!chat.content || isLoading) return
     
     setIsLoading(true)
     
     try {
-      // 使用翻译后的内容或原始内容
+      //
       let textToRead = translatedContent || chat.content
       
-      // 清理多余的空白字符
+      //
       textToRead = textToRead.trim()
       
       if (!textToRead) {
-        console.warn('朗读内容为空')
+        console.warn('Translated message')
         return
       }
       
-      // 获取当前音频模型的speed配置
+      // speed
       const { aiModelList, audioModel } = useSettingStore.getState()
       const audioConfig = aiModelList.find(config => config.key === audioModel)
       const speed = audioConfig?.speed
       
-      // 调用新的音频API，传入voice、speed和状态回调
+      // API，voice、speed
       await textToSpeechAndPlay(textToRead, undefined, speed, (playing: boolean) => {
         setIsPlaying(playing)
         if (playing) {
-          setIsLoading(false) // 开始播放时清除loading状态
+          setIsLoading(false) // loadingStatus
         }
       })
     } catch (error) {
-      console.error('朗读失败:', error)
-      // 可以在这里添加错误提示
+      console.error('Read aloud failed:', error)
+      //
     } finally {
       setIsLoading(false)
       setIsPlaying(false)

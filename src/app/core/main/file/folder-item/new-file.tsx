@@ -23,16 +23,16 @@ export function NewFile({ item }: NewFileProps) {
   function newFileHandler(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     e.stopPropagation();
     
-    // 创建临时文件节点，并将其设为编辑状态，与 newFile 保持一致
+    // ，， newFile
     const cacheTree = cloneDeep(fileTree);
     const currentFolder = getCurrentFolder(path, cacheTree);
     
-    // 如果文件夹中已经有一个空名称的文件，不再创建新的
+    // ，
     if (currentFolder?.children?.find(item => item.name === '' && item.isFile)) {
       return;
     }
     
-    // 确保文件夹是展开状态
+    //
     if (!collapsibleList.includes(path)) {
       setCollapsibleList(path, true);
     }

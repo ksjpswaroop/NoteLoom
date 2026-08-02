@@ -47,13 +47,13 @@ async function sha256(value: string): Promise<string> {
 function parseEmbedding(value: string): number[] {
   const parsed: unknown = JSON.parse(value)
   if (!Array.isArray(parsed) || parsed.some(item => typeof item !== 'number' || !Number.isFinite(item))) {
-    throw new Error('知识库包含无效的向量数据')
+    throw new Error('Knowledge base contains invalid vector data')
   }
   return parsed
 }
 
 function validateDocument(value: unknown): VectorDocumentSnapshot {
-  if (!value || typeof value !== 'object') throw new Error('知识库分块格式无效')
+  if (!value || typeof value !== 'object') throw new Error('Invalid knowledge base chunk format')
   const document = value as Partial<VectorDocumentSnapshot>
   if (
     typeof document.filename !== 'string' || !document.filename ||
@@ -62,17 +62,17 @@ function validateDocument(value: unknown): VectorDocumentSnapshot {
     typeof document.embedding !== 'string' ||
     typeof document.updated_at !== 'number'
   ) {
-    throw new Error('知识库分块字段不完整')
+    throw new Error('Knowledge base chunk fields incomplete')
   }
   parseEmbedding(document.embedding)
   return document as VectorDocumentSnapshot
 }
 
 function validateManifest(value: unknown): RagSnapshotManifest {
-  if (!value || typeof value !== 'object') throw new Error('远端知识库清单格式无效')
+  if (!value || typeof value !== 'object') throw new Error('Invalid remote knowledge base manifest format')
   const manifest = value as Partial<RagSnapshotManifest>
   if (manifest.schemaVersion !== RAG_SNAPSHOT_SCHEMA_VERSION) {
-    throw new Error(`不支持的知识库格式版本：${manifest.schemaVersion ?? 'unknown'}`)
+    throw new Error(`Unsupported knowledge base schema version: ${manifest.schemaVersion ?? 'unknown'}`)
   }
   if (
     typeof manifest.generatedAt !== 'number' ||
@@ -81,7 +81,7 @@ function validateManifest(value: unknown): RagSnapshotManifest {
     !Array.isArray(manifest.pages) ||
     !Array.isArray(manifest.sources)
   ) {
-    throw new Error('远端知识库清单字段不完整')
+    throw new Error('Remote knowledge base manifest fields incomplete')
   }
   return manifest as RagSnapshotManifest
 }
@@ -130,10 +130,10 @@ export async function uploadKnowledgeBaseSnapshot(
   onProgress?: (current: number, total: number, path: string) => void
 ): Promise<RagSnapshotManifest> {
   const documents = await getAllVectorDocuments()
-  if (documents.length === 0) throw new Error('本地知识库为空，请先重新计算')
+  if (documents.length === 0) throw new Error('Local knowledge base is empty; recalculate first')
 
   const dimensions = new Set(documents.map(document => parseEmbedding(document.embedding).length))
-  if (dimensions.size !== 1) throw new Error('本地知识库包含不同维度的向量，请先重新计算')
+  if (dimensions.size !== 1) throw new Error('Local knowledge base contains vectors of mixed dimensions; recalculate first')
 
   const store = await Store.load('store.json')
   const pages = splitDocumentsIntoPages(documents)
@@ -186,18 +186,18 @@ export async function downloadKnowledgeBaseSnapshot(
     onProgress?.(index, manifest.pages.length, page.path)
     const parsed: unknown = JSON.parse(await downloadRemoteText(page.path))
     if (!Array.isArray(parsed) || parsed.length !== page.count) {
-      throw new Error(`知识库分页损坏：${page.path}`)
+      throw new Error(`Knowledge base page corrupted: ${page.path}`)
     }
     documents.push(...parsed.map(validateDocument))
   }
 
   if (documents.length !== manifest.vectorCount) {
-    throw new Error(`知识库向量数量不匹配：预期 ${manifest.vectorCount}，实际 ${documents.length}`)
+    throw new Error(`Knowledge base vector count mismatch: expected ${manifest.vectorCount}, got ${documents.length}`)
   }
 
   const dimensions = new Set(documents.map(document => parseEmbedding(document.embedding).length))
   if (dimensions.size !== 1 || Array.from(dimensions)[0] !== manifest.embeddingDimension) {
-    throw new Error('知识库向量维度与清单不一致')
+    throw new Error('Knowledge base vector dimensions do not match the manifest')
   }
 
   await replaceAllVectorDocuments(documents)

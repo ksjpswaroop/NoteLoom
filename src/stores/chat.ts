@@ -41,10 +41,10 @@ function getPendingQuoteIdentity(quote: PendingQuote | null) {
   ].join('|')
 }
 
-// MCP 工具调用记录（临时，不保存到数据库）
+// MCP （，）
 export interface McpToolCall {
   id: string
-  chatId: number // 关联的 chat ID
+  chatId: number // Related chat ID
   toolName: string
   serverId: string
   serverName: string
@@ -58,22 +58,22 @@ interface ChatState {
   loading: boolean
   setLoading: (loading: boolean) => void
 
-  // 兼容旧代码：按标签加载（内部映射到默认会话）
+  // ：（）
   chats: Chat[]
-  init: (tagId: number) => Promise<void> // 初始化 chats
-  insert: (chat: Omit<Chat, 'id' | 'createdAt'>) => Promise<Chat | null> // 插入一条 chat
-  updateChat: (chat: Chat) => void // 更新一条 chat
-  saveChat: (chat: Chat, isSave?: boolean) => Promise<void> // 保存一条 chat，用于动态 AI 回复结束后保存数据库
-  deleteChat: (id: number) => Promise<void> // 删除一条 chat
+  init: (tagId: number) => Promise<void> // Initialize chats
+  insert: (chat: Omit<Chat, 'id' | 'createdAt'>) => Promise<Chat | null> // Insert a chat
+  updateChat: (chat: Chat) => void // Update a chat
+  saveChat: (chat: Chat, isSave?: boolean) => Promise<void> // Save a chat after streaming AI reply finishes
+  deleteChat: (id: number) => Promise<void> // Delete a chat
 
   locale: string
   getLocale: () => Promise<void>
   setLocale: (locale: string) => void
 
-  clearChats: (tagId: number) => Promise<void> // 清空 chats（兼容旧代码）
-  updateInsert: (id: number) => Promise<void> // 更新 inserted
+  clearChats: (tagId: number) => Promise<void> // Clear chats (legacy)
+  updateInsert: (id: number) => Promise<void> // Update inserted
 
-  // 同步
+  //
   syncState: boolean
   setSyncState: (syncState: boolean) => void
   lastSyncTime: string
@@ -81,14 +81,14 @@ interface ChatState {
   uploadChats: () => Promise<boolean>
   downloadChats: () => Promise<Chat[]>
 
-  // MCP 工具调用记录（临时缓存）
+  // MCP （）
   mcpToolCalls: McpToolCall[]
   addMcpToolCall: (toolCall: McpToolCall) => void
   updateMcpToolCall: (id: string, updates: Partial<McpToolCall>) => void
   getMcpToolCallsByChatId: (chatId: number) => McpToolCall[]
   clearMcpToolCalls: () => void
 
-  // Agent 模式
+  // Agent
   agentState: AgentState
   setAgentState: (state: Partial<AgentState>) => void
   resetAgentState: () => void
@@ -99,15 +99,15 @@ interface ChatState {
   agentAutoApproveRuntimeScriptKey: string | null
   setAgentAutoApproveRuntimeScriptKey: (permissionKey: string | null) => void
 
-  // Placeholder 状态
+  // Placeholder
   isPlaceholderEnabled: boolean
   setPlaceholderEnabled: (enabled: boolean) => void
 
-  // 关联的文件或文件夹（用于 Agent 工具调用时判断内容是否已在上下文中）
+  // （ Agent ）
   linkedResource: LinkedResource | null
   setLinkedResource: (resource: LinkedResource | null) => void
 
-  // 关联文件的行号预览（用于 AI 对话时快速了解文件结构）
+  // （ AI ）
   linkedResourcePreview: string | null
   setLinkedResourcePreview: (preview: string | null) => void
 
@@ -122,21 +122,21 @@ interface ChatState {
   onboardingPromptDraft: string | null
   setOnboardingPromptDraft: (prompt: string | null) => void
 
-  // === 新增：会话管理 ===
-  // 当前会话
+  // === ： ===
+  //
   currentConversationId: number | null
   conversations: Conversation[]
-  isTemporaryConversation: boolean // 临时会话仅保存在内存中
+  isTemporaryConversation: boolean //
 
-  // 会话初始化和管理
-  initConversations: () => Promise<void> // 初始化会话列表
-  createConversation: (title?: string) => Promise<number> // 创建新会话
-  switchConversation: (id: number) => Promise<void> // 切换会话
-  updateConversationTitle: (id: number, title: string) => Promise<void> // 更新会话标题
-  deleteConversation: (id: number) => Promise<void> // 删除会话
-  toggleConversationPin: (id: number) => Promise<boolean> // 切换会话置顶状态
-  startNewConversation: () => Promise<void> // 开始新对话（保存当前会话后创建新会话）
-  startTemporaryConversation: () => void // 开始不保存记录的临时会话
+  //
+  initConversations: () => Promise<void> //
+  createConversation: (title?: string) => Promise<number> //
+  switchConversation: (id: number) => Promise<void> //
+  updateConversationTitle: (id: number, title: string) => Promise<void> // Update conversation title
+  deleteConversation: (id: number) => Promise<void> //
+  toggleConversationPin: (id: number) => Promise<boolean> //
+  startNewConversation: () => Promise<void> // Start a new conversation after saving the current one
+  startTemporaryConversation: () => void //
 }
 
 let nextTemporaryChatId = -1
@@ -200,10 +200,10 @@ const useChatStore = create<ChatState>((set, get) => ({
         loadedSkills: undefined,
         selectedSkills: undefined,
         currentStepStartTime: undefined,
-        // 每次运行由 Agent 按需检索，不能沿用上一轮的参考笔记。
+        // Agent ，。
         ragSources: undefined,
         ragSourceDetails: undefined,
-        // 重置 Final Answer 模式
+        // Final Answer
         isFinalAnswerMode: false,
         finalAnswerContent: undefined,
       }
@@ -284,25 +284,25 @@ const useChatStore = create<ChatState>((set, get) => ({
   },
 
   chats: [],
-  // 兼容旧代码：init 方法现在会初始化会话列表并切换到第一个会话
+  // ：init
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   init: async (_tagId: number) => {
     set({ isTemporaryConversation: false })
     await initChatsDb()
-    // 先初始化会话列表
+    //
     await get().initConversations()
 
     const { currentConversationId, conversations } = get()
 
-    // 如果没有当前会话
+    //
     if (!currentConversationId) {
       if (conversations.length > 0) {
-        // 有历史会话，切换到第一个
+        // ，
         await get().switchConversation(conversations[0].id)
       }
-      // 如果没有历史会话，保持空状态，不创建新会话
+      // ，，
     } else {
-      // 加载当前会话的聊天记录
+      //
       const data = await getChatsByConversation(currentConversationId)
       set({ chats: data })
     }
@@ -321,13 +321,13 @@ const useChatStore = create<ChatState>((set, get) => ({
       return data
     }
 
-    // 确保有 conversationId，如果没有则创建新会话
+    // conversationId，
     let conversationId = chat.conversationId || currentConversationId
     if (!conversationId) {
-      // 没有当前会话，创建一个新会话
+      // ，
       const { createConversation } = await import('@/db/conversations')
-      conversationId = await createConversation('新对话')
-      // 设置为当前会话并刷新会话列表
+      conversationId = await createConversation('New chat')
+      //
       set({ currentConversationId: conversationId })
       await get().initConversations()
     }
@@ -345,19 +345,19 @@ const useChatStore = create<ChatState>((set, get) => ({
       const newChats = [...chats, data]
       set({ chats: newChats })
 
-      // 更新会话的消息数量和更新时间
+      //
       if (conversationId) {
         const { updateConversationMessageCount, updateConversationTime, updateConversationTitle, getConversation } = await import('@/db/conversations')
         await updateConversationMessageCount(conversationId, 1)
         await updateConversationTime(conversationId)
 
-        // 如果是当前会话的第一条用户消息，用消息内容作为标题
-        // 从数据库获取最新的会话状态，而不是使用内存中的旧数据
+        // ，
+        // ，
         const currentConv = await getConversation(conversationId)
         if (currentConv && currentConv.messageCount === 1 && chat.role === 'user' && chat.content) {
-          // 直接使用用户输入的前30个字符作为标题
+          // 30
           const title = chat.content
-            .replace(/\n/g, ' ')  // 移除换行符
+            .replace(/\n/g, ' ')  //
             .trim()
             .slice(0, 30)
 
@@ -366,7 +366,7 @@ const useChatStore = create<ChatState>((set, get) => ({
           }
         }
 
-        // 刷新会话列表
+        //
         await get().initConversations()
       }
 
@@ -378,7 +378,7 @@ const useChatStore = create<ChatState>((set, get) => ({
     const chats = get().chats
     const newChats = chats.map(item => {
       if (item.id === chat.id) {
-        // 合并更新，只覆盖非 undefined 的字段，保留已存在的字段（如 ragSources）
+        // ， undefined ，（ ragSources）
         const result = { ...item }
         for (const key in chat) {
           if ((chat as any)[key] !== undefined) {
@@ -408,7 +408,7 @@ const useChatStore = create<ChatState>((set, get) => ({
 
     await deleteChat(id)
 
-    // 更新会话的消息数量
+    //
     const { currentConversationId } = get()
     if (currentConversationId) {
       const { deleteConversationCompactions } = await import('@/db/conversation-compactions')
@@ -432,11 +432,11 @@ const useChatStore = create<ChatState>((set, get) => ({
     await store.set('note_locale', locale)
   },
 
-  // 兼容旧代码：clearChats 现在会清空当前会话的聊天记录
+  // ：clearChats
   clearChats: async (tagId) => {
     const isTemporaryConversation = get().isTemporaryConversation
     set({ chats: [] })
-    // 清空聊天记录时同步清理 Agent 状态
+    // Agent
     get().resetAgentState()
     get().clearMcpToolCalls()
     get().clearPendingQuote()
@@ -446,14 +446,14 @@ const useChatStore = create<ChatState>((set, get) => ({
       return
     }
 
-    // 更新会话的消息数量
+    //
     const { currentConversationId } = get()
     if (currentConversationId) {
-      // 获取当前消息数量
+      //
       const { chats } = get()
       const count = chats.length
 
-      // 删除数据库中的记录
+      //
       const db = await import('@/db').then(m => m.getDb())
       await db.execute("delete from chats where conversationId = $1", [currentConversationId])
       const { deleteConversationCompactions } = await import('@/db/conversation-compactions')
@@ -463,7 +463,7 @@ const useChatStore = create<ChatState>((set, get) => ({
       await updateConversationMessageCount(currentConversationId, -count)
       await get().initConversations()
     } else {
-      // 兼容旧代码：如果没有 conversationId，使用 tagId
+      // ： conversationId， tagId
       await clearChatsByTagId(tagId)
     }
   },
@@ -482,7 +482,7 @@ const useChatStore = create<ChatState>((set, get) => ({
     set({ chats: newChats })
   },
 
-  // 同步
+  //
   syncState: false,
   setSyncState: (syncState) => {
     set({ syncState })
@@ -585,7 +585,7 @@ const useChatStore = create<ChatState>((set, get) => ({
     set({ syncState: false })
     return result
   },
-  // MCP 工具调用记录
+  // MCP
   mcpToolCalls: [],
 
   addMcpToolCall: (toolCall: McpToolCall) => {
@@ -638,7 +638,7 @@ const useChatStore = create<ChatState>((set, get) => ({
           const s3Key = `${path}/${filename}`
           const s3Result = await s3Download(s3Config, s3Key)
           if (s3Result) {
-            // S3 返回的 content 是字符串，直接解析
+            // S3 content ，
             result = JSON.parse(s3Result.content)
           }
         }
@@ -656,7 +656,7 @@ const useChatStore = create<ChatState>((set, get) => ({
         break;
       }
     }
-    // S3/WebDAV 已经直接解析到 result 了，这里处理 Git 平台
+    // S3/WebDAV result ， Git
     if (files) {
       const configJson = decodeBase64ToString(getRemoteFileContent(files, `${path}/${filename}`))
       result = JSON.parse(configJson)
@@ -671,7 +671,7 @@ const useChatStore = create<ChatState>((set, get) => ({
     return result
   },
 
-  // === 新增：会话管理方法 ===
+  // === ： ===
   currentConversationId: null,
   conversations: [],
   isTemporaryConversation: false,
@@ -682,10 +682,10 @@ const useChatStore = create<ChatState>((set, get) => ({
     set({ conversations })
   },
 
-  createConversation: async (title = '新对话') => {
+  createConversation: async (title = 'New chat') => {
     const { createConversation: createConv } = await import('@/db/conversations')
     const id = await createConv(title)
-    // 设置为当前会话并刷新会话列表
+    //
     set({ currentConversationId: id, isTemporaryConversation: false })
     await get().initConversations()
     return id
@@ -697,10 +697,10 @@ const useChatStore = create<ChatState>((set, get) => ({
       const { scheduleConversationMemoryExtraction } = await import('@/lib/memory/auto-memory')
       scheduleConversationMemoryExtraction(previousConversationId)
     }
-    // 先同步消息数量，确保 messageCount 与实际消息数量一致
+    // ， messageCount
     const { syncConversationMessageCount } = await import('@/db/conversations')
     await syncConversationMessageCount(id)
-    // 然后加载消息
+    //
     const { getChatsByConversation } = await import('@/db/chats')
     const data = await getChatsByConversation(id)
     set({
@@ -710,14 +710,14 @@ const useChatStore = create<ChatState>((set, get) => ({
       pendingQuote: null,
       editorSelectionQuote: null,
     })
-    // 刷新会话列表以确保 UI 显示最新的会话状态
+    // UI
     await get().initConversations()
   },
 
   updateConversationTitle: async (id: number, title: string) => {
     const { updateConversationTitle: updateTitle } = await import('@/db/conversations')
     await updateTitle(id, title)
-    // 刷新会话列表
+    //
     await get().initConversations()
   },
 
@@ -727,13 +727,13 @@ const useChatStore = create<ChatState>((set, get) => ({
 
     const { currentConversationId, conversations, switchConversation } = get()
 
-    // 如果删除的是当前会话，切换到另一个会话
+    // ，
     if (id === currentConversationId) {
       const remainingConversations = conversations.filter(c => c.id !== id)
       if (remainingConversations.length > 0) {
         await switchConversation(remainingConversations[0].id)
       } else {
-        // 没有其他会话了，清空状态，不创建新会话
+        // ，，
         set({
           currentConversationId: null,
           chats: [],
@@ -748,14 +748,14 @@ const useChatStore = create<ChatState>((set, get) => ({
       }
     }
 
-    // 刷新会话列表
+    //
     await get().initConversations()
   },
 
   toggleConversationPin: async (id: number) => {
     const { toggleConversationPin: togglePin } = await import('@/db/conversations')
     const isPinned = await togglePin(id)
-    // 刷新会话列表
+    //
     await get().initConversations()
     return isPinned
   },
@@ -767,21 +767,21 @@ const useChatStore = create<ChatState>((set, get) => ({
       scheduleConversationMemoryExtraction(currentConversationId)
     }
 
-    // 如果当前会话无消息，删除它（从数据库查询最新状态）
+    // ，（）
     if (currentConversationId) {
       const { getConversation } = await import('@/db/conversations')
       const currentConv = await getConversation(currentConversationId)
       if (currentConv && currentConv.messageCount === 0) {
-        // 空会话，直接删除
+        // ，
         const { deleteConversation: deleteConv } = await import('@/db/conversations')
         await deleteConv(currentConversationId)
       }
-      // 刷新会话列表
+      //
       await get().initConversations()
     }
 
-    // 清空聊天，不立即创建新会话
-    // 等到用户发送第一条消息时才创建会话
+    // ，
+    //
     set({
       currentConversationId: null,
       chats: [],
@@ -791,7 +791,7 @@ const useChatStore = create<ChatState>((set, get) => ({
       agentAutoApproveConversationId: null,
       agentAutoApproveRuntimeScriptKey: null
     })
-    // 清空 Agent 状态
+    // Agent
     get().resetAgentState()
     get().clearMcpToolCalls()
   },

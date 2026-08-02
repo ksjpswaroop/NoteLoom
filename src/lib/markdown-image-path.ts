@@ -34,7 +34,7 @@ function getMarkdownDirSegments(markdownPath: string): string[] {
   return segments.slice(0, -1)
 }
 
-// Markdown 链接中的路径通常经过 URL 编码（如空格为 %20），解析为磁盘路径时需解码
+// Markdown URL （ %20），
 function decodePathSegment(segment: string): string {
   if (!segment.includes('%')) {
     return segment

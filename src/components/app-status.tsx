@@ -22,7 +22,7 @@ export default function AppStatus() {
     setGiteaSyncRepoInfo
   } = useSyncStore()
 
-  // 获取当前主要备份方式的用户信息
+  //
   async function handleGetUserInfo() {
     try {
       if (primaryBackupMethod === 'github') {
@@ -38,19 +38,19 @@ export default function AppStatus() {
         }
       } else if (primaryBackupMethod === 'gitee') {
         if (giteeAccessToken) {
-          // 获取 Gitee 用户信息
+          // Gitee
           setGiteeSyncRepoInfo(undefined)
           setGiteeSyncRepoState(SyncStateEnum.checking)
           const res = await import('@/lib/sync/gitee').then(module => module.getUserInfo())
           if (res) {
             setGiteeUserInfo(res)
           }
-          // 注意：checkGiteeRepos 内部已经包含了 getUserInfo 调用，但这里保留以确保用户信息及时更新
+          // ：checkGiteeRepos getUserInfo ，
           await checkGiteeRepos()
         }
       } else if (primaryBackupMethod === 'gitlab') {
         if (gitlabAccessToken) {
-          // 获取 Gitlab 用户信息
+          // Gitlab
           setGitlabSyncProjectInfo(undefined)
           setGitlabSyncProjectState(SyncStateEnum.checking)
           const { getUserInfo } = await import('@/lib/sync/gitlab')
@@ -63,7 +63,7 @@ export default function AppStatus() {
         }
       } else if (primaryBackupMethod === 'gitea') {
         if (giteaAccessToken) {
-          // 获取 Gitea 用户信息
+          // Gitea
           setGiteaSyncRepoInfo(undefined)
           setGiteaSyncRepoState(SyncStateEnum.checking)
           const { getUserInfo } = await import('@/lib/sync/gitea')
@@ -85,10 +85,10 @@ export default function AppStatus() {
     }
   }
 
-  // 检查 GitHub 仓库状态（仅检查，不创建）
+  // GitHub （，）
   async function checkGithubRepos() {
     try {
-      // 检查同步仓库状态
+      //
       const githubRepo = await getSyncRepoName('github')
       const syncRepo = await checkSyncRepoState(githubRepo)
       if (syncRepo) {
@@ -104,12 +104,12 @@ export default function AppStatus() {
     }
   }
   
-  // 检查 Gitlab 项目状态（仅检查，不创建）
+  // Gitlab （，）
   async function checkGitlabProjects() {
     try {
       const { checkSyncProjectState } = await import('@/lib/sync/gitlab')
       
-      // 检查同步项目状态
+      //
       const gitlabRepo = await getSyncRepoName('gitlab')
       const syncProject = await checkSyncProjectState(gitlabRepo)
       if (syncProject) {
@@ -125,12 +125,12 @@ export default function AppStatus() {
     }
   }
   
-  // 检查 Gitea 仓库状态（仅检查，不创建）
+  // Gitea （，）
   async function checkGiteaRepos() {
     try {
       const { checkSyncRepoState } = await import('@/lib/sync/gitea')
       
-      // 检查同步仓库状态
+      //
       const giteaRepo = await getSyncRepoName('gitea')
       const syncRepo = await checkSyncRepoState(giteaRepo)
       if (syncRepo) {
@@ -146,15 +146,15 @@ export default function AppStatus() {
     }
   }
   
-  // 检查 Gitee 仓库状态（仅检查，不创建）
+  // Gitee （，）
   async function checkGiteeRepos() {
     try {
       const { checkSyncRepoState, getUserInfo } = await import('@/lib/sync/gitee')
       
-      // 先获取用户信息，确保 giteeUsername 已设置
+      // ， giteeUsername
       await getUserInfo();
       
-      // 检查同步仓库状态
+      //
       const giteeRepo = await getSyncRepoName('gitee')
       const syncRepo = await checkSyncRepoState(giteeRepo)
       if (syncRepo) {
@@ -170,7 +170,7 @@ export default function AppStatus() {
     }
   }
 
-  // 监听 token 变化，获取用户信息
+  // token ，
   useEffect(() => {
     if (accessToken || giteeAccessToken || gitlabAccessToken || giteaAccessToken) {
       handleGetUserInfo()

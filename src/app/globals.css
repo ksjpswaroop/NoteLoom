@@ -3,7 +3,7 @@
 @import "@xyflow/react/dist/style.css";
 @import "streamdown/styles.css";
 
-/* 导入动画库 */
+/* Import animation library */
 @import "tw-animate-css";
 
 @source "../../node_modules/streamdown/dist/*.js";
@@ -12,12 +12,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* 配置 dark mode 变体 - 必须在 @theme 外面 */
+/* dark mode - @theme */
 @variant dark (&:where(.dark, .dark *));
 
-/* 使用 @theme inline 替代 tailwind.config.ts */
+/* @theme inline tailwind.config.ts */
 @theme inline {
-  /* 颜色映射 */
+  
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-card: hsl(var(--card));
@@ -40,12 +40,12 @@
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
 
-  /* 边框圆角 */
+  
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 
-  /* 自定义动画 */
+  
   @keyframes accordion-down {
     from {
       height: 0;
@@ -136,45 +136,62 @@
   animation: recordSearchBreathe 1.5s ease-in-out 2;
 }
 
-/* 基础样式 - 包含主题变量定义 */
+/*
+  NoteLoom brand — Deep Slate + Amber Thread
+  Hex reference (CSS tokens below store H S% L%):
+    --brand-slate-ink:   #1A2332
+    --brand-slate-deep:  #0F1419
+    --brand-slate-soft:  #F5F7FA
+    --brand-amber:       #C47D12  (light primary / loom frame)
+    --brand-amber-bright:#E9A825  (dark primary / warp thread)
+    --brand-teal-thread: #0F766E  (secondary accent / charts)
+  Tagline vibe: "Capture first. Organize later."
+*/
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    --brand-slate-ink: #1A2332;
+    --brand-slate-deep: #0F1419;
+    --brand-slate-soft: #F5F7FA;
+    --brand-amber: #C47D12;
+    --brand-amber-bright: #E9A825;
+    --brand-teal-thread: #0F766E;
+
+    --background: 220 33% 97%;
+    --foreground: 214 32% 15%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 214 32% 15%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --third: 240 4.8% 90.9%;
-    --third-foreground: 240 5.9% 15%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
+    --popover-foreground: 214 32% 15%;
+    --primary: 36 83% 42%;
+    --primary-foreground: 40 100% 97%;
+    --secondary: 214 25% 93%;
+    --secondary-foreground: 214 32% 15%;
+    --third: 214 28% 87%;
+    --third-foreground: 214 28% 22%;
+    --muted: 220 20% 94%;
+    --muted-foreground: 210 14% 42%;
+    --accent: 45 96% 89%;
+    --accent-foreground: 26 80% 26%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 10% 3.9%;
-    --shadow: 0 0% 0%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --border: 214 25% 88%;
+    --input: 214 25% 88%;
+    --ring: 36 83% 42%;
+    --shadow: 214 32% 15%;
+    --chart-1: 36 83% 42%;
+    --chart-2: 174 72% 26%;
+    --chart-3: 214 32% 28%;
+    --chart-4: 40 82% 53%;
+    --chart-5: 198 40% 40%;
     --radius: 0.625rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 220 28% 96%;
+    --sidebar-foreground: 214 24% 28%;
+    --sidebar-primary: 36 83% 42%;
+    --sidebar-primary-foreground: 40 100% 97%;
+    --sidebar-accent: 214 25% 93%;
+    --sidebar-accent-foreground: 214 32% 15%;
+    --sidebar-border: 214 22% 90%;
+    --sidebar-ring: 36 83% 42%;
     --component-inactive-color: var(--muted-foreground);
     --component-bg: var(--card);
     --component-shadow: var(--border);
@@ -185,51 +202,53 @@
     --component-active-bg: var(--secondary);
     --component-line-inactive-color: var(--border);
     --component-active-color-default: var(--accent-foreground);
+    --notegen-app-font-family: "Avenir Next", "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", "WenQuanYi Micro Hei", system-ui, sans-serif;
+    --noteloom-brand-font: "Iowan Old Style", "Palatino Linotype", Palatino, "Songti SC", "Noto Serif CJK SC", Georgia, serif;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --third: 240 3.7% 20.9%;
-    --third-foreground: 240 4.8% 90.9%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --background: 210 25% 8%;
+    --foreground: 214 20% 93%;
+    --card: 214 25% 11%;
+    --card-foreground: 214 20% 93%;
+    --popover: 214 25% 11%;
+    --popover-foreground: 214 20% 93%;
+    --primary: 40 82% 53%;
+    --primary-foreground: 36 60% 7%;
+    --secondary: 214 25% 16%;
+    --secondary-foreground: 214 20% 93%;
+    --third: 214 24% 20%;
+    --third-foreground: 214 20% 88%;
+    --muted: 214 25% 16%;
+    --muted-foreground: 214 15% 64%;
+    --accent: 36 50% 16%;
+    --accent-foreground: 45 96% 76%;
+    --destructive: 0 55% 36%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --border: 214 22% 21%;
+    --input: 214 22% 21%;
+    --ring: 40 82% 53%;
     --shadow: 0 0% 0%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --chart-1: 40 82% 53%;
+    --chart-2: 174 55% 42%;
+    --chart-3: 214 30% 55%;
+    --chart-4: 36 70% 48%;
+    --chart-5: 198 45% 55%;
+    --sidebar-background: 214 28% 10%;
+    --sidebar-foreground: 214 20% 92%;
+    --sidebar-primary: 40 82% 53%;
+    --sidebar-primary-foreground: 36 60% 7%;
+    --sidebar-accent: 214 25% 16%;
+    --sidebar-accent-foreground: 214 20% 92%;
+    --sidebar-border: 214 22% 18%;
+    --sidebar-ring: 40 82% 53%;
     --component-inactive-color: var(--muted-foreground);
     --component-bg: var(--card);
     --component-shadow: var(--border);
     --component-active-bg: var(--secondary);
     --component-line-inactive-color: var(--muted-foreground);
     --component-active-color-default: var(--accent-foreground);
-    --notegen-app-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", "WenQuanYi Micro Hei", Arial, sans-serif;
+    --notegen-app-font-family: "Avenir Next", "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", "WenQuanYi Micro Hei", system-ui, sans-serif;
   }
 
   * {
@@ -246,9 +265,14 @@
   html {
     @apply font-sans;
   }
+
+  .noteloom-brand-wordmark {
+    font-family: var(--noteloom-brand-font);
+    letter-spacing: -0.02em;
+  }
 }
 
-/* 自定义组件样式 - 使用 Tailwind 类以支持主题切换 */
+/* - Tailwind */
 html, body {
   height: 100vh;
   overflow: hidden;
@@ -707,7 +731,7 @@ ol {
   border-color: hsl(var(--ring) / 0.75);
 }
 
-/* Tiptap 搜索替换高亮样式 */
+/* Tiptap */
 .search-result {
   background-color: #ffeb3b !important;
   color: #000 !important;
@@ -722,7 +746,7 @@ ol {
   color: #fff !important;
 }
 
-/* 暗色模式适配 */
+
 .dark .search-result {
   background-color: #f59e0b !important;
   color: #000 !important;

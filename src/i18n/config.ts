@@ -1,9 +1,9 @@
 import type { AbstractIntlMessages } from 'next-intl';
 
-export const SUPPORTED_LOCALES = ['en', 'zh', 'ja', 'pt-BR', 'zh-TW'] as const;
+export const SUPPORTED_LOCALES = ['en'] as const;
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 
-export const DEFAULT_LOCALE: SupportedLocale = 'zh';
+export const DEFAULT_LOCALE: SupportedLocale = 'en';
 export const LANGUAGE_STORAGE_KEY = 'app-language';
 
 export function isSupportedLocale(locale: string): locale is SupportedLocale {
@@ -11,10 +11,7 @@ export function isSupportedLocale(locale: string): locale is SupportedLocale {
 }
 
 export function normalizeLocale(locale?: string | null): SupportedLocale {
-  if (locale && isSupportedLocale(locale)) {
-    return locale;
-  }
-
+  void locale;
   return DEFAULT_LOCALE;
 }
 
@@ -44,7 +41,7 @@ export function mergeMessages(
   return merged;
 }
 
-export async function loadLocaleMessages(locale: SupportedLocale): Promise<AbstractIntlMessages> {
+export async function loadLocaleMessages(locale: SupportedLocale = DEFAULT_LOCALE): Promise<AbstractIntlMessages> {
   const [{ default: messages }, { default: commonMessages }] = await Promise.all([
     import(`../../messages/${locale}.json`),
     import(`../../messages/common/${locale}.json`),
@@ -57,14 +54,8 @@ export async function loadLocaleMessages(locale: SupportedLocale): Promise<Abstr
 }
 
 export async function loadMessagesWithFallback(
-  locale: SupportedLocale
+  locale?: SupportedLocale
 ): Promise<AbstractIntlMessages> {
-  const messages = await loadLocaleMessages(locale);
-
-  if (locale === DEFAULT_LOCALE) {
-    return messages;
-  }
-
-  const fallbackMessages = await loadLocaleMessages(DEFAULT_LOCALE);
-  return mergeMessages(messages, fallbackMessages);
+  void locale;
+  return loadLocaleMessages(DEFAULT_LOCALE);
 }

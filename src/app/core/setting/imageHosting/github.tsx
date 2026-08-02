@@ -45,11 +45,11 @@ export function GithubImageHosting() {
     setImageRepoInfo,
   } = useImageStore()
 
-  // 检查按钮是否禁用
+  //
   const isChecking = imageRepoState === SyncStateEnum.checking;
   const isCreating = imageRepoState === SyncStateEnum.creating;
 
-  // 创建 GitHub 仓库
+  // GitHub
   async function createGithubRepo() {
     try {
       setImageRepoState(SyncStateEnum.creating)
@@ -67,7 +67,7 @@ export function GithubImageHosting() {
     }
   }
 
-  // 检查 GitHub 仓库状态
+  // GitHub
   async function checkGithubRepos() {
     try {
       setImageRepoState(SyncStateEnum.checking)
@@ -79,9 +79,9 @@ export function GithubImageHosting() {
         return;
       }
       setImageRepoUserInfo(userInfo)
-      // 获取实际使用的仓库名（自定义或默认）
+      // （）
       const actualRepoName = await getImageRepoName()
-      // 检查图床仓库状态
+      //
       const imageRepo = await checkImageRepoState(actualRepoName)
       if (imageRepo) {
         setImageRepoInfo(imageRepo)
@@ -111,7 +111,7 @@ export function GithubImageHosting() {
   async function customRepoChangeHandler(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value
     await setGithubCustomImageRepo(value)
-    // 如果有token，重新检查仓库状态
+    // token，
     if (githubImageAccessToken) {
       checkGithubRepos()
     }
@@ -175,7 +175,7 @@ export function GithubImageHosting() {
             </ItemActions>
           </Item>
 
-        {/* 仓库操作按钮 */}
+        {/* */}
         {githubImageAccessToken && imageRepoState === SyncStateEnum.fail && (
           <div className="flex gap-2">
             <Button 
@@ -218,14 +218,14 @@ export function GithubImageHosting() {
             onChange={tokenChangeHandler}
             visible={accessTokenVisible}
             onVisibleChange={setAccessTokenVisible}
-            tokenUrl="https://github.com/settings/personal-access-tokens/new?name=NoteGen&description=NoteGen+image+hosting&expires_in=none&contents=write&administration=write"
+            tokenUrl="https://github.com/settings/personal-access-tokens/new?name=NoteLoom&description=NoteLoom+image+hosting&expires_in=none&contents=write&administration=write"
             placeholder={t('settings.sync.enterToken')}
             docsSection="image-hosting"
           />
           <FieldDescription>{t('settings.sync.newTokenDesc')}</FieldDescription>
         </Field>
 
-        {/* 仓库信息 */}
+        {/* */}
         {imageRepoInfo && (
           <Field>
             <FieldTitle>{t('settings.sync.repoStatus')}</FieldTitle>
@@ -249,7 +249,7 @@ export function GithubImageHosting() {
           </Field>
         )}
 
-        {/* JSDelivr 设置 */}
+        {/* JSDelivr */}
         {imageRepoInfo && (
           <Field orientation="horizontal">
             <div className="flex flex-1 flex-col gap-1">

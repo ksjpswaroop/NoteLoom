@@ -66,7 +66,7 @@ export function ServerConfigDialog({
         setName(editingServer.name)
         setType(editingServer.type)
         
-        // 对于 stdio 类型，如果 command 和 args 都存在，合并显示在 command 字段
+        // stdio ， command args ， command
         if (editingServer.type === 'stdio' && editingServer.command && editingServer.args && editingServer.args.length > 0) {
           const fullCommand = `${editingServer.command} ${editingServer.args.join(' ')}`
           setCommand(fullCommand)
@@ -109,7 +109,7 @@ export function ServerConfigDialog({
 
     setTesting(true)
     try {
-      // 使用临时 ID 进行测试
+      // ID
       const config = buildConfig(true)
       const result = await mcpServerManager.testConnectionDetailed(config)
 
@@ -130,7 +130,7 @@ export function ServerConfigDialog({
   
   const buildConfig = (isTest: boolean = false): MCPServerConfig => {
     const config: MCPServerConfig = {
-      // 测试时使用临时 ID，避免与已存在的服务器冲突
+      // ID，
       id: isTest ? `mcp-test-${Date.now()}` : (editingServer?.id || `mcp-${Date.now()}`),
       name,
       type,
@@ -140,14 +140,14 @@ export function ServerConfigDialog({
     }
 
     if (type === 'stdio') {
-      // 智能解析命令：如果 command 包含空格且 args 为空，自动分割
+      // ： command args ，
       const commandParts = command.trim().split(/\s+/)
       if (commandParts.length > 1 && !args.trim()) {
-        // 第一个词是命令，其余是参数
+        // ，
         config.command = commandParts[0]
         config.args = commandParts.slice(1)
       } else {
-        // 使用原有逻辑
+        //
         config.command = command.trim()
         config.args = args.split(' ').filter(Boolean)
       }
@@ -257,7 +257,7 @@ export function ServerConfigDialog({
             </DrawerHeader>
 
             <div className="flex flex-col gap-4 px-4">
-              {/* 服务器名称 */}
+              {/* */}
               <div className="space-y-2">
                 <Label htmlFor="name">{t('serverName')}</Label>
                 <Input
@@ -268,7 +268,7 @@ export function ServerConfigDialog({
                 />
               </div>
 
-              {/* 启用状态 */}
+              {/* */}
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label>{t('serverEnabled')}</Label>
@@ -288,7 +288,7 @@ export function ServerConfigDialog({
                 <Switch checked={trustToolAnnotations} onCheckedChange={setTrustToolAnnotations} />
               </div>
 
-              {/* 服务器类型 */}
+              {/* */}
               <div className="space-y-2">
                 <Label htmlFor="type">{t('serverType')}</Label>
                 {isUnsupportedMobileStdio ? (
@@ -308,7 +308,7 @@ export function ServerConfigDialog({
 
               {unsupportedMobileSection}
 
-              {/* stdio 配置 */}
+              {/* stdio */}
               {type === 'stdio' && !isActualMobile && (
                 <>
                   <div className="space-y-2">
@@ -347,7 +347,7 @@ export function ServerConfigDialog({
                 </>
               )}
 
-              {/* HTTP 配置 */}
+              {/* HTTP */}
               {type === 'http' && (
                 <>
                   <div className="space-y-2">
@@ -402,7 +402,7 @@ export function ServerConfigDialog({
             </DialogHeader>
 
             <div className="space-y-4 py-4">
-              {/* 服务器名称 */}
+              {/* */}
               <div className="space-y-2">
                 <Label htmlFor="name">{t('serverName')}</Label>
                 <Input
@@ -413,7 +413,7 @@ export function ServerConfigDialog({
                 />
               </div>
 
-              {/* 启用状态 */}
+              {/* */}
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label>{t('serverEnabled')}</Label>
@@ -433,7 +433,7 @@ export function ServerConfigDialog({
                 <Switch checked={trustToolAnnotations} onCheckedChange={setTrustToolAnnotations} />
               </div>
 
-              {/* 服务器类型 */}
+              {/* */}
               <div className="space-y-2">
                 <Label htmlFor="type">{t('serverType')}</Label>
                 {isUnsupportedMobileStdio ? (
@@ -453,7 +453,7 @@ export function ServerConfigDialog({
 
               {unsupportedMobileSection}
 
-              {/* stdio 配置 */}
+              {/* stdio */}
               {type === 'stdio' && !isActualMobile && (
                 <>
                   <div className="space-y-2">
@@ -492,7 +492,7 @@ export function ServerConfigDialog({
                 </>
               )}
 
-              {/* HTTP 配置 */}
+              {/* HTTP */}
               {type === 'http' && (
                 <>
                   <div className="space-y-2">

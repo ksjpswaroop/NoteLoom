@@ -1,10 +1,10 @@
 /**
- * 自定义主题颜色配置
- * 使用 HSL 格式，值为 [hue, saturation, lightness] 数组或 null
- * null 表示使用默认值
+ * 
+ * HSL ， [hue, saturation, lightness] null
+ * null 
  */
 export interface CustomThemeColors {
-  // 亮色主题颜色
+  //
   light: {
     background: HSLValue | null
     foreground: HSLValue | null
@@ -23,7 +23,7 @@ export interface CustomThemeColors {
     border: HSLValue | null
     shadow: HSLValue | null
   }
-  // 暗色主题颜色
+  //
   dark: {
     background: HSLValue | null
     foreground: HSLValue | null
@@ -45,12 +45,12 @@ export interface CustomThemeColors {
 }
 
 /**
- * HSL 颜色值
+ * HSL 
  */
 export type HSLValue = [number, number, number]
 
 /**
- * 获取主题 CSS 变量名映射
+ * CSS 
  */
 export const THEME_VARIABLE_MAP = {
   light: {

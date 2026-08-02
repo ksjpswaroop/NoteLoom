@@ -89,7 +89,7 @@ export default function ModelCard({
   const abortControllerRef = useRef<AbortController | null>(null)
 
   const handleCheck = async () => {
-    // 取消之前的请求
+    //
     if (abortControllerRef.current) {
       abortControllerRef.current.abort()
     }
@@ -145,12 +145,12 @@ export default function ModelCard({
             }
           }, signal)
           if (!rerankData || !rerankData.results) {
-            throw new Error('重排序结果格式不正确')
+            throw new Error('Invalid rerank result format')
           }
           return true
 
         case 'embedding':
-          const testText = '测试文本'
+          const testText = 'Test text'
           const embeddingDataJson = await invokeAiJson<EmbeddingCheckResponse>({
             config: requestConfig,
             path: '/embeddings',
@@ -162,12 +162,12 @@ export default function ModelCard({
             }
           }, signal)
           if (!embeddingDataJson || !embeddingDataJson.data || !embeddingDataJson.data[0] || !embeddingDataJson.data[0].embedding) {
-            throw new Error('嵌入结果格式不正确')
+            throw new Error('Invalid embedding result format')
           }
           return true
 
         case 'tts':
-          const testAudioText = '测试音频生成'
+          const testAudioText = 'Test audio generation'
           const ttsBuffer = await invokeAiBinary({
             config: requestConfig,
             path: '/audio/speech',
@@ -179,7 +179,7 @@ export default function ModelCard({
             }
           }, signal)
           if (!ttsBuffer.byteLength) {
-            throw new Error('TTS模型返回格式不正确')
+            throw new Error('Invalid TTS model response format')
           }
           return true
 

@@ -30,7 +30,7 @@ export function ControlRecording() {
 
   const { addQueue, removeQueue } = useMarkStore()
   
-  // 大模型录音
+  //
   const {
     isRecording,
     recordingDuration,
@@ -39,7 +39,7 @@ export function ControlRecording() {
     cancelRecording,
   } = useRecordingStore()
   
-  // 监听快捷键
+  //
   useEffect(() => {
     const handleToggleRecording = () => {
       if (useRecordingStore.getState().isRecording) {
@@ -55,14 +55,14 @@ export function ControlRecording() {
     }
   })
 
-  // 格式化录音时长
+  //
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
   
-  // 开始录音
+  //
   const handleStart = async () => {
     try {
       await startRecording()
@@ -76,7 +76,7 @@ export function ControlRecording() {
     }
   }
   
-  // 停止录音
+  //
   const handleStop = async () => {
     try {
       const audioBlob = await stopRecording()
@@ -84,14 +84,14 @@ export function ControlRecording() {
         throw new Error(t('recording.noAudioData'))
       }
       
-      // 转换为 WAV 格式
+      // WAV
       const wavBlob = await convertToWav(audioBlob)
       
-      // 创建队列ID
+      // ID
       const queueId = `recording-${Date.now()}`
       const tagId = await getDefaultRecordSaveTagId()
       
-      // 添加到队列中显示识别中的状态
+      //
       addQueue({
         queueId,
         tagId,
@@ -100,11 +100,11 @@ export function ControlRecording() {
         startTime: Date.now()
       })
 
-      // 后台异步识别（使用转换后的 WAV）
+      // （ WAV）
       processTranscription(wavBlob, queueId, tagId)
       
     } catch (error) {
-      console.error('停止录音失败:', error)
+      console.error('Failed', error)
       toast({
         title: t('recording.error'),
         description: error instanceof Error ? error.message : t('recording.startError'),
@@ -113,10 +113,10 @@ export function ControlRecording() {
     }
   }
   
-  // 保存音频文件到本地
+  //
   const saveAudioFile = async (audioBlob: Blob): Promise<string> => {
     const timestamp = Date.now()
-    // 根据 MIME 类型确定文件扩展名
+    // MIME
     const extension = audioBlob.type.includes('wav') ? 'wav' :
                       audioBlob.type.includes('mpeg') || audioBlob.type.includes('mp3') ? 'mp3' :
                       audioBlob.type.includes('mp4') || audioBlob.type.includes('m4a') ? 'mp4' : 
@@ -127,24 +127,24 @@ export function ControlRecording() {
     const filename = `recording_${timestamp}.${extension}`
     const audioDir = 'recordings'
     
-    // 确保目录存在
+    //
     const dirExists = await exists(audioDir, { baseDir: BaseDirectory.AppData })
     if (!dirExists) {
       await mkdir(audioDir, { baseDir: BaseDirectory.AppData, recursive: true })
     }
     
-    // 将 Blob 转换为 ArrayBuffer
+    // Blob ArrayBuffer
     const arrayBuffer = await audioBlob.arrayBuffer()
     const uint8Array = new Uint8Array(arrayBuffer)
     
-    // 保存文件
+    //
     const filePath = `${audioDir}/${filename}`
     await writeFile(filePath, uint8Array, { baseDir: BaseDirectory.AppData })
     
     return filePath
   }
   
-  // 后台处理识别
+  //
   const processTranscription = async (
     audioBlob: Blob,
     queueId: string,
@@ -152,23 +152,23 @@ export function ControlRecording() {
   ) => {
     let audioPath = ''
     try {
-      // 先验证 Blob 是否有效
+      // Blob
       if (!audioBlob || audioBlob.size === 0) {
-        throw new Error('音频数据为空')
+        throw new Error('Translated message')
       }
       
-      // 保存音频文件
+      //
       audioPath = await saveAudioFile(audioBlob)
       
-      // 调用STT API识别
+      // STT API
       let transcription = ''
       try {
         transcription = await transcribeRecording(audioBlob)
       } catch (error) {
-        console.error('STT识别出错:', error)
+        console.error('STT', error)
       }
       
-      // 无论是否识别成功，都保存记录
+      // ，
       const noContent = !transcription || !transcription.trim()
       const fallbackMessage = getTranscriptionFallbackMessage(sttModel)
       const displayContent = noContent ? (fallbackMessage || t('recording.noContentDetected')) : transcription
@@ -178,11 +178,11 @@ export function ControlRecording() {
         type: 'recording',
         desc: displayContent.substring(0, 100),
         content: displayContent,
-        url: audioPath  // 保存音频文件路径
+        url: audioPath  // Save
       })
       const markId = Number(result.lastInsertId || 0) || null
       
-      // 移除队列
+      //
       removeQueue(queueId)
 
       await completeRecord({
@@ -191,11 +191,11 @@ export function ControlRecording() {
         typeLabel: t('record.mark.type.recording'),
       })
       
-      // 录制结束后不再显示提示
+      //
     } catch (error) {
-      console.error('识别失败:', error)
+      console.error('Recognition failed:', error)
       
-      // 移除队列
+      //
       removeQueue(queueId)
       
       toast({
@@ -207,16 +207,16 @@ export function ControlRecording() {
     }
   }
   
-  // 选择音频文件并识别
+  //
   const handleFileSelect = async () => {
     try {
-      // 移动端使用 HTML5 file input
+      // HTML5 file input
       if (isMobile) {
         fileInputRef.current?.click()
         return
       }
 
-      // PC端使用 Tauri dialog
+      // PC Tauri dialog
       const selected = await open({
         multiple: false,
         filters: [{
@@ -227,11 +227,11 @@ export function ControlRecording() {
 
       if (!selected) return
 
-      // 读取文件
+      //
       const filePath = selected as string
       const fileData = await readFile(filePath)
       
-      // 根据文件扩展名确定 MIME 类型
+      // MIME
       const extension = filePath.split('.').pop()?.toLowerCase()
       const mimeType = extension === 'wav' ? 'audio/wav' :
                       extension === 'mp3' ? 'audio/mpeg' :
@@ -241,15 +241,15 @@ export function ControlRecording() {
                       extension === 'webm' ? 'audio/webm' :
                       'audio/mpeg'
       
-      // 将 Uint8Array 转换为 ArrayBuffer
+      // Uint8Array ArrayBuffer
       const buffer = fileData.buffer.slice(fileData.byteOffset, fileData.byteOffset + fileData.byteLength) as ArrayBuffer
       const audioBlob = new Blob([buffer], { type: mimeType })
 
-      // 创建队列ID
+      // ID
       const queueId = `recording-${Date.now()}`
       const tagId = await getDefaultRecordSaveTagId()
       
-      // 添加到队列中显示识别中的状态
+      //
       addQueue({
         queueId,
         tagId,
@@ -258,30 +258,30 @@ export function ControlRecording() {
         startTime: Date.now()
       })
       
-      // 后台异步识别
+      //
       processTranscription(audioBlob, queueId, tagId)
       
     } catch (error) {
-      console.error('文件选择失败:', error)
+      console.error('File Failed', error)
       toast({
         title: t('recording.error'),
-        description: error instanceof Error ? error.message : '文件选择失败',
+        description: error instanceof Error ? error.message : 'File Failed',
         variant: 'destructive'
       })
     }
   }
   
-  // 处理移动端文件选择
+  //
   const handleFileInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) return
 
     try {
-      // 创建队列ID
+      // ID
       const queueId = `recording-${Date.now()}`
       const tagId = await getDefaultRecordSaveTagId()
       
-      // 添加到队列中显示识别中的状态
+      //
       addQueue({
         queueId,
         tagId,
@@ -290,45 +290,45 @@ export function ControlRecording() {
         startTime: Date.now()
       })
       
-      // 后台异步识别（File 对象就是 Blob，直接传递）
+      // （File Blob，）
       processTranscription(file, queueId, tagId)
       
-      // 重置 input
+      // input
       event.target.value = ''
     } catch (error) {
-      console.error('文件处理失败:', error)
+      console.error('File Failed', error)
       toast({
         title: t('recording.error'),
-        description: error instanceof Error ? error.message : '文件处理失败',
+        description: error instanceof Error ? error.message : 'File Failed',
         variant: 'destructive'
       })
     }
   }
 
-  // 处理点击事件（单击录音，双击选择文件）
+  // （，）
   const handleClick = () => {
     const now = Date.now()
     const timeSinceLastClick = now - lastClickTime.current
     
-    // 双击判定：300ms内的第二次点击
+    // ：300ms
     if (timeSinceLastClick < 300 && timeSinceLastClick > 0) {
-      // 双击：取消单击的延迟执行，直接选择文件
+      // ：，
       if (clickTimer.current) {
         clearTimeout(clickTimer.current)
         clickTimer.current = null
       }
-      lastClickTime.current = 0 // 重置，避免三连击
+      lastClickTime.current = 0 // Reset，
       void handleFileSelect()
     } else {
-      // 单击：延迟执行，等待可能的第二次点击
+      // ：，
       lastClickTime.current = now
       
-      // 清除之前的定时器
+      //
       if (clickTimer.current) {
         clearTimeout(clickTimer.current)
       }
       
-      // 延迟300ms执行单击操作，如果期间有第二次点击则会被取消
+      // 300ms，
       clickTimer.current = setTimeout(() => {
         if (isRecording) {
           void handleStop()
@@ -340,7 +340,7 @@ export function ControlRecording() {
     }
   }
   
-  // 生成tooltip文本
+  // tooltip
   const getTooltipText = () => {
     if (isRecording) {
       return `${t('recording.recording')} ${formatDuration(recordingDuration)}`
@@ -350,7 +350,7 @@ export function ControlRecording() {
 
   return (
     <>
-      {/* 移动端文件选择 */}
+      {/* */}
       {isMobile && (
         <input
           ref={fileInputRef}

@@ -29,7 +29,7 @@ export default function UploadStore() {
     const path = '.settings'
     const filename = 'store.json'
     
-    // 读取并过滤配置
+    //
     const store = await Store.load('store.json');
     const allSettings: Record<string, unknown> = {}
     const entries = await store.entries()
@@ -38,7 +38,7 @@ export default function UploadStore() {
     }
     const excludeSensitiveConfig = await store.get<boolean>('excludeSensitiveConfig') !== false
     
-    // 过滤掉不应同步的字段（如工作区路径等）
+    // （）
     const syncableSettings = filterSyncData(allSettings, { excludeSensitiveConfig })
     const filteredContent = JSON.stringify(syncableSettings, null, 2)
     const file = new TextEncoder().encode(filteredContent)
@@ -114,7 +114,7 @@ export default function UploadStore() {
     const filename = 'store.json'
     const store = await Store.load('store.json');
     
-    // 获取本地配置（用于保留排除字段）
+    // （）
     const localSettings: Record<string, unknown> = {}
     const entries = await store.entries()
     for (const [key, value] of entries) {
@@ -146,10 +146,10 @@ export default function UploadStore() {
       const configJson = decodeBase64ToString(getRemoteFileContent(file, `${path}/${filename}`))
       const remoteSettings = JSON.parse(configJson)
       
-      // 合并配置：使用远程配置，但保留本地的排除字段（如工作区路径等）
+      // ：，（）
       const mergedSettings = mergeSyncData(localSettings, remoteSettings, { excludeSensitiveConfig })
       
-      // 保存合并后的配置
+      //
       const keys = Object.keys(mergedSettings)
       await Promise.allSettled(keys.map(async key => await store.set(key, mergedSettings[key])))
       await store.save()

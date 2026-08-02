@@ -25,11 +25,11 @@ import { useSyncConfirmStore } from '@/stores/sync-confirm'
 import useSyncStore from '@/stores/sync'
 import emitter from '@/lib/emitter'
 
-// Store 实例缓存
+// Store
 let storeInstance: Store | null = null
 
 /**
- * 获取 Store 实例
+ * Store 
  */
 async function getStore(): Promise<Store> {
   if (!storeInstance) {
@@ -39,7 +39,7 @@ async function getStore(): Promise<Store> {
 }
 
 /**
- * 获取 GitLab 分支配置
+ * GitLab 
  */
 async function getGitlabBranch(): Promise<string> {
   const store = await getStore()
@@ -47,7 +47,7 @@ async function getGitlabBranch(): Promise<string> {
 }
 
 /**
- * 获取 Gitea 分支配置
+ * Gitea 
  */
 async function getGiteaBranch(): Promise<string> {
   const store = await getStore()
@@ -55,7 +55,7 @@ async function getGiteaBranch(): Promise<string> {
 }
 
 /**
- * 从 store 获取本地记录的远程 SHA
+ * store SHA
  */
 export async function getLocalRecordedSha(filePath: string): Promise<string | null> {
   const store = await getStore()
@@ -64,7 +64,7 @@ export async function getLocalRecordedSha(filePath: string): Promise<string | nu
 }
 
 /**
- * 设置本地记录的远程 SHA
+ * SHA
  */
 export async function setLocalRecordedSha(filePath: string, sha: string): Promise<void> {
   const store = await getStore()
@@ -91,7 +91,7 @@ export interface SyncResult {
 }
 
 /**
- * 计算文件内容的 SHA 值
+ * SHA 
  */
 export async function calculateFileSha(content: string): Promise<string> {
   const encoder = new TextEncoder()
@@ -102,12 +102,12 @@ export async function calculateFileSha(content: string): Promise<string> {
 }
 
 /**
- * 获取本地文件元数据（增强版，处理文件名兼容性和目录检查）
+ * （，）
  */
 export async function getLocalFileMetadata(path: string): Promise<FileMetadata> {
   const workspace = await getWorkspacePath()
   
-  // 检查并清理文件名
+  //
   if (hasInvalidFileNameChars(path)) {
     path = sanitizeFilePath(path)
   }
@@ -136,11 +136,11 @@ export async function getLocalFileMetadata(path: string): Promise<FileMetadata> 
       syncStatus: 'unknown'
     }
   } catch (error) {
-    // 如果是目录不存在的错误，这是正常的，返回未知状态
+    // ，，
     if (error instanceof Error && 
         (error.message.includes('no such file') || 
          error.message.includes('not found') ||
-         error.message.includes('系统找不到指定的路径'))) {
+         error.message.includes('Translated message'))) {
       return {
         path,
         syncStatus: 'unknown'
@@ -155,7 +155,7 @@ export async function getLocalFileMetadata(path: string): Promise<FileMetadata> 
 }
 
 /**
- * 获取远程文件信息
+ * 
  */
 export async function getRemoteFileInfo(path: string): Promise<{ sha?: string; lastModified?: number }> {
   const store = await Store.load('store.json')
@@ -168,7 +168,7 @@ export async function getRemoteFileInfo(path: string): Promise<{ sha?: string; l
         const githubRepo = await getSyncRepoName('github')
         file = await getGithubFiles({ path, repo: githubRepo })
         if (file) {
-          // 获取最新提交信息
+          //
           const commits = await getGithubFileCommits({ path, repo: githubRepo })
           if (commits && commits.length > 0) {
             return {
@@ -176,7 +176,7 @@ export async function getRemoteFileInfo(path: string): Promise<{ sha?: string; l
               lastModified: new Date(commits[0].commit.committer.date).getTime()
             }
           }
-          // 当前平台 API 不直接返回 SHA，返回 undefined
+          // API SHA， undefined
           return { sha: undefined }
         }
         break
@@ -192,7 +192,7 @@ export async function getRemoteFileInfo(path: string): Promise<{ sha?: string; l
               lastModified: new Date(commits[0].commit.committer.date).getTime()
             }
           }
-          // 当前平台 API 不直接返回 SHA，返回 undefined
+          // API SHA， undefined
           return { sha: undefined }
         }
         break
@@ -209,7 +209,7 @@ export async function getRemoteFileInfo(path: string): Promise<{ sha?: string; l
               lastModified: new Date(commits.data[0].committed_date).getTime()
             }
           }
-          // 当前平台 API 不直接返回 SHA，返回 undefined
+          // API SHA， undefined
           return { sha: undefined }
         }
         break
@@ -227,26 +227,26 @@ export async function getRemoteFileInfo(path: string): Promise<{ sha?: string; l
               lastModified: new Date(commits.data[0].commit.committer.date).getTime()
             }
           }
-          // 当前平台 API 不直接返回 SHA，返回 undefined
+          // API SHA， undefined
           return { sha: undefined }
         }
         break
       }
     }
   } catch {
-    // 静默处理错误
+    //
   }
 
   return { sha: undefined, lastModified: undefined }
 }
 
 /**
- * 比较本地和远程文件版本
- * 注意：由于本地使用 SHA-256 而远程使用 Git blob SHA（SHA-1），两种算法不同
- * 因此不直接比较 SHA，而是依赖修改时间进行比较
+ * 
+ * ： SHA-256 Git blob SHA（SHA-1），
+ * SHA，
  */
 export async function compareFileVersions(path: string): Promise<SyncResult> {
-  // 检查当前平台是否是 S3
+  // S3
   const store = await getStore()
   const platform = await store.get<string>('primaryBackupMethod')
 
@@ -261,105 +261,105 @@ export async function compareFileVersions(path: string): Promise<SyncResult> {
   const localMeta = await getLocalFileMetadata(path)
   const remoteInfo = await getRemoteFileInfo(path)
 
-  // 获取最后同步时间和恢复时间
+  //
   const syncStatus = await getFileSyncStatus(path)
   const lastSyncTime = syncStatus.lastSyncTime
   const lastRestoreTime = await getFileRestoreTime(path)
 
-  // SHA 比较逻辑：使用本地记录的远程 SHA 与当前远程 SHA 进行比较
+  // SHA ： SHA SHA
   if (remoteInfo.sha) {
     const localRecordedSha = await getLocalRecordedSha(path)
 
-    // 如果有本地记录的 SHA 和远程 SHA，进行比较
+    // SHA SHA，
     if (localRecordedSha && localRecordedSha !== remoteInfo.sha) {
-      // SHA 不一致，说明远程文件已更新，需要拉取
+      // SHA ，，
       return {
         shouldUpdate: true,
         action: 'pull',
-        reason: '远程文件已更新（SHA 不匹配），需要拉取更新'
+        reason: 'File Update（SHA ）， Update'
       }
     }
 
-    // 如果没有本地记录的 SHA，但远程有内容，记录 SHA
+    // SHA，， SHA
     if (!localRecordedSha) {
       await setLocalRecordedSha(path, remoteInfo.sha)
     } else {
-      // SHA 匹配，直接返回，无需继续比较时间
+      // SHA ，，
       return {
         shouldUpdate: false,
         action: 'none',
-        reason: 'SHA 匹配，文件已同步'
+        reason: 'SHA ，File'
       }
     }
   }
 
-  // 如果本地文件不存在
+  //
   if (!localMeta.localSha) {
     if (remoteInfo.sha) {
       return {
         shouldUpdate: true,
         action: 'pull',
-        reason: '本地文件不存在，需要从远程拉取'
+        reason: 'LocalFile does not exist，'
       }
     }
     return { shouldUpdate: false, action: 'none' }
   }
 
-  // 如果远程文件不存在，但本地文件存在
+  // ，
   if (!remoteInfo.sha) {
     if (localMeta.localSha) {
       return {
         shouldUpdate: true,
         action: 'push',
-        reason: '远程文件不存在，需要推送到远程'
+        reason: 'Remote file does not exist，'
       }
     }
     return { shouldUpdate: false, action: 'none' }
   }
 
-  // 比较修改时间（不直接比较 SHA，因为算法不同）
+  // （ SHA，）
   const localTime = localMeta.lastModified || 0
   const remoteTime = remoteInfo.lastModified || 0
 
-  // 如果两个时间都未知，且两边都有内容，返回冲突（需要用户判断）
+  // ，，（）
   if (localTime === 0 && remoteTime === 0) {
     return {
       shouldUpdate: true,
       action: 'conflict',
-      reason: '无法确定文件更新时间，需要手动处理'
+      reason: 'None FileUpdate ，'
     }
   }
 
-  // 如果远程时间未知（获取失败），但远程 SHA 存在
+  // （）， SHA
   if (remoteTime === 0 && remoteInfo.sha) {
     return {
       shouldUpdate: true,
       action: 'pull',
-      reason: '无法确定远程文件更新时间，拉取远程版本'
+      reason: 'None FileUpdate ，'
     }
   }
 
-  // 如果本地时间未知（获取失败），但本地 SHA 存在
+  // （）， SHA
   if (localTime === 0 && localMeta.localSha) {
     return {
       shouldUpdate: true,
       action: 'push',
-      reason: '无法确定本地文件更新时间，推送本地版本'
+      reason: 'None LocalFileUpdate ， Local'
     }
   }
 
-  // 拉取后缓冲期（10秒）：如果本地时间 > 远程时间，但本地时间 ≈ 最后同步时间
-  // 说明这是刚拉取的内容，不是用户编辑的，不需要推送
-  const PULL_GRACE_PERIOD = 10 * 1000 // 10 秒
+  // （10）： > ， ≈
+  // ，，
+  const PULL_GRACE_PERIOD = 10 * 1000 // 10
   if (localTime > remoteTime) {
-    // 检查是否在同步或恢复缓冲期内
+    //
     const isInSyncGrace = lastSyncTime && localTime - lastSyncTime < PULL_GRACE_PERIOD
     const isInRestoreGrace = lastRestoreTime && localTime - lastRestoreTime < PULL_GRACE_PERIOD
     if (isInSyncGrace || isInRestoreGrace) {
       return {
         shouldUpdate: false,
         action: 'none',
-        reason: '刚完成同步或恢复，处于缓冲期内，不触发推送'
+        reason: 'Done ， ，'
       }
     }
   }
@@ -368,26 +368,26 @@ export async function compareFileVersions(path: string): Promise<SyncResult> {
     return {
       shouldUpdate: true,
       action: 'pull',
-      reason: '远程文件较新，需要拉取更新'
+      reason: 'File ， Update'
     }
   } else if (localTime > remoteTime) {
     return {
       shouldUpdate: true,
       action: 'push',
-      reason: '本地文件较新，需要推送更新'
+      reason: 'LocalFile ， Update'
     }
   }
 
-  // 如果时间相同，认为已同步（避免频繁冲突）
+  // ，（）
   return {
     shouldUpdate: false,
     action: 'none',
-    reason: '文件修改时间相同，认为已同步'
+    reason: 'File ，'
   }
 }
 
 /**
- * 从远程拉取文件内容
+ * 
  */
 export async function pullRemoteFile(path: string): Promise<string> {
   const store = await Store.load('store.json')
@@ -458,25 +458,25 @@ export async function pullRemoteFile(path: string): Promise<string> {
     throw error
   }
 
-  throw new Error('无法获取远程文件内容')
+  throw new Error('None File')
 }
 
 /**
- * 确保目录存在，如果不存在则创建
+ * ，
  */
 export async function ensureDirectoryExists(filePath: string): Promise<void> {
   const workspace = await getWorkspacePath()
   
-  // 检查并清理文件名
+  //
   if (hasInvalidFileNameChars(filePath)) {
     filePath = sanitizeFilePath(filePath)
   }
   
-  // 提取目录路径
+  //
   const dirPath = filePath.includes('/') ? filePath.split('/').slice(0, -1).join('/') : ''
   
   if (!dirPath) {
-    return // 根目录，无需创建
+    return // ，
   }
   
   const pathOptions = await getFilePathOptions(dirPath)
@@ -490,7 +490,7 @@ export async function ensureDirectoryExists(filePath: string): Promise<void> {
     }
     
     if (!dirExists) {
-      // 递归创建目录
+      //
       if (workspace.isCustom) {
         await mkdir(pathOptions.path, { recursive: true })
       } else {
@@ -503,17 +503,17 @@ export async function ensureDirectoryExists(filePath: string): Promise<void> {
 }
 
 /**
- * 保存文件到本地（增强版，处理文件名兼容性和目录创建）
+ * （，）
  */
 export async function saveLocalFile(path: string, content: string): Promise<void> {
   const workspace = await getWorkspacePath()
   
-  // 检查并清理文件名
+  //
   if (hasInvalidFileNameChars(path)) {
     path = sanitizeFilePath(path)
   }
   
-  // 确保目录存在
+  //
   await ensureDirectoryExists(path)
   
   const pathOptions = await getFilePathOptions(path)
@@ -530,7 +530,7 @@ export async function saveLocalFile(path: string, content: string): Promise<void
 }
 
 /**
- * 获取远程文件的最新 commit 信息
+ * commit 
  */
 export async function getRemoteCommitInfo(path: string): Promise<{
   sha: string
@@ -570,7 +570,7 @@ export async function getRemoteCommitInfo(path: string): Promise<{
     
     const latestCommit = commits[0]
     
-    // 提取 commit 信息
+    // commit
     let author = 'Unknown'
     let message = 'No message'
     let date = new Date()
@@ -616,7 +616,7 @@ export async function getRemoteCommitInfo(path: string): Promise<{
 }
 
 /**
- * 自动同步检测和处理（增强版，包含冲突处理和 commit 信息展示）
+ * （， commit ）
  */
 export async function autoSyncIfNeeded(path: string, options: {
   autoPull?: boolean
@@ -626,16 +626,16 @@ export async function autoSyncIfNeeded(path: string, options: {
   const { autoPull = true, showConfirm = false, enableConflictResolution = true } = options
   
   try {
-    // 清理过期锁
+    //
     await cleanupExpiredLocks()
     
-    // 检查文件是否被其他设备锁定
+    //
     if (enableConflictResolution) {
       const lockInfo = await checkFileLock(path)
       if (lockInfo) {
         toast({
-          title: '文件锁定',
-          description: `文件正在被 ${lockInfo.userName} 在其他设备上编辑`,
+          title: 'File locked',
+          description: `File ${lockInfo.userName}`,
           variant: 'destructive'
         })
         return null
@@ -650,17 +650,17 @@ export async function autoSyncIfNeeded(path: string, options: {
     
     if (syncResult.action === 'pull' && autoPull) {
       if (showConfirm) {
-        // 获取 commit 信息
+        // commit
         const commitInfo = await getRemoteCommitInfo(path)
 
-        // 使用新的拉取确认对话框
+        //
         return new Promise<string | null>((resolve) => {
           useSyncConfirmStore.getState().showPullDialog({
             fileName: path || '',
             commitInfo: commitInfo || undefined,
             onConfirm: async () => {
               try {
-                // 执行实际的同步逻辑
+                //
                 const result = await performSync(path || '', enableConflictResolution)
                 resolve(result)
               } catch {
@@ -673,7 +673,7 @@ export async function autoSyncIfNeeded(path: string, options: {
           })
         })
       } else {
-        // 直接执行同步（不显示确认对话框）
+        // （）
         return await performSync(path, enableConflictResolution)
       }
     }
@@ -685,15 +685,15 @@ export async function autoSyncIfNeeded(path: string, options: {
 }
 
 /**
- * 执行实际的同步操作
+ * 
  */
 async function performSync(path: string, enableConflictResolution: boolean): Promise<string | null> {
   try {
-    // 获取本地内容用于冲突检测
+    //
     let localContent = ''
     let actualPath = path
     
-    // 检查并清理文件名
+    //
     if (hasInvalidFileNameChars(path)) {
       actualPath = sanitizeFilePath(path)
     }
@@ -707,24 +707,24 @@ async function performSync(path: string, enableConflictResolution: boolean): Pro
         localContent = await readTextFile(pathOptions.path, { baseDir: pathOptions.baseDir })
       }
     } catch (error) {
-      // 本地文件不存在或目录不存在，这是正常的同步场景
+      // ，
       if (error instanceof Error && 
           (error.message.includes('no such file') || 
            error.message.includes('not found') ||
-           error.message.includes('系统找不到指定的路径'))) {
+           error.message.includes('Translated message'))) {
       } else {
-        // 静默处理读取本地文件时的意外错误
+        //
       }
-      // 继续处理，将直接拉取远程文件
+      // ，
     }
     
     const remoteContent = await pullRemoteFile(path)
 
-    // 获取远程文件的 SHA，用于后续更新记录的 SHA
+    // SHA， SHA
     const remoteInfo = await getRemoteFileInfo(path)
     const remoteSha = remoteInfo.sha
 
-    // 检测和处理冲突
+    //
     if (enableConflictResolution && localContent && localContent !== remoteContent) {
       const resolution = await detectAndHandleConflict(path, localContent, remoteContent)
       
@@ -733,28 +733,28 @@ async function performSync(path: string, enableConflictResolution: boolean): Pro
         case 'keep_local':
           finalContent = localContent
           toast({
-            title: '冲突处理',
-            description: '保留本地版本'
+            title: 'Keep local version',
+            description: 'Keep local version'
           })
           break
         case 'keep_remote':
           finalContent = remoteContent
           toast({
-            title: '冲突处理',
-            description: '使用远程版本'
+            title: 'Use remote version',
+            description: 'Use remote version'
           })
           break
         case 'merge':
           finalContent = mergeSimpleContent(localContent, remoteContent)
           toast({
-            title: '冲突处理',
-            description: '自动合并成功'
+            title: 'Auto-merge succeeded',
+            description: 'Translated message'
           })
           break
         case 'manual':
           toast({
-            title: '需要手动处理',
-            description: '冲突较复杂，请手动处理',
+            title: 'Translated message',
+            description: 'Conflict ，',
             variant: 'destructive'
           })
           return null
@@ -763,26 +763,26 @@ async function performSync(path: string, enableConflictResolution: boolean): Pro
       await saveLocalFile(actualPath, finalContent)
       await updateFileSyncTime(actualPath)
 
-      // 成功拉取后，更新记录的 SHA
+      // ， SHA
       if (remoteSha) {
         await setLocalRecordedSha(actualPath, remoteSha)
       }
 
-      // 通知编辑器内容已更新
+      //
       emitter.emit('sync-content-updated', { path: actualPath, content: finalContent })
 
       return finalContent
     } else {
-      // 无冲突，直接保存
+      // ，
       await saveLocalFile(actualPath, remoteContent)
       await updateFileSyncTime(actualPath)
 
-      // 成功拉取后，更新记录的 SHA
+      // ， SHA
       if (remoteSha) {
         await setLocalRecordedSha(actualPath, remoteSha)
       }
 
-      // 通知编辑器内容已更新
+      //
       emitter.emit('sync-content-updated', { path: actualPath, content: remoteContent })
 
       return remoteContent
@@ -795,16 +795,16 @@ async function performSync(path: string, enableConflictResolution: boolean): Pro
 }
 
 /**
- * 检查网络连接状态
+ * 
  */
 export async function hasNetworkConnection(): Promise<boolean> {
   try {
     const store = await Store.load('store.json')
     const primaryBackupMethod = await store.get<string>('primaryBackupMethod') || 'github'
 
-    // 真正的网络检测：尝试发送请求到 API 端点
+    // ： API
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 10000) // 10秒超时
+    const timeoutId = setTimeout(() => controller.abort(), 10000) // 10
 
     let url = ''
     let token = ''
@@ -827,7 +827,7 @@ export async function hasNetworkConnection(): Promise<boolean> {
       case 'gitea':
         token = await store.get<string>('giteaAccessToken') || ''
         url = `${await getGiteaApiBaseUrl()}/user`
-        // Gitea 自建实例可能需要代理
+        // Gitea
         const giteaProxyUrl = await store.get<string>('proxy')
         if (giteaProxyUrl) {
           proxy = { all: giteaProxyUrl }
@@ -851,7 +851,7 @@ export async function hasNetworkConnection(): Promise<boolean> {
       }
     }
 
-    // Gitea 自建实例使用代理
+    // Gitea
     if (proxy) {
       fetchOptions.proxy = proxy
     }
@@ -861,79 +861,79 @@ export async function hasNetworkConnection(): Promise<boolean> {
     clearTimeout(timeoutId)
     return response.ok
   } catch (error) {
-    // 网络错误、超时等
+    // 、
     console.error('Network connection check failed:', error)
     return false
   }
 }
 
 /**
- * 比较 S3 本地和远程文件版本
- * 使用 ETag 进行比较
+ * S3 
+ * ETag 
  */
 export async function compareS3FileVersions(path: string): Promise<SyncResult> {
-  // 获取 S3 配置
+  // S3
   const store = await getStore()
   const config = await store.get<S3Config>('s3SyncConfig')
   if (!config) {
-    return { shouldUpdate: false, action: 'none', reason: 'S3 未配置' }
+    return { shouldUpdate: false, action: 'none', reason: 'S3 not configured' }
   }
 
-  // 获取 proxy
+  // proxy
   const proxyUrl = await store.get<string>('proxy')
   const proxy = proxyUrl ? { all: proxyUrl } : undefined
 
-  // 获取本地文件的元数据
+  //
   const localMeta = await getLocalFileMetadata(path)
 
-  // 从 sync store 获取本地记录的云端 ETag
+  // sync store ETag
   const syncStoreState = useSyncStore.getState()
   const localRecordedEtag = syncStoreState.s3FileEtags[path]
 
-  // 获取远程文件的 ETag
+  // ETag
   const remoteInfo = await s3HeadObject(config, path, proxy)
 
-  // 如果远程不存在
+  //
   if (!remoteInfo) {
     if (localMeta.localSha) {
       return {
         shouldUpdate: true,
         action: 'push',
-        reason: '远程文件不存在，需要推送到远程'
+        reason: 'Remote file does not exist，'
       }
     }
     return { shouldUpdate: false, action: 'none' }
   }
 
-  // 如果本地不存在
+  //
   if (!localMeta.localSha) {
     return {
       shouldUpdate: true,
       action: 'pull',
-      reason: '本地文件不存在，需要从远程拉取'
+      reason: 'LocalFile does not exist，'
     }
   }
 
-  // 比较 ETag
+  // ETag
   if (localRecordedEtag && localRecordedEtag !== remoteInfo.etag) {
     return {
       shouldUpdate: true,
       action: 'pull',
-      reason: '远程文件已更新（ETag 不匹配），需要拉取更新'
+      reason: 'File Update（ETag ）， Update'
     }
   }
 
-  // ETag 匹配
+  // ETag
   if (localRecordedEtag === remoteInfo.etag) {
     return {
       shouldUpdate: false,
       action: 'none',
-      reason: 'ETag 匹配，文件已同步'
+      reason: 'ETag ，File'
     }
   }
 
-  // 没有本地记录的 ETag，记录并检查时间
-  // 使用修改时间比较
+  // ETag，
+  //
   const localTime = localMeta.lastModified || 0
   const remoteTime = remoteInfo.lastModified ? new Date(remoteInfo.lastModified).getTime() : 0
 
@@ -941,84 +941,84 @@ export async function compareS3FileVersions(path: string): Promise<SyncResult> {
     return {
       shouldUpdate: true,
       action: 'push',
-      reason: '本地文件较新，需要推送'
+      reason: 'LocalFile ，'
     }
   }
 
   return {
     shouldUpdate: true,
     action: 'pull',
-    reason: '远程文件较新，需要拉取'
+    reason: 'File ，'
   }
 }
 
 /**
- * 比较 WebDAV 本地和远程文件版本
- * 使用 ETag 进行比较
+ * WebDAV 
+ * ETag 
  */
 export async function compareWebDAVFileVersions(path: string): Promise<SyncResult> {
-  // 获取 WebDAV 配置
+  // WebDAV
   const store = await getStore()
   const config = await store.get<WebDAVConfig>('webdavSyncConfig')
   if (!config) {
-    return { shouldUpdate: false, action: 'none', reason: 'WebDAV 未配置' }
+    return { shouldUpdate: false, action: 'none', reason: 'WebDAV' }
   }
 
-  // 获取 proxy
+  // proxy
   const proxyUrl = await store.get<string>('proxy')
   const proxy = proxyUrl ? { all: proxyUrl } : undefined
 
-  // 获取本地文件的元数据
+  //
   const localMeta = await getLocalFileMetadata(path)
 
-  // 从 sync store 获取本地记录的云端 ETag
+  // sync store ETag
   const syncStoreState = useSyncStore.getState()
   const localRecordedEtag = syncStoreState.webdavFileEtags[path]
 
-  // 获取远程文件的 ETag
+  // ETag
   const remoteInfo = await webdavHeadObject(config, path, proxy)
 
-  // 如果远程不存在
+  //
   if (!remoteInfo) {
     if (localMeta.localSha) {
       return {
         shouldUpdate: true,
         action: 'push',
-        reason: '远程文件不存在，需要推送到远程'
+        reason: 'Remote file does not exist，'
       }
     }
     return { shouldUpdate: false, action: 'none' }
   }
 
-  // 如果本地不存在
+  //
   if (!localMeta.localSha) {
     return {
       shouldUpdate: true,
       action: 'pull',
-      reason: '本地文件不存在，需要从远程拉取'
+      reason: 'LocalFile does not exist，'
     }
   }
 
-  // 比较 ETag
+  // ETag
   if (localRecordedEtag && localRecordedEtag !== remoteInfo.etag) {
     return {
       shouldUpdate: true,
       action: 'pull',
-      reason: '远程文件已更新（ETag 不匹配），需要拉取更新'
+      reason: 'File Update（ETag ）， Update'
     }
   }
 
-  // ETag 匹配
+  // ETag
   if (localRecordedEtag === remoteInfo.etag) {
     return {
       shouldUpdate: false,
       action: 'none',
-      reason: 'ETag 匹配，文件已同步'
+      reason: 'ETag ，File'
     }
   }
 
-  // 没有本地记录的 ETag，记录并检查时间
-  // 使用修改时间比较
+  // ETag，
+  //
   const localTime = localMeta.lastModified || 0
   const remoteTime = remoteInfo.lastModified ? new Date(remoteInfo.lastModified).getTime() : 0
 
@@ -1026,13 +1026,13 @@ export async function compareWebDAVFileVersions(path: string): Promise<SyncResul
     return {
       shouldUpdate: true,
       action: 'push',
-      reason: '本地文件较新，需要推送'
+      reason: 'LocalFile ，'
     }
   }
 
   return {
     shouldUpdate: true,
     action: 'pull',
-    reason: '远程文件较新，需要拉取'
+    reason: 'File ，'
   }
 }

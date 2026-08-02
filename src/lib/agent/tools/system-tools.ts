@@ -4,8 +4,8 @@ import { executeSkillRuntime, installSkillPythonDependencies } from '@/lib/skill
 import useArticleStore from '@/stores/article'
 
 /**
- * 选择 Skill 工具
- * 用于 AI 在第一次迭代时选择合适的 Skill 来指导后续操作
+ * Skill 
+ * AI Skill 
  */
 export const selectSkillTool: Tool = {
   name: 'select_skill',
@@ -27,11 +27,11 @@ export const selectSkillTool: Tool = {
       if (!Array.isArray(skill_ids)) {
         return {
           success: false,
-          error: 'skill_ids 必须是一个数组',
+          error: 'skill_ids must be an array',
         }
       }
 
-      // 验证所有 Skill ID 是否存在
+      // Skill ID
       const validSkills: string[] = []
       const invalidSkills: string[] = []
 
@@ -47,14 +47,14 @@ export const selectSkillTool: Tool = {
       if (invalidSkills.length > 0) {
         return {
           success: false,
-          error: `无效的 Skill ID: ${invalidSkills.join(', ')}`,
+          error: `Invalid Skill ID: ${invalidSkills.join(', ')}`,
         }
       }
 
       if (validSkills.length === 0) {
         return {
           success: false,
-          error: '没有选择任何有效的 Skill',
+          error: 'No valid Skill selected',
         }
       }
 
@@ -64,25 +64,25 @@ export const selectSkillTool: Tool = {
           selected_skills: validSkills,
           count: validSkills.length,
         },
-        message: `已选择 ${validSkills.length} 个 Skills: ${validSkills.join(', ')}。这些 Skills 的完整指令将在后续步骤中提供。`,
+        message: `Selected ${validSkills.length} Skills: ${validSkills.join(', ')}. Full instructions for these Skills will be provided in later steps.`,
       }
     } catch (error) {
-      console.error('[select_skill] 执行失败', {
+      console.error('[select_skill] Execution failed', {
         error: String(error),
         errorMessage: error instanceof Error ? error.message : String(error),
       })
       return {
         success: false,
-        error: `选择 Skill 失败: ${error}`,
+        error: `Failed to select Skill: ${error}`,
       }
     }
   },
 }
 
 /**
- * 加载 Skill 支持文件内容工具
- * 用于 AI 获取 Skill 的补充资料（如 KEYWORDS.md、EXAMPLES.md 等文件的内容）
- * 也支持加载根目录的自定义 .md 文件（如 editing.md, pptxgenjs.md）
+ * Skill 
+ * AI Skill （ KEYWORDS.md、EXAMPLES.md ）
+ * .md （ editing.md, pptxgenjs.md）
  */
 export const loadSkillContentTool: Tool = {
   name: 'load_skill_content',
@@ -111,34 +111,34 @@ export const loadSkillContentTool: Tool = {
       if (!skill) {
         return {
           success: false,
-          error: `未找到 Skill: ${skill_id}`,
+          error: `Skill not found: ${skill_id}`,
         }
       }
 
-      // 获取 Skill 的文件信息
+      // Skill
       const fileInfo = skillManager.getSkillFileInfo(skill_id)
       if (!fileInfo) {
         return {
           success: false,
-          error: `无法获取 Skill 文件信息: ${skill_id}`,
+          error: `Unable to get Skill file info: ${skill_id}`,
         }
       }
 
       const results: Record<string, string> = {}
 
-      // 标准文件类型映射
+      //
       const standardTypeMapping: Record<string, string> = {
         keywords: 'KEYWORDS.md',
         examples: 'EXAMPLES.md',
         reference: 'REFERENCE.md',
       }
 
-      // 读取文件内容
+      //
       const { readTextFile, BaseDirectory } = await import('@tauri-apps/plugin-fs')
       const { getFilePathOptions } = await import('@/lib/workspace')
       const { exists } = await import('@tauri-apps/plugin-fs')
 
-      // 辅助函数：读取文件
+      // ：
       const readFile = async (fileName: string, filePath: string): Promise<boolean> => {
         let fileExists = false
         if (skill.metadata.scope === 'global') {
@@ -148,7 +148,7 @@ export const loadSkillContentTool: Tool = {
               results[fileName] = await readTextFile(filePath, { baseDir: BaseDirectory.AppData })
               return true
             } catch (error) {
-              console.error(`[load_skill_content] 读取文件失败: ${filePath}`, error)
+              console.error(`[load_skill_content] Failed to read file: ${filePath}`, error)
             }
           }
         } else {
@@ -165,7 +165,7 @@ export const loadSkillContentTool: Tool = {
               }
               return true
             } catch (error) {
-              console.error(`[load_skill_content] 读取文件失败: ${filePath}`, error)
+              console.error(`[load_skill_content] Failed to read file: ${filePath}`, error)
             }
           }
         }
@@ -173,33 +173,33 @@ export const loadSkillContentTool: Tool = {
       }
 
       if (file_type) {
-        // 指定了 file_type，尝试加载特定文件
+        // file_type，
         const fileName = file_type
 
-        // 先检查是否是标准类型
+        //
         const standardFile = standardTypeMapping[file_type]
         if (standardFile) {
           const filePath = `${fileInfo.directory}/${standardFile}`
           await readFile(file_type, filePath)
         } else {
-          // 可能是根目录的自定义 .md 文件（如 editing.md, pptxgenjs.md）
+          // .md （ editing.md, pptxgenjs.md）
           const filePath = `${fileInfo.directory}/${fileName}`
           await readFile(fileName, filePath)
         }
       } else {
-        // 未指定 file_type，加载所有可用的支持文件
-        // 1. 加载标准文件
+        // file_type，
+        // 1.
         for (const [type, fileName] of Object.entries(standardTypeMapping)) {
           const filePath = `${fileInfo.directory}/${fileName}`
           await readFile(type, filePath)
         }
 
-        // 2. 加载 Skill.references 中的根目录 .md 文件
-        // references 数组中的 rootMdFiles 有 path 属性（文件名而非完整路径）
+        // 2. Skill.references .md
+        // references rootMdFiles path （）
         for (const ref of skill.references) {
-          // 检查是否是根目录的 .md 文件（path 不包含目录分隔符）
+          // .md （path ）
           if (!ref.path.includes('/') && ref.path.endsWith('.md') && ref.path !== 'SKILL.md') {
-            // 检查是否已经通过标准文件加载过了
+            //
             const alreadyLoaded = Object.values(standardTypeMapping).includes(ref.path)
             if (!alreadyLoaded) {
               const filePath = `${fileInfo.directory}/${ref.path}`
@@ -215,9 +215,9 @@ export const loadSkillContentTool: Tool = {
           data: {
             skill_id,
             available_files: skill.references.map(r => r.name),
-            message: '该 Skill 没有额外的支持文件，所有内容已包含在主 Skill 文件中。',
+            message: 'This Skill has no extra support files; everything is in the main Skill file.',
           },
-          message: `Skill "${skill_id}" 没有找到额外的支持文件。所有必要信息已包含在主 Skill 指令中。`,
+          message: `Skill "${skill_id}" has no extra support files. Everything needed is in the main Skill instructions.`,
         }
       }
 
@@ -232,24 +232,24 @@ export const loadSkillContentTool: Tool = {
           files: results,
           total_length: totalLength,
         },
-        message: `成功加载 ${loadedFiles.length} 个支持文件（${loadedFiles.join(', ')}），共 ${totalLength} 字符。这些内容将帮助你更好地应用 ${skill_id} Skill。`,
+        message: `Successfully loaded ${loadedFiles.length} support files (${loadedFiles.join(', ')}), ${totalLength} characters total. This content will help you apply the ${skill_id} Skill.`,
       }
     } catch (error) {
-      console.error('[load_skill_content] 执行失败', {
+      console.error('[load_skill_content] Execution failed', {
         error: String(error),
         errorMessage: error instanceof Error ? error.message : String(error),
       })
       return {
         success: false,
-        error: `加载 Skill 内容失败: ${error}`,
+        error: `Failed to load Skill content: ${error}`,
       }
     }
   },
 }
 
 /**
- * 执行 Skill 脚本工具
- * 只能执行 Skill 加载阶段登记的 scripts/ 脚本。
+ * Skill 
+ * Skill scripts/ 。
  */
 export const executeSkillScriptTool: Tool = {
   name: 'execute_skill_script',

@@ -85,7 +85,7 @@ const ORGANIZE_STEP_ORDER: OrganizeStep[] = ['template', 'records', 'settings']
 
 function sanitizeMarkdownTitle(title: string) {
   const sanitized = title.trim().replace(/[\/\\:*?"<>|]/g, '_').substring(0, 50)
-  return sanitized || '整理笔记'
+  return sanitized || 'Organized_Note'
 }
 
 function normalizeOutputFolder(folderValue: string) {
@@ -139,7 +139,7 @@ async function readLocalRecordImage(mark: Mark, localAssetPath: string) {
         fileName: localAssetPath.split('/').pop() || mark.url,
       }
     } catch {
-      // 远端没有原图时继续尝试使用本地缩略图。
+      // 。
     }
 
     const thumbnailPath = await getRecordImageThumbnailPath(localAssetPath)
@@ -229,7 +229,7 @@ export const OrganizeNotes = forwardRef<{ openOrganize: () => void }, OrganizeNo
     return marks.filter(item => item.tagId === selectedRecordTagId)
   }, [allMarks, currentTagId, marks, selectedRecordTagId])
 
-  // 使用 useMemo 优化过滤的记录
+  // useMemo
   const marksByRange = useMemo(() => {
     let subtractDate: Dayjs
     switch (templateRange) {
@@ -288,7 +288,7 @@ export const OrganizeNotes = forwardRef<{ openOrganize: () => void }, OrganizeNo
       .filter(type => recordTypeCounts[type] > 0 && types.has(type))
   }, [recordTypeCounts, selectedMarksByRange])
 
-  // 使用 useMemo 优化选中的模板
+  // useMemo
   const selectedTemplate = useMemo(() => {
     return availableTemplates.find(item => item.id === tab)
   }, [availableTemplates, tab])
@@ -514,7 +514,7 @@ export const OrganizeNotes = forwardRef<{ openOrganize: () => void }, OrganizeNo
     const outputFolder = normalizeOutputFolder(outputFolderValue)
     const preferredTitle = outputTitle.trim()
     const extraRequirement = additionalRequirement.trim()
-    const fileName = `整理笔记_${timestamp}.md`
+    const fileName = `Organized_Note_${timestamp}.md`
     const filePath = buildOutputPath(outputFolder, fileName)
 
     try {
@@ -688,7 +688,7 @@ export const OrganizeNotes = forwardRef<{ openOrganize: () => void }, OrganizeNo
 
       abortControllerRef.current = new AbortController()
       const signal = abortControllerRef.current.signal
-      const targetFilePath = filePath // 保存目标文件路径
+      const targetFilePath = filePath // Save target file path
 
       let fullContent = ''
       let streamFinished = false

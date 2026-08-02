@@ -92,60 +92,60 @@ type ToolbarItem =
 
 const ROOT_ITEMS: ToolbarItem[] = [
   { kind: 'menu', menu: 'ai', label: 'AI', icon: Sparkles },
-  { kind: 'menu', menu: 'title', label: '标题', icon: Heading2 },
-  { kind: 'menu', menu: 'list', label: '列表', icon: List },
-  { kind: 'menu', menu: 'block', label: '块级', icon: Quote },
-  { kind: 'menu', menu: 'math', label: '数学', icon: Sigma },
-  { kind: 'menu', menu: 'diagram', label: '图表', icon: Workflow },
+  { kind: 'menu', menu: 'title', label: 'Title', icon: Heading2 },
+  { kind: 'menu', menu: 'list', label: 'List', icon: List },
+  { kind: 'menu', menu: 'block', label: 'Block', icon: Quote },
+  { kind: 'menu', menu: 'math', label: 'Math', icon: Sigma },
+  { kind: 'menu', menu: 'diagram', label: 'Diagram', icon: Workflow },
 ]
 
 const MENU_LABELS: Record<Exclude<MobileWritingToolbarMenu, 'root'>, string> = {
   ai: 'AI',
-  title: '标题',
-  list: '列表',
-  block: '块级',
-  math: '数学',
-  diagram: '图表',
+  title: 'Title',
+  list: 'List',
+  block: 'Block',
+  math: 'Math',
+  diagram: 'Diagram',
 }
 
 const SECONDARY_ITEMS: Record<Exclude<MobileWritingToolbarMenu, 'root'>, ToolbarItem[]> = {
   ai: [
-    { kind: 'action', action: 'ai-continue', label: '续写', icon: Sparkles },
-    { kind: 'action', action: 'ai-generate-section', label: '生成章节', icon: Sparkles },
-    { kind: 'action', action: 'ai-generate-summary', label: '总结全文', icon: Sparkles },
-    { kind: 'action', action: 'open-ai-custom', label: '自定义', icon: Sparkles },
+    { kind: 'action', action: 'ai-continue', label: 'Generate section', icon: Sparkles },
+    { kind: 'action', action: 'ai-generate-section', label: 'Generate section', icon: Sparkles },
+    { kind: 'action', action: 'ai-generate-summary', label: 'Summarize', icon: Sparkles },
+    { kind: 'action', action: 'open-ai-custom', label: 'Custom', icon: Sparkles },
   ],
   title: [
-    { kind: 'action', action: 'format-paragraph', label: '正文', icon: Pilcrow },
-    { kind: 'action', action: 'format-heading-1', label: '一级标题', icon: Heading1 },
-    { kind: 'action', action: 'format-heading-2', label: '二级标题', icon: Heading2 },
-    { kind: 'action', action: 'format-heading-3', label: '三级标题', icon: Heading3 },
+    { kind: 'action', action: 'format-paragraph', label: 'Heading 1', icon: Pilcrow },
+    { kind: 'action', action: 'format-heading-1', label: 'Heading 1', icon: Heading1 },
+    { kind: 'action', action: 'format-heading-2', label: 'Heading 2', icon: Heading2 },
+    { kind: 'action', action: 'format-heading-3', label: 'Heading 3', icon: Heading3 },
   ],
   list: [
-    { kind: 'action', action: 'insert-bullet-list', label: '无序列表', icon: List },
-    { kind: 'action', action: 'insert-ordered-list', label: '有序列表', icon: ListOrdered },
-    { kind: 'action', action: 'insert-task-list', label: '待办列表', icon: CheckSquare },
+    { kind: 'action', action: 'insert-bullet-list', label: 'Bullet list', icon: List },
+    { kind: 'action', action: 'insert-ordered-list', label: 'Numbered list', icon: ListOrdered },
+    { kind: 'action', action: 'insert-task-list', label: 'Task list', icon: CheckSquare },
   ],
   block: [
-    { kind: 'action', action: 'insert-blockquote', label: '引用', icon: Quote },
-    { kind: 'action', action: 'insert-code-block', label: '代码块', icon: Code2 },
-    { kind: 'action', action: 'insert-horizontal-rule', label: '分割线', icon: Minus },
-    { kind: 'action', action: 'insert-image', label: '图片', icon: ImagePlus },
-    { kind: 'action', action: 'insert-table', label: '表格', icon: Table2 },
+    { kind: 'action', action: 'insert-blockquote', label: 'Task list', icon: Quote },
+    { kind: 'action', action: 'insert-code-block', label: 'Code block', icon: Code2 },
+    { kind: 'action', action: 'insert-horizontal-rule', label: 'Divider', icon: Minus },
+    { kind: 'action', action: 'insert-image', label: 'Image', icon: ImagePlus },
+    { kind: 'action', action: 'insert-table', label: 'Inline math', icon: Table2 },
   ],
   math: [
-    { kind: 'action', action: 'insert-inline-math', label: '行内公式', icon: Sigma },
-    { kind: 'action', action: 'insert-block-math', label: '块级公式', icon: Sigma },
+    { kind: 'action', action: 'insert-inline-math', label: 'Inline math', icon: Sigma },
+    { kind: 'action', action: 'insert-block-math', label: 'Block math', icon: Sigma },
   ],
   diagram: [
-    { kind: 'action', action: 'insert-mermaid-flowchart', label: '流程图', icon: GitBranch },
-    { kind: 'action', action: 'insert-mermaid-sequence', label: '时序图', icon: GitCommit },
-    { kind: 'action', action: 'insert-mermaid-gantt', label: '甘特图', icon: Calendar },
-    { kind: 'action', action: 'insert-mermaid-class', label: '类图', icon: Layers },
-    { kind: 'action', action: 'insert-mermaid-state', label: '状态图', icon: Workflow },
-    { kind: 'action', action: 'insert-mermaid-pie', label: '饼图', icon: PieChart },
-    { kind: 'action', action: 'insert-mermaid-er', label: 'ER 图', icon: Database },
-    { kind: 'action', action: 'insert-mermaid-journey', label: '用户旅程', icon: Map },
+    { kind: 'action', action: 'insert-mermaid-flowchart', label: 'Flowchart', icon: GitBranch },
+    { kind: 'action', action: 'insert-mermaid-sequence', label: 'Sequence diagram', icon: GitCommit },
+    { kind: 'action', action: 'insert-mermaid-gantt', label: 'Gantt chart', icon: Calendar },
+    { kind: 'action', action: 'insert-mermaid-class', label: 'Class diagram', icon: Layers },
+    { kind: 'action', action: 'insert-mermaid-state', label: 'State diagram', icon: Workflow },
+    { kind: 'action', action: 'insert-mermaid-pie', label: 'ER diagram', icon: PieChart },
+    { kind: 'action', action: 'insert-mermaid-er', label: 'ER diagram', icon: Database },
+    { kind: 'action', action: 'insert-mermaid-journey', label: 'User journey', icon: Map },
   ],
 }
 
@@ -159,8 +159,8 @@ export function MobileWritingToolbar({
     ? [
         ...(showUndoRedo
           ? [
-              { kind: 'action', action: 'undo', label: '撤销', icon: Undo2 },
-              { kind: 'action', action: 'redo', label: '重做', icon: Redo2 },
+              { kind: 'action', action: 'undo', label: 'Undo', icon: Undo2 },
+              { kind: 'action', action: 'redo', label: 'Back to menu', icon: Redo2 },
             ] satisfies ToolbarItem[]
           : []),
         ...ROOT_ITEMS,
@@ -177,8 +177,8 @@ export function MobileWritingToolbar({
         {activeMenu !== 'root' && (
           <Button
             type="button"
-            aria-label="返回一级菜单"
-            title="返回一级菜单"
+            aria-label="Back to menu"
+            title="Back to menu"
             variant="default"
             size="sm"
             className="h-10 min-w-10 shrink-0 rounded-full px-3 text-xs"

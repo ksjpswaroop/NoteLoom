@@ -16,7 +16,7 @@ function getAttachment(id: unknown, context: Parameters<AgentTool['execute']>[1]
 
 export const listAttachmentsTool: AgentTool = {
   name: 'attachment_list',
-  title: '列出附件目录',
+  title: 'List attachment directory',
   description: 'List the immediate children of a user-selected folder attachment. Paths are relative to the selected folder and symbolic links are not followed.',
   category: 'attachment',
   risk: 'read',
@@ -31,8 +31,8 @@ export const listAttachmentsTool: AgentTool = {
   },
   execute: async (input, context) => {
     const attachment = getAttachment(input.attachmentId, context)
-    if (!attachment) return { ok: false, message: '附件不存在或已不在本次运行授权范围内。', error: 'ATTACHMENT_NOT_AVAILABLE' }
-    if (attachment.kind !== 'folder') return { ok: false, message: '该附件不是文件夹。', error: 'ATTACHMENT_NOT_FOLDER' }
+    if (!attachment) return { ok: false, message: 'Attachment does not exist or is no longer authorized for this run.', error: 'ATTACHMENT_NOT_AVAILABLE' }
+    if (attachment.kind !== 'folder') return { ok: false, message: 'This attachment is not a folder.', error: 'ATTACHMENT_NOT_FOLDER' }
     try {
       const relativePath = typeof input.relativePath === 'string' ? input.relativePath : ''
       const directoryPath = await resolveAttachmentChildPath(attachment, relativePath)
@@ -47,18 +47,18 @@ export const listAttachmentsTool: AgentTool = {
         }))
       return {
         ok: true,
-        message: `已列出附件文件夹 ${attachment.name} 中的 ${entries.length} 项。`,
+        message: `Listed ${entries.length} items in attachment folder ${attachment.name}.`,
         data: { attachmentId: attachment.id, attachmentName: attachment.name, relativePath, entries },
       }
     } catch (error) {
-      return { ok: false, message: `无法列出附件目录：${String(error)}`, error: 'ATTACHMENT_LIST_FAILED' }
+      return { ok: false, message: `Unable to list attachment directory: ${String(error)}`, error: 'ATTACHMENT_LIST_FAILED' }
     }
   },
 }
 
 export const readAttachmentTool: AgentTool = {
   name: 'attachment_read',
-  title: '读取附件',
+  title: 'Read attachment',
   description: 'Read user-selected text, code, CSV, Markdown, or PDF attachments. For a folder summary, pass every relevant readable path together in relativePaths; use relativePath only when one file is sufficient. Use relative paths only.',
   category: 'attachment',
   risk: 'read',
@@ -80,7 +80,7 @@ export const readAttachmentTool: AgentTool = {
   },
   execute: async (input, context) => {
     const attachment = getAttachment(input.attachmentId, context)
-    if (!attachment) return { ok: false, message: '附件不存在或已不在本次运行授权范围内。', error: 'ATTACHMENT_NOT_AVAILABLE' }
+    if (!attachment) return { ok: false, message: 'Attachment does not exist or is no longer authorized for this run.', error: 'ATTACHMENT_NOT_AVAILABLE' }
     const relativePath = typeof input.relativePath === 'string' ? input.relativePath : ''
     const relativePaths = Array.isArray(input.relativePaths)
       ? [...new Set(input.relativePaths.filter((path): path is string => typeof path === 'string' && path.trim().length > 0))].slice(0, 20)
@@ -93,7 +93,7 @@ export const readAttachmentTool: AgentTool = {
           ? [relativePath]
           : []
     if (requestedPaths.length === 0) {
-      return { ok: false, message: '读取文件夹附件时必须提供 relativePath 或 relativePaths。', error: 'ATTACHMENT_PATH_REQUIRED' }
+      return { ok: false, message: 'Reading a folder attachment requires relativePath or relativePaths.', error: 'ATTACHMENT_PATH_REQUIRED' }
     }
 
     const results: Array<{
@@ -139,7 +139,7 @@ export const readAttachmentTool: AgentTool = {
           startLine,
           endLine,
           totalLines: lines.length,
-          content: truncated ? `${selected.slice(0, perFileContentLimit)}\n…内容已截断，可按行继续读取。` : selected,
+          content: truncated ? `${selected.slice(0, perFileContentLimit)}\n…content truncated; continue reading by line.` : selected,
           truncated,
         })
       } catch (error) {
@@ -153,14 +153,14 @@ export const readAttachmentTool: AgentTool = {
         return {
           ok: false,
           message: result.error === 'ATTACHMENT_UNSUPPORTED'
-            ? `附件 ${result.path} 的格式暂不支持内容读取，只能使用已提供的元数据。`
-            : `无法读取附件：${result.error}`,
+            ? `Attachment ${result.path} format does not support content reading; use the provided metadata only.`
+            : `Unable to read attachment: ${result.error}`,
           error: result.error || 'ATTACHMENT_READ_FAILED',
         }
       }
       return {
         ok: true,
-        message: `已读取 ${result.path} 第 ${result.startLine}-${result.endLine} 行，共 ${result.totalLines} 行。`,
+        message: `Read ${result.path} lines ${result.startLine}-${result.endLine} of ${result.totalLines}.`,
         data: { name: result.path, startLine: result.startLine, endLine: result.endLine, totalLines: result.totalLines, content: result.content },
       }
     }
@@ -169,7 +169,7 @@ export const readAttachmentTool: AgentTool = {
     const truncatedCount = results.filter((result) => result.truncated).length
     return {
       ok: readCount > 0,
-      message: `已批量读取 ${readCount}/${results.length} 个附件文件${truncatedCount > 0 ? `，其中 ${truncatedCount} 个内容已截断` : ''}。`,
+ message: `Batch-read ${readCount}/${results.length} attachment files${truncatedCount > 0 ? `， ${truncatedCount} ` : ''}。`,
       data: { requestedCount: results.length, readCount, files: results },
       error: readCount > 0 ? undefined : 'ATTACHMENT_READ_FAILED',
     }

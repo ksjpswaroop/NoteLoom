@@ -35,7 +35,7 @@ const HIGH_CONFIDENCE_BLOCKED_PAGE_PATTERNS: Array<{
   },
   {
     code: 'access-denied',
-    pattern: /<div[^>]+class=["'][^"']*weui-msg__title[^"']*warn[^"']*["'][^>]*>\s*参数错误\s*<\/div>/i,
+    pattern: /<div[^>]+class=["'][^"']*weui-msg__title[^"']*warn[^"']*["'][^>]*>\s*\s*<\/div>/i,
   },
 ]
 

@@ -40,7 +40,7 @@ export const SlashMenu = forwardRef<SlashMenuRef, SlashMenuProps>(({ editor, que
   const [selectedIndex, setSelectedIndex] = useState(0)
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([])
 
-  // 构建翻译对象
+  //
   const translations = useMemo(() => ({
     groups: {
       ai: t('groups.ai'),
@@ -123,7 +123,7 @@ export const SlashMenu = forwardRef<SlashMenuRef, SlashMenuProps>(({ editor, que
     },
   }), [t])
 
-  // 分组顺序
+  //
   const groupOrder = useMemo(() => [
     translations.groups.ai,
     translations.groups.heading,

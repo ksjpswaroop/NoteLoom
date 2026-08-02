@@ -13,8 +13,8 @@ import type {
 } from './types'
 
 /**
- * MCP 客户端
- * 支持 stdio 和 HTTP 两种传输协议
+ * MCP 
+ * stdio HTTP 
  */
 export class MCPClient {
   private config: MCPServerConfig
@@ -30,8 +30,8 @@ export class MCPClient {
   }
   
   /**
-   * 连接到 MCP 服务器
-   */
+ * MCP 
+ */
   async connect(): Promise<void> {
     if (this.config.type === 'stdio') {
       await this.connectStdio()
@@ -41,8 +41,8 @@ export class MCPClient {
   }
   
   /**
-   * 连接 stdio 服务器
-   */
+ * stdio 
+ */
   private async connectStdio(): Promise<void> {
     try {
       await invoke('start_mcp_stdio_server', {
@@ -57,19 +57,19 @@ export class MCPClient {
   }
   
   /**
-   * 连接 HTTP 服务器
-   */
+ * HTTP 
+ */
   private async connectHttp(): Promise<void> {
-    // HTTP 连接不需要特殊的启动过程
-    // 只需要验证 URL 是否可访问
+    // HTTP
+    // URL
     if (!this.config.url) {
       throw new Error('HTTP server URL is required')
     }
   }
   
   /**
-   * 初始化协议
-   */
+ * 
+ */
   async initialize(): Promise<InitializeResult> {
     if (this.initializeResult) return this.initializeResult
 
@@ -90,8 +90,8 @@ export class MCPClient {
   }
   
   /**
-   * 列出可用工具
-   */
+ * 
+ */
   async listTools(): Promise<MCPTool[]> {
     const initialized = await this.initialize()
     if (!initialized.capabilities.tools) return []
@@ -99,8 +99,8 @@ export class MCPClient {
   }
   
   /**
-   * 调用工具
-   */
+ * 
+ */
   async callTool(name: string, args: Record<string, unknown> = {}, signal?: AbortSignal): Promise<CallToolResult> {
     if (!this.isInitialized) {
       await this.initialize()
@@ -115,8 +115,8 @@ export class MCPClient {
   }
   
   /**
-   * 列出资源
-   */
+ * 
+ */
   async listResources(): Promise<MCPResource[]> {
     const initialized = await this.initialize()
     if (!initialized.capabilities.resources) return []
@@ -124,8 +124,8 @@ export class MCPClient {
   }
   
   /**
-   * 读取资源
-   */
+ * 
+ */
   async listResourceTemplates(): Promise<MCPResourceTemplate[]> {
     const initialized = await this.initialize()
     if (!initialized.capabilities.resources) return []
@@ -141,14 +141,14 @@ export class MCPClient {
   }
   
   /**
-   * 断开连接
-   */
+ * 
+ */
   async disconnect(): Promise<void> {
     if (this.config.type === 'stdio') {
       try {
         await invoke('stop_mcp_server', { serverId: this.config.id })
       } catch {
-        // 静默处理错误
+        //
       }
     }
     this.isInitialized = false
@@ -157,8 +157,8 @@ export class MCPClient {
   }
   
   /**
-   * 发送 JSON-RPC 请求
-   */
+ * JSON-RPC 
+ */
   private async sendRequest<T>(method: string, params: unknown, signal?: AbortSignal): Promise<T> {
     const request: JSONRPCRequest = {
       jsonrpc: '2.0',
@@ -225,8 +225,8 @@ export class MCPClient {
   }
   
   /**
-   * 发送 stdio 请求
-   */
+ * stdio 
+ */
   private async sendStdioRequest<T>(request: JSONRPCRequest): Promise<T> {
     try {
       const responseStr = await invoke<string>('send_mcp_message', {
@@ -248,8 +248,8 @@ export class MCPClient {
   }
   
   /**
-   * 发送 HTTP 请求
-   */
+ * HTTP 
+ */
   private getHttpHeaders() {
     let customHeaders: Record<string, string> = {}
     if (this.config.headers) customHeaders = this.config.headers
@@ -283,15 +283,15 @@ export class MCPClient {
       const returnedSessionId = response.headers.get('mcp-session-id')
       if (returnedSessionId) this.sessionId = returnedSessionId
       
-      // 检查响应的 Content-Type
+      // Content-Type
       const contentType = response.headers.get('content-type')
       
-      // 如果是 SSE 流式响应，需要特殊处理
+      // SSE ，
       if (contentType?.includes('text/event-stream')) {
-        // 对于流式响应，读取第一个事件
+        // ，
         const text = await response.text()
         
-        // 解析 SSE 格式，支持多种格式：
+        // SSE ，：
         // 1. event: message\ndata: {...}\n\n
         // 2. data: {...}\n\n
         const lines = text.split('\n')
@@ -315,7 +315,7 @@ export class MCPClient {
         throw new Error('Invalid SSE response format')
       }
       
-      // 标准 JSON 响应
+      // JSON
       const jsonResponse: JSONRPCResponse = await response.json()
       
       if (jsonResponse.error) {
@@ -324,7 +324,7 @@ export class MCPClient {
       
       return jsonResponse.result as T
     } catch (error) {
-      // 静默处理错误，不在控制台输出
+      // ，
       throw error
     }
   }

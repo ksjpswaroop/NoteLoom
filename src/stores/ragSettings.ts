@@ -7,29 +7,29 @@ import {
   type RagAgentStrategy,
 } from '@/lib/rag-agent-policy';
 
-// RAG 设置参数接口
+// RAG
 export interface RagSettings {
-  // 是否允许 AI 根据问题自动检索笔记
+  // AI
   automaticSearchEnabled: boolean;
-  // Agent 自动检索时采用的速度与深度策略
+  // Agent
   agentStrategy: RagAgentStrategy;
-  // 文本分块的最大字符数
+  //
   chunkSize: number;
-  // 分块之间的重叠字符数
+  //
   chunkOverlap: number;
-  // 检索返回的相关文档数量
+  //
   resultCount: number;
-  // 文档相似度阈值 (0.0-1.0)
+  // (0.0-1.0)
   similarityThreshold: number;
-  // 重排结果的最低相关性分数
+  //
   rerankThreshold: number;
-  // 不参与索引和检索的路径前缀
+  //
   excludedPaths: string[];
 }
 
 export type RagPreset = 'precision' | 'balanced' | 'recall';
 
-// 默认参数值
+//
 export const DEFAULT_RAG_SETTINGS: RagSettings = {
   automaticSearchEnabled: DEFAULT_RAG_AGENT_POLICY.automaticSearchEnabled,
   agentStrategy: DEFAULT_RAG_AGENT_POLICY.strategy,
@@ -41,31 +41,31 @@ export const DEFAULT_RAG_SETTINGS: RagSettings = {
   excludedPaths: DEFAULT_EXCLUDED_RAG_PATHS
 };
 
-// RAG 设置状态接口
+// RAG
 interface RagSettingsState extends RagSettings {
   indexNeedsRebuild: boolean;
-  // 初始化设置
+  //
   initSettings: () => Promise<void>;
-  // 更新单个设置项
+  //
   updateSetting: <K extends keyof RagSettings>(key: K, value: RagSettings[K]) => Promise<void>;
   applyPreset: (preset: RagPreset) => Promise<void>;
   markIndexDirty: () => Promise<void>;
   markIndexClean: () => Promise<void>;
-  // 重置所有设置为默认值
+  //
   resetToDefaults: () => Promise<void>;
 }
 
-// 创建状态存储
+//
 const useRagSettingsStore = create<RagSettingsState>((set, get) => ({
   ...DEFAULT_RAG_SETTINGS,
   indexNeedsRebuild: false,
 
-  // 初始化设置
+  //
   initSettings: async () => {
     try {
       const store = await Store.load('store.json');
       
-      // 从存储中读取各个设置项，如果不存在则使用默认值
+      // ，
       const storedAutomaticSearchEnabled = await store.get<boolean>('ragAutomaticSearchEnabled');
       const legacyRagEnabled = await store.get<boolean>('isRagEnabled');
       const automaticSearchEnabled = storedAutomaticSearchEnabled ?? legacyRagEnabled ?? DEFAULT_RAG_SETTINGS.automaticSearchEnabled;
@@ -93,11 +93,11 @@ const useRagSettingsStore = create<RagSettingsState>((set, get) => ({
         indexNeedsRebuild
       });
     } catch (error) {
-      console.error('初始化 RAG 设置失败:', error);
+      console.error('Failed to initialize RAG settings:', error);
     }
   },
 
-  // 更新单个设置项
+  //
   updateSetting: async <K extends keyof RagSettings>(key: K, value: RagSettings[K]) => {
     try {
       let resolvedValue = value;
@@ -110,10 +110,10 @@ const useRagSettingsStore = create<RagSettingsState>((set, get) => ({
         )) as RagSettings[K];
       }
 
-      // 更新本地状态
+      //
       set({ [key]: resolvedValue } as Pick<RagSettings, K>);
       
-      // 保存到存储
+      //
       const store = await Store.load('store.json');
       await store.set(`rag${key.charAt(0).toUpperCase() + key.slice(1)}`, resolvedValue);
 
@@ -128,7 +128,7 @@ const useRagSettingsStore = create<RagSettingsState>((set, get) => ({
         await store.set('ragIndexNeedsRebuild', true);
       }
     } catch (error) {
-      console.error(`更新 RAG 设置 ${key} 失败:`, error);
+      console.error(`Failed to update RAG setting ${key}:`, error);
     }
   },
 
@@ -160,13 +160,13 @@ const useRagSettingsStore = create<RagSettingsState>((set, get) => ({
     await store.set('ragIndexNeedsRebuild', false);
   },
 
-  // 重置所有设置为默认值
+  //
   resetToDefaults: async () => {
     try {
-      // 更新本地状态
+      //
       set({ ...DEFAULT_RAG_SETTINGS, indexNeedsRebuild: true });
       
-      // 保存到存储
+      //
       const store = await Store.load('store.json');
       await store.set('ragChunkSize', DEFAULT_RAG_SETTINGS.chunkSize);
       await store.set('ragAutomaticSearchEnabled', DEFAULT_RAG_SETTINGS.automaticSearchEnabled);
@@ -179,7 +179,7 @@ const useRagSettingsStore = create<RagSettingsState>((set, get) => ({
       await store.set('ragIndexNeedsRebuild', true);
     } catch (error) {
       toast({
-        title: '重置 RAG 设置失败',
+        title: 'Failed to reset RAG settings',
         description: error as string,
         variant: 'destructive',
       });

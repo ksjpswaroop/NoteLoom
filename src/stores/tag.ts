@@ -29,7 +29,7 @@ interface TagState {
 
   deleteTag: (id: number) => Promise<void>
 
-  // 同步
+  //
   syncState: boolean
   setSyncState: (syncState: boolean) => void
   lastSyncTime: string
@@ -39,7 +39,7 @@ interface TagState {
 }
 
 const useTagStore = create<TagState>((set, get) => ({
-  // 当前选择的 tag
+  // tag
   currentTagId: 1,
   setCurrentTagId: async(currentTagId: number) => {
     set({ currentTagId })
@@ -61,7 +61,7 @@ const useTagStore = create<TagState>((set, get) => ({
     set({ currentTag })
   },
 
-  // 所有 tag
+  // tag
   tags: [],
   fetchTags: async () => {
     const tags = await getTags()
@@ -74,7 +74,7 @@ const useTagStore = create<TagState>((set, get) => ({
     await get().setCurrentTagId(get().tags[0].id)
   },
 
-  // 同步
+  //
   syncState: false,
   setSyncState: (syncState) => {
     set({ syncState })
@@ -119,7 +119,7 @@ const useTagStore = create<TagState>((set, get) => ({
         const gitlabRepo = await getSyncRepoName('gitlab')
         files = await gitlabGetFiles({ path, repo: gitlabRepo })
 
-        // 如果目录不存在（files 为 null），先创建目录标记文件
+        // （files null），
         if (!files) {
           try {
             await uploadGitlabFile({
@@ -132,7 +132,7 @@ const useTagStore = create<TagState>((set, get) => ({
           } catch {
             // Ignore .gitkeep creation failures; the main upload path reports errors below.
           }
-          // 重新获取文件列表
+          //
           files = await gitlabGetFiles({ path, repo: gitlabRepo })
         }
 
@@ -224,7 +224,7 @@ const useTagStore = create<TagState>((set, get) => ({
           const s3Key = `${path}/${filename}`
           const s3Result = await s3Download(s3Config, s3Key)
           if (s3Result) {
-            // S3 返回的 content 是字符串，直接解析
+            // S3 content ，
             result = JSON.parse(s3Result.content)
             hasRemoteData = true
           }
@@ -244,7 +244,7 @@ const useTagStore = create<TagState>((set, get) => ({
         break;
       }
     }
-    // S3 已经直接解析到 result 了，这里处理 Git 平台
+    // S3 result ， Git
     if (files) {
       try {
         if (!options.allowMissingRemote || !hasEmptyRemoteFileContent(files)) {

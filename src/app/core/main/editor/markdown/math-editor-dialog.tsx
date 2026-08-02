@@ -29,7 +29,7 @@ export function MathEditorDialog({
   onInsert,
   initialLatex = '',
   type = 'inline',
-  title = '插入公式',
+  title = 'Insert formula',
 }: MathEditorDialogProps) {
   const [latex, setLatex] = useState(initialLatex)
   const [error, setError] = useState<string | null>(null)
@@ -81,19 +81,19 @@ export function MathEditorDialog({
 
         <div className="grid gap-4 py-4">
           <div>
-            <label className="text-sm font-medium mb-2 block">LaTeX 公式</label>
+            <label className="text-sm font-medium mb-2 block">LaTeX formula</label>
             <Input
               value={latex}
               onChange={(e) => setLatex(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="输入 LaTeX 公式，例如: \frac{a}{b}"
+              placeholder="LaTeX ， : \frac{a}{b}"
               className="font-mono"
             />
             {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
           </div>
 
           <div>
-            <label className="text-sm font-medium mb-2 block">预览</label>
+            <label className="text-sm font-medium mb-2 block">Preview</label>
             <div
               className={`min-h-[80px] p-4 rounded-lg border bg-muted/30 overflow-x-auto ${
                 type === 'block' ? 'text-center' : ''
@@ -103,26 +103,26 @@ export function MathEditorDialog({
           </div>
 
           <div className="text-xs text-muted-foreground">
-            <p>常用公式示例:</p>
+            <p>Common examples:</p>
             <ul className="list-disc list-inside mt-1 space-y-1">
-              <li>分数: <code>\frac&#123;a&#125;&#123;b&#125;</code></li>
-              <li>上标: <code>x^2</code></li>
-              <li>下标: <code>x_n</code></li>
-              <li>平方根: <code>\sqrt&#123;x&#125;</code></li>
-              <li>求和: <code>\sum_&#123;i=1&#125;^n</code></li>
-              <li>积分: <code>\int_a^b f(x) dx</code></li>
-              <li>极限: <code>\lim_&#123;x \to \infty&#125;</code></li>
-              <li>希腊字母: <code>\alpha, \beta, \pi</code></li>
+              <li>Fraction: <code>\frac&#123;a&#125;&#123;b&#125;</code></li>
+              <li>Superscript: <code>x^2</code></li>
+              <li>Subscript: <code>x_n</code></li>
+              <li>Square root: <code>\sqrt&#123;x&#125;</code></li>
+              <li>Sum: <code>\sum_&#123;i=1&#125;^n</code></li>
+              <li>Integral: <code>\int_a^b f(x) dx</code></li>
+              <li>Limit: <code>\lim_&#123;x \to \infty&#125;</code></li>
+              <li>Greek letters: <code>\alpha, \beta, \pi</code></li>
             </ul>
           </div>
         </div>
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            取消
+            Cancel
           </Button>
           <Button onClick={handleInsert} disabled={!latex.trim()}>
-            插入
+            Insert
           </Button>
         </DialogFooter>
       </DialogContent>

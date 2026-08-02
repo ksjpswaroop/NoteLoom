@@ -32,7 +32,7 @@ interface ImageGalleryProps {
 
 const COLLAPSED_IMAGE_LIMIT = 8
 
-// 单个图片项组件
+//
 function ImageItem({ mark }: { mark: Mark }) {
   const t = useTranslations()
   const {
@@ -267,7 +267,7 @@ export function ImageGallery({ marks }: ImageGalleryProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const { isMultiSelectMode, selectedMarkIds, setSelectedMarkIds } = useMarkStore()
 
-  // 筛选出没有内容的图片记录（包括 scan 和 image 类型）
+  // （ scan image ）
   const emptyImageMarks = useMemo(() => marks.filter(mark =>
     (mark.type === 'image' || mark.type === 'scan') && 
     Boolean(mark.url) &&
@@ -297,7 +297,7 @@ export function ImageGallery({ marks }: ImageGalleryProps) {
     setSelectedMarkIds(nextSelectedIds)
   }
 
-  // 如果没有无内容的图片，不显示组件
+  // ，
   if (emptyImageMarks.length === 0) {
     return null
   }
@@ -319,7 +319,7 @@ export function ImageGallery({ marks }: ImageGalleryProps) {
           ) : null}
           <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
             <span className="text-xs font-medium">
-              图片组
+              Image group
             </span>
             <span className="text-xs opacity-70">
               {isMultiSelectMode ? `${selectedImageCount}/${emptyImageMarks.length}` : emptyImageMarks.length}
@@ -335,7 +335,7 @@ export function ImageGallery({ marks }: ImageGalleryProps) {
         </div>
       </div>
 
-      {/* 图片展示区域 */}
+      {/* */}
       <div className={cn(
         "px-2 pb-2",
         !isExpanded && "max-h-[72px] overflow-hidden"

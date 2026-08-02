@@ -29,18 +29,18 @@ export function FileSelector({ onFileSelect, onClose, isOpen }: FileSelectorProp
   const inputRef = useRef<HTMLInputElement>(null)
   const t = useTranslations('record.chat.input.fileLink')
 
-  // 加载所有Markdown文件
+  // Markdown
   useEffect(() => {
     if (isOpen) {
       loadFiles()
-      // 自动聚焦搜索框
+      //
       setTimeout(() => {
         inputRef.current?.focus()
       }, 100)
     }
   }, [isOpen])
 
-  // 过滤文件
+  //
   useEffect(() => {
     if (!searchQuery.trim()) {
       setFilteredFiles(files)
@@ -62,7 +62,7 @@ export function FileSelector({ onFileSelect, onClose, isOpen }: FileSelectorProp
       setFiles(allFiles)
       setFilteredFiles(allFiles)
     } catch (error) {
-      console.error('加载文件失败:', error)
+      console.error('Failed to load file:', error)
     } finally {
       setLoading(false)
     }
@@ -108,7 +108,7 @@ export function FileSelector({ onFileSelect, onClose, isOpen }: FileSelectorProp
           />
         </ResponsiveDialogHeader>
 
-        {/* 文件列表 */}
+        {}
         <ScrollArea className="flex-1 max-h-[400px]">
           {loading ? (
             <div className="flex items-center justify-center py-8">

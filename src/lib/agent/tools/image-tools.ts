@@ -6,7 +6,7 @@ import type { AgentTool } from '../types'
 
 const imageInspectTool: AgentTool = {
   name: 'image_inspect',
-  title: '深入识别图片',
+  title: 'Deeply identify image',
   description: 'Inspect a user-uploaded image again when persisted OCR or visual context is insufficient. Use the exact imageId from Available image attachments. The optional crop uses normalized 0-1 coordinates.',
   category: 'image',
   risk: 'read',
@@ -44,14 +44,14 @@ const imageInspectTool: AgentTool = {
     if (!attachment) {
       return {
         ok: false,
-        message: '图片不存在或已不在本轮可访问范围内。',
+        message: 'Image does not exist or is no longer accessible this turn.',
         error: 'IMAGE_ATTACHMENT_NOT_AVAILABLE',
       }
     }
     if (!prompt) {
       return {
         ok: false,
-        message: '必须提供明确的图片检查问题。',
+        message: 'You must provide a clear image inspection question.',
         error: 'IMAGE_INSPECTION_PROMPT_REQUIRED',
       }
     }
@@ -79,14 +79,14 @@ const imageInspectTool: AgentTool = {
       if (result.status !== 'completed') {
         return {
           ok: false,
-          message: '图片重新识别未返回有效内容。',
+          message: 'Image re-identification returned no valid content.',
           data: result,
           error: result.errorCode || 'IMAGE_INSPECTION_FAILED',
         }
       }
       return {
         ok: true,
-        message: `已重新识别图片 ${attachment.name}。`,
+        message: `Re-identified image ${attachment.name}.`,
         data: {
           imageId: result.imageId,
           name: result.name,
@@ -99,7 +99,7 @@ const imageInspectTool: AgentTool = {
     } catch (error) {
       return {
         ok: false,
-        message: `图片重新识别失败：${String(error)}`,
+        message: `Image re-identification failed: ${String(error)}`,
         error: 'IMAGE_INSPECTION_FAILED',
       }
     }

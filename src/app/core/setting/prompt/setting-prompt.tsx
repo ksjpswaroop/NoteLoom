@@ -92,20 +92,20 @@ export function SettingPrompt({id, icon}: {id: string, icon?: React.ReactNode}) 
     setSystemPromptDraft('')
   }
 
-  // 添加新prompt
+  // prompt
   const handleAddPrompt = async () => {
     if (!newTitle.trim()) return
     await addPrompt({
       title: newTitle,
       content: newContent
     })
-    // 清空表单
+    //
     setNewTitle('')
     setNewContent('')
     setDialogOpen(false)
   }
 
-  // 保存编辑中的prompt
+  // prompt
   const handleSaveEdit = async (id: string) => {
     const prompt = promptList.find(p => p.id === id)
     if (!prompt) return
@@ -119,24 +119,24 @@ export function SettingPrompt({id, icon}: {id: string, icon?: React.ReactNode}) 
     setEditingId(null)
   }
 
-  // 取消编辑
+  //
   const handleCancelEdit = () => {
     setEditingId(null)
   }
 
-  // 开始编辑
+  //
   const handleStartEdit = (prompt: Prompt) => {
     setEditingId(prompt.id)
     setNewTitle(prompt.title)
     setNewContent(prompt.content)
   }
 
-  // 删除prompt
+  // prompt
   const handleDeletePrompt = async (id: string) => {
     await deletePrompt(id)
   }
 
-  // 优化提示词
+  //
   const handleOptimizePrompt = async () => {
     if (!newContent.trim()) {
       toast({
@@ -177,7 +177,7 @@ ${newContent}`
     }
   }
 
-  // 打开新增对话框
+  //
   const handleOpenAddDialog = () => {
     setNewTitle('')
     setNewContent('')

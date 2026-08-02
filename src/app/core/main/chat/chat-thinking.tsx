@@ -6,12 +6,12 @@ import { useTranslations } from "next-intl";
 export default function ChatThinking({chat}: { chat: Chat }) {
   const t = useTranslations()
   const thinkingContent = chat.thinking || ''
-  const isThinking = !chat.content && !!chat.thinking // 还在思考中（有 thinking 但没有 content）
+  const isThinking = !chat.content && !!chat.thinking // （ thinking content）
   
   const [isExpanded, setIsExpanded] = useState(isThinking)
   const contentRef = useRef<HTMLDivElement>(null)
   
-  // 当思考状态改变时，自动展开或折叠
+  // ，
   useEffect(() => {
     if (isThinking) {
       setIsExpanded(true)
@@ -20,7 +20,7 @@ export default function ChatThinking({chat}: { chat: Chat }) {
     }
   }, [isThinking])
   
-  // 思考内容更新时，自动滚动到底部
+  // ，
   useEffect(() => {
     if (isThinking && isExpanded && contentRef.current) {
       contentRef.current.scrollTop = contentRef.current.scrollHeight
@@ -31,7 +31,7 @@ export default function ChatThinking({chat}: { chat: Chat }) {
     return null
   }
 
-  // 提取标题（第一行或前50个字符）
+  // （50）
   const extractTitle = (text: string): string => {
     const firstLine = text.split('\n')[0]
     if (firstLine.length > 50) {
@@ -44,7 +44,7 @@ export default function ChatThinking({chat}: { chat: Chat }) {
   
   return (
     <div className="w-full space-y-1 mb-2 bg-muted/30 border border-border/50 rounded-lg overflow-hidden">
-      {/* 思考卡片 - 单行 */}
+      {/* - */}
       <button
         type="button"
         className={`flex min-h-11 w-full min-w-0 cursor-pointer items-center gap-2 px-3 py-1.5 text-left transition-colors ${isThinking ? 'bg-muted/50' : 'hover:bg-muted/40'}`}
@@ -62,7 +62,7 @@ export default function ChatThinking({chat}: { chat: Chat }) {
         <ChevronRight className={`size-4 text-muted-foreground flex-shrink-0 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
       </button>
 
-      {/* 展开的详细内容 */}
+      {/* */}
       {isExpanded && (
         <div
           ref={contentRef}

@@ -25,7 +25,7 @@ export function SkillDetailView({ skillContent }: SkillDetailViewProps) {
 
       {/* Skill Details */}
       <div className="flex flex-col gap-4 w-full max-w-2xl">
-        {/* 指令 */}
+        {/* */}
         <div className="border rounded-lg p-4 space-y-3">
           <h3 className="font-semibold text-sm">{t('instructions')}</h3>
           <div className="text-sm whitespace-pre-wrap bg-muted/50 p-3 rounded max-h-60 overflow-y-auto">

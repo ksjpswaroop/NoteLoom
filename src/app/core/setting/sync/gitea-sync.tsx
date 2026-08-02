@@ -44,24 +44,24 @@ export function GiteaSync() {
 
   const [giteaAccessTokenVisible, setGiteaAccessTokenVisible] = useState<boolean>(false)
 
-  // 获取实际使用的仓库名称
+  //
   const getRepoName = () => {
     return giteaCustomSyncRepo.trim() || RepoNames.sync
   }
 
 
-  // 检查 Gitea 仓库状态（仅检查，不创建）
+  // Gitea （，）
   async function checkRepoState() {
     try {
       setGiteaSyncRepoState(SyncStateEnum.checking)
-      // 先清空之前的仓库信息
+      //
       setGiteaSyncRepoInfo(undefined)
       
-      // 获取并保存用户信息
+      //
       const userInfo = await getUserInfo();
       setGiteaUserInfo(userInfo);
       
-      // 检查同步仓库状态
+      //
       const repoName = getRepoName()
       const syncRepo = await checkSyncRepoState(repoName)
       
@@ -79,7 +79,7 @@ export function GiteaSync() {
     }
   }
 
-  // 手动创建仓库
+  //
   async function createGiteaRepo() {
     try {
       setGiteaSyncRepoState(SyncStateEnum.creating)
@@ -97,7 +97,7 @@ export function GiteaSync() {
     }
   }
 
-  // Token 变化处理
+  // Token
   async function tokenChangeHandler(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value
     if (value === '') {
@@ -110,19 +110,19 @@ export function GiteaSync() {
     await store.set('giteaAccessToken', value)
     await store.save()
     
-    // 如果 token 有效，自动检查仓库状态
+    // token ，
     if (value.trim()) {
-      // 等待一下再检查，避免频繁请求
+      // ，
       setTimeout(() => {
         checkRepoState()
       }, 500)
     }
   }
 
-  // 实例类型变化处理
+  //
   async function instanceTypeChangeHandler(value: GiteaInstanceType) {
     await setGiteaInstanceType(value)
-    // 如果有 token，重新检查仓库状态
+    // token，
     if (giteaAccessToken.trim()) {
       setTimeout(() => {
         checkRepoState()
@@ -130,13 +130,13 @@ export function GiteaSync() {
     }
   }
 
-  // 自定义 URL 变化处理
+  // URL
   async function customUrlChangeHandler(e: React.ChangeEvent<HTMLInputElement>) {
     let value = e.target.value
-    // 自动移除末尾的斜杠
+    //
     value = value.replace(/\/+$/, '')
     await setGiteaCustomUrl(value)
-    // 如果是自建实例且有 token，重新检查仓库状态
+    // token，
     if (giteaInstanceType === GiteaInstanceType.SELF_HOSTED && giteaAccessToken.trim() && value.trim()) {
       setTimeout(() => {
         checkRepoState()
@@ -144,7 +144,7 @@ export function GiteaSync() {
     }
   }
 
-  // 获取当前实例的 Token 创建 URL
+  // Token URL
   function getTokenCreateUrl() {
     if (giteaInstanceType === GiteaInstanceType.SELF_HOSTED) {
       return giteaCustomUrl ? `${giteaCustomUrl}/user/settings/applications` : '#'
@@ -157,23 +157,23 @@ export function GiteaSync() {
     async function init() {
       const store = await Store.load('store.json');
       
-      // 加载实例类型
+      //
       const instanceType = await store.get<GiteaInstanceType>('giteaInstanceType')
       if (instanceType) {
         setGiteaInstanceType(instanceType)
       }
       
-      // 加载自定义 URL
+      // URL
       const customUrl = await store.get<string>('giteaCustomUrl')
       if (customUrl) {
         setGiteaCustomUrl(customUrl)
       }
       
-      // 加载访问令牌
+      //
       const token = await store.get<string>('giteaAccessToken')
       if (token) {
         setGiteaAccessToken(token)
-        // 如果有 token，自动检查仓库状态
+        // token，
         checkRepoState()
       } else {
         setGiteaAccessToken('')
@@ -202,7 +202,7 @@ export function GiteaSync() {
       </div>
       <p className="text-sm text-muted-foreground mb-4">{t('settings.sync.platformDesc')}</p>
 
-      {/* 实例类型选择 */}
+      {/* */}
       <div className="space-y-2 mb-4">
         <label className="text-sm font-medium">{t('settings.sync.giteaInstanceType')}</label>
         <ResponsiveSelect
@@ -218,7 +218,7 @@ export function GiteaSync() {
         <p className="text-xs text-muted-foreground">{t('settings.sync.giteaInstanceTypeDesc')}</p>
       </div>
 
-      {/* 自定义 URL（自建实例时显示） */}
+      {/* URL（） */}
       {giteaInstanceType === GiteaInstanceType.SELF_HOSTED && (
         <div className="space-y-2 mb-4">
           <label className="text-sm font-medium">Gitea URL</label>
@@ -232,7 +232,7 @@ export function GiteaSync() {
         </div>
       )}
 
-      {/* Token 输入 */}
+      {/* Token */}
       <div className="space-y-2">
         <label className="text-sm font-medium">Gitea Access Token</label>
         <TokenInputControl
@@ -245,7 +245,7 @@ export function GiteaSync() {
         />
       </div>
 
-      {/* 自定义仓库 */}
+      {/* */}
       <div className="mt-4 space-y-2">
         <label className="text-sm font-medium">{t('settings.sync.customSyncRepo')}</label>
         <Input
@@ -256,7 +256,7 @@ export function GiteaSync() {
         <p className="text-xs text-muted-foreground">{t('settings.sync.customSyncRepoDesc')}</p>
       </div>
 
-      {/* 操作按钮 */}
+      {/* */}
       <div className="mt-4 flex gap-2 flex-wrap">
         {giteaAccessToken ? (
           <>
@@ -293,7 +293,7 @@ export function GiteaSync() {
         )}
       </div>
 
-      {/* 仓库信息 */}
+      {/* */}
       {giteaSyncRepoInfo && (
         <div className="border-t mt-4 pt-4">
           <div className="flex items-center gap-4">

@@ -19,12 +19,12 @@ export function PromptSelect({ display = 'icon', disabled = false }: PromptSelec
   const [open, setOpen] = React.useState(false)
   const t = useTranslations('record.chat.input.promptSelect')
 
-  // 初始化prompt列表
+  // prompt
   useEffect(() => {
     initPromptData()
   }, [])
 
-  // 选择 Prompt
+  // Prompt
   async function promptSelectChangeHandler(id: string) {
     const selectedPrompt = promptList.find(item => item.id === id)
     if (!selectedPrompt) return

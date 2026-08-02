@@ -12,11 +12,11 @@ export function MobileClearContext() {
   const t = useTranslations('mobile.chat.drawer.tools')
 
   const handleClearContext = async () => {
-    // 插入一条系统消息，表示清除上下文
+    // ，
     await insert({
       tagId: currentTagId,
       role: 'system',
-      content: '上下文已清除，之后的对话将只携带此消息之后的内容。',
+      content: 'Context cleared. Later messages will only carry content after this point.',
       type: 'clear',
       inserted: true,
       image: undefined,

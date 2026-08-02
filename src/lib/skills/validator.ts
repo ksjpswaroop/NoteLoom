@@ -1,8 +1,8 @@
 /**
- * Skill 验证器
+ * Skill 
  *
- * 验证 Skill 元数据和内容的完整性和正确性。
- * 遵循 Agent Skills 官方规范: https://agentskills.io/specification
+ * Skill 。
+ * Agent Skills : https://agentskills.io/specification
  */
 
 import {
@@ -19,92 +19,92 @@ import {
 } from './parser'
 
 // ============================================================================
-// 验证函数
+//
 // ============================================================================
 
 /**
- * 验证 Skill YAML 元数据 (符合官方规范)
+ * Skill YAML ()
  *
- * @param metadata - YAML 元数据
- * @returns 验证结果
+ * @param metadata - YAML 
+ * @returns 
  */
 export function validateSkillYamlMetadata(metadata: SkillYamlMetadata): ValidationResult {
   const errors: ValidationError[] = []
   const warnings: ValidationWarning[] = []
 
-  // 验证必填字段 - name
+  // - name
   if (!metadata.name || metadata.name.trim().length === 0) {
     errors.push({
       field: 'name',
-      message: 'name 字段不能为空',
+      message: 'name field cannot be empty',
       severity: 'error',
     })
   } else if (!isValidSkillName(metadata.name)) {
     errors.push({
       field: 'name',
-      message: 'name 必须是 1-64 字符，只能包含小写字母、数字和连字符，不能以连字符开头或结尾，不能包含连续连字符',
+      message: 'name must be 1–64 characters, lowercase letters, digits, and hyphens only; cannot start or end with a hyphen or contain consecutive hyphens',
       severity: 'error',
     })
   }
 
-  // 验证必填字段 - description
+  // - description
   if (!metadata.description || metadata.description.trim().length === 0) {
     errors.push({
       field: 'description',
-      message: 'description 字段不能为空',
+      message: 'description field cannot be empty',
       severity: 'error',
     })
   } else if (!isValidSkillDescription(metadata.description)) {
     errors.push({
       field: 'description',
-      message: 'description 必须是 1-1024 字符',
+      message: 'description must be 1–1024 characters',
       severity: 'error',
     })
   }
 
-  // 验证可选字段 - license
+  // - license
   if (metadata.license) {
     if (metadata.license.length > 200) {
       warnings.push({
         field: 'license',
-        message: 'license 建议不超过 200 个字符',
+        message: 'license should not exceed 200 characters',
         severity: 'warning',
       })
     }
   }
 
-  // 验证可选字段 - compatibility
+  // - compatibility
   if (metadata.compatibility) {
     if (metadata.compatibility.length > 500) {
       errors.push({
         field: 'compatibility',
-        message: 'compatibility 不能超过 500 个字符',
+        message: 'compatibility cannot exceed 500 characters',
         severity: 'error',
       })
     }
   }
 
-  // 验证 metadata 字段
+  // metadata
   if (metadata.metadata) {
     for (const [key, value] of Object.entries(metadata.metadata)) {
       if (key.length > 50) {
         warnings.push({
           field: 'metadata',
-          message: `metadata 键名 "${key}" 过长，建议不超过 50 个字符`,
+          message: `metadata key "${key}" is too long; keep it under 50 characters`,
           severity: 'warning',
         })
       }
       if (value.length > 500) {
         warnings.push({
           field: 'metadata',
-          message: `metadata "${key}" 的值过长，建议不超过 500 个字符`,
+          message: `metadata "${key}" value is too long; keep it under 500 characters`,
           severity: 'warning',
         })
       }
     }
   }
 
-  // 验证 allowedTools (官方规范使用空格分隔)
+  // allowedTools ()
   if (metadata.allowedTools) {
     const tools = Array.isArray(metadata.allowedTools)
       ? metadata.allowedTools
@@ -115,27 +115,27 @@ export function validateSkillYamlMetadata(metadata: SkillYamlMetadata): Validati
     if (tools.length === 0) {
       warnings.push({
         field: 'allowedTools',
-        message: 'allowedTools 为空，建议移除此字段或添加工具',
+        message: 'allowedTools is empty; remove the field or add tools',
         severity: 'warning',
       })
     }
 
-    // 验证工具名称格式
+    //
     const invalidTools = tools.filter((tool) => !isValidToolName(tool))
     if (invalidTools.length > 0) {
       errors.push({
         field: 'allowedTools',
-        message: `无效的工具名称: ${invalidTools.join(', ')}`,
+        message: `Invalid tool name: ${invalidTools.join(', ')}`,
         severity: 'error',
       })
     }
   }
 
-  // 验证扩展字段 (向后兼容)
+  // ()
   if (metadata.version && !isValidVersion(metadata.version)) {
     warnings.push({
       field: 'version',
-      message: 'version 格式无效，应为 semver 格式 (如: 1.0.0)',
+      message: 'Invalid version format; use semver (e.g. 1.0.0)',
       severity: 'warning',
     })
   }
@@ -148,16 +148,16 @@ export function validateSkillYamlMetadata(metadata: SkillYamlMetadata): Validati
 }
 
 /**
- * 验证 Skill 完整内容
+ * Skill 
  *
- * @param skill - Skill 内容
- * @returns 验证结果
+ * @param skill - Skill 
+ * @returns 
  */
 export function validateSkillContent(skill: SkillContent): ValidationResult {
   const errors: ValidationError[] = []
   const warnings: ValidationWarning[] = []
 
-  // 验证元数据
+  //
   const metadataResult = validateSkillYamlMetadata({
     name: skill.metadata.name,
     description: skill.metadata.description,
@@ -173,37 +173,37 @@ export function validateSkillContent(skill: SkillContent): ValidationResult {
   errors.push(...metadataResult.errors)
   warnings.push(...metadataResult.warnings)
 
-  // 验证 ID 格式
+  // ID
   if (!isValidSkillId(skill.metadata.id)) {
     errors.push({
       field: 'id',
-      message: 'Skill ID 格式无效，必须与目录名匹配，且符合 name 字段格式要求',
+      message: 'Invalid Skill ID format; it must match the directory name and the name field format rules',
       severity: 'error',
     })
   }
 
-  // 验证 ID 与 name 匹配 (官方规范要求)
+  // ID name ()
   if (skill.metadata.id !== skill.metadata.name) {
     warnings.push({
       field: 'id',
-      message: 'Skill ID 应与 name 字段保持一致 (官方规范建议)',
+      message: 'Skill ID should match the name field (recommended by the official spec)',
       severity: 'warning',
     })
   }
 
-  // 验证指令内容
+  //
   if (!skill.instructions || skill.instructions.trim().length === 0) {
     errors.push({
       field: 'instructions',
-      message: '指令内容不能为空',
+      message: 'Instruction content cannot be empty',
       severity: 'error',
     })
   } else {
-    // 官方规范建议指令长度
+    //
     if (skill.instructions.length > 10000) {
       warnings.push({
         field: 'instructions',
-        message: '指令内容超过 10000 字符，建议将详细文档移到 references/ 目录',
+        message: 'Instruction exceeds 10000 characters; move detailed docs to the references/ directory',
         severity: 'warning',
       })
     }
@@ -211,7 +211,7 @@ export function validateSkillContent(skill: SkillContent): ValidationResult {
     if (skill.instructions.length < 50) {
       warnings.push({
         field: 'instructions',
-        message: '指令内容过短，建议提供更详细的说明',
+        message: 'Instruction is too short; provide more detail',
         severity: 'warning',
       })
     }
@@ -225,69 +225,69 @@ export function validateSkillContent(skill: SkillContent): ValidationResult {
 }
 
 /**
- * 验证 Skill ID
+ * Skill ID
  *
  * @param id - Skill ID
- * @returns 是否有效
+ * @returns 
  */
 export function validateSkillId(id: string): boolean {
   return isValidSkillId(id)
 }
 
 // ============================================================================
-// 辅助验证函数
+//
 // ============================================================================
 
 /**
- * 验证版本号格式 (semver)
+ * (semver)
  *
- * @param version - 版本号字符串
- * @returns 是否有效
+ * @param version - 
+ * @returns 
  */
 function isValidVersion(version: string): boolean {
   return /^\d+\.\d+\.\d+(?:-[a-zA-Z0-9.-]+)?(?:\+[a-zA-Z0-9.-]+)?$/.test(version)
 }
 
 /**
- * 验证工具名称格式
+ * 
  *
- * @param toolName - 工具名称
- * @returns 是否有效
+ * @param toolName - 
+ * @returns 
  */
 function isValidToolName(toolName: string): boolean {
-  // 工具名称可以包含字母、数字、下划线、冒号和星号
-  // 例如: Bash, Read, git:*, jq:*
+  // 、、、
+  // : Bash, Read, git:*, jq:*
   return /^[a-zA-Z_][a-zA-Z0-9_:*]*$/.test(toolName)
 }
 
 // ============================================================================
-// 工具函数
+//
 // ============================================================================
 
 /**
- * 格式化验证结果为可读文本
+ * 
  *
- * @param result - 验证结果
- * @returns 格式化的错误和警告信息
+ * @param result - 
+ * @returns 
  */
 export function formatValidationResult(result: ValidationResult): string {
   const lines: string[] = []
 
   if (result.valid) {
-    lines.push('✓ 验证通过')
+    lines.push('✓ Validation passed')
   } else {
-    lines.push('✗ 验证失败')
+    lines.push('✗ Validation failed')
   }
 
   if (result.errors.length > 0) {
-    lines.push('\n错误:')
+    lines.push('\nError:')
     for (const error of result.errors) {
       lines.push(`  - ${error.field}: ${error.message}`)
     }
   }
 
   if (result.warnings.length > 0) {
-    lines.push('\n警告:')
+    lines.push('\nWarning:')
     for (const warning of result.warnings) {
       lines.push(`  - ${warning.field}: ${warning.message}`)
     }
@@ -297,14 +297,14 @@ export function formatValidationResult(result: ValidationResult): string {
 }
 
 /**
- * 获取验证错误的摘要
+ * 
  *
- * @param result - 验证结果
- * @returns 错误摘要
+ * @param result - 
+ * @returns 
  */
 export function getValidationSummary(result: ValidationResult): string {
   if (result.valid) {
-    return '验证通过'
+    return 'Validation passed'
   }
 
   const errorCount = result.errors.length
@@ -312,11 +312,11 @@ export function getValidationSummary(result: ValidationResult): string {
 
   const parts: string[] = []
   if (errorCount > 0) {
-    parts.push(`${errorCount} 个错误`)
+    parts.push(`${errorCount} errors`)
   }
   if (warningCount > 0) {
-    parts.push(`${warningCount} 个警告`)
+    parts.push(`${warningCount} warnings`)
   }
 
-  return `验证失败: ${parts.join(', ')}`
+  return `Validation failed: ${parts.join(', ')}`
 }

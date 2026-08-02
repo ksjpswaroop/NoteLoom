@@ -67,9 +67,9 @@ const useSettingsSyncStore = create<SettingsSyncState>((set) => ({
   setLastSyncTime: (lastSyncTime) => set({ lastSyncTime }),
   
   /**
-   * 上传配置到远程仓库
-   * 会自动过滤掉不应同步的字段（如工作区路径等）
-   */
+ * 
+ * （）
+ */
   uploadSettings: async () => {
     try {
       const store = await Store.load('store.json')
@@ -80,7 +80,7 @@ const useSettingsSyncStore = create<SettingsSyncState>((set) => ({
         excludeSensitiveConfig,
       })
       
-      // 获取所有配置项
+      //
       const allSettings: Record<string, unknown> = {}
       const entries = await store.entries()
       
@@ -88,7 +88,7 @@ const useSettingsSyncStore = create<SettingsSyncState>((set) => ({
         allSettings[key] = value
       }
       
-      // 过滤掉不应同步的字段
+      //
       const syncableSettings = filterSyncData(allSettings, { excludeSensitiveConfig })
       debugSettingsSync('settings filtered for upload', {
         totalKeys: Object.keys(allSettings).length,
@@ -96,7 +96,7 @@ const useSettingsSyncStore = create<SettingsSyncState>((set) => ({
         path: '.data/settings.json',
       })
       
-      // 转换为 JSON 字符串
+      // JSON
       const content = JSON.stringify(syncableSettings, null, 2)
       
       if (primaryBackupMethod === 's3') {
@@ -131,10 +131,10 @@ const useSettingsSyncStore = create<SettingsSyncState>((set) => ({
         return false
       }
 
-      // 获取仓库名称
+      //
       const repoName = await getSyncRepoName(primaryBackupMethod as GitSettingsSyncProvider)
       
-      // 根据主要备份方式选择上传函数
+      //
       let uploadFile: typeof uploadGithubFile
       let getFiles: typeof githubGetFiles
       
@@ -156,7 +156,7 @@ const useSettingsSyncStore = create<SettingsSyncState>((set) => ({
           getFiles = githubGetFiles
       }
       
-      // 上传到远程仓库
+      //
       const settingsPath = '.data/settings.json'
       const existingFile = await getFiles({
         path: settingsPath,
@@ -181,7 +181,7 @@ const useSettingsSyncStore = create<SettingsSyncState>((set) => ({
       })
       
       if (result) {
-        // 更新最后同步时间
+        //
         const now = new Date().toISOString()
         set({ lastSyncTime: now })
         return true
@@ -198,9 +198,9 @@ const useSettingsSyncStore = create<SettingsSyncState>((set) => ({
   },
   
   /**
-   * 从远程仓库下载配置
-   * 会保留本地的排除字段（如工作区路径等）
-   */
+ * 
+ * （）
+ */
   downloadSettings: async (options: SettingsDownloadOptions = {}) => {
     try {
       const store = await Store.load('store.json')
@@ -211,7 +211,7 @@ const useSettingsSyncStore = create<SettingsSyncState>((set) => ({
         excludeSensitiveConfig,
       })
       
-      // 获取本地配置（用于保留排除字段）
+      // （）
       const localSettings: Record<string, unknown> = {}
       const entries = await store.entries()
       
@@ -249,12 +249,12 @@ const useSettingsSyncStore = create<SettingsSyncState>((set) => ({
         remoteSettings = JSON.parse(file.content)
       }
 
-      // 获取仓库名称
+      //
       const repoName = primaryBackupMethod === 's3' || primaryBackupMethod === 'webdav'
         ? ''
         : await getSyncRepoName(primaryBackupMethod as GitSettingsSyncProvider)
 
-      // 根据主要备份方式选择获取函数
+      //
       let getFiles: typeof githubGetFiles
 
       switch (primaryBackupMethod) {
@@ -271,7 +271,7 @@ const useSettingsSyncStore = create<SettingsSyncState>((set) => ({
           getFiles = githubGetFiles
       }
       
-      // 从远程仓库获取配置文件
+      //
       if (!remoteSettings) {
         const settingsPath = '.data/settings.json'
         const files = primaryBackupMethod === 'gitlab'
@@ -304,7 +304,7 @@ const useSettingsSyncStore = create<SettingsSyncState>((set) => ({
           success: true,
         })
 
-        // 解码 base64 内容
+        // base64
         const content = decodeBase64ToString(getRemoteFileContent(files, settingsPath))
         remoteSettings = JSON.parse(content)
       }
@@ -313,7 +313,7 @@ const useSettingsSyncStore = create<SettingsSyncState>((set) => ({
         return false
       }
       
-      // 合并配置：使用远程配置，但保留本地的排除字段
+      // ：，
       const mergedSettings = mergeSyncData(localSettings, remoteSettings, { excludeSensitiveConfig })
       debugSettingsSync('settings merged from remote', {
         localKeys: Object.keys(localSettings).length,
@@ -321,7 +321,7 @@ const useSettingsSyncStore = create<SettingsSyncState>((set) => ({
         mergedKeys: Object.keys(mergedSettings).length,
       })
       
-      // 保存合并后的配置到本地
+      //
       setAutoDataSyncApplyingRemote(true)
       try {
         for (const [key, value] of Object.entries(mergedSettings)) {
@@ -332,7 +332,7 @@ const useSettingsSyncStore = create<SettingsSyncState>((set) => ({
         setAutoDataSyncApplyingRemote(false)
       }
       
-      // 更新最后同步时间
+      //
       const now = new Date().toISOString()
       set({ lastSyncTime: now })
       

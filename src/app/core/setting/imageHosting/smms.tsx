@@ -29,7 +29,7 @@ export default function SMMSImageHosting() {
     }
   }
 
-  // 设置 token
+  // token
   async function handleSetToken(token: string) {
     setToken(token)
     const store = await Store.load('store.json');
@@ -37,7 +37,7 @@ export default function SMMSImageHosting() {
     await store.save()
   }
 
-  // 获取用户信息
+  //
   async function handleSetUserInfo() {
     setSmmsState(SyncStateEnum.checking)
     const user = await getUserInfo()

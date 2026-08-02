@@ -49,7 +49,7 @@ export function ThemeColorPicker({ colors, onColorChange, t }: ThemeColorPickerP
     { key: 'shadow', label: t('colors.shadow'), defaultColor: '#000000' },
   ]
 
-  // 分成两列
+  //
   const half = Math.ceil(colorConfig.length / 2)
   const leftColumn = colorConfig.slice(0, half)
   const rightColumn = colorConfig.slice(half)
@@ -113,26 +113,26 @@ function ColorInput({ label, value, defaultColor, onChange }: ColorInputProps) {
 
   return (
     <div className="flex items-center gap-2 py-1">
-      {/* 颜色选择器 */}
+      {}
       <input
         type="color"
         value={hexValue}
         onChange={handleColorChange}
         className="w-8 h-8 rounded cursor-pointer border-2 border-border hover:border-primary transition-colors shrink-0"
-        title="点击选择颜色"
+        title="Click to choose a color"
       />
 
-      {/* 标签 */}
+      {}
       <Label className="text-xs font-medium flex-1 cursor-pointer" title={label}>
         {label}
       </Label>
 
-      {/* 颜色值 - 移动端隐藏 */}
+      {/* - */}
       <span className="hidden md:inline text-xs text-muted-foreground font-mono w-16 text-right tabular-nums">
         {hexValue}
       </span>
 
-      {/* 重置按钮 - 始终占位 */}
+      {/* - */}
       <div className="h-6 w-6 shrink-0 flex items-center justify-center">
         {hasCustomValue ? (
           <Button
@@ -141,7 +141,7 @@ function ColorInput({ label, value, defaultColor, onChange }: ColorInputProps) {
             size="sm"
             className="h-6 w-6 p-0"
             onClick={handleReset}
-            title="恢复默认值"
+            title="Restore defaults"
           >
             <RotateCcw className="h-3 w-3" />
           </Button>

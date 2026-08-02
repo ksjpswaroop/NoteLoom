@@ -12,19 +12,19 @@ export function RecordingIndicator() {
   const { isRecording, recordingDuration } = useRecordingStore();
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  // 格式化录音时长
+  //
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // 如果没有在录音，不显示指示器
+  // ，
   if (!isRecording) {
     return null;
   }
 
-  // 点击打开录音对话框
+  //
   const handleClick = () => {
     setDialogOpen(true);
   };

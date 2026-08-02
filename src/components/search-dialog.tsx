@@ -80,7 +80,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
     return fileName.includes('.') ? fileName.substring(0, fileName.lastIndexOf('.')) : fileName
   }
 
-  // 高亮搜索关键词
+  //
   function highlightText(text: string, query: string) {
     if (!query.trim() || !text) return text
     
@@ -92,12 +92,12 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
     let index = lowerText.indexOf(lowerQuery)
     
     while (index !== -1) {
-      // 添加匹配前的文本
+      //
       if (index > lastIndex) {
         parts.push(text.substring(lastIndex, index))
       }
       
-      // 添加高亮的匹配文本
+      //
       parts.push(
         <mark key={index} className="rounded bg-primary/15 px-0.5 text-foreground">
           {text.substring(index, index + lowerQuery.length)}
@@ -108,7 +108,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
       index = lowerText.indexOf(lowerQuery, lastIndex)
     }
     
-    // 添加剩余文本
+    //
     if (lastIndex < text.length) {
       parts.push(text.substring(lastIndex))
     }
@@ -154,7 +154,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
       return
     }
     
-    // 构建文章搜索项
+    //
     const articleItems: SearchableItem[] = allArticle.map((item, index) => ({
       id: `article-${index}-${item.path?.replace(/[^a-zA-Z0-9]/g, '-')}`,
       title: extractTitleFromPath(item.path || ''),
@@ -166,7 +166,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
       }
     }))
     
-    // 准备记录搜索数据
+    //
     const markItems: SearchableItem[] = allMarks.map((item, index) => {
       const tag = tags.find(tag => tag.id === item.tagId)
       return {
@@ -205,15 +205,15 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
       },
     }))
     
-    // 合并所有搜索项
+    //
     const allItems = [...articleItems, ...markItems, ...canvasItems]
     
-    // 执行搜索（自动合并精确和模糊结果）
+    // （）
     const searchResults = search(allItems, value, { 
       maxResults: 50 
     })
     
-    // 转换为组件需要的格式
+    //
     const results: EnhancedSearchResult[] = searchResults.map(result => {
       const metadata = result.item.metadata || {}
       const firstMatch = result.matches[0]
@@ -225,11 +225,11 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
         highlightText: result.highlightText,
         score: result.score,
         firstMatchIndex: firstMatch?.index,
-        // 文章特定字段
+        //
         path: metadata.path,
         article: metadata.article,
         canvasId: metadata.canvasId,
-        // 记录特定字段
+        //
         markId: metadata.markId,
         content: metadata.content,
         desc: metadata.desc,
@@ -243,7 +243,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
     setSearchResult(results)
   }, [allArticle, allMarks, canvasProjects, isMobileRoute, tags])
 
-  // 防抖搜索，300ms 延迟
+  // ，300ms
   const debouncedSearch = useMemo(
     () => debounce(performSearch, 300),
     [performSearch]
@@ -257,7 +257,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
   }, [searchFilter, searchResult])
 
   async function handleSelect(item: EnhancedSearchResult) {
-    // 如果是记录类型，跳转到记录页面并设置对应的 tag
+    // ， tag
     if (item.searchType === 'record') {
       onOpenChange(false)
       setPendingSearchKeyword('')
@@ -269,10 +269,10 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
       }
 
       if (!isMobileRoute) {
-        // PC 端：切换到记录标签页
+        // PC ：
         await setLeftSidebarTab('notes')
       } else {
-        // 移动端：进入记录页
+        // ：
         router.push('/mobile/record')
       }
 
@@ -296,12 +296,12 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
     onOpenChange(false)
     setPendingScrollMarkId(null)
 
-    // PC 端切换到笔记标签页；移动端直接跳转写作页
+    // PC ；
     if (!isMobileRoute) {
       await setLeftSidebarTab('files')
     }
     
-    // 如果是文章类型，跳转到文章页面
+    // ，
     if (item.firstMatchIndex !== undefined) {
       setMatchPosition(item.firstMatchIndex)
     }
@@ -310,7 +310,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
     const filePath = item.path as string
     
     const setupAndNavigate = async () => {
-      // 展开文件夹路径
+      //
       const pathParts = filePath.split('/')
       pathParts.pop()
       
@@ -327,14 +327,14 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
         }
       }
       
-      // 设置活动文件路径
+      //
       await setActiveFilePath(filePath)
       
-      // 读取文件内容
+      //
       const { readArticle } = useArticleStore.getState()
       await readArticle(filePath)
       
-      // 跳转到对应平台页面
+      //
       router.push(isMobileRoute ? '/mobile/writing' : '/core/main')
     }
     

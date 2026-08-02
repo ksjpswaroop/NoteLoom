@@ -84,13 +84,13 @@ export function FolderItem({
   const isMobile = useIsMobile()
   const t = useTranslations('article.file')
 
-  // 检查路径是否在 skills 文件夹下
+  // skills
   const isInSkillsFolder = (itemPath: string): boolean => {
     const parts = itemPath.split('/')
     return parts.some(part => isSkillsFolder(part))
   }
 
-  // 根据文字大小映射图标大小
+  //
   const getIconSize = (textSize: string) => {
     const sizeMap = {
       'xs': 'size-3',
@@ -146,19 +146,19 @@ export function FolderItem({
   const currentFolder = getCurrentFolder(path, cacheTree)
   const parentFolder = currentFolder?.parent
 
-  // 检查文件夹是否被剪切
+  //
   const isCut = clipboardOperation === 'cut' && clipboardItems.some(entry => entry.path === path)
   const isSelected = selectedPathSet.has(path)
   const useSelectionMenu = isSelected && selectionEntries.length > 1
 
-  // 计算文件夹的向量状态
+  //
   const folderVectorStatus = useMemo(() => {
     let totalCount = 0
     let loadedIndexedCount = 0
 
     function countFiles(node: DirTree) {
       if (!node.children) {
-        // 如果是文件（没有 children）
+        // （ children）
         if (node.name.endsWith('.md')) {
           totalCount++
           if (vectorIndexedFiles.has(computedParentPath(node))) {
@@ -168,7 +168,7 @@ export function FolderItem({
         return
       }
 
-      // 递归计算子节点
+      //
       node.children.forEach(child => countFiles(child))
     }
 
@@ -186,7 +186,7 @@ export function FolderItem({
     }
   }, [item, path, vectorIndexedFiles])
 
-  // 渲染文件夹的向量状态图标
+  //
   const renderFolderVectorIcon = () => {
     if (!showKnowledgeBaseStatus || isInSkillsFolder(path)) return null
 
@@ -222,18 +222,18 @@ export function FolderItem({
     return null
   }
 
-  // 移动端处理函数
+  //
   function handleNewFile() {
-    // 创建临时文件节点，并将其设为编辑状态
+    // ，
     const cacheTree = cloneDeep(fileTree);
     const currentFolder = getCurrentFolder(path, cacheTree);
     
-    // 如果文件夹中已经有一个空名称的文件，不再创建新的
+    // ，
     if (currentFolder?.children?.find(item => item.name === '' && item.isFile)) {
       return;
     }
     
-    // 确保文件夹是展开状态
+    //
     if (!collapsibleList.includes(path)) {
       setCollapsibleList(path, true);
     }
@@ -257,16 +257,16 @@ export function FolderItem({
   }
 
   function handleNewFolder() {
-    // 创建临时文件夹节点
+    //
     const cacheTree = cloneDeep(fileTree);
     const currentFolder = getCurrentFolder(path, cacheTree);
     
-    // 如果文件夹中已经有一个空名称的文件夹，不再创建新的
+    // ，
     if (currentFolder?.children?.find(item => item.name === '' && item.isDirectory)) {
       return;
     }
     
-    // 确保文件夹是展开状态
+    //
     if (!collapsibleList.includes(path)) {
       setCollapsibleList(path, true);
     }
@@ -289,7 +289,7 @@ export function FolderItem({
   }
 
   function handleStartRename() {
-    // 延迟执行，确保上下文菜单完全关闭
+    // ，
     setTimeout(() => {
       setIsEditing(true)
       setRenameError(null)
@@ -297,7 +297,7 @@ export function FolderItem({
         const input = inputRef.current
         if (input) {
           input.focus()
-          // 只选中文件名，不包含扩展名
+          // ，
           const lastDotIndex = item.name.lastIndexOf('.')
           if (lastDotIndex > 0) {
             input.setSelectionRange(0, lastDotIndex)
@@ -309,7 +309,7 @@ export function FolderItem({
     }, 300)
   }
 
-  // 粘贴到文件夹
+  //
   async function handlePasteInFolder() {
     await pasteIntoFolder({
       clipboardItem,
@@ -357,14 +357,14 @@ export function FolderItem({
     toast({ title: t('clipboard.copied') })
   }
 
-  // 删除文件夹
+  //
   async function handleDeleteFolder() {
     if (!item.isLocale) return
 
     try {
       const { ask } = await import('@tauri-apps/plugin-dialog')
 
-      // 确认删除操作
+      //
       const confirmed = await ask(t('context.confirmDelete', { name: item.name }), {
         title: item.name,
         kind: 'warning',
@@ -378,7 +378,7 @@ export function FolderItem({
           .filter(([vectorPath]) => vectorPath === path || vectorPath.startsWith(`${path}/`))
       )
 
-      // 如果删除的文件夹包含当前活动文件，清除活动文件路径
+      // ，
       if (activeFilePath && activeFilePath.startsWith(path)) {
         setActiveFilePath('')
       }
@@ -403,24 +403,24 @@ export function FolderItem({
     }
   }
 
-  // 优化的输入处理，支持输入法
+  // ，
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value)
     setRenameError(null)
   }, [])
 
-  // 输入法合成开始
+  //
   const handleCompositionStart = useCallback(() => {
     setIsComposing(true)
   }, [])
 
-  // 输入法合成结束
+  //
   const handleCompositionEnd = useCallback((e: React.CompositionEvent<HTMLInputElement>) => {
     setIsComposing(false)
     setName(e.currentTarget.value)
   }, [])
 
-  // 创建或修改文件夹名称
+  //
   async function handleRename() {
     const nextName = name
     setName(nextName)
@@ -430,13 +430,13 @@ export function FolderItem({
       return
     }
 
-    // 获取工作区路径信息
+    //
     const { getFilePathOptions, getWorkspacePath } = await import('@/lib/workspace')
     const workspace = await getWorkspacePath()
 
-    // 修改文件夹名称
+    //
     if (nextName && nextName !== item.name && item.name !== '') {
-      // 更新缓存树中的名称
+      //
       if (parentFolder && parentFolder.children) {
         const folderIndex = parentFolder?.children?.findIndex(folder => folder.name === item.name)
         if (folderIndex !== undefined && folderIndex !== -1) {
@@ -449,7 +449,7 @@ export function FolderItem({
         cacheTree[folderIndex].isEditing = false
       }
       
-      // 获取源路径和目标路径
+      //
       const oldPathOptions = await getFilePathOptions(path)
       const parentPath = path.split('/').slice(0, -1).join('/')
       const targetRelativePath = joinRelativePath(parentPath, nextName)
@@ -469,7 +469,7 @@ export function FolderItem({
         targetRelativePath,
       })
       
-      // 根据工作区类型执行重命名操作
+      //
       try {
         if (workspace.isCustom) {
           await rename(oldPathOptions.path, newPathOptions.path)
@@ -508,15 +508,15 @@ export function FolderItem({
         setActiveFilePath(nextActiveFilePath)
       }
     } else {
-      // 已有文件夹但名称未改变，直接取消编辑
+      // ，
       if (item.name !== '' && nextName === item.name) {
         setIsEditing(false)
         return
       }
 
-      // 新建文件夹
+      //
       if (nextName !== '') {
-        // 检查文件夹是否已存在
+        //
         const newFolderPath = joinRelativePath(path, nextName)
         const pathOptions = await getFilePathOptions(newFolderPath)
         
@@ -532,14 +532,14 @@ export function FolderItem({
           setTimeout(() => inputRef.current?.focus(), 0)
           return
         } else {
-          // 创建新文件夹
+          //
           if (workspace.isCustom) {
             await mkdir(pathOptions.path)
           } else {
             await mkdir(pathOptions.path, { baseDir: pathOptions.baseDir })
           }
           
-          // 更新缓存树
+          //
           if (parentFolder && parentFolder.children) {
             const index = parentFolder.children?.findIndex(item => item.name === '')
             parentFolder.children[index].name = nextName
@@ -553,7 +553,7 @@ export function FolderItem({
           }
         }
       } else {
-        // 处理空名称情况（取消新建）
+        // （）
         if (currentFolder?.parent) {
           const index = currentFolder?.parent?.children?.findIndex(item => item.name === '')
           if (index !== undefined && index !== -1 && currentFolder?.parent?.children) {
@@ -707,16 +707,16 @@ export function FolderItem({
   }
 
   async function handleSelectFolder() {
-    // 检查是否真的是目录（防止误将文件当作目录处理）
+    // （）
     if (!item.isDirectory) {
       return
     }
 
-    // 让文件管理器获得焦点，以便响应快捷键
+    // ，
     focusSidebar?.()
-    // 本地文件夹可以作为编辑器中的文件夹视图打开；远程文件夹只属于
-    // 文件树选择状态。不要把不存在于本地的目录写入 activeFilePath，
-    // 否则编辑器会把它当成普通路径并尝试读取本地元数据。
+    // ；
+    // 。 activeFilePath，
+    // 。
     if (item.isLocale) {
       await setActiveFilePath(path)
     } else {
@@ -726,21 +726,21 @@ export function FolderItem({
       setSelectedFilePaths([path])
     }
 
-    // 自动展开文件夹（如果未展开）
+    // （）
     if (!collapsibleList.includes(path)) {
       await setCollapsibleList(path, true)
     }
 
-    // 加载文件夹内容
+    //
     await loadCollapsibleFiles(path)
 
-    // 仅远程文件夹没有可供知识库扫描的本地目录。它的子节点已经由
-    // loadCollapsibleFiles/loadFolderRemoteFiles 加载，此处不要再调用 readDir。
+    // 。
+    // loadCollapsibleFiles/loadFolderRemoteFiles ， readDir。
     if (!item.isLocale) {
       return
     }
 
-    // 触发文件夹选择事件
+    //
     const folderName = path.split('/').pop() || path
     let fullPath: string
     const { getWorkspacePath } = await import('@/lib/workspace')
@@ -752,18 +752,18 @@ export function FolderItem({
       fullPath = path
     }
 
-    // 计算文件夹中的文件数量
+    //
     const { collectMarkdownFiles } = await import('@/lib/files')
     const files = await collectMarkdownFiles(path)
 
-    // 获取向量索引状态
+    //
     const indexedCount = files.filter(f =>
       vectorIndexedFiles.has(f.path)
     ).length
 
-    // 只有在有索引文件时才触发关联事件
+    //
     if (indexedCount > 0) {
-      // 触发事件
+      //
       emitter.emit('folderSelected', {
         name: folderName,
         path: fullPath,
@@ -825,7 +825,7 @@ export function FolderItem({
     }
   }, [])
 
-  // 监听文件管理器统一快捷键触发的自定义事件
+  //
   useEffect(() => {
     const handleRenameEvent = (e: Event) => {
       const customEvent = e as CustomEvent<{ path: string }>
@@ -843,7 +843,7 @@ export function FolderItem({
 
     const handlePasteEvent = (e: Event) => {
       const customEvent = e as CustomEvent<{ targetPath: string }>
-      // 粘贴到当前文件夹
+      //
       if (customEvent.detail.targetPath === path) {
         handlePasteInFolder()
       }
@@ -860,7 +860,7 @@ export function FolderItem({
     }
   }, [path, handleStartRename, handleDeleteFolder, handlePasteInFolder])
 
-  // 获取当前平台（用于显示快捷键）
+  // （）
   const [currentPlatform, setCurrentPlatform] = useState<'macos' | 'windows' | 'linux' | 'unknown'>('unknown')
 
   useEffect(() => {
@@ -882,7 +882,7 @@ export function FolderItem({
     detectPlatform()
   }, [])
 
-  // 快捷键显示文本
+  //
   const modKey = currentPlatform === 'macos' ? '⌘' : 'Ctrl'
   const deleteKey = currentPlatform === 'macos' ? '⌫' : 'Del'
   const renameKey = currentPlatform === 'macos' ? '↩' : 'F2'
@@ -943,7 +943,7 @@ export function FolderItem({
                     onCompositionEnd={handleCompositionEnd}
                     onClick={(event) => event.stopPropagation()}
                     onKeyDown={(e) => {
-                      // 阻止删除快捷键冒泡到全局快捷键处理器
+                      //
                       if (e.key === 'Backspace' || e.key === 'Delete') {
                         e.stopPropagation()
                       }
@@ -1041,7 +1041,7 @@ export function FolderItem({
             <NewFolder item={item} />
             <ViewDirectory item={item} />
             <ContextMenuSeparator />
-            {/* skills 文件夹及其子内容不显示知识库选项 */}
+            {/* skills */}
             {!isInSkillsFolder(path) && (
               <>
                 <ContextMenuSub>

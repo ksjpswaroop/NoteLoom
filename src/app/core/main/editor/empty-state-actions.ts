@@ -9,12 +9,12 @@ export async function createNewNoteFromEmptyState({
   await newFile()
 }
 
-export const ONBOARDING_SAMPLE_RECORD = `这是我在 NoteLoom 里的第一条记录。
+export const ONBOARDING_SAMPLE_RECORD = `This is my first record in NoteLoom.
 
-我可以先把零散想法快速记下来，不用一开始就整理结构。
-后面可以把这些记录整理成一篇正式笔记，再继续编辑。
-如果觉得内容不够通顺，还可以用 AI 帮我润色、改写或补充重点。
-写完之后，笔记会保存在本地 Markdown 文件里，也方便后续查找和管理。`
+I can capture scattered thoughts quickly without organizing them first.
+Later I can turn these records into a proper note and keep editing.
+If the draft feels rough, AI can help polish, rewrite, or highlight key points.
+Finished notes stay as local Markdown files that are easy to find and manage.`
 
 export async function startCreateRecordOnboardingStep({
   setLeftSidebarTab,
@@ -85,7 +85,7 @@ function computedOnboardingPath(node: OnboardingFileTreeNode): string {
 function getPathPriority(path: string) {
   const name = path.split('/').pop() || path
 
-  if (/^整理笔记_\d+\.md$/i.test(name)) {
+  if (/^Organized_Note_\d+\.md$/i.test(name) || /^整理笔记_\d+\.md$/i.test(name)) {
     return 2
   }
 

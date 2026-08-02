@@ -163,7 +163,7 @@ async function insertIntoStoreBackedEditor(params: Record<string, any>): Promise
       insertedLength: insertContent.length,
       newCursorPosition: insertPosition + insertContent.length,
     },
-    message: `成功插入 ${insertContent.length} 个字符`,
+    message: `Successfully inserted ${insertContent.length} characters`,
   }
 }
 
@@ -171,7 +171,7 @@ function getEditorSelectionFallbackResult(): ToolResult {
   return {
     success: false,
     data: { text: '', from: 0, to: 0, startLine: 1, endLine: 1 },
-    message: '当前没有活跃编辑器，无法获取选中内容',
+    message: 'No active editor; cannot get the selection',
   }
 }
 
@@ -179,7 +179,7 @@ function getInsertFallbackResult(): ToolResult {
   return {
     success: false,
     error: 'No active editor',
-    message: '当前没有活跃编辑器，无法按光标位置插入内容',
+    message: 'No active editor; cannot insert at cursor',
   }
 }
 
@@ -192,7 +192,7 @@ async function replaceEditorContentWithStore(params: Record<string, any>): Promi
     return {
       success: false,
       error: 'Content has changed, please get editor content again',
-      message: '编辑器内容已变化，请重新获取内容后再操作',
+      message: 'Editor content has changed. Fetch the content again before retrying',
     }
   }
 
@@ -209,7 +209,7 @@ async function replaceEditorContentWithStore(params: Record<string, any>): Promi
       return {
         success: false,
         error: error instanceof Error ? error.message : String(error),
-        message: error instanceof Error ? error.message : '替换失败',
+        message: error instanceof Error ? error.message : 'Replace failed',
       }
     }
 
@@ -220,9 +220,9 @@ async function replaceEditorContentWithStore(params: Record<string, any>): Promi
       data: {
         success: true,
         insertedLength: replaceContent.length,
-        message: `成功替换第 ${params.startLine}-${params.endLine} 行内容`,
+        message: `Successfully replaced lines ${params.startLine}-${params.endLine}`,
       },
-      message: `成功替换第 ${params.startLine}-${params.endLine} 行内容`,
+      message: `Successfully replaced lines ${params.startLine}-${params.endLine}`,
     }
   }
 
@@ -238,9 +238,9 @@ async function replaceEditorContentWithStore(params: Record<string, any>): Promi
       data: {
         success: true,
         insertedLength: replaceContent.length,
-        message: `成功替换 ${to - from} 个字符`,
+        message: `Successfully replaced ${to - from} characters`,
       },
-      message: `成功替换 ${to - from} 个字符`,
+      message: `Successfully replaced ${to - from} characters`,
     }
   }
 
@@ -255,8 +255,8 @@ async function replaceEditorContentWithStore(params: Record<string, any>): Promi
     if (updatedMarkdown === null) {
       return {
         success: false,
-        error: `找不到文本 "${params.searchContent}"`,
-        message: `找不到文本 "${params.searchContent}"`,
+        error: `Text not found: "${params.searchContent}"`,
+        message: `Text not found: "${params.searchContent}"`,
       }
     }
 
@@ -267,20 +267,20 @@ async function replaceEditorContentWithStore(params: Record<string, any>): Promi
       data: {
         success: true,
         insertedLength: replaceContent.length,
-        message: `成功替换匹配文本 "${params.searchContent}"`,
+        message: `Successfully replaced matching text "${params.searchContent}"`,
       },
-      message: `成功替换匹配文本 "${params.searchContent}"`,
+      message: `Successfully replaced matching text "${params.searchContent}"`,
     }
   }
 
   return {
     success: false,
     error: 'No active editor',
-    message: '当前没有活跃编辑器，仅支持按行号或按文本搜索替换',
+    message: 'No active editor; only line-number or text search-and-replace is supported',
   }
 }
 
-// 1. 获取当前选中内容
+// 1.
 export const getEditorSelectionTool: Tool = {
   name: 'get_editor_selection',
   description: `📝 **Editor Operation**: Get the currently selected text in the editor, including position information.
@@ -322,8 +322,8 @@ export const getEditorSelectionTool: Tool = {
             success: true,
             data,
             message: data.text
-              ? `选中内容：${data.text.slice(0, 50)}${data.text.length > 50 ? '...' : ''} (行 ${data.startLine}-${data.endLine})`
-              : `当前没有选中文本，光标位于第 ${data.startLine || 1} 行，位置 ${data.from}。`,
+ ? `：${data.text.slice(0, 50)}${data.text.length > 50 ? '...' : ''} ( ${data.startLine}-${data.endLine})`
+              : `No text selected; cursor is on line ${data.startLine || 1}, position ${data.from}.`,
           })
         },
       })
@@ -331,7 +331,7 @@ export const getEditorSelectionTool: Tool = {
   },
 }
 
-// 2. 获取当前编辑器内容
+// 2.
 export const getEditorContentTool: Tool = {
   name: 'get_editor_content',
   description: `📝 **Editor Operation**: Get the current complete content of the editor (unsaved changes included).
@@ -360,12 +360,12 @@ export const getEditorContentTool: Tool = {
     return {
       success: true,
       data,
-      message: `编辑器内容：${data.markdown.slice(0, 50)}${data.markdown.length > 50 ? '...' : ''} (${data.wordCount} 字，${data.totalLines} 行, v${data.version})`,
+      message: `Editor content: ${data.markdown.slice(0, 50)}${data.markdown.length > 50 ? '...' : ''} (${data.wordCount} words, ${data.totalLines} lines, v${data.version})`,
     }
   },
 }
 
-// 3. 在光标位置插入内容
+// 3.
 export const insertAtCursorTool: Tool = {
   name: 'insert_at_cursor',
   description: `📝 **Editor Operation**: Insert content at the current cursor position or replace selected text.
@@ -429,8 +429,8 @@ export const insertAtCursorTool: Tool = {
             success: result.success,
             data: result,
             message: result.success
-              ? `成功插入 ${result.insertedLength} 个字符`
-              : '插入失败',
+              ? `Successfully inserted ${result.insertedLength} characters`
+              : 'Insert failed',
           })
         },
       })
@@ -438,7 +438,7 @@ export const insertAtCursorTool: Tool = {
   },
 }
 
-// 4. 替换指定范围的内容
+// 4.
 export const replaceEditorContentTool: Tool = {
   name: 'replace_editor_content',
   description: `📝 **Editor Operation**: Replace content in the specified range with new content.
@@ -549,7 +549,7 @@ When the user quotes content from the editor and exact selection positions are p
         resolve(result)
       }
 
-      // 确定使用哪种模式
+      //
       const hasPositionParams = params.from !== undefined || params.to !== undefined;
       const hasSearchParams = params.searchContent;
       const hasLineParams = params.startLine !== undefined && params.endLine !== undefined;
@@ -558,7 +558,7 @@ When the user quotes content from the editor and exact selection positions are p
         finalize({
           success: false,
           error: 'Missing required parameters',
-          message: '请提供 content 或 searchContent 或 startLine/endLine 参数',
+          message: 'Provide content or searchContent or startLine/endLine',
         });
         return;
       }
@@ -583,19 +583,19 @@ When the user quotes content from the editor and exact selection positions are p
             finalize({
               success: false,
               error: result.error,
-              message: '编辑器内容已变化，请重新获取内容后再操作',
+              message: 'Editor content has changed. Fetch the content again before retrying',
             });
           } else if (result.success) {
             finalize({
               success: true,
               data: result,
-              message: result.message || `成功替换 ${result.insertedLength} 个字符`,
+              message: result.message || `Successfully replaced ${result.insertedLength} characters`,
             });
           } else {
             finalize({
               success: false,
               error: result.error,
-              message: result.message || '替换失败',
+              message: result.message || 'Replace failed',
             });
           }
         },

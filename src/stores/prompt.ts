@@ -24,8 +24,8 @@ const usePromptStore = create<PromptState>((set, get) => ({
   promptList: [
     {
       id: '0',
-      title: '写作助手',
-      content: '请你扮演一个笔记软件的智能助手，可以参考记录内容，使用 markdown 语法，回答用户的问题。',
+      title: 'Writing assistant',
+      content: 'You are a smart assistant for a note-taking app. Use the captured records when helpful, reply in Markdown, and answer the user clearly.',
       isDefault: true
     }
   ],
@@ -37,12 +37,12 @@ const usePromptStore = create<PromptState>((set, get) => ({
     if (promptList) {
       set({ promptList });
     } else {
-      // 如果不存在，设置默认
+      // ，
       const defaultPromptList = get().promptList;
       await store.set('promptList', defaultPromptList);
     }
     
-    // 设置当前使用的prompt
+    // prompt
     const currentPromptId = await store.get<string>('currentPromptId');
     if (currentPromptId) {
       const prompt = get().promptList.find(item => item.id === currentPromptId);
@@ -50,7 +50,7 @@ const usePromptStore = create<PromptState>((set, get) => ({
         set({ currentPrompt: prompt });
       }
     } else {
-      // 默认使用第一个prompt
+      // prompt
       const defaultPrompt = get().promptList[0];
       set({ currentPrompt: defaultPrompt });
       await store.set('currentPromptId', defaultPrompt.id);
@@ -80,7 +80,7 @@ const usePromptStore = create<PromptState>((set, get) => ({
     
     await get().setPromptList(promptList);
     
-    // 如果更新的是当前选中的prompt，同时更新currentPrompt
+    // prompt，currentPrompt
     const currentPrompt = get().currentPrompt;
     if (currentPrompt && currentPrompt.id === updatedPrompt.id) {
       set({ currentPrompt: updatedPrompt });
@@ -88,14 +88,14 @@ const usePromptStore = create<PromptState>((set, get) => ({
   },
   
   deletePrompt: async (id) => {
-    // 不允许删除默认prompt
+    // prompt
     const promptToDelete = get().promptList.find(prompt => prompt.id === id);
     if (promptToDelete?.isDefault) return;
     
     const promptList = get().promptList.filter(prompt => prompt.id !== id);
     await get().setPromptList(promptList);
     
-    // 如果删除的是当前选中的prompt，将当前prompt设置为默认prompt
+    // prompt，promptprompt
     const currentPrompt = get().currentPrompt;
     if (currentPrompt && currentPrompt.id === id) {
       const defaultPrompt = get().promptList.find(prompt => prompt.isDefault);

@@ -15,7 +15,7 @@ import {
   GitlabRepositoryFile
 } from './gitlab.types';
 
-// 获取 Gitlab 实例的 API 基础 URL 
+// Gitlab API URL
 
 function resolveUploadPath(path: string | undefined, filename: string | undefined, fallbackFilename: string) {
   if (filename) {
@@ -31,15 +31,15 @@ async function getGitlabApiBaseUrl(): Promise<string> {
 
   if (instanceType === GitlabInstanceType.SELF_HOSTED) {
     let customUrl = await store.get<string>('gitlabCustomUrl') || '';
-    // 移除末尾的斜杠，避免双斜杠问题
+    // ，
     customUrl = customUrl.replace(/\/+$/, '').trim();
 
-    // 验证自定义 URL 是否有效
+    // URL
     if (!customUrl) {
-      throw new Error('自建 GitLab 实例的 URL 未配置，请先在设置中填写 GitLab URL');
+      throw new Error('GitLab URL ， GitLab URL');
     }
 
-    // 确保 URL 包含协议
+    // URL
     if (!customUrl.startsWith('http://') && !customUrl.startsWith('https://')) {
       customUrl = 'https://' + customUrl;
     }
@@ -51,13 +51,13 @@ async function getGitlabApiBaseUrl(): Promise<string> {
   return `${instance.baseUrl}/api/v4`;
 }
 
-// 获取通用请求头
+//
 async function getCommonHeaders(): Promise<any> {
   const store = await Store.load('store.json');
   const accessToken = await store.get<string>('gitlabAccessToken');
 
   if (!accessToken) {
-    throw new Error('GitLab Access Token 未配置');
+    throw new Error('GitLab Access Token');
   }
 
   const headers = {
@@ -68,7 +68,7 @@ async function getCommonHeaders(): Promise<any> {
   return headers;
 }
 
-// 获取代理配置
+//
 async function getProxyConfig(): Promise<Proxy | undefined> {
   const store = await Store.load('store.json');
   const proxyUrl = await store.get<string>('proxy');
@@ -76,8 +76,8 @@ async function getProxyConfig(): Promise<Proxy | undefined> {
 }
 
 /**
- * 上传文件到 Gitlab 项目
- * @param params 上传参数
+ * Gitlab 
+ * @param params 
  */
 export async function uploadFile({
   file,
@@ -100,7 +100,7 @@ export async function uploadFile({
     const projectId = await store.get<string>(`gitlab_${repo}_project_id`);
     
     if (!gitlabUsername || !projectId) {
-      throw new Error('Gitlab 用户名或项目 ID 未配置');
+      throw new Error('Gitlab Project ID is not configured');
     }
 
     const id = uuid();
@@ -114,7 +114,7 @@ export async function uploadFile({
       hasSha: Boolean(sha),
     })
 
-    // 将内容转换为 Base64（GitLab API 要求）
+    // Base64（GitLab API ）
     const base64Content = encodeRemoteFileContent(file)
 
     const baseUrl = await getGitlabApiBaseUrl();
@@ -133,9 +133,9 @@ export async function uploadFile({
       encoding: 'base64'
     };
 
-    // 如果是更新文件，需要添加 last_commit_id
+    // ， last_commit_id
     if (sha) {
-      // 获取文件的最新提交 ID
+      // ID
       const commitsUrl = `${baseUrl}/projects/${projectId}/repository/commits?path=${encodeURIComponent(targetPath)}&per_page=1`;
       const commitsResponse = await fetch(commitsUrl, {
         method: 'GET',
@@ -153,8 +153,8 @@ export async function uploadFile({
 
     const url = `${baseUrl}/projects/${projectId}/repository/files/${encodedTargetPath}`;
 
-    // 首先尝试使用 Commits API 创建文件（会自动创建目录）
-    // GitLab Commits API 可以通过一次 commit 创建多个文件，包括父目录
+    // Commits API （）
+    // GitLab Commits API commit ，
     const commitsApiUrl = `${baseUrl}/projects/${projectId}/repository/commits`;
 
     const commitActions = [{
@@ -182,13 +182,13 @@ export async function uploadFile({
       return { data } as GitlabResponse<any>;
     }
 
-    // 如果是 400 错误，可能文件已存在，尝试用 PUT 更新
+    // 400 ，， PUT
     if (commitResponse.status === 400) {
       const commitErrorData = await commitResponse.json();
 
-      // 检查是否是文件已存在的错误
+      //
       if (commitErrorData.error && commitErrorData.error.includes('already exists')) {
-        // 获取当前文件的 SHA
+        // SHA
         const fileUrl = `${baseUrl}/projects/${projectId}/repository/files/${encodedTargetPath}?ref=main`;
         const fileResponse = await fetch(fileUrl, {
           method: 'GET',
@@ -202,7 +202,7 @@ export async function uploadFile({
           fileSha = fileData.blob_id || fileData.sha;
         }
 
-        // 使用 PUT 更新文件
+        // PUT
         const putBody = {
           branch: 'main',
           content: base64Content,
@@ -226,27 +226,27 @@ export async function uploadFile({
         const putErrorData = await putResponse.json();
         throw {
           status: putResponse.status,
-          message: putErrorData.message || '更新文件失败'
+          message: putErrorData.message || 'UpdateFileFailed'
         } as GitlabError;
       }
 
       throw {
         status: commitResponse.status,
-        message: commitErrorData.error || '同步失败'
+        message: commitErrorData.error || 'UpdateFileFailed'
       } as GitlabError;
     }
 
-    // 其他错误
+    //
     const commitErrorData = await commitResponse.json();
     throw {
       status: commitResponse.status,
-      message: commitErrorData.error || commitErrorData.message || '同步失败'
+      message: commitErrorData.error || commitErrorData.message || 'UpdateFileFailed'
     } as GitlabError;
 
   } catch (error) {
     toast({
-      title: '同步失败',
-      description: (error as GitlabError).message || '上传文件时发生错误',
+      title: 'File Error',
+      description: (error as GitlabError).message || 'File Error',
       variant: 'destructive',
     });
     throw error;
@@ -254,8 +254,8 @@ export async function uploadFile({
 }
 
 /**
- * 获取 Gitlab 项目文件列表或单个文件信息
- * @param params 查询参数
+ * Gitlab 
+ * @param params 
  */
 export async function getFiles({ path, repo }: { path: string; repo: string }) {
   try {
@@ -263,7 +263,7 @@ export async function getFiles({ path, repo }: { path: string; repo: string }) {
     const projectId = await store.get<string>(`gitlab_${repo}_project_id`);
 
     if (!projectId) {
-      throw new Error('项目 ID 未配置');
+      throw new Error('Project ID is not configured');
     }
 
     const baseUrl = await getGitlabApiBaseUrl();
@@ -275,7 +275,7 @@ export async function getFiles({ path, repo }: { path: string; repo: string }) {
       treePath: encodeURIComponent(path),
     })
 
-    // 先尝试获取单个文件信息
+    //
     const fileUrl = `${baseUrl}/projects/${projectId}/repository/files/${encodeURIComponent(path)}?ref=main`;
 
     try {
@@ -287,7 +287,7 @@ export async function getFiles({ path, repo }: { path: string; repo: string }) {
 
       if (fileResponse.status >= 200 && fileResponse.status < 300) {
         const fileData = await fileResponse.json();
-        // 返回单个文件对象，包含 sha (使用 blob_id 作为 sha)
+        // ， sha ( blob_id sha)
         return {
           name: fileData.file_name,
           path: fileData.file_path,
@@ -296,10 +296,10 @@ export async function getFiles({ path, repo }: { path: string; repo: string }) {
         };
       }
     } catch {
-      // 如果获取单个文件失败，继续尝试获取目录列表
+      // ，
     }
 
-    // 如果不是单个文件，尝试获取目录列表
+    // ，
     const url = `${baseUrl}/projects/${projectId}/repository/tree?path=${encodeURIComponent(path)}`;
 
     const response = await fetch(url, {
@@ -320,35 +320,35 @@ export async function getFiles({ path, repo }: { path: string; repo: string }) {
       })
     }
 
-    // 文件或目录不存在，返回 null
+    // ， null
     if (response.status === 404) {
       return null
     }
 
-    // 401 或其他客户端错误，抛出错误
+    // 401 ，
     if (response.status >= 400 && response.status < 500) {
       const errorData = await response.json().catch(() => ({}));
       throw {
         status: response.status,
-        message: errorData.message || `获取文件列表失败: ${response.status}`
+        message: errorData.message || `FileListFailed: ${response.status}`
       } as GitlabError;
     }
 
     return null;
 
   } catch (error) {
-    // 重新抛出已处理的错误，静默处理其他错误
+    // ，
     if ((error as GitlabError).status) {
       throw error;
     }
-    // 静默处理错误，不显示 toast，因为这可能只是文件不存在
+    // ， toast，
     return null;
   }
 }
 
 /**
- * 删除 Gitlab 项目文件
- * @param params 删除参数
+ * Gitlab 
+ * @param params 
  */
 export async function deleteFile({ path, repo }: { path: string; sha?: string; repo: string }) {
   try {
@@ -356,14 +356,14 @@ export async function deleteFile({ path, repo }: { path: string; sha?: string; r
     const projectId = await store.get<string>(`gitlab_${repo}_project_id`);
     
     if (!projectId) {
-      throw new Error('项目 ID 未配置');
+      throw new Error('Project ID is not configured');
     }
 
     const baseUrl = await getGitlabApiBaseUrl();
     const headers = await getCommonHeaders();
     const proxy = await getProxyConfig();
 
-    // 获取文件的最新提交 ID，对 path 进行编码
+    // ID， path
     const encodedPath = encodeURIComponent(path);
     const commitsUrl = `${baseUrl}/projects/${projectId}/repository/commits?path=${encodedPath}&per_page=1`;
     const commitsResponse = await fetch(commitsUrl, {
@@ -400,22 +400,22 @@ export async function deleteFile({ path, repo }: { path: string; sha?: string; r
     const errorData = await response.json();
     throw {
       status: response.status,
-      message: errorData.message || '删除文件失败'
+      message: errorData.message || 'Failed to delete file'
     } as GitlabError;
 
   } catch (error) {
     toast({
-      title: '删除文件失败',
-      description: (error as GitlabError).message || '删除文件时发生错误',
+      title: 'Failed to delete file',
+      description: (error as GitlabError).message || 'File Error',
       variant: 'destructive',
     });
-    return null; // 确保在错误情况下也有返回值
+    return null; //
   }
 }
 
 /**
- * 获取文件提交历史
- * @param params 查询参数
+ * 
+ * @param params 
  */
 export async function getFileCommits({ path, repo }: { path: string; repo: string }) {
   try {
@@ -430,7 +430,7 @@ export async function getFileCommits({ path, repo }: { path: string; repo: strin
     const headers = await getCommonHeaders();
     const proxy = await getProxyConfig();
 
-    // 对 path 进行编码，避免特殊字符导致 404
+    // path ， 404
     const encodedPath = encodeURIComponent(path);
     const url = `${baseUrl}/projects/${projectId}/repository/commits?path=${encodedPath}&per_page=100`;
 
@@ -445,19 +445,19 @@ export async function getFileCommits({ path, repo }: { path: string; repo: strin
       return { data } as GitlabResponse<GitlabCommit[]>;
     }
 
-    // 404 或其他错误，静默返回 false（文件没有提交历史）
+    // 404 ， false（）
     return false;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
-    // 静默处理错误，不显示 toast
+    // ， toast
     return false;
   }
 }
 
 /**
- * 获取特定 commit 的文件内容
- * @param params 查询参数
+ * commit 
+ * @param params 
  */
 export async function getFileContent({ path, ref, repo }: { path: string; ref: string; repo: string }) {
   try {
@@ -465,14 +465,14 @@ export async function getFileContent({ path, ref, repo }: { path: string; ref: s
     const projectId = await store.get<string>(`gitlab_${repo}_project_id`);
     
     if (!projectId) {
-      throw new Error('项目 ID 未配置');
+      throw new Error('Project ID is not configured');
     }
 
     const baseUrl = await getGitlabApiBaseUrl();
     const headers = await getCommonHeaders();
     const proxy = await getProxyConfig();
 
-    // 使用 Gitlab API 获取特定 commit 的文件内容
+    // Gitlab API commit
     const url = `${baseUrl}/projects/${projectId}/repository/files/${encodeURIComponent(path)}/raw?ref=${ref}`;
 
     const response = await encodeFetch(url, {
@@ -483,7 +483,7 @@ export async function getFileContent({ path, ref, repo }: { path: string; ref: s
 
     if (response.status >= 200 && response.status < 300) {
       const content = new Uint8Array(await response.arrayBuffer());
-      // 将原始字节转换为 Base64，同时支持文本和二进制文件。
+      // Base64，。
       const base64Content = encodeRemoteFileContent(content);
       return {
         content: base64Content,
@@ -501,13 +501,13 @@ export async function getFileContent({ path, ref, repo }: { path: string; ref: s
     const errorData = await response.text();
     throw {
       status: response.status,
-      message: errorData || '获取文件内容失败'
+      message: errorData || 'Failed to get file content'
     } as GitlabError;
 
   } catch (error) {
     toast({
-      title: '获取文件内容失败',
-      description: (error as GitlabError).message || '获取文件内容时发生错误',
+      title: 'Failed to get file content',
+      description: (error as GitlabError).message || 'File Error',
       variant: 'destructive',
     });
     throw error;
@@ -515,8 +515,8 @@ export async function getFileContent({ path, ref, repo }: { path: string; ref: s
 }
 
 /**
- * 获取 Gitlab 用户信息
- * @param token 可选的访问令牌
+ * Gitlab 
+ * @param token 
  */
 export async function getUserInfo(token?: string): Promise<GitlabUserInfo> {
   try {
@@ -524,7 +524,7 @@ export async function getUserInfo(token?: string): Promise<GitlabUserInfo> {
     const accessToken = token || await store.get<string>('gitlabAccessToken');
     
     if (!accessToken) {
-      throw new Error('访问令牌未配置');
+      throw new Error('Access token is not configured');
     }
 
     const baseUrl = await getGitlabApiBaseUrl();
@@ -543,7 +543,7 @@ export async function getUserInfo(token?: string): Promise<GitlabUserInfo> {
     if (response.status >= 200 && response.status < 300) {
       const userInfo = await response.json() as GitlabUserInfo;
       
-      // 保存用户名到存储
+      //
       await store.set('gitlabUsername', userInfo.username);
       await store.save();
       
@@ -553,13 +553,13 @@ export async function getUserInfo(token?: string): Promise<GitlabUserInfo> {
     const errorData = await response.json();
     throw {
       status: response.status,
-      message: errorData.message || '获取用户信息失败'
+      message: errorData.message || 'Failed to fetch user info'
     } as GitlabError;
 
   } catch (error) {
     toast({
-      title: '获取用户信息失败',
-      description: (error as GitlabError).message || '获取用户信息时发生错误',
+      title: 'Failed to fetch user info',
+      description: (error as GitlabError).message || 'Error',
       variant: 'destructive',
     });
     throw error;
@@ -567,8 +567,8 @@ export async function getUserInfo(token?: string): Promise<GitlabUserInfo> {
 }
 
 /**
- * 检查同步项目状态
- * @param name 项目名称
+ * 
+ * @param name 
  */
 export async function checkSyncProjectState(name: string): Promise<GitlabProjectInfo | null> {
   try {
@@ -576,14 +576,14 @@ export async function checkSyncProjectState(name: string): Promise<GitlabProject
     const gitlabUsername = await store.get<string>('gitlabUsername');
     
     if (!gitlabUsername) {
-      throw new Error('用户名未配置');
+      throw new Error('Username is not configured');
     }
 
     const baseUrl = await getGitlabApiBaseUrl();
     const headers = await getCommonHeaders();
     const proxy = await getProxyConfig();
 
-    // 搜索项目
+    //
     const searchUrl = `${baseUrl}/projects?search=${name}&owned=true&per_page=10`;
     
     const response = await fetch(searchUrl, {
@@ -595,11 +595,11 @@ export async function checkSyncProjectState(name: string): Promise<GitlabProject
     if (response.status >= 200 && response.status < 300) {
       const projects = await response.json() as GitlabProjectInfo[];
       
-      // 查找匹配的项目
+      //
       const project = projects.find(p => p.name === name && p.namespace.path === gitlabUsername);
       
       if (project) {
-        // 保存项目 ID
+        // ID
         await store.set(`gitlab_${name}_project_id`, project.id.toString());
         await store.save();
       }
@@ -610,7 +610,7 @@ export async function checkSyncProjectState(name: string): Promise<GitlabProject
     const errorData = await response.json();
     throw {
       status: response.status,
-      message: errorData.message || '检查项目状态失败'
+      message: errorData.message || 'Failed'
     } as GitlabError;
 
   } catch (error) {
@@ -619,9 +619,9 @@ export async function checkSyncProjectState(name: string): Promise<GitlabProject
 }
 
 /**
- * 创建同步项目
- * @param name 项目名称
- * @param isPrivate 是否私有项目
+ * 
+ * @param name 
+ * @param isPrivate 
  */
 export async function createSyncProject(name: string, isPrivate: boolean = true): Promise<GitlabProjectInfo | null> {
   try {
@@ -632,7 +632,7 @@ export async function createSyncProject(name: string, isPrivate: boolean = true)
     const requestBody = {
       name: name,
       path: name,
-      description: `note-gen 同步项目 - ${name}`,
+      description: `note-gen - ${name}`,
       visibility: isPrivate ? 'private' : 'public',
       initialize_with_readme: true,
       default_branch: 'main'
@@ -648,7 +648,7 @@ export async function createSyncProject(name: string, isPrivate: boolean = true)
     if (response.status >= 200 && response.status < 300) {
       const project = await response.json() as GitlabProjectInfo;
       
-      // 保存项目 ID
+      // ID
       const store = await Store.load('store.json');
       await store.set(`gitlab_${name}_project_id`, project.id.toString());
       await store.save();
@@ -659,13 +659,13 @@ export async function createSyncProject(name: string, isPrivate: boolean = true)
     const errorData = await response.json();
     throw {
       status: response.status,
-      message: errorData.message || '创建项目失败'
+      message: errorData.message || 'Failed'
     } as GitlabError;
 
   } catch (error) {
     toast({
-      title: '创建项目失败',
-      description: (error as GitlabError).message || '创建项目时发生错误',
+      title: 'Failed',
+      description: (error as GitlabError).message || 'Error',
       variant: 'destructive',
     });
     return null;

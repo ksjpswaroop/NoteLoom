@@ -303,7 +303,7 @@ export default function Updater() {
         <CardHeader className="p-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex min-w-0 items-center gap-3">
-              <Image src="/app-icon.png" alt="NoteLoom logo" className="size-14 shrink-0 dark:invert" width={56} height={56} />
+              <Image src="/logo.svg" alt="NoteLoom logo" className="size-14 shrink-0 rounded-[22%]" width={56} height={56} />
               <div className="flex min-w-0 flex-col gap-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <CardTitle className="text-xl font-semibold leading-none">NoteLoom</CardTitle>

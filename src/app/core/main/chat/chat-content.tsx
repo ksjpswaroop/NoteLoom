@@ -146,14 +146,14 @@ const ChatContent = React.memo(function ChatContent() {
       .length
   }, [activeCompaction, chats])
 
-  // 判断是否应该显示 loading：loading=true 且最后一个 AI 消息还没有内容
+  // loading：loading=true AI Content
   const shouldShowLoading = useMemo(() => {
     if (!loading) return false
     if (compactionRunning) return false
     if (agentState.isRunning) return false
 
     const lastChat = chats[chats.length - 1]
-    // 如果最后一个消息是 system 角色且有内容或思考内容，说明 AI 已经开始输出了
+    // system ContentContent， AI Start
     if (lastChat?.role === 'system' && (lastChat.content || lastChat.thinking)) {
       return false
     }
@@ -238,7 +238,7 @@ const MessageWrapper = React.memo(function MessageWrapper({ chat, children }: { 
   }, [chat.id, deleteChat])
   const shouldShowDelete = showDelete
 
-  // 用户消息：右对齐，带边框和背景
+  // ：Align，
   if (chat.role === 'user') {
     return (
       <div className="flex w-full justify-end">
@@ -275,7 +275,7 @@ const MessageWrapper = React.memo(function MessageWrapper({ chat, children }: { 
     )
   }
 
-  // AI 消息：左对齐，无边框，无图标
+  // AI ：Align，，
   return (
     <div className="flex w-full min-w-0">
       <div className='text-sm leading-6 flex-1 word-break min-w-0 overflow-hidden'>
@@ -311,7 +311,7 @@ const Message = React.memo(function Message({ chat }: { chat: Chat }) {
     deleteChat(chat.id)
   }, [chat.id, deleteChat])
 
-  // 解析 RAG 来源
+  // RAG
   const ragSources = useMemo(() => {
     if (!chat.ragSources) return []
     try {
@@ -321,7 +321,7 @@ const Message = React.memo(function Message({ chat }: { chat: Chat }) {
     }
   }, [chat.ragSources])
 
-  // 解析 RAG 来源详情
+  // RAG Details
   const ragSourceDetails = useMemo(() => {
     if (!chat.ragSourceDetails) return []
     try {
@@ -335,10 +335,10 @@ const Message = React.memo(function Message({ chat }: { chat: Chat }) {
     }
   }, [chat.ragSourceDetails])
 
-  // 获取该消息关联的 MCP 工具调用
+  // MCP
   const mcpToolCalls = useMemo(() => getMcpToolCallsByChatId(chat.id), [chat.id, getMcpToolCallsByChatId])
 
-  // 解析图片数组
+  // Image
   const images = useMemo(() => {
     if (!chat.images) return []
     try {
@@ -404,7 +404,7 @@ const Message = React.memo(function Message({ chat }: { chat: Chat }) {
     [chat.attachments]
   )
 
-  // 解析引用数据
+  // Quote
   const quoteData = useMemo(() => {
     if (!chat.quoteData) return null
     try {
@@ -471,7 +471,7 @@ const Message = React.memo(function Message({ chat }: { chat: Chat }) {
       </MessageWrapper>
 
     default:
-      // 检查 AI 消息是否有实际内容（没有内容时不渲染）
+      // AI Content（Content）
       const hasContent = chat.role === 'system' && (
         !!content ||
         !!chat.thinking ||
@@ -482,17 +482,17 @@ const Message = React.memo(function Message({ chat }: { chat: Chat }) {
         isLiveAgentVisible
       )
 
-      // 用户消息或有内容的 AI 消息才渲染
+      // Content AI
       if (chat.role === 'system' && !hasContent) {
         return null
       }
 
       return <MessageWrapper chat={chat}>
         {chat.role === 'system' ? (
-          // AI 消息：所有内容放在一个容器中
+          // AI ：Content
           <div className="w-full space-y-4">
-            {/* 合并的 RAG 和 Agent 面板 - 只在有 agentHistory 时显示（历史模式） */}
-            {/* 实时执行时，RAG 和 Agent 步骤在 AgentExecutionStatusWrapper 中统一显示 */}
+            {/*  RAG  Agent  -  agentHistory （History） */}
+            {/* ，RAG  Agent  AgentExecutionStatusWrapper  */}
             {chat.agentHistory && (
               <AgentPanelWithRag
                 ragSources={ragSources}
@@ -509,7 +509,7 @@ const Message = React.memo(function Message({ chat }: { chat: Chat }) {
               </div>
             )}
 
-            {/* MCP 工具调用展示 */}
+            {/* MCP  */}
             {mcpToolCalls.length > 0 && (
               <div className="space-y-4">
                 {mcpToolCalls.map(toolCall => (
@@ -530,9 +530,9 @@ const Message = React.memo(function Message({ chat }: { chat: Chat }) {
             )}
           </div>
         ) : (
-          // 用户消息
+          //
           <div className="w-full space-y-3 text-primary">
-            {/* 显示用户消息中的图片 */}
+            {/* Image */}
             {images.length > 0 && (
               <ChatImages
                 images={images}
@@ -541,7 +541,7 @@ const Message = React.memo(function Message({ chat }: { chat: Chat }) {
               />
             )}
             <ChatAttachmentSummary attachments={attachments} />
-            {/* 显示用户消息中的引用 */}
+            {/* Quote */}
             {quoteData && (
               <div className="flex flex-col gap-1 text-[11px]">
                 <div className="flex items-center gap-1">

@@ -34,7 +34,7 @@ export function DeleteFolder({ item, shortcut }: DeleteFolderProps) {
     event.stopPropagation();
     
     try {
-      // 确认删除操作
+      //
       const confirmed = await ask(t('context.confirmDelete', { name: item.name }), {
         title: item.name,
         kind: 'warning',
@@ -48,7 +48,7 @@ export function DeleteFolder({ item, shortcut }: DeleteFolderProps) {
           .filter(([vectorPath]) => vectorPath === path || vectorPath.startsWith(`${path}/`))
       )
 
-      // 清理已被删除的文件夹对应的 tabs（包括自动选择其他 tab）
+      // tabs（ tab）
       await cleanTabsByDeletedFolder(path)
       if (removedVectorEntries.size > 0) {
         const nextVectorIndexedFiles = new Map(useArticleStore.getState().vectorIndexedFiles)

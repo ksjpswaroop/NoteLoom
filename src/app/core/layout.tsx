@@ -6,7 +6,6 @@ import useSettingStore from "@/stores/setting"
 import { useEffect, useRef, useState } from "react";
 import { initAllDatabases } from "@/db"
 import dayjs from "dayjs"
-import zh from "dayjs/locale/zh-cn";
 import en from "dayjs/locale/en";
 import { useI18n } from "@/hooks/useI18n"
 import useVectorStore from "@/stores/vector"
@@ -93,8 +92,8 @@ export default function RootLayout({
 
       if (openedCount === 0) {
         toast({
-          title: '无法打开文件',
-          description: '请选择存在的 Markdown 文件',
+          title: 'Unable to open file',
+          description: 'Please select an existing Markdown file',
           variant: 'destructive',
         })
       }
@@ -299,7 +298,7 @@ export default function RootLayout({
     lastContentPathRef.current = pathname
   }, [openSettings, pathname, router, searchParams])
 
-  // 重定向旧路径到新的 /core/main
+  // /core/main
   useEffect(() => {
     async function redirectOldPaths() {
       if (pathname === '/core/article' || pathname === '/core/record') {
@@ -322,7 +321,7 @@ export default function RootLayout({
         await initSettingData()
         initMainHosting()
 
-        // 先完成数据库和默认工作区初始化，避免首次启动时其他逻辑抢先读取空目录或未建表数据库。
+        //
         await initAllDatabases()
         if (cancelled) return
         const { runMemoryMaintenance } = await import('@/lib/memory/auto-memory')
@@ -363,68 +362,60 @@ export default function RootLayout({
     }
   }, [])
 
-  // 应用界面缩放
+  //
   useEffect(() => {
     if (uiScale && uiScale !== 100) {
       document.documentElement.style.fontSize = `${uiScale}%`
     }
   }, [uiScale])
 
-  // 应用字体
+  //
   useEffect(() => {
     applyAppFontFamily(appFontFamily)
   }, [appFontFamily])
 
-  // 应用自定义主题颜色
+  //
   useEffect(() => {
     applyThemeColors(customThemeColors)
   }, [customThemeColors])
 
   useEffect(() => {
-    switch (currentLocale) {
-      case 'zh':
-        dayjs.locale(zh);
-        break;
-      case 'en':
-        dayjs.locale(en);
-        break;
-      default:
-        break;
-    }
+    void currentLocale
+    dayjs.locale(en)
   }, [currentLocale])
 
-  // 禁用浏览器后退快捷键（Backspace）和添加搜索快捷键（Cmd/Ctrl+F）
+  // （Backspace）（Cmd/Ctrl+F）
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // 搜索快捷键：Cmd+F (macOS) 或 Ctrl+F (Windows/Linux)
+      // ：Cmd+F (macOS) Ctrl+F (Windows/Linux)
       if ((e.metaKey || e.ctrlKey) && e.key === 'f') {
-        // 检查焦点是否在编辑器内
+        //
         const target = e.target as HTMLElement
         const editorElement = document.getElementById('aritcle-md-editor')
         const isFocusInEditor = editorElement && editorElement.contains(target)
 
-        // 如果焦点在编辑器内，触发编辑器搜索
+        //
         if (isFocusInEditor) {
           e.preventDefault()
-          // 触发编辑器内搜索
+          //
           emitter.emit('editor-search-trigger' as any)
           return
         }
 
-        // 否则打开全局搜索
+        //
         e.preventDefault()
         setSearchOpen(true)
         return
       }
 
-      // 如果按下 Backspace 键，且不在可编辑元素中
+      // Backspace ，
       if (e.key === 'Backspace') {
         const editableTarget = isEditableKeyboardTarget(e.target)
         if (editableTarget) {
           return
         }
 
-        // 否则阻止默认的后退行为
+        //
         e.preventDefault()
       }
 

@@ -10,25 +10,25 @@ import {
 import { createAiStreamContentProcessor } from './sanitize';
 
 /**
- * 翻译文本
- * @param text 要翻译的文本
- * @param targetLanguage 目标语言
- * @returns 翻译后的文本
+ * 
+ * @param text 
+ * @param targetLanguage 
+ * @returns 
  */
 export async function fetchAiTranslate(text: string, targetLanguage: string): Promise<string> {
   try {
-    // 项目当前没有 translateModel 设置项，优先兼容未来扩展，
-    // 若不存在则使用编辑器模型，并在未选择时回退到主要模型。
+    // translateModel ，，
+    // ，。
     const aiConfig = await getAISettings('translateModel') || await getEditorAISettings()
 
     if (await validateAIService(aiConfig?.baseURL) === null) {
       return ''
     }
     
-    // 构建翻译提示词
+    //
     const translationPrompt = `Translate the following text to ${targetLanguage}. Maintain the original formatting, markdown syntax, and structure:`
     
-    // 准备消息
+    //
     const { messages } = await prepareMessages(`${translationPrompt}\n\n${text}`)
     const openai = await createOpenAIClient(aiConfig)
     

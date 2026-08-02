@@ -34,8 +34,8 @@ function sanitizeMcpError(error: unknown) {
 }
 
 /**
- * MCP 服务器管理器
- * 管理多个 MCP 服务器的连接和工具调用
+ * MCP 
+ * MCP 
  */
 export class MCPServerManager {
   private static instance: MCPServerManager
@@ -87,8 +87,8 @@ export class MCPServerManager {
   }
   
   /**
-   * 连接到服务器
-   */
+ * 
+ */
   async connectServer(config: MCPServerConfig): Promise<void> {
     await this.ensureEventListeners()
     const store = useMcpStore.getState()
@@ -97,7 +97,7 @@ export class MCPServerManager {
       await this.disconnectServer(config.id)
     }
     
-    // 设置连接中状态
+    //
     store.setServerState(config.id, {
       id: config.id,
       status: 'connecting',
@@ -109,21 +109,21 @@ export class MCPServerManager {
       const client = new MCPClient(config)
       await client.connect()
       
-      // 初始化并获取工具列表
+      //
       const initialized = await client.initialize()
       const tools = await client.listTools()
       
-      // 尝试获取资源列表（某些服务器可能不支持）
+      // （）
       let resources: MCPResource[] = []
       try {
         resources = await client.listResources()
       } catch {
-        // 静默处理，某些服务器不支持 resources
+        // ， resources
       }
       
       this.clients.set(config.id, client)
       
-      // 更新连接成功状态
+      //
       store.setServerState(config.id, {
         id: config.id,
         status: 'connected',
@@ -135,11 +135,11 @@ export class MCPServerManager {
         instructions: initialized.instructions,
       })
       
-      // 更新最后连接时间
+      //
       store.updateServer(config.id, { lastConnected: Date.now() })
     } catch (error) {
       const sanitizedError = sanitizeMcpError(error)
-      // 静默处理错误，设置错误状态
+      // ，
       store.setServerState(config.id, {
         id: config.id,
         status: 'error',
@@ -153,8 +153,8 @@ export class MCPServerManager {
   }
   
   /**
-   * 断开服务器连接
-   */
+ * 
+ */
   async disconnectServer(serverId: string): Promise<void> {
     const client = this.clients.get(serverId)
     if (client) {
@@ -172,8 +172,8 @@ export class MCPServerManager {
   }
   
   /**
-   * 重新连接服务器
-   */
+ * 
+ */
   async reconnectServer(config: MCPServerConfig): Promise<void> {
     await this.disconnectServer(config.id)
     await this.connectServer(config)
@@ -194,8 +194,8 @@ export class MCPServerManager {
   }
   
   /**
-   * 获取服务器的所有工具
-   */
+ * 
+ */
   getServerTools(serverId: string): MCPTool[] {
     const store = useMcpStore.getState()
     const state = store.getServerState(serverId)
@@ -203,8 +203,8 @@ export class MCPServerManager {
   }
   
   /**
-   * 获取所有已连接服务器的工具
-   */
+ * 
+ */
   getAllTools(): Map<string, MCPTool[]> {
     const store = useMcpStore.getState()
     const toolsMap = new Map<string, MCPTool[]>()
@@ -222,8 +222,8 @@ export class MCPServerManager {
   }
   
   /**
-   * 调用工具
-   */
+ * 
+ */
   async callTool(
     serverId: string,
     toolName: string,
@@ -239,8 +239,8 @@ export class MCPServerManager {
   }
   
   /**
-   * 获取服务器资源
-   */
+ * 
+ */
   getServerResources(serverId: string): MCPResource[] {
     const store = useMcpStore.getState()
     const state = store.getServerState(serverId)
@@ -248,8 +248,8 @@ export class MCPServerManager {
   }
   
   /**
-   * 读取资源
-   */
+ * 
+ */
   async listResourceTemplates(serverId: string): Promise<MCPResourceTemplate[]> {
     const client = this.clients.get(serverId)
     if (!client) throw new Error(`Server ${serverId} is not connected`)
@@ -266,8 +266,8 @@ export class MCPServerManager {
   }
   
   /**
-   * 断开所有服务器
-   */
+ * 
+ */
   async disconnectAll(): Promise<void> {
     const promises = Array.from(this.clients.keys()).map(id =>
       this.disconnectServer(id)
@@ -276,9 +276,9 @@ export class MCPServerManager {
   }
   
   /**
-   * 测试服务器连接
-   * 注意：测试时不会更新 store 中的服务器状态
-   */
+ * 
+ * ： store 
+ */
   async testConnectionDetailed(config: MCPServerConfig): Promise<MCPConnectionTestResult> {
     const testConfig: MCPServerConfig = {
       ...config,
@@ -327,5 +327,5 @@ export class MCPServerManager {
   }
 }
 
-// 导出单例
+//
 export const mcpServerManager = MCPServerManager.getInstance()

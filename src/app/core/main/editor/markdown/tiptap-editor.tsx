@@ -263,7 +263,7 @@ function EditorScrollbar({
   return (
     <div
       role="scrollbar"
-      aria-label="编辑器滚动条"
+      aria-label="Editor scrollbar"
       aria-orientation="vertical"
       aria-valuemin={0}
       aria-valuemax={Math.round(maxScrollTop)}
@@ -825,7 +825,7 @@ function applyImageNodeAttributes(element: HTMLImageElement, attrs: Record<strin
   }
 }
 
-// 自定义扩展：处理粘贴 Markdown 文本
+// ： Markdown
 const PasteMarkdown = Extension.create({
   name: 'pasteMarkdown',
 
@@ -854,9 +854,9 @@ const PasteMarkdown = Extension.create({
               return true
             }
 
-            // 检查文本是否看起来像 Markdown
+            // Markdown
             if (looksLikeMarkdown(text)) {
-              // 使用 editor.commands.insertContent 插入 Markdown 内容
+              // editor.commands.insertContent Markdown
               editor.commands.insertContent(text, { contentType: 'markdown' })
               return true
             }
@@ -1058,20 +1058,20 @@ const BlurSelectionHighlight = Extension.create({
 })
 
 
-// 简单的启发式函数：检查文本是否看起来像 Markdown
+// ： Markdown
 function looksLikeMarkdown(text: string): boolean {
   return (
-    /^#{1,6}\s/.test(text) || // 标题
-    /\*\*[^*]+\*\*/.test(text) || // 粗体
-    /\*[^*]+\*/.test(text) || // 斜体
-    /\[.+\]\(.+\)/.test(text) || // 链接
-    /^[-*+]\s/.test(text) || // 无序列表
-    /^\d+\.\s/.test(text) || // 有序列表
-    /^>\s/.test(text) || // 引用
-    /^```[\s\S]*```$/.test(text) || // 代码块
-    /`[^`]+`/.test(text) || // 行内代码
-    /\$\$[\s\S]+?\$\$/.test(text) || // 块级公式
-    /(^|[^\$])\$[^\$\n]+\$(?!\$)/.test(text) // 行内公式
+    /^#{1,6}\s/.test(text) || // heading
+    /\*\*[^*]+\*\*/.test(text) || // bold
+    /\*[^*]+\*/.test(text) || // italic
+    /\[.+\]\(.+\)/.test(text) || // link
+    /^[-*+]\s/.test(text) || // unordered list
+    /^\d+\.\s/.test(text) || // ordered list
+    /^>\s/.test(text) || // blockquote
+    /^```[\s\S]*```$/.test(text) || // code block
+    /`[^`]+`/.test(text) || // inline code
+    /\$\$[\s\S]+?\$\$/.test(text) || // block formula
+    /(^|[^\$])\$[^\$\n]+\$(?!\$)/.test(text) // inline formula
   )
 }
 
@@ -1248,7 +1248,7 @@ export function TipTapEditor({
     : 'visual'
   const previousViewModeRef = useRef<EditorViewMode>(viewMode)
 
-  // 编辑器容器 ref，用于应用字体缩放
+  // ref，
   const editorContainerRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const sourceTextareaRef = useRef<HTMLTextAreaElement>(null)
@@ -1538,11 +1538,11 @@ export function TipTapEditor({
                 const width = getImageDimensionFromElement(element, 'width')
                 const height = getImageDimensionFromElement(element, 'height')
                 const uploading = element.getAttribute('data-uploading') === 'true'
-                // 如果是相对路径（非 http/https/asset://），转换为 asset://
+                // （ http/https/asset://）， asset://
                 if (shouldTransformImageSrcToWorkspaceAsset(src)) {
-                  // 这里不能直接调用 async 函数，需要在后续处理
+                  // async ，
                   return {
-                    src, // 先保持原样，后续通过其他方式处理
+                    src, // keep as-is; handled later
                     relativeSrc: src,
                     alt: element.getAttribute('alt') || '',
                     title: element.getAttribute('title') || null,
@@ -1595,10 +1595,10 @@ export function TipTapEditor({
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         renderMarkdown(node, _helpers) {
-          // 优先使用 relativeSrc，其次使用 src
+          // relativeSrc， src
           const attrs = node.attrs || {}
           let src = attrs.relativeSrc || attrs.src || ''
-          // 如果是 asset:// 或 tauri:// 路径，提取实际路径
+          // asset:// tauri:// ，
           src = src.replace(/^(tauri|asset|http):\/\/localhost\//, '')
           const width = parseImageDimension(attrs.width)
           const height = parseImageDimension(attrs.height)
@@ -1704,7 +1704,7 @@ export function TipTapEditor({
               type: this.type,
               getAttributes: (match) => {
                 const [, alt, src, title] = match
-                // 规范化路径：去掉 ./ 前缀
+                // ： ./
                 const normalizedSrc = src.replace(/^\.\//, '')
                 return { src: normalizedSrc, alt, title, relativeSrc: normalizedSrc }
               },
@@ -1725,7 +1725,7 @@ export function TipTapEditor({
           class: 'max-w-full rounded-lg',
         },
       }),
-      // 自定义粘贴 Markdown 扩展
+      // Markdown
       PasteMarkdown,
       BlurSelectionHighlight,
     ],
@@ -2285,7 +2285,7 @@ export function TipTapEditor({
     }
   }, [editor, isMobile, scrollMobileSelectionIntoView])
 
-  // 普通点击编辑链接；组合键点击直接打开链接。
+  // ；。
   useEffect(() => {
     if (!editor || !editorContainerRef.current) return
 
@@ -2923,7 +2923,7 @@ export function TipTapEditor({
     }
   }, [editor])
 
-  // 应用正文文字大小缩放
+  //
   useEffect(() => {
     if (!editor) return
 
@@ -2931,14 +2931,14 @@ export function TipTapEditor({
       if (editorContainerRef.current) {
         const proseMirror = editorContainerRef.current.querySelector('.ProseMirror') as HTMLElement
         if (proseMirror) {
-          // 使用 16px 作为基础字体大小，根据 contentTextScale 进行缩放
+          // 16px ， contentTextScale
           const baseFontSize = 16
           proseMirror.style.fontSize = `${(baseFontSize * contentTextScale) / 100}px`
         }
       }
     }
 
-    // 立即应用一次
+    //
     applyFontSize()
   }, [contentTextScale, editor])
 
@@ -3049,7 +3049,7 @@ export function TipTapEditor({
           const canvasId = getCanvasDragId(dataTransfer)
           const project = canvasId ? await getCanvasProject(canvasId) : null
           const activeFilePath = activeFilePathRef.current
-          if (!project || !activeFilePath) throw new Error('无法读取画布或当前 Markdown 文件')
+          if (!project || !activeFilePath) throw new Error('Unable to read the canvas or current Markdown file')
           const safeTitle = project.title.replace(/[\\/:*?"<>|]/g, '-').trim() || 'NoteGen-Canvas'
           const imageFile = await canvasDocumentToPngFile(project.document, `${safeTitle}.png`)
           const result = await saveImageToWorkspace(imageFile, activeFilePath)
@@ -3115,8 +3115,8 @@ export function TipTapEditor({
           }
 
           toast({
-            title: '无法获取文件路径',
-            description: '当前拖拽来源没有提供真实文件路径，无法生成可打开的链接。',
+            title: 'Unable to get file path',
+            description: 'The drag source did not provide a real file path, so a openable link could not be created.',
             variant: 'destructive',
           })
           return
@@ -3134,7 +3134,7 @@ export function TipTapEditor({
             ? t('canvasDrop.failed')
             : droppedImageFiles.length > 0
               ? tImage('failed')
-              : '插入文件链接失败',
+              : 'Failed to insert file link',
           description: error instanceof Error ? error.message : undefined,
           variant: 'destructive',
         })
@@ -3818,14 +3818,14 @@ export function TipTapEditor({
     }
   }, [editor, initialContent, onReady, onEditorReady, activeFilePath, restoreEditorViewState])
 
-  // 处理编辑器中图片的相对路径，转换为 asset:// URL
+  // ， asset:// URL
   useEffect(() => {
     if (!editor || !editor.view) return
 
     let transformFrameId: number | null = null
 
     const transformImagePaths = () => {
-      // 获取编辑器 DOM 中的所有图片
+      // DOM
       const editorDom = editor.view.dom
       const images = editorDom.querySelectorAll('img')
 
@@ -3841,18 +3841,18 @@ export function TipTapEditor({
 
       for (const img of images) {
         const src = img.getAttribute('src')
-        // 如果是相对路径，转换为 asset://
+        // ， asset://
         if (src && currentFilePath && shouldTransformImageSrcToWorkspaceAsset(src)) {
-          // 异步转换路径
+          //
           resolveEditorImageSource(src).then((assetUrl: string) => {
-            // 只有当 src 仍然是相对路径时才更新（避免覆盖已转换的）
+            // src （）
             const currentSrc = img.getAttribute('src')
             if (currentSrc === src || !currentSrc?.startsWith('asset://')) {
               img.setAttribute('src', assetUrl)
             }
           })
         }
-        // 添加 onerror 处理：如果加载失败，尝试转换路径
+        // onerror ：，
         if (img && !img.onerror) {
           img.onerror = async () => {
             const currentSrc = img.getAttribute('src')
@@ -3891,7 +3891,7 @@ export function TipTapEditor({
 
     imageNodeObserver.observe(editor.view.dom, { childList: true, subtree: true })
 
-    // 初始执行
+    //
     scheduleTransformImagePaths()
 
     return () => {
@@ -4157,8 +4157,8 @@ export function TipTapEditor({
 
       if (!context.trim()) {
         toast({
-          title: '续写失败',
-          description: '请先输入一些内容',
+          title: 'Continue writing failed',
+          description: 'Enter some content first',
           variant: 'destructive',
         })
         return
@@ -4240,8 +4240,8 @@ export function TipTapEditor({
         // Show error toast (but not for aborted requests)
         if (error instanceof Error && error.message !== 'Request was aborted.') {
           toast({
-            title: '续写失败',
-            description: error.message || '网络错误',
+            title: 'Continue writing failed',
+            description: error.message || 'Network error',
             variant: 'destructive',
           })
         }
@@ -4260,9 +4260,9 @@ export function TipTapEditor({
     let abortController: AbortController | null = null
 
     const actionTitle: Record<EditorAiGenerationAction, string> = {
-      section: '生成章节',
-      summary: '总结',
-      custom: '自定义指令',
+      section: 'Generate section',
+      summary: 'Summary',
+      custom: 'Custom instruction',
     }
 
     const handleAIGenerate = async (event: Event) => {
@@ -4290,8 +4290,8 @@ export function TipTapEditor({
 
       if (action === 'custom' && !instruction) {
         toast({
-          title: '自定义指令失败',
-          description: '请输入指令',
+          title: 'Custom instruction failed',
+          description: 'Enter an instruction',
           variant: 'destructive',
         })
         return
@@ -4305,8 +4305,8 @@ export function TipTapEditor({
 
       if (action !== 'custom' && !plainText.trim()) {
         toast({
-          title: `${actionTitle[action]}失败`,
-          description: '请先输入一些内容',
+          title: `${actionTitle[action]} failed`,
+          description: 'Enter some content first',
           variant: 'destructive',
         })
         return
@@ -4401,8 +4401,8 @@ export function TipTapEditor({
 
         if (error instanceof Error && error.message !== 'Request was aborted.') {
           toast({
-            title: `${actionTitle[action]}失败`,
-            description: error.message || '网络错误',
+            title: `${actionTitle[action]} failed`,
+            description: error.message || 'Network error',
             variant: 'destructive',
           })
         }
@@ -4446,7 +4446,7 @@ export function TipTapEditor({
               if (!/^https?:\/\//i.test(mark.url)) {
                 const localAssetPath = getMarkLocalAssetPath(mark)
                 if (!localAssetPath) {
-                  throw new Error('无法获取图片记录的本地文件路径')
+                  throw new Error('Unable to get the local file path for this image record')
                 }
 
                 const bytes = await readFile(localAssetPath, { baseDir: BaseDirectory.AppData })
@@ -4477,8 +4477,8 @@ export function TipTapEditor({
                 .run()
 
               toast({
-                title: '已插入记录',
-                description: mark.desc || '图片记录',
+                title: 'Record inserted',
+                description: mark.desc || 'Image record',
               })
             })().catch(error => {
               toast({
@@ -4498,8 +4498,8 @@ export function TipTapEditor({
               editor?.commands.insertContent(markdown, { contentType: 'markdown' })
             }
             toast({
-              title: '已插入记录',
-              description: mark.desc || mark.content?.slice(0, 50) || '记录内容'
+              title: 'Record inserted',
+              description: mark.desc || mark.content?.slice(0, 50) || 'Record content'
             })
           })
         }
@@ -4798,7 +4798,7 @@ export function TipTapEditor({
           while (currentOccurrence < (occurrence || 1)) {
             foundIndex = contentLower.indexOf(searchLower, searchFrom)
             if (foundIndex === -1) {
-              resolve({ success: false, insertedLength: 0, error: `找不到文本 "${searchContent}"` })
+              resolve({ success: false, insertedLength: 0, error: `Could not find text "${searchContent}"` })
               return
             }
             currentOccurrence++
@@ -4840,7 +4840,7 @@ export function TipTapEditor({
         else if (content) {
           // Don't change from/to, use current selection
         } else {
-          resolve({ success: false, insertedLength: 0, error: '请提供 content、range、searchContent 或 startLine/endLine 参数' })
+          resolve({ success: false, insertedLength: 0, error: 'Provide content, range, searchContent, or startLine/endLine' })
           return
         }
 
@@ -4889,7 +4889,7 @@ export function TipTapEditor({
           resolve({
             success: true,
             insertedLength: newContent.length,
-            message: `成功替换 ${to - from} 个字符为 ${newContent.length} 个字符`,
+            message: `Replaced ${to - from} characters with ${newContent.length} characters`,
             newCursorPosition: from + newContent.length,
           })
         }, (error) => {
@@ -5307,7 +5307,7 @@ export function TipTapEditor({
           type="button"
           variant="outline"
           size="icon"
-          aria-label="返回顶部"
+          aria-label="Back to top"
           className="mobile-scroll-top-button absolute right-4 size-11 rounded-full border-border/70 bg-background/90 text-foreground shadow-lg backdrop-blur supports-[backdrop-filter]:bg-background/75"
           onMouseDown={(event) => event.preventDefault()}
           onClick={handleMobileScrollTop}
@@ -5360,7 +5360,7 @@ export function TipTapEditor({
         <div className="absolute inset-0 z-50 flex items-start justify-end p-4 bg-background/20 pointer-events-none">
           <div className="flex items-center gap-2 bg-background/90 border rounded-md px-3 py-2 shadow-md pointer-events-auto">
             <Loader2 className="size-4 animate-spin text-muted-foreground" />
-            <span className="text-xs text-muted-foreground">AI 整理中</span>
+            <span className="text-xs text-muted-foreground">Organizing with AI</span>
             {onTerminate && (
               <Button
                 variant="ghost"
@@ -5393,7 +5393,7 @@ export function TipTapEditor({
         onOpenChange={setMathDialogOpen}
         onInsert={handleMathInsert}
         type={mathType}
-        title={mathType === 'inline' ? '插入行内公式' : '插入块级公式'}
+        title={mathType === 'inline' ? 'Insert inline formula' : 'Insert block formula'}
       />
     </div>
   )

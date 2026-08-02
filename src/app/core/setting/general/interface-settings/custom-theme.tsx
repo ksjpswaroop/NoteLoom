@@ -54,9 +54,9 @@ export function CustomThemeSettings() {
   const [importCode, setImportCode] = useState('')
   const [exportCode, setExportCode] = useState('')
 
-  // 实时保存颜色变化
+  //
   const handleColorChange = async (colorKey: string, value: HSLValue | null) => {
-    // 同时更新亮色和暗色主题的颜色
+    //
     const updatedColors = {
       light: {
         ...customThemeColors.light,
@@ -68,19 +68,19 @@ export function CustomThemeSettings() {
       },
     }
 
-    // 立即保存到 store
+    // store
     const store = await Store.load('store.json')
     await store.set('customThemeColors', updatedColors)
     await store.save()
 
-    // 更新 store 状态（触发 re-render）
+    // store （ re-render）
     useSettingStore.setState({ customThemeColors: updatedColors })
 
-    // 立即应用颜色
+    //
     applyThemeColors(updatedColors)
   }
 
-  // 应用预设方案
+  //
   const applyPreset = async (preset: ColorScheme) => {
     const hexToHsl = (hex: string): HSLValue | null => {
       const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
@@ -152,18 +152,18 @@ export function CustomThemeSettings() {
     useSettingStore.setState({ customThemeColors: updatedColors })
     applyThemeColors(updatedColors)
 
-    // 同时设置系统主题模式
+    //
     if (preset.mode) {
       setTheme(preset.mode)
     }
   }
 
-  // 重置为默认主题
+  //
   const handleResetDefault = async () => {
     await useSettingStore.getState().resetCustomThemeColors()
   }
 
-  // 生成导出代码
+  //
   const handleExport = () => {
     const exportData = {
       name: 'Custom Theme',
@@ -189,7 +189,7 @@ export function CustomThemeSettings() {
     setExportCode(JSON.stringify(exportData, null, 2))
   }
 
-  // 导入配色方案
+  //
   const handleImport = async () => {
     try {
       const importData = JSON.parse(importCode) as ColorScheme
@@ -245,7 +245,7 @@ export function CustomThemeSettings() {
             </TabsContent>
 
             <TabsContent value="import-export" className="mt-4 space-y-4">
-              {/* 导出 */}
+              {/* */}
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-sm font-semibold">{t('export.title')}</h3>
@@ -265,7 +265,7 @@ export function CustomThemeSettings() {
                 />
               </div>
 
-              {/* 导入 */}
+              {/* */}
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-sm font-semibold">{t('import.title')}</h3>

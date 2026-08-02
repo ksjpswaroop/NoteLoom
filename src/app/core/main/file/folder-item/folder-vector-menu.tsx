@@ -20,15 +20,15 @@ export function FolderVectorMenu({ item }: FolderVectorMenuProps) {
   const [isCalculating, setIsCalculating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // 批量计算文件夹中的向量
+  //
   async function handleBatchCalculate() {
     if (isCalculating) return;
 
-    // 检查是否真的是目录（防止误将文件当作目录处理）
+    // （）
     if (!item.isDirectory) {
       toast({
-        title: '不是目录',
-        description: '只能对目录进行批量向量计算',
+        title: 'Not a directory',
+        description: 'Batch vector calculation is only allowed on directories',
         variant: 'destructive'
       });
       return;
@@ -52,8 +52,8 @@ export function FolderVectorMenu({ item }: FolderVectorMenuProps) {
 
       const result = await calculateFolderVectors({
         folderPath: path,
-        // processMarkdownFile 会用内容哈希跳过未变化文件；这里检查全部文件，
-        // 避免已有索引的文件在外部修改后一直保留旧内容。
+        // processMarkdownFile ；，
+        // 。
         mode: 'recalculate',
         checkFileVectorIndexed,
         setVectorCalcStatus,
@@ -61,8 +61,8 @@ export function FolderVectorMenu({ item }: FolderVectorMenuProps) {
 
       if (!result.embeddingModelAvailable) {
         toast({
-          title: '向量处理',
-          description: '未配置嵌入模型或模型不可用，请在AI设置中配置嵌入模型',
+          title: 'Vector processing',
+          description: 'Embedding model is not configured or unavailable. Configure it in AI settings',
           variant: 'destructive'
         });
         setVectorCalcStatus(path, 'idle');
@@ -83,16 +83,16 @@ export function FolderVectorMenu({ item }: FolderVectorMenuProps) {
         });
       }
 
-      // 刷新向量索引状态 - 检查所有文件的向量状态
+      // -
       for (const file of markdownFiles) {
         await checkFileVectorIndexed(file.path);
       }
 
-      // 设置文件夹为完成状态
+      //
       setVectorCalcStatus(path, 'completed');
       loadFileTree();
     } catch (error) {
-      console.error('批量计算向量失败:', error);
+      console.error('Failed to batch-compute vectors:', error);
       toast({
         title: t('context.batchCalcFailed'),
         variant: 'destructive'
@@ -103,7 +103,7 @@ export function FolderVectorMenu({ item }: FolderVectorMenuProps) {
     }
   }
 
-  // 批量删除文件夹中的向量
+  //
   async function handleBatchDelete() {
     if (isDeleting) return;
 
@@ -139,7 +139,7 @@ export function FolderVectorMenu({ item }: FolderVectorMenuProps) {
           await clearFileVector(file.path);
           successCount++;
         } catch (error) {
-          console.error(`删除文件 ${file.name} 向量失败:`, error);
+          console.error(`Failed to delete vectors for file ${file.name}:`, error);
           failedCount++;
         }
       }
@@ -157,7 +157,7 @@ export function FolderVectorMenu({ item }: FolderVectorMenuProps) {
 
       loadFileTree();
     } catch (error) {
-      console.error('批量删除向量失败:', error);
+      console.error('Failed to batch-delete vectors:', error);
       toast({
         title: t('context.batchDeleteFailed'),
         variant: 'destructive'

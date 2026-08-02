@@ -29,7 +29,7 @@ export function WebDAVSync() {
   const [isConnecting, setIsConnecting] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // 初始化配置
+  //
   useEffect(() => {
     const initConfig = async () => {
       try {
@@ -37,7 +37,7 @@ export function WebDAVSync() {
         const savedConfig = await store.get<WebDAVConfig>('webdavSyncConfig');
         if (savedConfig) {
           setConfig(savedConfig);
-          // 如果配置完整，自动进行连接检测
+          // ，
           if (savedConfig.url && savedConfig.username && savedConfig.password) {
             testConnection(savedConfig);
           }
@@ -49,7 +49,7 @@ export function WebDAVSync() {
     initConfig();
   }, []);
 
-  // 测试连接
+  //
   const testConnection = async (configToTest?: WebDAVConfig) => {
     const testConfig = configToTest || config;
     if (!testConfig.url || !testConfig.username || !testConfig.password) {
@@ -68,7 +68,7 @@ export function WebDAVSync() {
     }
   };
 
-  // 配置变更后自动保存，避免输入过程中频繁写入磁盘
+  // ，
   useEffect(() => {
     if (!isInitialized) return;
 
@@ -85,7 +85,7 @@ export function WebDAVSync() {
     return () => clearTimeout(timer);
   }, [config, isInitialized]);
 
-  // 配置变更处理
+  //
   const handleConfigChange = (key: keyof WebDAVConfig, value: string) => {
     setConfig(prev => ({ ...prev, [key]: value }));
     setWebDAVConnected(false);

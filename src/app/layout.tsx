@@ -14,7 +14,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // 初始化同步推送队列
+  //
   useEffect(() => {
     getSyncPushQueue()
   }, [])
@@ -23,7 +23,7 @@ export default function RootLayout({
     <>
       <html lang="en" suppressHydrationWarning>
         <head>
-          {/* 移动端视口设置 */}
+          {/* */}
           <meta
             name="viewport"
             content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover"

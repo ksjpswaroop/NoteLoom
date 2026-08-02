@@ -64,24 +64,24 @@ function buildCanvasSelectionContext(context: CanvasSelectionContext | null) {
         ].filter(Boolean)
         return `- ${details.join('; ')}`
       }).join('\n')
-    : '- 无'
+    : '- None'
   const edges = context.edges.length > 0
     ? context.edges.map(edge => (
         `- id=${edge.id}; source=${edge.source}${nodeLabels.has(edge.source) ? ` (${JSON.stringify(nodeLabels.get(edge.source))})` : ''}; target=${edge.target}${nodeLabels.has(edge.target) ? ` (${JSON.stringify(nodeLabels.get(edge.target))})` : ''}${edge.label ? `; label=${JSON.stringify(edge.label)}` : ''}`
       )).join('\n')
-    : '- 无'
+    : '- None'
   const selectionGuidance = context.scope === 'selection'
-    ? '以下节点是用户为本次对话明确选中的操作对象；连线包含用户选中的连线，以及所选节点之间已有的关联。回答或调用画布工具时优先使用这些精确 ID；除非用户明确要求，不要修改未选中的元素。'
-    : '以下是用户关联的整个画布。回答时请结合节点内容与连线关系；调用画布工具时使用这里提供的精确 ID。'
+    ? 'These nodes are the objects the user explicitly selected for this conversation; edges include selected edges and existing links among selected nodes. Prefer these exact IDs when answering or calling canvas tools; do not modify unselected elements unless the user asks.'
+    : 'Below is the full canvas the user linked. Use node content and edge relationships when answering; use the exact IDs provided here for canvas tools.'
   return [
-    context.scope === 'selection' ? '## 用户选择的画布节点与关系' : '## 用户关联的画布',
-    `画布：${context.canvasTitle}（ID: ${context.canvasId}）`,
+    context.scope === 'selection' ? '## Selected canvas nodes and relationships' : '## Linked canvas',
+    `Canvas: ${context.canvasTitle} (ID: ${context.canvasId})`,
     selectionGuidance,
     '',
-    '节点：',
+    'Nodes:',
     nodes,
     '',
-    '连线：',
+    'Edges:',
     edges,
     '',
   ].join('\n')
@@ -199,10 +199,10 @@ export const ChatSend = forwardRef<{ sendChat: () => void }, ChatSendProps>(({
     const failureMessage = failedToolCall?.result?.error || result
 
     return [
-      `已成功生成文件：`,
+      `Successfully generated file:`,
       uniqueOutputFiles.map((file) => `- ${file}`).join('\n'),
       '',
-      `后续校验或附加步骤失败：${failureMessage}`,
+      `Follow-up validation or extra step failed: ${failureMessage}`,
     ].join('\n')
   }
 
@@ -239,11 +239,11 @@ export const ChatSend = forwardRef<{ sendChat: () => void }, ChatSendProps>(({
     let context = ''
 
     if (articleStore.activeFilePath && articleStore.currentArticle) {
-      context += `## 当前打开的笔记\n文件路径: ${articleStore.activeFilePath}\n\n内容:\n${articleStore.currentArticle}\n\n`
+      context += `## Currently open note\nFile path: ${articleStore.activeFilePath}\n\nContent:\n${articleStore.currentArticle}\n\n`
     }
 
     if (linkedResource && isLinkedFolder(linkedResource)) {
-      context += `## 用户关联的笔记文件夹\n用户关联了文件夹“${linkedResource.name}”（${linkedResource.relativePath}）。需要查找笔记时优先使用这个 folderPath。\n\n`
+      context += `## Linked note folder\nThe user linked folder “${linkedResource.name}” (${linkedResource.relativePath}). When searching notes, prefer this folderPath.\n\n`
     }
 
     if (linkedResource && !isLinkedFolder(linkedResource)) {
@@ -255,14 +255,14 @@ export const ChatSend = forwardRef<{ sendChat: () => void }, ChatSendProps>(({
           : await readTextFile(pathOptions!.path, {
               baseDir: pathOptions!.baseDir,
             })
-        context += `${linkedResourcePreview ? `${linkedResourcePreview}\n` : ''}## 关联文件完整内容\n${linkedResource.relativePath}\n\n${linkedFileContent}\n\n`
+        context += `${linkedResourcePreview ? `${linkedResourcePreview}\n` : ''}## Full linked file content\n${linkedResource.relativePath}\n\n${linkedFileContent}\n\n`
       } catch (error) {
         console.error('Failed to read linked file for steering:', error)
       }
     }
 
     if (quoteData) {
-      context += `## 用户引用内容\n文件: ${quoteData.fileName}\n范围: ${quoteData.from}-${quoteData.to}\n\n${quoteData.fullContent}\n\n`
+      context += `## User quote\nFile: ${quoteData.fileName}\nRange: ${quoteData.from}-${quoteData.to}\n\n${quoteData.fullContent}\n\n`
     }
 
     context += buildCanvasSelectionContext(canvasSelectionContext)
@@ -283,8 +283,8 @@ export const ChatSend = forwardRef<{ sendChat: () => void }, ChatSendProps>(({
               readTextFile(path, { baseDir })
             )
         context += [
-          '## 用户通过 @ 关联的文件',
-          `文件：${file.relativePath}`,
+          '## Files linked via @',
+          `File: ${file.relativePath}`,
           '',
           content,
           '',
@@ -296,8 +296,8 @@ export const ChatSend = forwardRef<{ sendChat: () => void }, ChatSendProps>(({
 
     for (const record of mentionedRecords) {
       context += [
-        '## 用户通过 @ 关联的记录',
-        `记录：${record.fileName}`,
+        '## Records linked via @',
+        `Record: ${record.fileName}`,
         '',
         record.fullContent,
         '',
@@ -354,7 +354,7 @@ export const ChatSend = forwardRef<{ sendChat: () => void }, ChatSendProps>(({
     sendChat: handleSubmit
   }))
 
-  // Agent 确认回调 - 使用内联确认而不是弹窗
+  // Agent -
   const requestConfirmation = (
     toolName: string,
     params: Record<string, any>,
@@ -412,7 +412,7 @@ export const ChatSend = forwardRef<{ sendChat: () => void }, ChatSendProps>(({
         sessionApprovalScope,
       })
 
-      // 将确认请求保存到 store，在对话中显示
+      // store，
       setAgentState({
         pendingConfirmation: {
           toolName,
@@ -425,11 +425,11 @@ export const ChatSend = forwardRef<{ sendChat: () => void }, ChatSendProps>(({
         }
       })
       
-      // 轮询检查用户是否已确认或取消
+      //
       const checkInterval = setInterval(() => {
         const currentState = useChatStore.getState()
         
-        // 如果 pendingConfirmation 被清除，说明用户已操作
+        // pendingConfirmation ，
         if (!currentState.agentState.pendingConfirmation) {
           clearInterval(checkInterval)
           const latestRecord = [...currentState.agentState.confirmationHistory]
@@ -456,9 +456,9 @@ export const ChatSend = forwardRef<{ sendChat: () => void }, ChatSendProps>(({
     })
   }
 
-  // Agent 模式处理
+  // Agent
   async function handleAgentMode(images: ImageAttachment[], userMessage: Chat) {
-    // 先创建一个占位的 AI 消息
+    // AI
     const placeholderMessage = await insert({
       tagId: currentTagId,
       role: 'system',
@@ -551,7 +551,7 @@ export const ChatSend = forwardRef<{ sendChat: () => void }, ChatSendProps>(({
       agentHandlerRef.current = null
     }
 
-    // 每次都创建新的 AgentHandler，使用当前的 placeholderMessage
+    // AgentHandler， placeholderMessage
     const agentHandler = new AgentHandler({
       activeChatId: placeholderMessage.id,
       conversationId: placeholderMessage.conversationId,
@@ -575,7 +575,7 @@ export const ChatSend = forwardRef<{ sendChat: () => void }, ChatSendProps>(({
       imageAttachments: agentImageAttachments,
       selectedSkills: selectedSkillIds,
       onFinalAnswerRender: (markdownContent) => {
-        // 检测到 Final Answer 时触发渲染
+        // Final Answer
         setAgentState({
           activeChatId: placeholderMessage.id,
           isFinalAnswerMode: true,
@@ -585,7 +585,7 @@ export const ChatSend = forwardRef<{ sendChat: () => void }, ChatSendProps>(({
       formatAutoFinalAnswer: (key, values) => t(key as any, values),
       onComplete: async (result, steps, stopped) => {
         deferredOverflowError = undefined
-        // 获取 Agent 执行历史，保存结构化运行轨迹
+        // Agent ，
         const { agentState } = useChatStore.getState()
         const effectivelyStopped = Boolean(stopped)
           || manualStopRequestedRef.current
@@ -613,7 +613,7 @@ export const ChatSend = forwardRef<{ sendChat: () => void }, ChatSendProps>(({
           }
         })
         const traceEvents = retainCompletedAgentTraceEvents(completedTraceEvents)
-        // 使用 agentState.completedSteps 而不是 steps 参数，因为 completedSteps 包含 duration 信息
+        // agentState.completedSteps steps ， completedSteps duration
         const agentHistory = {
           steps: agentState.completedSteps || [],
           toolCalls: agentState.toolCalls,
@@ -639,13 +639,13 @@ export const ChatSend = forwardRef<{ sendChat: () => void }, ChatSendProps>(({
           }
         }
         if (effectivelyStopped && !finalContent.trim()) {
-          // 只有尚未产生任何正文时才显示终止提示；已有的流式正文原样保留。
+          // ；。
           finalContent = t('record.chat.input.stopped')
         }
 
         if (!effectivelyStopped) {
           const partialSuccessContent = buildPartialSuccessContent(result, agentState.toolCalls)
-          if (partialSuccessContent && /^工具 .+执行失败：|^工具 .+执行出错：|^Error:/.test(finalContent.trim())) {
+          if (partialSuccessContent && /^Tool .+ failed:|^Tool .+ error:|^Error:/.test(finalContent.trim())) {
             finalContent = partialSuccessContent
           }
         }
@@ -661,7 +661,7 @@ export const ChatSend = forwardRef<{ sendChat: () => void }, ChatSendProps>(({
           ? JSON.stringify(agentState.ragSourceDetails)
           : currentMessage?.ragSourceDetails
 
-        // 更新占位消息，保留 RAG 相关字段
+        // ， RAG
         await saveChat({
           id: placeholderMessage.id,
           tagId: placeholderMessage.tagId,
@@ -672,12 +672,12 @@ export const ChatSend = forwardRef<{ sendChat: () => void }, ChatSendProps>(({
           createdAt: placeholderMessage.createdAt,
           ragSources: resolvedRagSources,
           ragSourceDetails: resolvedRagSourceDetails,
-          // 设置新的内容
+          //
           content: finalContent,
           agentHistory: JSON.stringify(agentHistory),
         }, true)
 
-        // 清空 Final Answer 模式状态
+        // Final Answer
         setAgentState({
           activeChatId: undefined,
           isFinalAnswerMode: false,
@@ -691,7 +691,7 @@ export const ChatSend = forwardRef<{ sendChat: () => void }, ChatSendProps>(({
           scheduleConversationMemoryExtraction(placeholderMessage.conversationId)
         }
 
-        // 清空 ref
+        // ref
         agentHandlerRef.current = null
       },
       onError: async (error) => {
@@ -741,18 +741,18 @@ export const ChatSend = forwardRef<{ sendChat: () => void }, ChatSendProps>(({
       },
     })
 
-    // 保存到 ref
+    // ref
     agentHandlerRef.current = agentHandler
     for (const payload of pendingSteeringRef.current.splice(0)) {
       agentHandler.steer(payload)
     }
 
     try {
-      // 构建上下文信息
+      //
       let context = ''
 
-      // 1. 图片先由专用视觉模型识别，失败时回退 OCR。
-      // 主聊天模型只接收结构化识别结果，不依赖自身的视觉能力。
+      // 1. ， OCR。
+      // ，。
       if (images.length > 0) {
         imageAnalysisAbortControllerRef.current?.abort()
         const imageAnalysisAbortController = new AbortController()
@@ -816,8 +816,8 @@ export const ChatSend = forwardRef<{ sendChat: () => void }, ChatSendProps>(({
         context += `${historicalImageContext}\n`
       }
 
-      // 2. 当前编辑器内容由 AgentHandler 在模型调用前读取实时快照并注入系统提示词。
-      // 这里不再重复追加 currentArticle，避免同一篇正文占用两份上下文。
+      // 2. AgentHandler 。
+      // currentArticle，。
 
       agentDebugLog('chat_context_active_note', {
         activeFilePath: articleStore.activeFilePath || null,
@@ -826,17 +826,17 @@ export const ChatSend = forwardRef<{ sendChat: () => void }, ChatSendProps>(({
         injectedByRuntimeSnapshot: Boolean(articleStore.activeFilePath),
         preview: previewText(articleStore.currentArticle || ''),
       })
-      // 3. 关联文件夹作为 Agent 自动检索时的优先范围，不在发送前预先检索。
+      // 3. Agent ，。
       if (linkedResource && isLinkedFolder(linkedResource)) {
         context += [
-          '## 用户关联的笔记文件夹',
-          `用户关联了文件夹“${linkedResource.name}”（${linkedResource.relativePath}）。`,
-          '如果当前请求需要查找用户笔记，请优先使用 note_search_files，并将 folderPath 设置为这个相对路径。不要在没有必要时搜索。',
+          '## Linked note folder',
+          `The user linked folder “${linkedResource.name}” (${linkedResource.relativePath}).`,
+          'If this request needs to find user notes, prefer note_search_files and set folderPath to this relative path. Do not search unless needed.',
           '',
         ].join('\n')
       }
 
-      // 4. 如果有关联文件（非文件夹），始终注入完整内容作为 Agent 上下文
+      // 4. （）， Agent
       const linkedResourceIsActiveFile = linkedResource && !isLinkedFolder(linkedResource) && (
         linkedResource.relativePath === articleStore.activeFilePath ||
         linkedResource.path === articleStore.activeFilePath ||
@@ -859,7 +859,7 @@ export const ChatSend = forwardRef<{ sendChat: () => void }, ChatSendProps>(({
           }
 
           if (linkedFileContent) {
-            context += `\n## 关联文件完整内容\n\nThe full content of the linked file "${linkedResource.name}" (${linkedResource.relativePath}) is already included below. Do not call tools to read or check this same file again unless the user explicitly asks to refresh it.\n\n---\n${linkedFileContent}\n---\n`
+            context += `\n## Full linked file content\n\nThe full content of the linked file "${linkedResource.name}" (${linkedResource.relativePath}) is already included below. Do not call tools to read or check this same file again unless the user explicitly asks to refresh it.\n\n---\n${linkedFileContent}\n---\n`
           }
 
           agentDebugLog('chat_context_linked_file', {
@@ -879,7 +879,7 @@ export const ChatSend = forwardRef<{ sendChat: () => void }, ChatSendProps>(({
         })
       }
 
-      // 5. 如果有引用内容，添加引用上下文（在构建消息之前）
+      // 5. ，（）
       if (quoteData) {
         const { fileName, startLine, endLine, fullContent, from, to } = quoteData
         let lineInfo = ''
@@ -888,72 +888,74 @@ export const ChatSend = forwardRef<{ sendChat: () => void }, ChatSendProps>(({
 
         if (hasValidLineNumbers) {
           if (startLine === endLine) {
-            lineInfo = `第 ${startLine} 行`
+            lineInfo = `Line ${startLine}`
           } else {
-            lineInfo = `第 ${startLine}-${endLine} 行`
+            lineInfo = `Lines ${startLine}-${endLine}`
           }
         }
 
-        context += `\n## 📌 用户引用内容
+        context += `
+## 📌 Quoted content
 
-用户引用了笔记 "${fileName}" ${lineInfo}的以下内容：
+The user quoted the following from note "${fileName}" ${lineInfo}:
 
 ---
 ${fullContent}
 ---
 
-${hasValidRange ? `**仅在用户明确要求修改/改写/补充/插入时才允许编辑**。
+${hasValidRange ? `**Only edit when the user explicitly asks to modify/rewrite/expand/insert.**
 
-如果用户是在提问、解释、总结、分析、询问译法、润色建议、代码说明，应该直接基于这段引用内容回答，**不要调用任何编辑工具**。
+If the user is asking a question, or wants explanation, summary, analysis, translation advice, polish suggestions, or code explanation, answer from this quote and **do not call any editing tools**.
 
-如果用户明确说“这句/这段/选中内容翻译成某种语言”，这是编辑请求，必须直接使用 editor_replace_range；已有 from/to 已足够，禁止再调用 editor_get_state 或 editor_get_selection。
+If the user clearly asks to translate this sentence/selection into a language, that is an edit request: use editor_replace_range directly. from/to are already enough; do not call editor_get_state or editor_get_selection again.
 
-**🚨 当且仅当用户明确要求修改时，必须精确替换用户选中的范围**: 当前引用内容来自编辑器选区，必须优先使用 editor_replace_range，只替换这段选中的内容：
+**Only when the user explicitly requests a change, precisely replace the selected range**: the quote comes from the editor selection — prefer editor_replace_range and replace only this selection:
 - from: ${from}
 - to: ${to}
-- 使用 content 传入新内容
-- 只允许替换这个选区，禁止扩大到整篇文档或整段之外
+- Pass the new text via content
+- Replace only this selection; do not expand to the whole document or beyond the selection
 
-**如果用户说“在这段前面/后面/上面/下面插入、补充、添加”**:
-- 仍然使用 editor_replace_range
-- 基于当前引用范围整体替换
-- 前插: 新内容 + 原引用内容
-- 后插: 原引用内容 + 新内容
-- 不要使用 editor_insert_at_cursor，因为聊天输入会让编辑器失焦，当前光标位置不可靠
+**If the user asks to insert/add content before/after/above/below this passage**:
+- Still use editor_replace_range
+- Replace the entire current quote range
+- Prefix: new content + original quote
+- Suffix: original quote + new content
+- Do not use editor_insert_at_cursor — chat focus makes the cursor position unreliable
 
-**如果用户明确要求“前面和后面都增加内容”**:
-- 仍然使用 editor_replace_range
-- content 直接传入最终替换内容：前插内容 + 原引用内容 + 后插内容
-- 不要使用额外协议标记；工具会把 content 原样写入选区
+**If the user asks to add content both before and after**:
+- Still use editor_replace_range
+- Pass the final replacement as content: prefix + original quote + suffix
+- Do not use extra protocol markers; the tool writes content as-is
 
-**兜底行号信息**:
-- 单行修改: startLine: ${startLine}, endLine: ${endLine}
-- 多行范围: startLine: ${startLine}, endLine: ${endLine}
+**Fallback line numbers**:
+- Single line: startLine: ${startLine}, endLine: ${endLine}
+- Multi-line: startLine: ${startLine}, endLine: ${endLine}
 
-**禁止**:
-- 禁止在解释/分析类请求中调用编辑工具
-- 禁止改动选区之外的内容
-- 禁止获取整个文档后再重写整篇
-- 禁止把 startLine/endLine 擅自改成 1/1` : hasValidLineNumbers ? `**仅在用户明确要求修改/改写/补充/插入时才允许编辑**。
+**Do not**:
+- Call editing tools for explanation/analysis requests
+- Change content outside the selection
+- Fetch the whole document and rewrite it
+- Change startLine/endLine to 1/1 on your own` : hasValidLineNumbers ? `**Only edit when the user explicitly asks to modify/rewrite/expand/insert.**
 
-如果用户是在提问、解释、总结、分析、询问译法、润色建议、代码说明，应该直接基于这段引用内容回答，**不要调用任何编辑工具**。
+If the user is asking a question, or wants explanation, summary, analysis, translation advice, polish suggestions, or code explanation, answer from this quote and **do not call any editing tools**.
 
-如果用户明确说“这句/这段/选中内容翻译成某种语言”，这是编辑请求，必须直接使用 editor_replace_lines；已有行号已足够，禁止再调用 editor_get_state 或 editor_get_selection。
+If the user clearly asks to translate this sentence/selection into a language, that is an edit request: use editor_replace_lines directly. Line numbers are already enough; do not call editor_get_state or editor_get_selection again.
 
-**🚨 当且仅当用户明确要求修改时，必须使用行号修改**: 当用户引用内容并要求修改时，你必须使用 editor_replace_lines，传入精确的行号：
-- 单行修改: startLine: ${startLine}, endLine: ${endLine}
-- 多行范围: startLine: ${startLine}, endLine: ${endLine}
-- 必须使用 replaceContent 参数传入新内容
+**Only when the user explicitly requests a change, edit by line number**: when the user quotes content and asks to change it, you must use editor_replace_lines with exact line numbers:
+- Single line: startLine: ${startLine}, endLine: ${endLine}
+- Multi-line: startLine: ${startLine}, endLine: ${endLine}
+- Pass the new text via replaceContent
 
-**禁止**:
-- 禁止在解释/分析类请求中调用编辑工具
-- 禁止使用 from/to 位置参数
-- 禁止使用 searchContent 文本搜索模式
-- 禁止获取整个文档内容后再操作` : `**注意**: 此引用内容没有有效的行号信息。如果需要修改，请先使用 editor_get_selection 工具获取当前选中的行号信息。`}
+**Do not**:
+- Call editing tools for explanation/analysis requests
+- Use from/to position parameters
+- Use searchContent text-search mode
+- Fetch the whole document before editing` : `**Note**: This quote has no valid line numbers. If you need to edit, first call editor_get_selection to get the current selection line numbers.`}
 
-请基于这段引用内容回答用户的问题。
+Answer the user's question based on this quoted content.
 
 `
+
 
         agentDebugLog('chat_context_quote', {
           fileName,
@@ -972,7 +974,7 @@ ${hasValidRange ? `**仅在用户明确要求修改/改写/补充/插入时才�
       context += buildCanvasSelectionContext(canvasSelectionContext)
       context += await buildMentionedContext()
 
-      // 6. 构建消息数组：较早回合使用会话级锚定摘要，最近完整回合保留原文
+      // 6. 
       const compactionContext = [
         context,
         articleStore.activeFilePath ? articleStore.currentArticle || '' : '',
@@ -1003,17 +1005,17 @@ ${hasValidRange ? `**仅在用户明确要求修改/改写/补充/插入时才�
         }
       }
 
-      // 使用 buildMessagesWithHistory 构建完整的消息数组
-      // 注意：Agent 模式下，不传入 systemPrompt（Agent 会自己构建）
-      // 将所有上下文（文章、RAG、关联文件、引用）作为 additionalContext
+      // buildMessagesWithHistory
+      // ：Agent ， systemPrompt（Agent ）
+      // （、RAG、、） additionalContext
       let messages = buildMessagesWithHistory(
         chats,
-        undefined, // systemPrompt - Agent 会自己构建
-        context,   // additionalContext - 包含文章、RAG、关联文件、引用等
-        undefined, // currentUserInput - AgentRuntime 负责且只注入一次
+        undefined, // systemPrompt - Agent builds this itself
+        context,   // additionalContext - article, RAG, linked files, quotes, etc.
+        undefined, // currentUserInput - AgentRuntime injects once
         {
-          // Agent 自己会在 think() 里重新注入当前请求，避免重复。
-          // 保留 assistant 历史；已由会话级摘要覆盖的旧回合会在构建阶段排除。
+          // Agent think() ，。
+          // assistant ；。
           includeAssistantMessages: true,
           includeLatestUserMessage: false,
           conversationSummary: preparedHistory?.compaction?.summary,
@@ -1096,12 +1098,12 @@ ${hasValidRange ? `**仅在用户明确要求修改/改写/补充/插入时才�
       }
       console.error('Agent execution error:', error)
     } finally {
-      // 清空 ref
+      // ref
       agentHandlerRef.current = null
     }
   }
 
-  // 对话（Agent 模式）
+  // （Agent ）
   async function handleSubmit() {
     if (!inputValue.trim() && attachedImages.length === 0 && fileAttachments.length === 0) return
 
@@ -1196,19 +1198,19 @@ ${hasValidRange ? `**仅在用户明确要求修改/改写/补充/插入时才�
     imageAnalysisAbortControllerRef.current?.abort()
     imageAnalysisAbortControllerRef.current = null
 
-    // 停止普通对话的流式输出
+    //
     if (abortControllerRef.current) {
       abortControllerRef.current.abort()
       abortControllerRef.current = null
     }
 
-    // 停止 Agent 执行
+    // Agent
     if (agentHandlerRef.current) {
       agentHandlerRef.current.stop()
-      // 不立即清空 ref，等待 Agent 的错误处理完成并调用 onComplete
+      // ref， Agent onComplete
     }
 
-    // 重置 loading 状态
+    // loading
     setLoading(false)
   }
 

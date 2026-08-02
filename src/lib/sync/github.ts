@@ -10,13 +10,13 @@ export function uint8ArrayToBase64(data: Uint8Array) {
   return Buffer.from(data).toString('base64');
 }
 
-// File 转换 Base64
+// File Base64
 export async function fileToBase64(file: File) {
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
-      // 删除前缀
+      //
       const base64 = reader.result?.toString().replace(/^data:image\/\w+;base64,/, '');
       resolve(base64 || '');
     }
@@ -75,7 +75,7 @@ export async function uploadFile(
   const githubUsername = await store.get('githubUsername')
   const id = uuid()
   
-  // 获取代理设置
+  //
   const proxyUrl = await store.get<string>('proxy')
   const proxy: Proxy | undefined = proxyUrl ? {
     all: proxyUrl
@@ -89,10 +89,10 @@ export async function uploadFile(
       contentPath,
     })
 
-    // 将内容转换为 Base64（GitHub API 要求）
+    // Base64（GitHub API ）
     const base64Content = encodeRemoteFileContent(file)
 
-    // 设置请求头
+    //
     const headers = new Headers();
     headers.append('Authorization', `Bearer ${accessToken}`);
     headers.append('Accept', 'application/vnd.github+json');
@@ -125,11 +125,11 @@ export async function uploadFile(
     const errorData = await response.json();
     throw {
       status: response.status,
-      message: errorData.message || '同步失败'
+      message: errorData.message || 'Sync failed'
     };
   } catch (error) {
     toast({
-      title: '同步失败',
+      title: 'Sync failed',
       description: (error as GithubError).message,
       variant: 'destructive',
     })
@@ -149,14 +149,14 @@ export async function getFiles({ path, repo, ref }: { path: string, repo: string
     encodedPath,
   })
 
-  // 获取代理设置
+  //
   const proxyUrl = await store.get<string>('proxy')
   const proxy: Proxy | undefined = proxyUrl ? {
     all: proxyUrl
   } : undefined
 
   try {
-    // 设置请求头
+    //
     const headers = new Headers();
     headers.append('Authorization', `Bearer ${accessToken}`);
     headers.append('Accept', 'application/vnd.github+json');
@@ -169,7 +169,7 @@ export async function getFiles({ path, repo, ref }: { path: string, repo: string
       proxy
     };
 
-    // 如果有 ref 参数，添加到 URL 查询参数中
+    // ref ， URL
     const refParam = ref ? `?ref=${ref}` : '';
     const url = `https://api.github.com/repos/${githubUsername}/${repo}/contents/${encodedPath}${refParam}`;
     
@@ -186,7 +186,7 @@ export async function getFiles({ path, repo, ref }: { path: string, repo: string
   } catch (error) {
     if ((error as GithubError).status !== 404) {
       toast({
-        title: '查询失败',
+        title: 'Query failed',
         description: (error as GithubError).message,
         variant: 'destructive',
       })
@@ -204,14 +204,14 @@ export async function deleteFile(
   
   const githubUsername = username || await store.get('githubUsername')
   
-  // 获取代理设置
+  //
   const proxyUrl = await store.get<string>('proxy')
   const proxy: Proxy | undefined = proxyUrl ? {
     all: proxyUrl
   } : undefined
   
   try {
-    // 设置请求头
+    //
     const headers = new Headers();
     headers.append('Authorization', `Bearer ${accessToken}`);
     headers.append('Accept', 'application/vnd.github+json');
@@ -237,7 +237,7 @@ export async function deleteFile(
       return data;
     }
 
-    throw new Error(`删除文件失败: ${response.status} ${response.statusText}`);
+    throw new Error(`Failed to delete file: ${response.status} ${response.statusText}`);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return false
@@ -252,14 +252,14 @@ export async function getFileCommits({ path, repo }: { path: string, repo: strin
 
   const githubUsername = await store.get('githubUsername')
 
-  // 获取代理设置
+  //
   const proxyUrl = await store.get<string>('proxy')
   const proxy: Proxy | undefined = proxyUrl ? {
     all: proxyUrl
   } : undefined
 
   try {
-    // 设置请求头
+    //
     const headers = new Headers();
     headers.append('Authorization', `Bearer ${accessToken}`);
     headers.append('Accept', 'application/vnd.github+json');
@@ -294,20 +294,20 @@ export async function getFileCommits({ path, repo }: { path: string, repo: strin
   }
 }
 
-// 获取 Github 用户信息
+// Github
 export async function getUserInfo(token?: string) {
   const store = await Store.load('store.json');
   const accessToken = token || await store.get('accessToken')
   if (!accessToken) return;
   
-  // 获取代理设置
+  //
   const proxyUrl = await store.get<string>('proxy')
   const proxy: Proxy | undefined = proxyUrl ? {
     all: proxyUrl
   } : undefined
   
   try {
-    // 设置请求头
+    //
     const headers = new Headers();
     headers.append('Authorization', `Bearer ${accessToken}`);
     headers.append('Accept', 'application/vnd.github+json');
@@ -328,27 +328,27 @@ export async function getUserInfo(token?: string) {
       return { data } as OctokitResponse<any>;
     }
     
-    throw new Error('获取用户信息失败');
+    throw new Error('Failed to get user info');
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return false;
   }
 }
 
-// 检查 Github 仓库
+// Github
 export async function checkSyncRepoState(name: string) {
   const store = await Store.load('store.json');
   const githubUsername = await store.get('githubUsername')
   const accessToken = await store.get('accessToken')
   if (!accessToken) return;
   
-  // 获取代理设置
+  //
   const proxyUrl = await store.get<string>('proxy')
   const proxy: Proxy | undefined = proxyUrl ? {
     all: proxyUrl
   } : undefined
   
-  // 设置请求头
+  //
   const headers = new Headers();
   headers.append('Authorization', `Bearer ${accessToken}`);
   headers.append('Accept', 'application/vnd.github+json');
@@ -371,20 +371,20 @@ export async function checkSyncRepoState(name: string) {
   return false
 }
 
-// 创建 Github 仓库
+// Github
 export async function createSyncRepo(name: string, isPrivate?: boolean) {
   const store = await Store.load('store.json');
   const accessToken = await store.get('accessToken')
   if (!accessToken) return;
   
-  // 获取代理设置
+  //
   const proxyUrl = await store.get<string>('proxy')
   const proxy: Proxy | undefined = proxyUrl ? {
     all: proxyUrl
   } : undefined
   
   try {
-    // 设置请求头
+    //
     const headers = new Headers();
     headers.append('Authorization', `Bearer ${accessToken}`);
     headers.append('Accept', 'application/vnd.github+json');
@@ -415,19 +415,19 @@ export async function createSyncRepo(name: string, isPrivate?: boolean) {
   }
 }
 
-// 读取 release
+// release
 export async function getRelease(): Promise<GithubRelease | false | undefined> {
   const store = await Store.load('store.json');
   const accessToken = await store.get<string>('accessToken')
   
-  // 获取代理设置
+  //
   const proxyUrl = await store.get<string>('proxy')
   const proxy: Proxy | undefined = proxyUrl ? {
     all: proxyUrl
   } : undefined
   
   try {
-    // 设置请求头
+    //
     const headers = new Headers();
     if (accessToken) {
       headers.append('Authorization', `Bearer ${accessToken}`);
@@ -450,14 +450,14 @@ export async function getRelease(): Promise<GithubRelease | false | undefined> {
       return data;
     }
     
-    throw new Error('获取 release 失败');
+    throw new Error('Failed to get release');
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return false
   }
 }
 
-// 读取 release 列表
+// release
 export async function getReleases(options: GetReleasesOptions = {}): Promise<GithubRelease[] | false | undefined> {
   const store = await Store.load('store.json');
   const accessToken = await store.get<string>('accessToken')
@@ -471,14 +471,14 @@ export async function getReleases(options: GetReleasesOptions = {}): Promise<Git
     return cachedReleases.releases;
   }
 
-  // 获取代理设置
+  //
   const proxyUrl = await store.get<string>('proxy')
   const proxy: Proxy | undefined = proxyUrl ? {
     all: proxyUrl
   } : undefined
 
   try {
-    // 设置请求头
+    //
     const headers = new Headers();
     if (accessToken) {
       headers.append('Authorization', `Bearer ${accessToken}`);
@@ -506,7 +506,7 @@ export async function getReleases(options: GetReleasesOptions = {}): Promise<Git
       return data;
     }
 
-    throw new Error('获取 release 列表失败');
+    throw new Error('Failed to get release list');
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     if (cachedReleases?.releases?.length) {

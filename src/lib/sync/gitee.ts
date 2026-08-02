@@ -6,20 +6,20 @@ import { buildRepoContentPath, buildRepoContentsEndpoint, debugSyncPath, encodeR
 export { decodeBase64ToString } from './remote-file'
 // Remove unused imports - these types are not actually used in this file
 
-// 自定义类型，类似于 GitHub 的响应
+// ， GitHub
 type GiteeResponse<T> = {
   data: T;
   status?: number;
   headers?: Record<string, string>;
 }
 
-// File 转换 Base64
+// File Base64
 export async function fileToBase64(file: File) {
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
-      // 删除前缀
+      //
       const base64 = reader.result?.toString().replace(/^data:image\/\w+;base64,/, '');
       resolve(base64 || '');
     }
@@ -27,13 +27,13 @@ export async function fileToBase64(file: File) {
   });
 }
 
-// Gitee Error 类型，与 GitHub 保持一致
+// Gitee Error ， GitHub
 export interface GiteeError {
   status: number;
   message: string;
 }
 
-// Gitee 仓库信息类型
+// Gitee
 export interface GiteeRepoInfo {
   id: number;
   full_name: string;
@@ -189,7 +189,7 @@ export async function uploadFile(
   const giteeUsername = await store.get('giteeUsername')
   const id = uuid()
   
-  // 获取代理设置
+  //
   const proxyUrl = await store.get<string>('proxy')
   const proxy: Proxy | undefined = proxyUrl ? {
     all: proxyUrl
@@ -220,15 +220,15 @@ export async function uploadFile(
       hasSha: Boolean(sha),
     })
 
-    // 将内容转换为 Base64（Gitee API 要求）
+    // Base64（Gitee API ）
     const base64Content = encodeRemoteFileContent(file)
 
-    // 设置请求头
+    //
     const headers = new Headers();
     headers.append('Content-Type', 'application/json');
 
-    // 根据是否有sha参数来决定是创建新文件（POST）还是更新文件（PUT）
-    // Gitee API 与 GitHub 不同，更新文件需要使用 PUT 请求
+    // sha（POST）（PUT）
+    // Gitee API GitHub ， PUT
     const requestOptions = {
       method: sha ? 'PUT' : 'POST',
       headers,
@@ -254,7 +254,7 @@ export async function uploadFile(
       return null;
     }
 
-    // 404 表示文件不存在，尝试用 POST 创建新文件
+    // 404 ， POST
     if (response.status === 404) {
       const postOptions = {
         method: 'POST',
@@ -275,18 +275,18 @@ export async function uploadFile(
       const postErrorData = await postResponse.json();
       throw {
         status: postResponse.status,
-        message: postErrorData.message || '同步失败'
+        message: postErrorData.message || 'Sync failed'
       };
     }
 
     const errorData = await response.json();
     throw {
       status: response.status,
-      message: errorData.message || '同步失败'
+      message: errorData.message || 'Sync failed'
     };
   } catch (error) {
     toast({
-      title: '同步失败',
+      title: 'Sync failed',
       description: (error as GiteeError).message,
       variant: 'destructive',
     })
@@ -305,14 +305,14 @@ export async function getFiles({ path, repo, ref }: { path: string, repo: string
     normalizedPath,
   })
 
-  // 获取代理设置
+  //
   const proxyUrl = await store.get<string>('proxy')
   const proxy: Proxy | undefined = proxyUrl ? {
     all: proxyUrl
   } : undefined
 
   try {
-    // 构建 URL 参数
+    // URL
     let urlParams = `access_token=${accessToken}`
     if (ref) {
       urlParams += `&ref=${ref}`
@@ -365,7 +365,7 @@ export async function getFiles({ path, repo, ref }: { path: string, repo: string
   } catch (error) {
     if ((error as GiteeError).status !== 404) {
       toast({
-        title: '查询失败',
+        title: 'Query failed',
         description: (error as GiteeError).message,
         variant: 'destructive',
       })
@@ -380,14 +380,14 @@ export async function deleteFile({ path, sha, repo }: { path: string, sha: strin
   
   const giteeUsername = await store.get('giteeUsername')
   
-  // 获取代理设置
+  //
   const proxyUrl = await store.get<string>('proxy')
   const proxy: Proxy | undefined = proxyUrl ? {
     all: proxyUrl
   } : undefined
   
   try {
-    // 设置请求头
+    //
     const headers = new Headers();
     headers.append('Content-Type', 'application/json');
     
@@ -414,15 +414,15 @@ export async function deleteFile({ path, sha, repo }: { path: string, sha: strin
     const errorData = await response.json();
     throw {
       status: response.status,
-      message: errorData.message || '删除失败'
+      message: errorData.message || 'Delete failed'
     };
   } catch (error) {
     toast({
-      title: '删除失败',
+      title: 'Delete failed',
       description: (error as GiteeError).message,
       variant: 'destructive',
     })
-    // 返回 false 而不是 undefined，让调用者知道操作已完成
+    // false undefined，
     return false;
   }
 }
@@ -434,14 +434,14 @@ export async function getFileCommits({ path, repo }: { path: string, repo: strin
   
   const giteeUsername = await store.get<string>('giteeUsername')
   
-  // 获取代理设置
+  //
   const proxyUrl = await store.get<string>('proxy')
   const proxy: Proxy | undefined = proxyUrl ? {
     all: proxyUrl
   } : undefined
   
   try {
-    // 设置请求参数
+    //
     const params = new URLSearchParams();
     params.append('access_token', accessToken);
     params.append('path', path);
@@ -465,7 +465,7 @@ export async function getFileCommits({ path, repo }: { path: string, repo: strin
   }
 }
 
-// 获取 Gitee 用户信息
+// Gitee
 export async function getUserInfo() {
   const store = await Store.load('store.json');
   const accessToken = await store.get<string>('giteeAccessToken')
@@ -473,22 +473,22 @@ export async function getUserInfo() {
     return;
   }
   
-  // 获取代理设置
+  //
   const proxyUrl = await store.get<string>('proxy')
   const proxy: Proxy | undefined = proxyUrl ? {
     all: proxyUrl
   } : undefined
   
   try {
-    // 设置请求参数
+    //
     const params = new URLSearchParams();
     params.append('access_token', accessToken);
     
     const requestOptions = {
       method: 'GET',
       proxy,
-      // 添加超时设置
-      timeout: 10000 // 10秒超时
+      //
+      timeout: 10000 // 10
     };
     
     const url = `https://gitee.com/api/v5/user?${params.toString()}`;
@@ -496,20 +496,20 @@ export async function getUserInfo() {
     const response = await fetch(url, requestOptions);
     const data = await response.json();
     
-    // 保存用户名到存储
+    //
     await store.set('giteeUsername', data.login);
     
     return data;
   } catch {
-    // 不显示 toast，避免在检测过程中干扰用户
+    // toast，
     throw {
       status: 0,
-      message: '获取用户信息失败'
+      message: 'Failed to fetch user info'
     };
   }
 }
 
-// 检查 Gitee 仓库
+// Gitee
 export async function checkSyncRepoState(name: string) {
   const store = await Store.load('store.json');
   const accessToken = await store.get<string>('giteeAccessToken')
@@ -519,22 +519,22 @@ export async function checkSyncRepoState(name: string) {
   
   const giteeUsername = await store.get<string>('giteeUsername')
   
-  // 获取代理设置
+  //
   const proxyUrl = await store.get<string>('proxy')
   const proxy: Proxy | undefined = proxyUrl ? {
     all: proxyUrl
   } : undefined
   
   try {
-    // 设置请求参数
+    //
     const params = new URLSearchParams();
     params.append('access_token', accessToken);
     
     const requestOptions = {
       method: 'GET',
       proxy,
-      // 添加超时设置
-      timeout: 10000 // 10秒超时
+      //
+      timeout: 10000 // 10
     };
     
     const url = `https://gitee.com/api/v5/repos/${giteeUsername}/${name}?${params.toString()}`;
@@ -547,7 +547,7 @@ export async function checkSyncRepoState(name: string) {
     
     throw {
       status: response.status,
-      message: '仓库不存在'
+      message: 'Translated message'
     };
   } catch (error) {
     if ((error as GiteeError).status === 404) {
@@ -557,20 +557,20 @@ export async function checkSyncRepoState(name: string) {
   }
 }
 
-// 创建 Gitee 仓库
+// Gitee
 export async function createSyncRepo(name: string, isPrivate?: boolean) {
   const store = await Store.load('store.json');
   const accessToken = await store.get('giteeAccessToken')
   if (!accessToken) return;
   
-  // 获取代理设置
+  //
   const proxyUrl = await store.get<string>('proxy')
   const proxy: Proxy | undefined = proxyUrl ? {
     all: proxyUrl
   } : undefined
   
   try {
-    // 设置请求头
+    //
     const headers = new Headers();
     headers.append('Content-Type', 'application/json');
     
@@ -582,7 +582,7 @@ export async function createSyncRepo(name: string, isPrivate?: boolean) {
         name,
         private: isPrivate === undefined ? true : isPrivate,
         auto_init: false,
-        description: '由 Note Gen 自动创建'
+        description: 'Note Gen'
       }),
       proxy
     };
@@ -598,11 +598,11 @@ export async function createSyncRepo(name: string, isPrivate?: boolean) {
     const errorData = await response.json();
     throw {
       status: response.status,
-      message: errorData.message || '创建仓库失败'
+      message: errorData.message || 'Failed to create repository'
     };
   } catch (error) {
     toast({
-      title: '创建仓库失败',
+      title: 'Failed to create repository',
       description: (error as GiteeError).message,
       variant: 'destructive',
     })

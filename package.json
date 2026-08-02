@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack -p 3456 -H 0.0.0.0",
-    "build": "next build --turbopack && pnpm build:prune-maps",
+    "build": "next build && pnpm build:prune-maps",
     "build:prune-maps": "node -e \"const fs=require('fs'),path=require('path');const roots=['out','.next'];function walk(dir){if(!fs.existsSync(dir))return;for(const entry of fs.readdirSync(dir,{withFileTypes:true})){const file=path.join(dir,entry.name);if(entry.isDirectory())walk(file);else if(entry.isFile()){if(entry.name.endsWith('.map'))fs.rmSync(file,{force:true});else if(entry.name.endsWith('.js')||entry.name.endsWith('.css')){const text=fs.readFileSync(file,'utf8');const next=text.replace(/\\n?\\/\\/# sourceMappingURL=[^\\n\\r]*/g,'').replace(/\\/\\*# sourceMappingURL=[^*]*\\*\\//g,'');if(next!==text)fs.writeFileSync(file,next);}}}}roots.forEach(walk);\"",
     "start": "next start --turbopack -p 3456",
     "lint": "next lint",
     "tauri": "tauri",
+    "icons": "tauri icon ./branding/noteloom-icon-master.png --ios-color '#1A2332'",
     "docs:build": "npm --prefix ./docs run build",
     "sync-version": "./scripts/sync-version.sh",
     "ios-build": "npm run sync-version && pnpm tauri ios build --open"
@@ -109,7 +110,6 @@
     "openai": "^4.78.1",
     "pdfjs-dist": "^4.10.38",
     "perfect-freehand": "^1.2.3",
-    "pinyin": "^4.0.0",
     "radix-ui": "^1.6.2",
     "react": "19.1.0",
     "react-advanced-cropper": "^0.20.1",

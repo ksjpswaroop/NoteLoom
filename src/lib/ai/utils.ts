@@ -12,7 +12,7 @@ import {
 import { loadWebSearchSettings } from '@/lib/web-search/settings';
 
 /**
- * 获取当前的prompt内容
+ * prompt
  */
 export async function getPromptContent(): Promise<string> {
   const store = await Store.load('store.json')
@@ -33,7 +33,7 @@ export async function getPromptContent(): Promise<string> {
 }
 
 /**
- * 获取 Agent 系统提示词
+ * Agent 
  */
 export async function getSystemPromptContent(): Promise<string> {
   const store = await Store.load('store.json')
@@ -55,7 +55,7 @@ export async function getSystemPromptContent(): Promise<string> {
 }
 
 /**
- * 获取AI设置
+ * AI
  */
 export async function getAISettings(modelType?: string): Promise<AiConfig | undefined> {
   const store = await Store.load('store.json')
@@ -67,14 +67,14 @@ export async function getAISettings(modelType?: string): Promise<AiConfig | unde
   }
   const webSearchSettings = await loadWebSearchSettings(store, { aiConfigs, modelId })
 
-  // 在新的数据结构中，需要找到包含指定模型ID的配置
+  // ，ID
   for (const config of aiConfigs) {
-    // 检查新的 models 数组结构
+    // models
     if (config.models && config.models.length > 0) {
-      // 首先尝试直接匹配模型ID
+      // ID
       let targetModel = config.models.find(model => model.id === modelId)
 
-      // 如果没找到，尝试匹配组合键格式 ${config.key}-${model.id}
+      // ， ${config.key}-${model.id}
       if (!targetModel && typeof modelId === 'string' && modelId.includes('-')) {
         const expectedPrefix = `${config.key}-`
         if (modelId.startsWith(expectedPrefix)) {
@@ -111,7 +111,7 @@ export async function getAISettings(modelType?: string): Promise<AiConfig | unde
         return result
       }
     } else {
-      // 向后兼容：处理旧的单模型结构
+      // ：
       if (config.key === modelId) {
         return {
           ...config,
@@ -150,13 +150,13 @@ export function getChatTokenLimitParams(
 }
 
 /**
- * 检查AI服务配置是否有效
+ * AI
  */
 export async function validateAIService(baseURL: string | undefined): Promise<string | null> {
   if (!baseURL) {
     toast({
-      title: 'AI 错误',
-      description: '请先设置 AI 地址',
+      title: 'AI error',
+      description: 'Set the AI endpoint first',
       variant: 'destructive',
     })
     return null
@@ -165,16 +165,16 @@ export async function validateAIService(baseURL: string | undefined): Promise<st
 }
 
 /**
- * 将图片 URL 转换为 base64 格式
+ * URL base64 
  */
 export async function convertImageToBase64(imageUrl: string): Promise<string | null> {
   try {
-    // 如果已经是 base64 格式，直接返回
+    // base64 ，
     if (imageUrl.startsWith('data:image')) {
       return imageUrl
     }
 
-    // 从 convertFileSrc 生成的 URL 中提取文件路径
+    // convertFileSrc URL
     let filePath = imageUrl
 
     try {
@@ -187,15 +187,15 @@ export async function convertImageToBase64(imageUrl: string): Promise<string | n
       filePath = imageUrl
     }
 
-    // 读取文件
+    //
     const fileData = await readFile(filePath)
 
-    // 转换为 base64
+    // base64
     const base64 = btoa(
       new Uint8Array(fileData).reduce((data, byte) => data + String.fromCharCode(byte), '')
     )
 
-    // 根据文件扩展名确定 MIME 类型
+    // MIME
     let mimeType = 'image/png'
     if (filePath.toLowerCase().endsWith('.jpg') || filePath.toLowerCase().endsWith('.jpeg')) {
       mimeType = 'image/jpeg'
@@ -213,30 +213,30 @@ export async function convertImageToBase64(imageUrl: string): Promise<string | n
 }
 
 /**
- * 处理AI请求错误
+ * AI
  */
 export function handleAIError(error: any, showToast = true): string | null {
-  const errorMessage = error instanceof Error ? error.message : '未知错误'
-  // 检查是否是取消请求的错误，如果是则静默处理
+  const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+  // ，
   if (error.message === 'Request was aborted.') {
-    // 静默处理取消请求，不显示任何消息
+    // ，
     return null
   }
   
   if (showToast) {
     toast({
-      description: errorMessage || 'AI错误',
+      description: errorMessage || 'AI error',
       variant: 'destructive',
     })
   }
   
-  return `请求失败: ${errorMessage}`
+  return `Request failed: ${errorMessage}`
 }
 
 /**
- * 为不同AI类型准备消息
- * @param text 用户输入文本（如果提供了 baseMessages，此参数将作为最后一条用户消息）
- * @param baseMessages 基础消息数组（如对话历史），如果提供，将合并到返回结果中
+ * AI
+ * @param text （ baseMessages，）
+ * @param baseMessages （），，
  */
 export async function prepareMessages(
   text: string,
@@ -250,7 +250,7 @@ export async function prepareMessages(
   messages: OpenAI.Chat.ChatCompletionMessageParam[],
   geminiText?: string
 }> {
-  // 获取当前 Prompt 模板
+  // Prompt
   let promptContent = await getPromptContent()
 
   const currentChatState = (await import('@/stores/chat')).default.getState()
@@ -260,7 +260,7 @@ export async function prepareMessages(
   if (shouldUseMemory) {
     try {
       const { memoryContextService } = await import('@/lib/context/loader')
-      // 确定用于检索记忆的查询文本
+      //
       let queryText = text || ''
       if (baseMessages && baseMessages.length > 0) {
         const lastUserMessage = [...baseMessages].reverse().find(message => message.role === 'user')
@@ -289,14 +289,14 @@ export async function prepareMessages(
     }
   }
 
-  // 如果提供了基础消息数组，直接使用它
+  // ，
   if (baseMessages && baseMessages.length > 0) {
-    // 检查是否已经有 system 消息
+    // system
     const hasSystemMessage = baseMessages.some(msg => msg.role === 'system')
 
     const messages: OpenAI.Chat.ChatCompletionMessageParam[] = []
 
-    // 如果需要添加 system prompt 且当前没有 system 消息
+    // system prompt system
     if (promptContent && !hasSystemMessage) {
       messages.push({
         role: 'system',
@@ -304,12 +304,12 @@ export async function prepareMessages(
       })
     }
 
-    // 添加所有基础消息
+    //
     messages.push(...baseMessages)
 
-    // 添加系统提示词（如果有且原消息中没有）
+    // （）
     if (promptContent && hasSystemMessage) {
-      // 如果已有 system 消息，合并内容
+      // system ，
       const firstSystemIndex = messages.findIndex(msg => msg.role === 'system')
       if (firstSystemIndex !== -1) {
         const existingContent = typeof messages[firstSystemIndex].content === 'string'
@@ -325,7 +325,7 @@ export async function prepareMessages(
     return { messages, geminiText: undefined }
   }
 
-  // 定义消息数组（旧逻辑，保持向后兼容）
+  // （，）
   const messages: OpenAI.Chat.ChatCompletionMessageParam[] = []
   let geminiText: string | undefined
 
@@ -345,7 +345,7 @@ export async function prepareMessages(
 }
 
 /**
- * 创建OpenAI客户端，适用于所有AI类型
+ * OpenAI，AI
  */
 export async function createOpenAIClient(AiConfig?: AiConfig): Promise<OpenAICompatibleClient> {
   const store = await Store.load('store.json')
@@ -391,8 +391,8 @@ function omitToolChoice(
 }
 
 /**
- * 部分 OpenAI 兼容的思考模型支持 tools，但会拒绝 tool_choice。
- * 首次请求遇到此类错误时，保留工具定义并省略 tool_choice 重试。
+ * OpenAI tools， tool_choice。
+ * ， tool_choice 。
  */
 export async function createChatCompletionStreamWithToolChoiceFallback(
   client: OpenAICompatibleClient,

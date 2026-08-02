@@ -46,7 +46,7 @@ import {
   ONBOARDING_SAMPLE_RECORD,
 } from './empty-state-actions'
 
-// 常量：扩展名到类型的映射（避免每次渲染时重新创建）
+// ：（）
 const MARKDOWN_EXTENSIONS = new Set([
   'md', 'txt', 'markdown', 'py', 'js', 'ts', 'jsx', 'tsx', 'css', 'scss', 'less',
   'html', 'xml', 'json', 'yaml', 'yml', 'sh', 'bash', 'java', 'c', 'cpp', 'h', 'go',

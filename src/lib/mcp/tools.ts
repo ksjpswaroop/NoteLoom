@@ -3,7 +3,7 @@ import { useMcpStore } from '@/stores/mcp'
 import type { MCPTool, CallToolResult } from './types'
 
 /**
- * 获取所有选中服务器的工具
+ * 
  */
 export function getSelectedServerTools(): Array<{
   serverId: string
@@ -30,7 +30,7 @@ export function getSelectedServerTools(): Array<{
 }
 
 /**
- * 获取所有选中服务器的工具，转换为 OpenAI Function Calling 格式
+ * ， OpenAI Function Calling 
  */
 export function getOpenAIFunctions(selectedServerIds: string[]): any[] {
   const functions: any[] = []
@@ -39,11 +39,11 @@ export function getOpenAIFunctions(selectedServerIds: string[]): any[] {
     const tools = mcpServerManager.getServerTools(serverId)
     
     for (const tool of tools) {
-      // 转换为 OpenAI Function Calling 格式
+      // OpenAI Function Calling
       functions.push({
         type: 'function',
         function: {
-          name: `${serverId}__${tool.name}`, // 使用服务器ID作为前缀避免冲突
+          name: `${serverId}__${tool.name}`, // ID
           description: tool.description || tool.name,
           parameters: tool.inputSchema || {
             type: 'object',
@@ -59,7 +59,7 @@ export function getOpenAIFunctions(selectedServerIds: string[]): any[] {
 }
 
 /**
- * 搜索工具
+ * 
  */
 export function searchTools(query: string): Array<{
   serverId: string
@@ -81,7 +81,7 @@ export function searchTools(query: string): Array<{
 }
 
 /**
- * 调用工具
+ * 
  */
 export async function callTool(
   serverId: string,
@@ -92,7 +92,7 @@ export async function callTool(
 }
 
 /**
- * 验证工具参数
+ * 
  */
 export function validateToolArgs(tool: MCPTool, args: any): {
   valid: boolean
@@ -101,14 +101,14 @@ export function validateToolArgs(tool: MCPTool, args: any): {
   const errors: string[] = []
   const required = tool.inputSchema.required || []
   
-  // 检查必需参数
+  //
   for (const field of required) {
     if (!(field in args)) {
       errors.push(`Missing required parameter: ${field}`)
     }
   }
   
-  // 检查参数类型（简单验证）
+  // （）
   const properties = tool.inputSchema.properties || {}
   for (const key of Object.keys(args)) {
     if (!(key in properties)) {
@@ -123,7 +123,7 @@ export function validateToolArgs(tool: MCPTool, args: any): {
 }
 
 /**
- * 格式化工具调用结果
+ * 
  */
 export function formatToolResult(result: CallToolResult): string {
   if (result.isError) {
@@ -140,7 +140,7 @@ export function formatToolResult(result: CallToolResult): string {
 }
 
 /**
- * 将工具转换为 OpenAI Function Calling 格式
+ * OpenAI Function Calling 
  */
 export function toolToOpenAIFunction(tool: MCPTool) {
   return {

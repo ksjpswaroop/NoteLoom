@@ -348,9 +348,9 @@ export function AgentRunTimeline({
     event.type === "model_call" || event.type === "model_response"
   ).length
   const processLabel = [
-    "已处理",
+    "Processed",
     processDuration === undefined ? undefined : formatProcessedDuration(processDuration),
-    modelExecutionCount > 0 ? `· 执行 ${modelExecutionCount} 次` : undefined,
+    modelExecutionCount > 0 ? `· ${modelExecutionCount}` : undefined,
   ].filter(Boolean).join(" ")
 
   const processContent = (

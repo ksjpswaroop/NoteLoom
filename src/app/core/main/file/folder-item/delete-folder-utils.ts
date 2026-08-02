@@ -128,7 +128,7 @@ export async function collectFolderMarkdownPaths(folderPath: string, item: DirTr
       .filter(file => file.relativePath.startsWith(folderPrefix))
       .forEach(file => paths.add(file.relativePath));
   } catch {
-    // 本地目录不存在时，仍然可以依赖当前树节点清理已知的向量记录。
+    // ，。
   }
 
   return Array.from(paths);
@@ -145,7 +145,7 @@ export async function deleteVectorDocumentsByPaths(paths: string[], folderPath?:
       await deleteVectorDocumentsByPrefix(folderPath);
       return;
     } catch (error) {
-      console.error(`删除文件夹 ${folderPath} 的向量数据失败，将逐文件重试:`, error);
+      console.error(`Failed to delete vector data for folder ${folderPath}; will retry per file:`, error);
     }
   }
 

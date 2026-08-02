@@ -58,13 +58,13 @@ export function AppSidebar({ onSearchClick }: AppSidebarProps) {
   }
 
   async function menuHandler(item: typeof items[0]) {
-    // 如果是搜索按钮，打开搜索对话框
+    // ，
     if (item.url === '/core/search') {
       onSearchClick?.()
       return
     }
 
-    // 直接跳转到对应页面
+    //
     router.push(item.url)
     const store = await Store.load('store.json')
     store.set('currentPage', item.url)

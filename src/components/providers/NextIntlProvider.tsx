@@ -7,27 +7,18 @@ import {
   DEFAULT_LOCALE,
   LANGUAGE_STORAGE_KEY,
   loadMessagesWithFallback,
-  normalizeLocale,
-  type SupportedLocale,
 } from '@/i18n/config';
 
 export function NextIntlProvider({ children }: { children: React.ReactNode }) {
   const [messages, setMessages] = useState<AbstractIntlMessages | null>(null);
-  const [locale, setLocale] = useState<SupportedLocale>(DEFAULT_LOCALE);
 
   useEffect(() => {
-    const savedLocale = normalizeLocale(localStorage.getItem(LANGUAGE_STORAGE_KEY));
-    setLocale(savedLocale);
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, DEFAULT_LOCALE);
 
-    loadMessagesWithFallback(savedLocale).then((loadedMessages) => {
+    loadMessagesWithFallback(DEFAULT_LOCALE).then((loadedMessages) => {
       setMessages(loadedMessages);
     }).catch((error) => {
-      console.error(`Failed to load messages for locale: ${savedLocale}`, error);
-
-      if (savedLocale !== DEFAULT_LOCALE) {
-        setLocale(DEFAULT_LOCALE);
-        void loadMessagesWithFallback(DEFAULT_LOCALE).then(setMessages);
-      }
+      console.error('Failed to load English messages', error);
     });
   }, []);
 
@@ -36,7 +27,7 @@ export function NextIntlProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
+    <NextIntlClientProvider locale={DEFAULT_LOCALE} messages={messages}>
       {children}
     </NextIntlClientProvider>
   );

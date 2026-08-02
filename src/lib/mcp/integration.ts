@@ -4,8 +4,8 @@ import { callTool } from './tools'
 import type { CallToolResult } from './types'
 
 /**
- * MCP 集成模块
- * 提供统一的 MCP 功能集成接口
+ * MCP 
+ * MCP 
  */
 export class MCPIntegration {
   private static instance: MCPIntegration
@@ -20,18 +20,18 @@ export class MCPIntegration {
   }
   
   /**
-   * 初始化 MCP
-   * 连接所有启用的服务器
-   */
+ * MCP
+ * 
+ */
   async initialize(): Promise<void> {
     const store = useMcpStore.getState()
     await mcpServerManager.connectEnabledServers(store.servers)
   }
   
   /**
-   * 处理 AI 工具调用
-   * 当 AI 决定调用工具时调用此方法
-   */
+ * AI 
+ * AI 
+ */
   async handleToolCall(
     toolName: string,
     args: any
@@ -42,7 +42,7 @@ export class MCPIntegration {
   }> {
     const store = useMcpStore.getState()
     
-    // 查找工具所属的服务器
+    //
     let targetServerId: string | null = null
     
     for (const serverId of store.selectedServerIds) {
@@ -75,12 +75,12 @@ export class MCPIntegration {
   }
   
   /**
-   * 清理资源
-   */
+ * 
+ */
   async cleanup(): Promise<void> {
     await mcpServerManager.disconnectAll()
   }
 }
 
-// 导出单例
+//
 export const mcpIntegration = MCPIntegration.getInstance()

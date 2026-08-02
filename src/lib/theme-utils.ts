@@ -1,7 +1,7 @@
 import { CustomThemeColors, HSLValue } from '@/types/theme'
 
 /**
- * 将 HSL 值转换为 CSS 变量格式
+ * HSL CSS 
  */
 function hslToCssValue(hsl: HSLValue): string {
   const [h, s, l] = hsl
@@ -9,14 +9,14 @@ function hslToCssValue(hsl: HSLValue): string {
 }
 
 /**
- * 应用自定义主题颜色到 DOM
- * 这个函数会同时应用亮色和暗色主题的自定义颜色
- * 暗色主题的颜色通过设置在 .dark 类上的样式来实现
+ * DOM
+ * 
+ * .dark 
  */
 export function applyThemeColors(colors: CustomThemeColors): void {
   const root = document.documentElement
 
-  // 获取或创建用于暗色主题自定义颜色的 style 标签
+  // style
   let darkStyleTag = document.getElementById('custom-dark-theme')
   if (!darkStyleTag) {
     darkStyleTag = document.createElement('style')
@@ -24,42 +24,42 @@ export function applyThemeColors(colors: CustomThemeColors): void {
     document.head.appendChild(darkStyleTag)
   }
 
-  // 构建暗色主题的 CSS 规则
+  // CSS
   let darkCssRules = '.dark {\n'
 
-  // 应用亮色主题的自定义颜色到 :root（内联样式）
+  // :root（）
   Object.entries(colors.light).forEach(([key, value]) => {
     const cssVar = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`
     if (value) {
       root.style.setProperty(cssVar, hslToCssValue(value))
     } else {
-      // 如果值为 null，移除自定义值（恢复默认）
+      // null，（）
       root.style.removeProperty(cssVar)
     }
   })
 
-  // 构建暗色主题的 CSS 规则
+  // CSS
   Object.entries(colors.dark).forEach(([key, value]) => {
     const cssVar = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`
     if (value) {
       darkCssRules += `  ${cssVar}: ${hslToCssValue(value)};\n`
     }
-    // 如果值为 null，不添加到规则中，让 CSS 默认值生效
+    // null，， CSS
   })
 
   darkCssRules += '}'
 
-  // 更新暗色主题的样式
+  //
   darkStyleTag.textContent = darkCssRules
 }
 
 /**
- * 移除所有自定义主题颜色
+ * 
  */
 export function removeThemeColors(): void {
   const root = document.documentElement
 
-  // 移除 :root 上的所有自定义颜色变量
+  // :root
   const lightVars = [
     'background', 'foreground', 'card', 'cardForeground',
     'primary', 'primaryForeground', 'secondary', 'secondaryForeground',
@@ -73,7 +73,7 @@ export function removeThemeColors(): void {
     root.style.removeProperty(cssVar)
   })
 
-  // 移除暗色主题的样式标签
+  //
   const darkStyleTag = document.getElementById('custom-dark-theme')
   if (darkStyleTag) {
     darkStyleTag.remove()
@@ -81,13 +81,13 @@ export function removeThemeColors(): void {
 }
 
 /**
- * 将颜色转换为 HSL 格式
+ * HSL 
  */
 export function hexToHsl(hex: string): HSLValue | null {
-  // 移除 # 号
+  // #
   hex = hex.replace('#', '')
 
-  // 解析 RGB
+  // RGB
   let r = 0, g = 0, b = 0
   if (hex.length === 3) {
     r = parseInt(hex[0] + hex[0], 16)
@@ -101,7 +101,7 @@ export function hexToHsl(hex: string): HSLValue | null {
     return null
   }
 
-  // 转换为 HSL
+  // HSL
   r /= 255
   g /= 255
   b /= 255
@@ -132,7 +132,7 @@ export function hexToHsl(hex: string): HSLValue | null {
 }
 
 /**
- * 将 HSL 格式转换为 Hex
+ * HSL Hex
  */
 export function hslToHex(hsl: HSLValue): string {
   const [h, s, l] = hsl

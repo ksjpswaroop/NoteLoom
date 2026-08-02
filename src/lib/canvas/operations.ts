@@ -10,22 +10,22 @@ type CanvasOperationType =
   | 'clear'
 
 const DEFAULT_NODE_LABELS: Partial<Record<CanvasNodeType, string>> = {
-  decision: '判断条件',
-  terminator: '开始 / 结束',
-  'input-output': '输入 / 输出',
-  document: '文档',
-  'multi-document': '多文档',
-  database: '数据库',
-  'predefined-process': '子流程',
-  'manual-input': '手动输入',
-  preparation: '准备',
-  delay: '延迟',
-  display: '显示',
-  connector: '连接符',
-  'off-page-connector': '跨页连接符',
-  'internal-storage': '内部存储',
-  'stored-data': '存储数据',
-  text: '文本',
+  decision: 'Start / End',
+  terminator: 'Start / End',
+  'input-output': 'Input / Output',
+  document: 'Input / Output',
+  'multi-document': 'Multi-document',
+  database: 'Database',
+  'predefined-process': 'Subprocess',
+  'manual-input': 'Manual input',
+  preparation: 'Prepare',
+  delay: 'Delay',
+  display: 'Display',
+  connector: 'Connector',
+  'off-page-connector': 'Translated message',
+  'internal-storage': 'Internal storage',
+  'stored-data': 'Stored data',
+  text: 'Text',
 }
 
 function asRecord(value: unknown): Record<string, unknown> {
@@ -74,7 +74,7 @@ export function applyCanvasOperations(document: CanvasDocument, rawOperations: u
           y: asFiniteNumber(operation.y, Math.floor(index / 4) * 140),
         },
         data: {
-          label: asString(operation.label) || DEFAULT_NODE_LABELS[nodeType] || '处理步骤',
+          label: asString(operation.label) || DEFAULT_NODE_LABELS[nodeType] || 'Process step',
           description: asString(operation.description) || undefined,
         },
       })

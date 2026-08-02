@@ -18,7 +18,7 @@ export function VectorCalc({
   const [isHoveringVector, setIsHoveringVector] = useState(false)
 
   const formatLastProcessTime = (timestamp: number | null) => {
-    if (!timestamp) return '未处理'
+    if (!timestamp) return 'Not processed'
     const date = new Date(timestamp)
     const now = new Date()
     const diffMs = now.getTime() - date.getTime()
@@ -26,10 +26,10 @@ export function VectorCalc({
     const diffHours = Math.floor(diffMs / 3600000)
     const diffDays = Math.floor(diffMs / 86400000)
 
-    if (diffMins < 1) return '刚刚'
-    if (diffMins < 60) return `${diffMins} 分钟前`
-    if (diffHours < 24) return `${diffHours} 小时前`
-    return `${diffDays} 天前`
+    if (diffMins < 1) return 'Just now'
+    if (diffMins < 60) return `${diffMins}`
+    if (diffHours < 24) return `${diffHours}`
+    return `${diffDays}`
   }
 
   const handleVectorProcess = useCallback(async () => {
@@ -49,7 +49,7 @@ export function VectorCalc({
             ? 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]'
             : 'hover:bg-[hsl(var(--muted))]'
         )}
-        title={aiCompletionEnabled ? 'AI 补全已启用' : 'AI 补全已禁用'}
+        title={aiCompletionEnabled ? 'AI' : 'AI'}
       >
         <Sparkles size={10} />
         <span>AI</span>
@@ -70,18 +70,18 @@ export function VectorCalc({
               ? 'opacity-50 cursor-wait'
               : 'hover:bg-[hsl(var(--muted))]'
           )}
-          title="点击重新计算向量"
+          title="Vector"
         >
           <Database size={10} className={cn(isProcessing && 'animate-spin')} />
-          <span>知识库</span>
+          <span>Knowledge base</span>
         </button>
 
         {/* Hover tooltip */}
         {isHoveringVector && (
           <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-0.5 bg-[hsl(var(--foreground))] text-[hsl(var(--background))] rounded text-[10px] whitespace-nowrap">
             {isProcessing
-              ? '正在计算向量...'
-              : `最后更新: ${formatLastProcessTime(lastProcessTime)}`}
+              ? 'Vector...'
+              : `Update: ${formatLastProcessTime(lastProcessTime)}`}
           </div>
         )}
       </div>

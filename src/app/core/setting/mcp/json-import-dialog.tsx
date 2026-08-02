@@ -44,16 +44,16 @@ export function JsonImportDialog({ open, onOpenChange }: JsonImportDialogProps) 
   const [error, setError] = useState('')
   const [importing, setImporting] = useState(false)
 
-  // 将 mcpServers 格式转换为标准配置数组
+  // mcpServers
   const convertMcpServersFormat = (parsed: any): MCPServerConfig[] => {
     const configs: MCPServerConfig[] = []
 
-    // 检查是否是 mcpServers 格式: { "mcpServers": { "serverName": {...} } }
+    // mcpServers : { "mcpServers": { "serverName": {...} } }
     if (parsed.mcpServers && typeof parsed.mcpServers === 'object') {
       for (const [name, serverConfig] of Object.entries(parsed.mcpServers)) {
         const config = serverConfig as any
 
-        // 检查是否是 stdio 类型 (有 command 字段)
+        // stdio ( command )
         if (config.command) {
           configs.push({
             id: `mcp-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
@@ -66,7 +66,7 @@ export function JsonImportDialog({ open, onOpenChange }: JsonImportDialogProps) 
             env: config.env,
           })
         }
-        // 检查是否是 http 类型 (有 url 字段)
+        // http ( url )
         else if (config.url) {
           configs.push({
             id: `mcp-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
@@ -82,8 +82,8 @@ export function JsonImportDialog({ open, onOpenChange }: JsonImportDialogProps) 
       return configs
     }
 
-    // 检查是否是简化的 mcpServers 格式: { "serverName": {...} }
-    // 如果没有 mcpServers 字段，但第一层是对象且包含 command 或 url
+    // mcpServers : { "serverName": {...} }
+    // mcpServers ， command url
     if (!Array.isArray(parsed) && typeof parsed === 'object') {
       let hasMcpFormat = false
       for (const [, value] of Object.entries(parsed)) {
@@ -124,7 +124,7 @@ export function JsonImportDialog({ open, onOpenChange }: JsonImportDialogProps) 
       }
     }
 
-    // 支持标准数组格式
+    //
     const standardConfigs = Array.isArray(parsed) ? parsed : [parsed]
     for (const config of standardConfigs) {
       configs.push({
@@ -156,7 +156,7 @@ export function JsonImportDialog({ open, onOpenChange }: JsonImportDialogProps) 
     try {
       const parsed = JSON.parse(jsonText)
 
-      // 转换为标准配置数组
+      //
       const configs = convertMcpServersFormat(parsed)
 
       if (configs.length === 0) {
@@ -169,7 +169,7 @@ export function JsonImportDialog({ open, onOpenChange }: JsonImportDialogProps) 
       const addedConfigs: MCPServerConfig[] = []
 
       for (const config of configs) {
-        // 验证配置结构
+        //
         if (!config.name || !config.type) {
           setError(t('jsonInvalidFormat'))
           return
@@ -190,7 +190,7 @@ export function JsonImportDialog({ open, onOpenChange }: JsonImportDialogProps) 
           return
         }
 
-        // 检查是否已存在同名服务器
+        //
         const exists = servers.some(s => s.name === config.name)
         if (exists) {
           skippedCount++
@@ -210,7 +210,7 @@ export function JsonImportDialog({ open, onOpenChange }: JsonImportDialogProps) 
           description: t('jsonImportSuccess', { count: successCount }),
         })
 
-        // 自动连接已启用的新服务器
+        //
         for (const config of addedConfigs) {
           if (config.enabled) {
             try {

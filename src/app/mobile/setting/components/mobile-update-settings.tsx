@@ -35,15 +35,15 @@ export function MobileUpdateSettings() {
       <section className="mobile-dock-surface overflow-hidden rounded-[1.35rem] border border-primary/20">
         <div className="flex items-center gap-3 p-4">
           <Image
-            src="/app-icon.png"
-            alt="NoteGen logo"
-            className="size-12 shrink-0 rounded-xl dark:invert"
+            src="/logo.svg"
+            alt="NoteLoom logo"
+            className="size-12 shrink-0 rounded-xl"
             width={48}
             height={48}
           />
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-lg font-semibold leading-none">NoteGen</h2>
+              <h2 className="text-lg font-semibold leading-none">NoteLoom</h2>
               <Badge variant="outline">v{version || '-'}</Badge>
               <ArrowRight className="size-3.5 text-muted-foreground" />
               <Badge className="border-transparent bg-green-600 text-white hover:bg-green-600 dark:bg-green-500 dark:hover:bg-green-500">

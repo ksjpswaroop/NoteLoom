@@ -1,8 +1,8 @@
 /**
- * 匿名产品统计上报。
+ * 。
  *
- * 只发送应用启动事件，用于 Aptabase 统计基础活跃数据；
- * 不上报笔记内容、文件名、文件路径、AI 对话或硬件机器 ID。
+ * ， Aptabase ；
+ * 、、、AI ID。
  */
 
 import { getVersion } from '@tauri-apps/api/app'

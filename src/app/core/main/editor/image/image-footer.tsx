@@ -32,7 +32,7 @@ export function ImageFooter({ filePath, imageWidth, imageHeight }: ImageFooterPr
         fileStat = await stat(pathOptions.path, { baseDir: pathOptions.baseDir })
       }
 
-      // 格式化文件大小
+      //
       const sizeInBytes = fileStat.size
       let formattedSize = ''
       if (sizeInBytes < 1024) {

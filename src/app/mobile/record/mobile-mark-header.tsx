@@ -45,7 +45,7 @@ export function MobileMarkHeader() {
 
   return (
     <div className="mobile-page-header flex justify-between items-center border-b px-3">
-      {/* 左侧：记录标题和数量 */}
+      {/* ： */}
       <div className="flex items-center gap-2">
         <FileText className="h-4 w-4" />
         <span className="font-medium text-sm">
@@ -53,7 +53,7 @@ export function MobileMarkHeader() {
         </span>
       </div>
 
-      {/* 右侧：回收站按钮 / 关闭回收站 */}
+      {/* ： / */}
       <div className="flex items-center gap-1">
         {trashState ? (
           <>

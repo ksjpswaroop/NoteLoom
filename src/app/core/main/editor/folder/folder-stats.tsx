@@ -9,12 +9,12 @@ import useArticleStore from '@/stores/article'
 import { getVectorDocumentsByFilename } from '@/db/vector'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import 'dayjs/locale/zh-cn'
+import 'dayjs/locale/en'
 import { calculateFolderVectors } from '@/lib/folder-vector'
 import { toast } from '@/hooks/use-toast'
 
 dayjs.extend(relativeTime)
-dayjs.locale('zh-cn')
+dayjs.locale('en')
 
 interface FolderStats {
   totalFiles: number
@@ -86,7 +86,7 @@ export function FolderStatsView({ folderPath, folderFiles }: FolderStatsViewProp
     }
   }, [folderFiles, vectorIndexedFiles])
 
-  // 确保 vectorIndexedFiles 被初始化
+  // vectorIndexedFiles
   useEffect(() => {
     const init = async () => {
       await initVectorIndexedFiles()
@@ -95,7 +95,7 @@ export function FolderStatsView({ folderPath, folderFiles }: FolderStatsViewProp
     init()
   }, [initVectorIndexedFiles])
 
-  // Initial stats calculation - 等待 vectorIndexedFiles 初始化完成
+  // Initial stats calculation - vectorIndexedFiles
   useEffect(() => {
     if (vectorFilesInitialized) {
       calculateStats()
@@ -124,8 +124,8 @@ export function FolderStatsView({ folderPath, folderFiles }: FolderStatsViewProp
 
     if (!result.embeddingModelAvailable) {
       toast({
-        title: '向量处理',
-        description: '未配置嵌入模型或模型不可用，请在AI设置中配置嵌入模型',
+        title: 'Vector processing',
+        description: 'Embedding model is not configured or unavailable. Configure it in AI settings',
         variant: 'destructive'
       })
       setVectorCalcStatus(folderPath, 'idle')

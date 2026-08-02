@@ -98,7 +98,7 @@ export async function calculateFolderVectors({
         success++;
       }
     } catch (error) {
-      console.error(`计算文件 ${file.name} 向量失败:`, error);
+      console.error(`Failed to compute vectors for file ${file.name}:`, error);
       setVectorCalcStatus?.(file.path, 'idle');
       failed++;
     } finally {

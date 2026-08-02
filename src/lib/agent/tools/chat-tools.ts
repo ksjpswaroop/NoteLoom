@@ -20,12 +20,12 @@ export const readChatsTool: Tool = {
       return {
         success: true,
         data: chats,
-        message: `找到 ${chats.length} 条对话记录`,
+        message: `Found ${chats.length} chat records`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `读取对话记录失败: ${error}`,
+        error: `Failed to read chat records: ${error}`,
       }
     }
   },
@@ -76,12 +76,12 @@ export const createChatTool: Tool = {
       return {
         success: true,
         data: { id: result.lastInsertId },
-        message: `成功创建对话记录，ID: ${result.lastInsertId}`,
+        message: `Successfully created chat record, ID: ${result.lastInsertId}`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `创建对话记录失败: ${error}`,
+        error: `Failed to create chat record: ${error}`,
       }
     }
   },
@@ -120,7 +120,7 @@ export const updateChatTool: Tool = {
       if (!chat) {
         return {
           success: false,
-          error: `未找到ID为 ${params.id} 的对话记录`,
+          error: `Chat record with ID ${params.id} not found`,
         }
       }
       
@@ -133,12 +133,12 @@ export const updateChatTool: Tool = {
       await updateChat(updatedChat)
       return {
         success: true,
-        message: `成功更新对话记录 ID: ${params.id}`,
+        message: `Successfully updated chat record ID: ${params.id}`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `更新对话记录失败: ${error}`,
+        error: `Failed to update chat record: ${error}`,
       }
     }
   },
@@ -162,12 +162,12 @@ export const deleteChatTool: Tool = {
       await deleteChat(params.id)
       return {
         success: true,
-        message: `成功删除对话记录 ID: ${params.id}`,
+        message: `Successfully deleted chat record ID: ${params.id}`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `删除对话记录失败: ${error}`,
+        error: `Failed to delete chat record: ${error}`,
       }
     }
   },
@@ -191,12 +191,12 @@ export const clearChatsTool: Tool = {
       await clearChatsByTagId(params.tagId)
       return {
         success: true,
-        message: `成功清空标签 ${params.tagId} 下的所有对话记录`,
+        message: `Successfully cleared all chat records under tag ${params.tagId}`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `清空对话记录失败: ${error}`,
+        error: `Failed to clear chat records: ${error}`,
       }
     }
   },
@@ -231,12 +231,12 @@ export const searchChatsTool: Tool = {
       return {
         success: true,
         data: results,
-        message: `找到 ${results.length} 条匹配的对话记录`,
+        message: `Found ${results.length} matching chat records`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `搜索对话记录失败: ${error}`,
+        error: `Failed to search chat records: ${error}`,
       }
     }
   },
@@ -260,7 +260,7 @@ export const createChatsBatchTool: Tool = {
       if (!Array.isArray(params.chats) || params.chats.length === 0) {
         return {
           success: false,
-          error: '参数 chats 必须是非空数组',
+          error: 'Parameter chats must be a non-empty array',
         }
       }
 
@@ -279,12 +279,12 @@ export const createChatsBatchTool: Tool = {
       return {
         success: true,
         data: { count: chatsToInsert.length },
-        message: `成功批量创建 ${chatsToInsert.length} 条对话记录`,
+        message: `Successfully batch-created ${chatsToInsert.length} chat records`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `批量创建对话记录失败: ${error}`,
+        error: `Failed to batch-create chat records: ${error}`,
       }
     }
   },
@@ -308,7 +308,7 @@ export const updateChatsBatchTool: Tool = {
       if (!Array.isArray(params.chats) || params.chats.length === 0) {
         return {
           success: false,
-          error: '参数 chats 必须是非空数组',
+          error: 'Parameter chats must be a non-empty array',
         }
       }
 
@@ -333,12 +333,12 @@ export const updateChatsBatchTool: Tool = {
       return {
         success: true,
         data: { count: chatsToUpdate.length },
-        message: `成功批量更新 ${chatsToUpdate.length} 条对话记录`,
+        message: `Successfully batch-updated ${chatsToUpdate.length} chat records`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `批量更新对话记录失败: ${error}`,
+        error: `Failed to batch-update chat records: ${error}`,
       }
     }
   },
@@ -362,7 +362,7 @@ export const deleteChatsBatchTool: Tool = {
       if (!Array.isArray(params.ids) || params.ids.length === 0) {
         return {
           success: false,
-          error: '参数 ids 必须是非空数组',
+          error: 'Parameter ids must be a non-empty array',
         }
       }
 
@@ -371,12 +371,12 @@ export const deleteChatsBatchTool: Tool = {
       return {
         success: true,
         data: { count: params.ids.length },
-        message: `成功批量删除 ${params.ids.length} 条对话记录`,
+        message: `Successfully batch-deleted ${params.ids.length} chat records`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `批量删除对话记录失败: ${error}`,
+        error: `Failed to batch-delete chat records: ${error}`,
       }
     }
   },

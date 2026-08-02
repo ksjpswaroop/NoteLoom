@@ -1,10 +1,10 @@
 import { GenTemplateRange } from '@/stores/setting';
 
 /**
- * 获取模板范围的国际化标签
- * @param range 模板范围枚举值
- * @param t 翻译函数
- * @returns 国际化后的标签文本
+ * 
+ * @param range 
+ * @param t 
+ * @returns 
  */
 export function getTemplateRangeLabel(range: GenTemplateRange, t: (key: string) => string): string {
   const keyMap = {
@@ -23,9 +23,9 @@ export function getTemplateRangeLabel(range: GenTemplateRange, t: (key: string) 
 }
 
 /**
- * 获取所有模板范围选项的国际化标签
- * @param t 翻译函数
- * @returns 包含值和标签的选项数组
+ * 
+ * @param t 
+ * @returns 
  */
 export function getTemplateRangeOptions(t: (key: string) => string) {
   return Object.values(GenTemplateRange).map(value => ({

@@ -88,7 +88,7 @@ export function SyncButton() {
     isSyncConfigured().then(setIsConfigured)
   }, [])
 
-  // 监听推送开始事件
+  //
   useEffect(() => {
     const handlePushStarted = (event: { path: string }) => {
       if (activeFilePath && event.path === activeFilePath) {
@@ -101,17 +101,17 @@ export function SyncButton() {
     }
   }, [activeFilePath])
 
-  // 监听推送完成事件
+  //
   useEffect(() => {
     const handlePushCompleted = (event: { path: string; success: boolean }) => {
       if (activeFilePath && event.path === activeFilePath) {
         setIsLoading(false)
         if (event.success) {
-          // 显示成功状态
+          //
           setShowError(false)
           setShowSuccess(true)
           setLastPushTime(new Date())
-          // 5秒后恢复
+          // 5
           if (successTimerRef.current) {
             clearTimeout(successTimerRef.current)
           }
@@ -119,10 +119,10 @@ export function SyncButton() {
             setShowSuccess(false)
           }, 5000)
         } else {
-          // 显示失败状态
+          //
           setShowSuccess(false)
           setShowError(true)
-          // 5秒后恢复
+          // 5
           if (errorTimerRef.current) {
             clearTimeout(errorTimerRef.current)
           }
@@ -169,13 +169,13 @@ export function SyncButton() {
       const store = await Store.load('store.json')
       const provider = (await store.get<string>('primaryBackupMethod') || 'github') as SyncProvider
       providerForLog = provider
-      // S3 和 WebDAV 不需要 repo
+      // S3 WebDAV repo
       const repo = (provider === 's3' || provider === 'webdav') ? '' : await getSyncRepoName(provider)
       logPerf('loadConfig', {
         hasRepo: Boolean(repo),
       })
 
-      // 始终从磁盘读取最新内容
+      //
       const workspace = await getWorkspacePath()
       const pathOptions = await getFilePathOptions(activeFilePath)
       const content = workspace.isCustom
@@ -210,16 +210,16 @@ export function SyncButton() {
           const s3Config = await store.get<S3Config>('s3SyncConfig')
           logPerf('loadProviderModule', { module: 's3', hasConfig: Boolean(s3Config) })
           if (!s3Config) {
-            throw new Error('S3 配置未找到')
+            throw new Error('S3 configuration not found')
           }
-          // S3 上传文件
+          // S3
           const result = await s3Module.s3Upload(s3Config, activeFilePath, content)
           logPerf('uploadFile', {
             hasResult: Boolean(result),
             hasEtag: Boolean(result?.etag),
           })
           if (result) {
-            // 更新 ETag 记录
+            // ETag
             useSyncStore.getState().updateS3FileEtag(activeFilePath, result.etag)
             uploadedSha = result.etag || 'uploaded'
             success = true
@@ -235,7 +235,7 @@ export function SyncButton() {
             hasRemoteSha: Boolean(getRemoteFileSha(fileInfo)),
           })
           if (Array.isArray(fileInfo)) {
-            throw new Error(`${activeFilePath} 是目录，无法推送`)
+            throw new Error(`${activeFilePath} Yes ，None`)
           }
           const result = await githubModule.uploadFile({
             file: content,
@@ -271,7 +271,7 @@ export function SyncButton() {
             hasRemoteSha: Boolean(getRemoteFileSha(fileInfo)),
           })
           if (Array.isArray(fileInfo)) {
-            throw new Error(`${activeFilePath} 是目录，无法推送`)
+            throw new Error(`${activeFilePath} Yes ，None`)
           }
           const result = await giteeModule.uploadFile({
             file: content,
@@ -307,7 +307,7 @@ export function SyncButton() {
             hasRemoteSha: Boolean(getRemoteFileSha(fileInfo)),
           })
           if (Array.isArray(fileInfo)) {
-            throw new Error(`${activeFilePath} 是目录，无法推送`)
+            throw new Error(`${activeFilePath} Yes ，None`)
           }
           const result = await gitlabModule.uploadFile({
             file: content,
@@ -339,7 +339,7 @@ export function SyncButton() {
             hasRemoteSha: Boolean(getRemoteFileSha(fileInfo)),
           })
           if (Array.isArray(fileInfo)) {
-            throw new Error(`${activeFilePath} 是目录，无法推送`)
+            throw new Error(`${activeFilePath} Yes ，None`)
           }
           const result = await giteaModule.uploadFile({
             file: content,
@@ -371,7 +371,7 @@ export function SyncButton() {
           const webdavConfig = await store.get<WebDAVConfig>('webdavSyncConfig')
           logPerf('loadProviderModule', { module: 'webdav', hasConfig: Boolean(webdavConfig) })
           if (!webdavConfig) {
-            throw new Error('WebDAV 配置未找到')
+            throw new Error('WebDAV configuration not found')
           }
           const result = await webdavModule.webdavUpload(webdavConfig, activeFilePath, content)
           logPerf('uploadFile', {
@@ -379,7 +379,7 @@ export function SyncButton() {
             hasEtag: Boolean(result?.etag),
           })
           if (result) {
-            // 更新 ETag 记录
+            // ETag
             useSyncStore.getState().updateWebDAVFileEtag(activeFilePath, result.etag)
             uploadedSha = result.etag || 'uploaded'
             success = true
@@ -419,25 +419,25 @@ export function SyncButton() {
     }
   }, [activeFilePath, isLoading])
 
-  // 如果没有配置同步，不显示按钮
+  // ，
   if (!isConfigured || !activeFilePath) return null
 
-  // 格式化时间
+  //
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
   }
 
   return (
     <div className="flex items-center gap-1.5">
-      {/* 上传中显示文字 */}
+      {/* */}
       {isLoading && (
         <span className="text-xs text-muted-foreground flex items-center gap-1">
           <Loader2 size={12} className="animate-spin" />
-          上传中
+          Uploading
         </span>
       )}
 
-      {/* 成功推送状态 */}
+      {/* */}
       {showSuccess && !isLoading && (
         <span className="text-xs text-green-500 flex items-center gap-1 animate-pulse">
           <CheckCircle size={12} />
@@ -445,15 +445,15 @@ export function SyncButton() {
         </span>
       )}
 
-      {/* 失败推送状态 */}
+      {/* */}
       {showError && !isLoading && (
         <span className="text-xs text-red-500 flex items-center gap-1">
           <XCircle size={12} />
-          上传失败
+          Upload failed
         </span>
       )}
 
-      {/* 同步按钮 */}
+      {/* */}
       {!showSuccess && !showError && !isLoading && (
         <button
           onClick={handlePush}
@@ -461,7 +461,7 @@ export function SyncButton() {
           className={cn(
             'p-0.5 rounded transition-colors flex items-center gap-1 text-muted-foreground hover:text-foreground hover:bg-muted'
           )}
-          title={isLoading ? '上传中...' : '点击推送'}
+          title={isLoading ? 'Uploading...' : 'Uploading...'}
         >
           <ArrowUpCircle size={14} />
         </button>

@@ -23,13 +23,13 @@ interface ConflictDialogProps {
   onResolved: () => void
 }
 
-// 简单的 diff 计算
+// diff
 function computeDiff(oldText: string, newText: string): { type: 'equal' | 'add' | 'remove', text: string }[] {
   const oldLines = oldText.split('\n')
   const newLines = newText.split('\n')
   const result: { type: 'equal' | 'add' | 'remove', text: string }[] = []
 
-  // 简单的行对比
+  //
   const maxLen = Math.max(oldLines.length, newLines.length)
   let oldIdx = 0
   let newIdx = 0
@@ -45,17 +45,17 @@ function computeDiff(oldText: string, newText: string): { type: 'equal' | 'add' 
       oldIdx++
       newIdx++
     } else if (oldLine === undefined) {
-      // 新增行
+      //
       if (newLine !== undefined) {
         result.push({ type: 'add', text: newLine })
       }
       newIdx++
     } else if (newLine === undefined) {
-      // 删除行
+      //
       result.push({ type: 'remove', text: oldLine })
       oldIdx++
     } else {
-      // 不相同，认为是修改
+      // ，
       result.push({ type: 'remove', text: oldLine })
       result.push({ type: 'add', text: newLine })
       oldIdx++
@@ -78,21 +78,21 @@ export function ConflictDialog({
   const [isLoading, setIsLoading] = useState(false)
   const [diff, setDiff] = useState<{ type: 'equal' | 'add' | 'remove', text: string }[]>([])
 
-  // 当对话框打开时，获取本地和远程内容
+  // ，
   useEffect(() => {
     if (!open || !activeFilePath) return
 
     const fetchContents = async () => {
       try {
-        // 获取远程内容
+        //
         const remote = await pullRemoteFile(activeFilePath)
         setRemoteContent(remote)
 
-        // 获取本地内容（从编辑器）
+        // （）
         const local = editor.getMarkdown()
         setLocalContent(local)
 
-        // 计算 diff
+        // diff
         const diffResult = computeDiff(local, remote)
         setDiff(diffResult)
       } catch (error) {
@@ -108,9 +108,9 @@ export function ConflictDialog({
 
     setIsLoading(true)
     try {
-      // 保留本地，更新同步时间
+      // ，
       await updateFileSyncTime(activeFilePath)
-      // 触发事件
+      //
       emitter.emit('sync-pulled', { path: activeFilePath })
       onResolved()
       onOpenChange(false)
@@ -126,7 +126,7 @@ export function ConflictDialog({
 
     setIsLoading(true)
     try {
-      // 使用远程内容覆盖本地
+      //
       await saveLocalFile(activeFilePath, remoteContent)
       editor.commands.setContent(remoteContent, { contentType: 'markdown' })
       await updateFileSyncTime(activeFilePath)
@@ -140,7 +140,7 @@ export function ConflictDialog({
     }
   }
 
-  // 统计变化
+  //
   const addCount = diff.filter(d => d.type === 'add').length
   const removeCount = diff.filter(d => d.type === 'remove').length
 
@@ -148,39 +148,39 @@ export function ConflictDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
         <DialogHeader>
-          <DialogTitle>文件冲突</DialogTitle>
+          <DialogTitle>File conflict</DialogTitle>
           <DialogDescription>
-            检测到远程文件与本地文件存在冲突。请选择要保留的版本。
+            Remote and local files conflict. Choose which version to keep.
           </DialogDescription>
         </DialogHeader>
 
         <div className="flex-1 overflow-hidden flex gap-4 min-h-[300px]">
-          {/* 本地版本 */}
+          {/* */}
           <div className="flex-1 flex flex-col overflow-hidden border rounded-md">
             <div className="bg-muted px-3 py-2 text-sm font-medium border-b">
-              本地版本
+              Local version
             </div>
             <div className="flex-1 overflow-auto p-3 font-mono text-xs whitespace-pre-wrap">
-              {localContent || '加载中...'}
+              {localContent || 'Loading...'}
             </div>
           </div>
 
-          {/* 远程版本 */}
+          {/* */}
           <div className="flex-1 flex flex-col overflow-hidden border rounded-md">
             <div className="bg-muted px-3 py-2 text-sm font-medium border-b">
-              远程版本
+              Remote version
             </div>
             <div className="flex-1 overflow-auto p-3 font-mono text-xs whitespace-pre-wrap">
-              {remoteContent || '加载中...'}
+              {remoteContent || 'Loading...'}
             </div>
           </div>
         </div>
 
-        {/* 变化统计 */}
+        {/* */}
         <div className="text-sm text-muted-foreground">
-          <span className="text-green-500">+{addCount} 新增</span>
+          <span className="text-green-500">+{addCount} added</span>
           {' / '}
-          <span className="text-red-500">-{removeCount} 删除</span>
+          <span className="text-red-500">-{removeCount} removed</span>
         </div>
 
         <DialogFooter>
@@ -189,13 +189,13 @@ export function ConflictDialog({
             onClick={handleKeepLocal}
             disabled={isLoading}
           >
-            保留本地
+            Keep local
           </Button>
           <Button
             onClick={handleKeepRemote}
             disabled={isLoading}
           >
-            保留远程
+            Keep remote
           </Button>
         </DialogFooter>
       </DialogContent>

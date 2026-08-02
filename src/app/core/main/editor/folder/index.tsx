@@ -69,14 +69,14 @@ export function FolderView({ folderPath }: FolderViewProps) {
   const { fileTree } = useArticleStore()
   const { getSkillsByScope, initSkills, initialized: skillsStoreInitialized } = useSkillsStore()
 
-  // 检查是否是 Skills 文件夹
+  // Skills
   const isSkillsView = isSkillsFolder(folderPath.split('/').pop() || '')
 
-  // 检查是否是 Skill 子文件夹（单个 skill）
+  // Skill （ skill）
   const skillId = extractSkillIdFromPath(folderPath)
   const isSkillDetailView = skillId !== null
 
-  // 初始化 Skills（如果是 Skills 相关视图）
+  // Skills（ Skills ）
   useEffect(() => {
     if ((isSkillsView || isSkillDetailView) && !skillsStoreInitialized) {
       initSkills()
@@ -138,6 +138,6 @@ export function FolderView({ folderPath }: FolderViewProps) {
     return <SkillDetailView skillContent={skillContent} />
   }
 
-  // 普通文件夹视图
+  //
   return <FolderStatsView folderPath={folderPath} folderFiles={folderFiles} />
 }

@@ -30,7 +30,7 @@ export function SettingWorkspace({ showTitle = true }: { showTitle?: boolean }) 
   const t = useTranslations('settings.file')
   const [open, setOpen] = useState(false)
 
-  // 选择工作区目录
+  //
   async function handleSelectWorkspace() {
     try {
       const selected = await openDialog({
@@ -44,11 +44,11 @@ export function SettingWorkspace({ showTitle = true }: { showTitle?: boolean }) 
         await switchWorkspace(path)
       }
     } catch (error) {
-      console.error('选择工作区失败:', error)
+      console.error('Failed to select workspace:', error)
     }
   }
 
-  // 切换工作区（统一处理）
+  // （）
   async function switchWorkspace(path: string) {
     try {
       await setWorkspacePath(path)
@@ -59,20 +59,20 @@ export function SettingWorkspace({ showTitle = true }: { showTitle?: boolean }) 
       if (lastActivePath) await setActiveFilePath(lastActivePath)
       await refreshSkills()
     } catch (error) {
-      console.error('切换工作区失败:', error)
+      console.error('Failed to switch workspace:', error)
     }
   }
 
 
-  // 清空所有历史记录
+  //
   async function handleClearHistory() {
     await clearWorkspaceHistory()
   }
 
-  // 重置为默认工作区
+  //
   async function handleResetWorkspace() {
     try {
-      // 确保默认目录存在
+      //
       const exists1 = await exists('article', { baseDir: BaseDirectory.AppData })
       if (!exists1) {
         await mkdir('article', { baseDir: BaseDirectory.AppData })
@@ -85,7 +85,7 @@ export function SettingWorkspace({ showTitle = true }: { showTitle?: boolean }) 
       if (lastActivePath) await setActiveFilePath(lastActivePath)
       await refreshSkills()
     } catch (error) {
-      console.error('重置工作区失败:', error)
+      console.error('Failed to reset workspace:', error)
     }
   }
 
@@ -93,7 +93,7 @@ export function SettingWorkspace({ showTitle = true }: { showTitle?: boolean }) 
     <Field>
       {showTitle ? <FieldTitle>{t('workspace.current')}</FieldTitle> : null}
         <div className="flex flex-col gap-3">
-          {/* 当前工作区路径显示和选择 */}
+          {/* */}
           <ResponsivePopover open={open} onOpenChange={setOpen} mobileTitle={t('workspace.current')}>
             <ResponsivePopoverTrigger asChild>
               <Button
@@ -118,7 +118,7 @@ export function SettingWorkspace({ showTitle = true }: { showTitle?: boolean }) 
                 <CommandList>
                   <CommandEmpty>{t('workspace.noResults')}</CommandEmpty>
                   
-                  {/* 选择新工作区 */}
+                  {/* */}
                   <CommandGroup heading={t('workspace.actions')}>
                     <CommandItem
                       onSelect={() => {
@@ -142,7 +142,7 @@ export function SettingWorkspace({ showTitle = true }: { showTitle?: boolean }) 
                     )}
                   </CommandGroup>
 
-                  {/* 历史路径 */}
+                  {/* */}
                   {workspaceHistory.length > 0 && (
                     <>
                       <CommandSeparator />

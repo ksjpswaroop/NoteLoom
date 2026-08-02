@@ -20,16 +20,16 @@ export function AudioPlayer({ audioPath, compact = false }: AudioPlayerProps) {
   const [audioSrc, setAudioSrc] = useState<string>('')
   const [isReady, setIsReady] = useState(false)
 
-  // 加载音频文件
+  //
   useEffect(() => {
     let blobUrl: string | null = null
     
     const loadAudio = async () => {
       try {
-        // 读取音频文件
+        //
         const fileData = await readFile(audioPath, { baseDir: BaseDirectory.AppData })
         
-        // 根据文件扩展名确定 MIME 类型
+        // MIME
         const extension = audioPath.split('.').pop()?.toLowerCase()
         const mimeType = extension === 'mp4' ? 'audio/mp4' :
                         extension === 'webm' ? 'audio/webm' :
@@ -39,20 +39,20 @@ export function AudioPlayer({ audioPath, compact = false }: AudioPlayerProps) {
                         extension === 'mp3' ? 'audio/mpeg' :
                         'audio/webm'
         
-        // 创建 Blob URL
+        // Blob URL
         const buffer = fileData.buffer.slice(fileData.byteOffset, fileData.byteOffset + fileData.byteLength) as ArrayBuffer
         const blob = new Blob([buffer], { type: mimeType })
         blobUrl = URL.createObjectURL(blob)
         
         setAudioSrc(blobUrl)
       } catch (error) {
-        console.error('加载音频失败:', error, '路径:', audioPath)
+        console.error('Failed', error, 'Failed', audioPath)
       }
     }
     
     loadAudio()
     
-    // 清理函数
+    //
     return () => {
       if (blobUrl) {
         URL.revokeObjectURL(blobUrl)
@@ -61,7 +61,7 @@ export function AudioPlayer({ audioPath, compact = false }: AudioPlayerProps) {
   }, [audioPath])
 
 
-  // 播放/暂停
+  // /
   const togglePlay = async () => {
     if (!audioRef.current || !isReady) return
     
@@ -73,12 +73,12 @@ export function AudioPlayer({ audioPath, compact = false }: AudioPlayerProps) {
       }
       setIsPlaying(!isPlaying)
     } catch (error) {
-      console.error('播放失败:', error)
+      console.error('Playback failed:', error)
       setIsPlaying(false)
     }
   }
 
-  // 进度调整
+  //
   const handleSeek = (value: number[]) => {
     if (!audioRef.current) return
     const newTime = value[0]
@@ -86,7 +86,7 @@ export function AudioPlayer({ audioPath, compact = false }: AudioPlayerProps) {
     setCurrentTime(newTime)
   }
 
-  // 格式化时间
+  //
   const formatTime = (time: number) => {
     if (isNaN(time) || !isFinite(time)) {
       return '0:00'
@@ -96,7 +96,7 @@ export function AudioPlayer({ audioPath, compact = false }: AudioPlayerProps) {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`
   }
 
-  // 如果音频源未加载，显示加载提示
+  // ，
   if (!audioSrc) {
     if (compact) {
       return (
@@ -113,7 +113,7 @@ export function AudioPlayer({ audioPath, compact = false }: AudioPlayerProps) {
 
     return (
       <div className="w-full py-1 px-2 bg-muted/30 rounded text-center text-xs text-muted-foreground">
-        加载音频中...
+        Loading audio...
       </div>
     )
   }
@@ -138,7 +138,7 @@ export function AudioPlayer({ audioPath, compact = false }: AudioPlayerProps) {
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
           onError={(e) => {
-            console.error('音频加载错误:', e.currentTarget.error)
+            console.error('Audio load error:', e.currentTarget.error)
             setIsReady(false)
           }}
         />
@@ -161,7 +161,7 @@ export function AudioPlayer({ audioPath, compact = false }: AudioPlayerProps) {
 
   return (
     <div className="w-full flex items-center gap-1.5 py-1 pl-2 bg-muted/30 rounded">
-      {/* 音频元素 */}
+      {/* */}
       <audio
         ref={audioRef}
         src={audioSrc}
@@ -179,14 +179,14 @@ export function AudioPlayer({ audioPath, compact = false }: AudioPlayerProps) {
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
         onError={(e) => {
-          console.error('音频加载错误:', e.currentTarget.error)
+          console.error('Audio load error:', e.currentTarget.error)
           setIsReady(false)
         }}
         onLoadStart={() => {}}
         onLoadedData={() => {}}
       />
 
-      {/* 播放/暂停按钮 */}
+      {/* / */}
       <Button
         variant="ghost"
         size="icon"
@@ -201,12 +201,12 @@ export function AudioPlayer({ audioPath, compact = false }: AudioPlayerProps) {
         )}
       </Button>
 
-      {/* 当前时间 */}
+      {/* */}
       <span className="text-xs text-muted-foreground shrink-0 w-9 text-right">
         {formatTime(currentTime)}
       </span>
 
-      {/* 进度条 */}
+      {/* */}
       <Slider
         value={[currentTime]}
         max={duration || 100}
@@ -215,7 +215,7 @@ export function AudioPlayer({ audioPath, compact = false }: AudioPlayerProps) {
         className="flex-1 cursor-pointer"
       />
 
-      {/* 总时长 */}
+      {/* */}
       <span className="text-xs text-muted-foreground shrink-0 w-9">
         {formatTime(duration)}
       </span>

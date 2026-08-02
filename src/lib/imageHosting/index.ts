@@ -19,7 +19,7 @@ import {
 export async function uploadImage(file: File) {
   const store = await Store.load('store.json');
 
-  // 检查是否启用了图床功能
+  //
   const useImageRepo = await store.get<boolean>('useImageRepo')
   const savedMainImageHosting = await store.get<string>('mainImageHosting')
   const normalizedImageHosting = getNormalizedImageHosting(savedMainImageHosting)
@@ -29,7 +29,7 @@ export async function uploadImage(file: File) {
     return undefined
   }
 
-  // 如果没有配置图床，直接返回 undefined
+  // ， undefined
   if (!mainImageHosting || mainImageHosting === 'none') {
     return undefined
   }

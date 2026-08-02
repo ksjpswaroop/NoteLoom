@@ -35,7 +35,7 @@ export default function ModelSelect(
   const currentRequestIdRef = useRef<number>(0)
   const t = useTranslations('settings.ai')
   
-  // 检查输入的模型是否存在于列表中
+  //
   const modelExists = (value: string) => {
     return list.some(item => item.id.toLowerCase() === value.toLowerCase());
   }
@@ -45,10 +45,10 @@ export default function ModelSelect(
     let model: AiConfig | undefined
     
     if (aiConfig) {
-      // 如果传入了aiConfig，直接使用
+      // aiConfig，
       model = aiConfig
     } else {
-      // 否则从store中获取当前AI配置
+      // storeAI
       const aiModelList = await store.get<AiConfig[]>('aiModelList')
       model = aiModelList?.find(item => item.key === currentAi)
     }
@@ -63,7 +63,7 @@ export default function ModelSelect(
     if (!models) return
     setList(models)
     
-    // 如果没有传入aiConfig，则从store中设置model值
+    // aiConfig，storemodel
     if (!aiConfig && setModel) {
       const store = await Store.load('store.json')
       const aiModelList = await store.get<AiConfig[]>('aiModelList')
@@ -74,7 +74,7 @@ export default function ModelSelect(
     }
   }
 
-  // 获取模型列表
+  //
   async function getModels(model: AiConfig, requestId: number) {
     try {
       setLoading(true)
@@ -100,7 +100,7 @@ export default function ModelSelect(
   }
 
   async function syncModelList(value: string) {
-    // 使用传递的setModel回调来更新模型
+    // setModel
     if (setModel) {
       setModel(value)
     }
@@ -112,7 +112,7 @@ export default function ModelSelect(
   }
 
   const handleInputChange = (value: string) => {
-    // 只更新输入值，不做其他处理
+    // ，
     setInputValue(value)
   }
 
@@ -134,7 +134,7 @@ export default function ModelSelect(
     }
   }, [])
 
-  // 只在初始化和模型变化时设置输入值
+  //
   useEffect(() => {
     if (model) {
       setInputValue(model)

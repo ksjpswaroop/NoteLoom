@@ -50,7 +50,7 @@ export function ControlText() {
   const { currentTagId, tags, fetchTags, initTags } = useTagStore()
   const [selectedTagId, setSelectedTagId] = useState<number>(currentTagId)
 
-  // 初始化时从 store 读取设置
+  // store
   useEffect(() => {
     async function loadSetting() {
       try {
@@ -60,19 +60,19 @@ export function ControlText() {
           setAutoReadClipboard(savedValue)
         }
       } catch {
-        // 忽略加载错误
+        //
       }
     }
     loadSetting()
   }, [])
 
-  // 保存设置到 store
+  // store
   const handleAutoReadChange = useCallback(async (checked: boolean) => {
     setAutoReadClipboard(checked)
     try {
       const store = await Store.load('store.json')
       await store.set('autoReadClipboard', checked)
-      // 如果勾选了 checkbox，立即读取剪贴板
+      // checkbox，
       if (checked) {
         try {
           const hasTextRes = await hasText()
@@ -83,22 +83,22 @@ export function ControlText() {
             }
           }
         } catch {
-          // 忽略剪贴板读取错误
+          //
         }
       }
     } catch {
-      // 忽略保存错误
+      //
     }
   }, [])
 
-  // 检查剪贴板中的文本
+  //
   const checkClipboard = useCallback(async () => {
     if (onboardingPrefillRef.current) {
       setText(onboardingPrefillRef.current)
       return
     }
 
-    // 只有启用自动读取时才检查剪贴板
+    //
     if (!autoReadClipboard) {
       return
     }
@@ -112,7 +112,7 @@ export function ControlText() {
         }
       }
     } catch {
-      // 忽略剪贴板读取错误
+      //
     }
   }, [autoReadClipboard])
 

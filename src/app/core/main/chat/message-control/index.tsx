@@ -62,7 +62,7 @@ export default function MessageControl({chat, children}: {chat: Chat, children: 
         </div>
       </div>
 
-      {/* 显示翻译结果 */}
+      {/* */}
       {translatedContent && (
         <div className="mt-2 pt-2 border-t border-border">
           <div className="whitespace-pre-wrap">{translatedContent}</div>

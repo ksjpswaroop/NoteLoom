@@ -367,7 +367,7 @@ export function MdEditor({ tabContentsRef, filePath, isActive }: MdEditorProps) 
   }
 
   // Loading state - wait for content to be loaded
-  // 如果正在从远程拉取，优先显示拉取遮罩
+  // ，
   if (isPulling) {
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -385,7 +385,7 @@ export function MdEditor({ tabContentsRef, filePath, isActive }: MdEditorProps) 
     )
   }
 
-  // 如果 currentArticle 已经有内容，直接显示（拉取完成）
+  // currentArticle ，（）
   const showContent = (currentArticle && currentArticle.length > 0) || initialContent !== null
   if (isLoading && !showContent) {
     return (

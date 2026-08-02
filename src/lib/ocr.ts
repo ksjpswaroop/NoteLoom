@@ -13,7 +13,7 @@ async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T
   let timeoutId: ReturnType<typeof setTimeout> | undefined
 
   const timeoutPromise = new Promise<T>((_, reject) => {
-    timeoutId = setTimeout(() => reject(new Error('OCR 识别超时')), timeoutMs)
+    timeoutId = setTimeout(() => reject(new Error('OCR timed out')), timeoutMs)
   })
 
   try {
@@ -35,7 +35,7 @@ async function recognizeImagePath(path: string, timeoutMs = DEFAULT_OCR_TIMEOUT_
   const activeProvider = await getActiveOcrProvider()
 
   if (!activeProvider) {
-    throw new Error('当前平台暂无内置 OCR 引擎')
+    throw new Error('No built-in OCR engine on this platform')
   }
 
   return withTimeout(runInstalledOcrProvider({

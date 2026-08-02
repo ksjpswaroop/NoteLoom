@@ -1,22 +1,22 @@
 /**
- * BM25 检索模块
- * 中文友好的 BM25 算法实现，无需外部分词库
+ * BM25 retrieval module
+ * Chinese-friendly BM25 implementation without an external tokenizer
  */
 
 /**
- * 文档项结构
+ * Document item shape
  */
 export interface BM25Document {
-  id: string;           // 文档唯一标识（通常用文件名）
-  content: string;      // 文档内容
+  id: string;           // Document unique id (usually filename)
+  content: string;      // Document content
 }
 
 /**
- * 检索结果
+ * Search result
  */
 export interface BM25Result {
-  id: string;           // 文档ID
-  score: number;        // BM25 分数
+  id: string;           // Document id
+  score: number;        // BM25 score
 }
 
 const CHUNK_KEY_SEPARATOR = '::rag-chunk::';
@@ -36,7 +36,7 @@ export function parseBM25ChunkKey(id: string): { filename: string; chunkId: numb
 }
 
 /**
- * BM25 索引类
+ * BM25 index class
  */
 export class BM25Index {
   private documents: Map<string, string> = new Map(); // id -> content
@@ -45,9 +45,9 @@ export class BM25Index {
   private docLengths: Map<string, number> = new Map(); // id -> document length
   private averageDocLength: number = 0;
 
-  // BM25 参数
-  private k1: number;  // 词频饱和参数
-  private b: number;   // 长度归一化参数
+  // BM25 parameters
+  private k1: number;  // term-frequency saturation parameter
+  private b: number;   // length normalization parameter
 
   constructor(k1: number = 1.2, b: number = 0.75) {
     this.k1 = k1;
@@ -66,8 +66,8 @@ export class BM25Index {
   }
 
   /**
-   * 多语言分词：空格语言保留单词和数字，CJK/Hangul 连续文本生成字符二元组。
-   * 这种方式不依赖特定语言的词典，也能检索编号、日文和阿拉伯文。
+   * Multilingual tokenization: keep words/numbers for spaced languages; emit character bigrams for CJK/Hangul runs.
+   * This does not depend on a language-specific dictionary and can also match numbers, Japanese, and Arabic.
    */
   private tokenize(text: string): string[] {
     const tokens: string[] = [];
@@ -98,11 +98,11 @@ export class BM25Index {
   }
 
   /**
-   * 构建索引
-   * @param documents 文档列表
+   * Build the index
+   * @param documents document list
    */
   index(documents: BM25Document[]): void {
-    // 清空现有索引
+    // Clear existing index
     this.documents.clear();
     this.docVectors.clear();
     this.idfCache.clear();
@@ -111,36 +111,36 @@ export class BM25Index {
     const N = documents.length;
     let totalLength = 0;
 
-    // 1. 处理每个文档
+    // 1. Process each document
     for (const doc of documents) {
       const tokens = this.tokenize(doc.content);
       const tokenFreq = new Map<string, number>();
 
-      // 计算词频
+      // Compute term frequencies
       for (const token of tokens) {
         tokenFreq.set(token, (tokenFreq.get(token) || 0) + 1);
       }
 
-      // 存储文档和词频向量
+      // Store documents and term-frequency vectors
       this.documents.set(doc.id, doc.content);
       this.docVectors.set(doc.id, tokenFreq);
       this.docLengths.set(doc.id, tokens.length);
       totalLength += tokens.length;
     }
 
-    // 2. 计算平均文档长度
+    // 2. Compute average document length
     this.averageDocLength = N > 0 ? totalLength / N : 0;
 
-    // 3. 计算 IDF
+    // 3. Compute IDF
     this.calculateIDF(N);
   }
 
   /**
-   * 计算 IDF（逆文档频率）
-   * @param N 总文档数
+   * Compute IDF (inverse document frequency)
+   * @param N total document count
    */
   private calculateIDF(N: number): void {
-    // 统计每个 token 出现在多少个文档中
+    // Count how many documents contain each token
     const docFreq = new Map<string, number>();
 
     for (const [, tokenFreq] of this.docVectors.entries()) {
@@ -149,7 +149,7 @@ export class BM25Index {
       }
     }
 
-    // 计算 IDF：log((N - df + 0.5) / (df + 0.5) + 1)
+    // IDF: log((N - df + 0.5) / (df + 0.5) + 1)
     for (const [token, df] of docFreq.entries()) {
       const idf = Math.log((N - df + 0.5) / (df + 0.5) + 1);
       this.idfCache.set(token, idf);
@@ -157,32 +157,32 @@ export class BM25Index {
   }
 
   /**
-   * 搜索
-   * @param query 查询文本
-   * @param limit 返回结果数量限制
-   * @returns 排序后的检索结果
+   * Search
+   * @param query query text
+   * @param limit result limit
+   * @returns ranked search results
    */
   search(query: string, limit: number = 10): BM25Result[] {
     const queryTokens = this.tokenize(query);
 
     const results: Map<string, number> = new Map();
 
-    // 对每个文档计算 BM25 分数
+    // Score each document with BM25
     for (const [docId, docVector] of this.docVectors.entries()) {
       const docLength = this.docLengths.get(docId) || 0;
       let score = 0;
 
-      // BM25 公式：
+      // BM25 formula:
       // score = Σ IDF(qi) * (f(qi, D) * (k1 + 1)) / (f(qi, D) + k1 * (1 - b + b * |D| / avgDl))
       for (const token of queryTokens) {
-        // 检查 token 是否在文档中
+        // Skip tokens absent from the document
         const freq = docVector.get(token) || 0;
         if (freq === 0) continue;
 
-        // 获取 IDF
+        // Get IDF
         const idf = this.idfCache.get(token) || 0;
 
-        // 计算 BM25 分数分量
+        // Compute BM25 score component
         const numerator = freq * (this.k1 + 1);
         const denominator = freq + this.k1 * (1 - this.b + this.b * (docLength / this.averageDocLength));
         const componentScore = idf * (numerator / denominator);
@@ -195,7 +195,7 @@ export class BM25Index {
       }
     }
 
-    // 按分数降序排序
+    // Sort by score descending
     const sortedResults = Array.from(results.entries())
       .sort(([, a], [, b]) => b - a)
       .slice(0, limit)
@@ -205,8 +205,8 @@ export class BM25Index {
   }
 
   /**
-   * 更新单个文档
-   * @param document 要更新的文档
+   * Update a single document
+   * @param document document to update
    */
   update(document: BM25Document): void {
     const documents = new Map(this.documents);
@@ -275,36 +275,36 @@ export class BM25Index {
   }
 
   /**
-   * 删除文档
-   * @param docId 文档ID
+   * Delete document
+   * @param docId Document id
    */
   delete(docId: string): void {
     if (!this.documents.has(docId)) {
       return;
     }
 
-    // 删除文档
+    // Delete document
     this.documents.delete(docId);
     this.docVectors.delete(docId);
     this.docLengths.delete(docId);
 
-    // 重新计算 IDF（因为文档频率变了）
+    // Recalculate IDF because document frequencies changed
     this.calculateIDF(this.documents.size);
 
-    // 重新计算平均文档长度
+    // Recalculate average document length
     const totalLength = Array.from(this.docLengths.values()).reduce((a, b) => a + b, 0);
     this.averageDocLength = this.documents.size > 0 ? totalLength / this.documents.size : 0;
   }
 
   /**
-   * 获取索引中的文档数量
+   * Get document count in the index
    */
   size(): number {
     return this.documents.size;
   }
 
   /**
-   * 清空索引
+   * Clear the index
    */
   clear(): void {
     this.documents.clear();
@@ -316,13 +316,13 @@ export class BM25Index {
 }
 
 /**
- * 全局 BM25 索引实例
+ * Global BM25 index instance
  */
 let globalBM25Index: BM25Index | null = null;
 
 /**
- * 初始化全局 BM25 索引
- * @param documents 文档列表
+ * Initialize the global BM25 index
+ * @param documents document list
  */
 export function initBM25Index(documents: BM25Document[]): BM25Index {
   if (!globalBM25Index) {
@@ -333,14 +333,14 @@ export function initBM25Index(documents: BM25Document[]): BM25Index {
 }
 
 /**
- * 获取全局 BM25 索引
+ * Get the global BM25 index
  */
 export function getBM25Index(): BM25Index | null {
   return globalBM25Index;
 }
 
 /**
- * 清空全局 BM25 索引
+ * Clear the global BM25 index
  */
 export function clearBM25Index(): void {
   if (globalBM25Index) {

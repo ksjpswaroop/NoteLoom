@@ -14,22 +14,22 @@ import {
 import useRagSettingsStore from '@/stores/ragSettings';
 
 interface VectorState {
-  isAutoVectorEnabled: boolean;    // 是否在文件保存后自动更新向量
-  isProcessing: boolean;           // 是否正在处理向量
-  lastProcessTime: number | null;  // 最后一次处理向量的时间
-  hasRerankModel: boolean;         // 是否有可用的重排序模型
-  hasEmbeddingModel: boolean;      // 是否有可用的嵌入模型
+  isAutoVectorEnabled: boolean;    // Save
+  isProcessing: boolean;           //
+  lastProcessTime: number | null;  //
+  hasRerankModel: boolean;         //
+  hasEmbeddingModel: boolean;      //
   indexStats: VectorIndexStats;
 
-  // 统计数据
-  documentCount: number;           // 文档数量
+  //
+  documentCount: number;           //
 
-  // 初始化函数
+  //
   initVectorDb: () => Promise<void>;
 
   setAutoVectorEnabled: (enabled: boolean) => Promise<void>;
 
-  // 处理向量
+  //
   processAllDocuments: () => Promise<void>;
   processDocument: (filename: string, content: string) => Promise<void>;
   checkEmbeddingModel: () => Promise<boolean>;
@@ -52,16 +52,16 @@ const useVectorStore = create<VectorState>((set, get) => ({
   },
   documentCount: 0,
 
-  // 初始化向量数据库
+  //
   initVectorDb: async () => {
     try {
       await useRagSettingsStore.getState().initSettings();
       await initVectorDb();
 
-      // 初始化 BM25 索引
+      // BM25
       await initBM25Search();
 
-      // 读取用户设置
+      //
       const store = await Store.load('store.json');
       const isAutoVectorEnabled = await store.get<boolean>('autoVectorEnabled') ?? true;
       const lastProcessTime = await store.get<number>('lastVectorProcessTime') || null;
@@ -71,24 +71,24 @@ const useVectorStore = create<VectorState>((set, get) => ({
         lastProcessTime
       });
 
-      // 检查嵌入模型可用性
+      //
       if (isAutoVectorEnabled) {
         const modelAvailable = await get().checkEmbeddingModel();
         if (!modelAvailable) {
           toast({
-            title: '向量数据库',
-            description: '未配置嵌入模型或模型不可用，请在AI设置中配置嵌入模型',
+            title: 'Vector database',
+            description: 'Embed ， AI Embed',
             variant: 'destructive',
           });
         }
       }
 
-      // 检查重排序模型是否可用
+      //
       const hasRerankModel = await get().checkRerankModel();
       set({ hasRerankModel });
       await get().refreshIndexStats();
     } catch (error) {
-      console.error('初始化向量数据库失败:', error);
+      console.error('Vector databaseFailed', error);
     }
   },
 
@@ -98,27 +98,27 @@ const useVectorStore = create<VectorState>((set, get) => ({
     set({ isAutoVectorEnabled: enabled });
   },
 
-  // 处理所有文档向量
+  //
   processAllDocuments: async () => {
-    // 如果已经在处理中，直接返回
+    // ，
     if (get().isProcessing) return;
 
     let processingToast: ReturnType<typeof toast> | undefined;
     let previousDocuments: VectorDocumentSnapshot[] | null = null;
 
     try {
-      // 检查嵌入模型是否可用
+      //
       const modelAvailable = await get().checkEmbeddingModel();
       if (!modelAvailable) {
         toast({
-          title: '向量处理',
-          description: '未配置嵌入模型或模型不可用，请在AI设置中配置嵌入模型',
+          title: 'Vector processing',
+          description: 'Embed ， AI Embed',
           variant: 'destructive',
         });
         return;
       }
 
-      // 设置处理状态
+      //
       set({ isProcessing: true });
 
       const forceRebuild = useRagSettingsStore.getState().indexNeedsRebuild;
@@ -127,18 +127,18 @@ const useVectorStore = create<VectorState>((set, get) => ({
         await clearVectorDb();
       }
 
-      // 显示处理开始的提示
+      //
       processingToast = toast({
-        title: '向量处理',
-        description: '开始处理文档向量，这可能需要一些时间...',
+        title: 'Vector processing',
+        description: 'Vector， ...',
         duration: Infinity,
       });
 
-      // 处理所有文档，带进度回调
+      // ，
       const result = await processAllMarkdownFiles((current, total, fileName) => {
         processingToast?.update({
-          title: '向量处理中',
-          description: `已处理 ${current}/${total}：${fileName}`,
+          title: 'Processing vectors',
+          description: `${current}/${total}：${fileName}`,
           duration: Infinity,
         });
       });
@@ -148,7 +148,7 @@ const useVectorStore = create<VectorState>((set, get) => ({
         await initBM25Search();
       }
 
-      // 更新处理时间和状态
+      //
       const currentTime = Date.now();
       const store = await Store.load('store.json');
       await store.set('lastVectorProcessTime', currentTime);
@@ -159,32 +159,32 @@ const useVectorStore = create<VectorState>((set, get) => ({
         documentCount: result.success
       });
 
-      // 重新初始化 BM25 索引
+      // BM25
       await initBM25Search();
       if (result.failed === 0) {
         await useRagSettingsStore.getState().markIndexClean();
       }
       await get().refreshIndexStats();
 
-      // 显示处理结果
-      let description = `成功处理 ${result.success} 个文档`;
+      //
+      let description = `${result.success}`;
       if (result.failed > 0) {
-        description += `，失败 ${result.failed} 个文档`;
-        // 如果有失败文件，显示前几个
+        description += `，Failed ${result.failed}`;
+        // ，
         if (result.failedFiles && result.failedFiles.length > 0) {
           const failedSample = result.failedFiles.slice(0, 3).map(f => f.fileName).join('、');
-          description += `\n失败文件: ${failedSample}${result.failedFiles.length > 3 ? ' 等' : ''}`;
+          description += `\nFailedFile: ${failedSample}${result.failedFiles.length > 3 ? ' etc.' : ''}`;
         }
       }
 
       processingToast.update({
-        title: result.failed > 0 ? '向量处理完成（部分失败）' : '向量处理完成',
+        title: result.failed > 0 ? 'Vector processing complete（ Failed）' : 'Vector processing complete',
         description,
         variant: result.failed > 0 ? 'destructive' : 'default',
         duration: 5000,
       });
     } catch (error) {
-      console.error('处理文档向量失败:', error);
+      console.error('VectorFailed', error);
       set({ isProcessing: false });
 
       if (previousDocuments) {
@@ -193,13 +193,13 @@ const useVectorStore = create<VectorState>((set, get) => ({
           await initBM25Search();
           await get().refreshIndexStats();
         } catch (restoreError) {
-          console.error('恢复原有知识库索引失败:', restoreError);
+          console.error('Failed', restoreError);
         }
       }
 
       const errorToast = {
-        title: '向量处理失败',
-        description: '处理文档向量时发生错误，请查看控制台日志',
+        title: 'Vector processing failed',
+        description: 'Vector Error，',
         variant: 'destructive',
         duration: 5000,
       } as const;
@@ -212,36 +212,36 @@ const useVectorStore = create<VectorState>((set, get) => ({
     }
   },
 
-  // 处理单个文档向量
+  //
   processDocument: async (filePath: string, content: string) => {
     try {
       await processMarkdownFile(filePath, content);
     } catch (error) {
-      console.error(`处理文档 ${filePath} 向量失败:`, error);
+      console.error(`${filePath} VectorFailed`, error);
     }
   },
 
-  // 检查嵌入模型可用性
+  //
   checkEmbeddingModel: async () => {
     try {
       const modelAvailable = await checkEmbeddingModelAvailable();
       set({ hasEmbeddingModel: modelAvailable });
       return modelAvailable;
     } catch (error) {
-      console.error('检查嵌入模型失败:', error);
+      console.error('Embed Failed', error);
       set({ hasEmbeddingModel: false });
       return false;
     }
   },
 
-  // 检查重排序模型可用性
+  //
   checkRerankModel: async () => {
     try {
       const modelAvailable = await checkRerankModelAvailable();
       set({ hasRerankModel: modelAvailable });
       return modelAvailable;
     } catch (error) {
-      console.error('检查重排序模型失败:', error);
+      console.error('Failed', error);
       set({ hasRerankModel: false });
       return false;
     }
@@ -252,7 +252,7 @@ const useVectorStore = create<VectorState>((set, get) => ({
       const indexStats = await getVectorIndexStats();
       set({ indexStats, documentCount: indexStats.documentCount });
     } catch (error) {
-      console.error('读取知识库索引统计失败:', error);
+      console.error('Failed', error);
     }
   }
 }));

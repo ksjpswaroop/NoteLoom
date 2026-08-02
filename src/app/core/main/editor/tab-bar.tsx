@@ -58,7 +58,7 @@ interface TabBarProps {
   onCloseAllTabs: () => void
   onCloseLeftTabs: (path: string) => void
   onCloseRightTabs: (path: string) => void
-  showUndoRedo?: boolean // 保留这个 prop 以保持兼容性，但主要使用 store 中的值
+  showUndoRedo?: boolean //  prop ， store 
 }
 
 // Sortable Tab with Context Menu
@@ -450,7 +450,7 @@ export function TabBar({
             <div className="flex items-center gap-0.5 px-2 border-r border-border shrink-0">
               <TooltipButton
                 icon={<Undo2 className="w-4 h-4" />}
-                tooltipText={`撤销 (${modKey}+Z)`}
+                tooltipText={`(${modKey}+Z)`}
                 side="bottom"
                 onClick={() => {
                   if (activeCanvasId) {
@@ -465,7 +465,7 @@ export function TabBar({
               />
               <TooltipButton
                 icon={<Redo2 className="w-4 h-4" />}
-                tooltipText={`重做 (${modKey}+Shift+Z)`}
+                tooltipText={`(${modKey}+Shift+Z)`}
                 side="bottom"
                 onClick={() => {
                   if (activeCanvasId) {

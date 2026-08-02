@@ -43,21 +43,21 @@ export function GitlabSync() {
 
   const [gitlabAccessTokenVisible, setGitlabAccessTokenVisible] = useState<boolean>(false)
 
-  // 获取实际使用的仓库名称
+  //
   const getRepoName = () => {
     return gitlabCustomSyncRepo.trim() || RepoNames.sync
   }
 
 
-  // 检查 Gitlab 项目状态（仅检查，不创建）
+  // Gitlab （，）
   async function checkProjectState() {
     try {
       setGitlabSyncProjectState(SyncStateEnum.checking)
-      // 先清空之前的项目信息
+      //
       setGitlabSyncProjectInfo(undefined)
       
       await getUserInfo();
-      // 检查同步项目状态
+      //
       const repoName = getRepoName()
       const syncProject = await checkSyncProjectState(repoName)
       
@@ -75,7 +75,7 @@ export function GitlabSync() {
     }
   }
 
-  // 手动创建项目
+  //
   async function createGitlabProject() {
     try {
       setGitlabSyncProjectState(SyncStateEnum.creating)
@@ -93,7 +93,7 @@ export function GitlabSync() {
     }
   }
 
-  // Token 变化处理
+  // Token
   async function tokenChangeHandler(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value
     if (value === '') {
@@ -106,20 +106,20 @@ export function GitlabSync() {
     await store.save()
   }
 
-  // 实例类型变化处理
+  //
   async function instanceTypeChangeHandler(value: GitlabInstanceType) {
     await setGitlabInstanceType(value)
   }
 
-  // 自定义 URL 变化处理
+  // URL
   async function customUrlChangeHandler(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value
     await setGitlabCustomUrl(value)
   }
 
-  // 获取当前实例的 Token 创建 URL
+  // Token URL
   function getTokenCreateUrl() {
-    const query = '?name=NoteGen&description=NoteGen+sync&scopes=api'
+    const query = '?name=NoteLoom&description=NoteLoom+sync&scopes=api'
     if (gitlabInstanceType === GitlabInstanceType.SELF_HOSTED) {
       const baseUrl = gitlabCustomUrl.replace(/\/+$/, '')
       return baseUrl ? `${baseUrl}/-/user_settings/personal_access_tokens${query}` : '#'
@@ -132,19 +132,19 @@ export function GitlabSync() {
     async function init() {
       const store = await Store.load('store.json');
       
-      // 加载实例类型
+      //
       const instanceType = await store.get<GitlabInstanceType>('gitlabInstanceType')
       if (instanceType) {
         setGitlabInstanceType(instanceType)
       }
       
-      // 加载自定义 URL
+      // URL
       const customUrl = await store.get<string>('gitlabCustomUrl')
       if (customUrl) {
         setGitlabCustomUrl(customUrl)
       }
       
-      // 加载访问令牌
+      //
       const token = await store.get<string>('gitlabAccessToken')
       if (token) {
         setGitlabAccessToken(token)
@@ -175,7 +175,7 @@ export function GitlabSync() {
       </div>
       <p className="text-sm text-muted-foreground mb-4">{t('settings.sync.platformDesc')}</p>
 
-      {/* 实例类型选择 */}
+      {/* */}
       <div className="space-y-2 mb-4">
         <label className="text-sm font-medium">{t('settings.sync.gitlabInstanceType')}</label>
         <ResponsiveSelect
@@ -185,14 +185,14 @@ export function GitlabSync() {
           placeholder={t('settings.sync.gitlabInstanceTypePlaceholder')}
           options={[
             { value: GitlabInstanceType.OFFICIAL, label: <span className="flex items-center gap-2"><Globe />GitLab.com</span> },
-            { value: GitlabInstanceType.JIHULAB, label: <span className="flex items-center gap-2"><Globe />极狐</span> },
+            { value: GitlabInstanceType.JIHULAB, label: <span className="flex items-center gap-2"><Globe />JiHu</span> },
             { value: GitlabInstanceType.SELF_HOSTED, label: <span className="flex items-center gap-2"><Server />{t('settings.sync.gitlabInstanceTypeOptions.selfHosted')}</span> },
           ]}
         />
         <p className="text-xs text-muted-foreground">{t('settings.sync.gitlabInstanceTypeDesc')}</p>
       </div>
 
-      {/* 自定义 URL（自建实例时显示） */}
+      {/* URL（） */}
       {gitlabInstanceType === GitlabInstanceType.SELF_HOSTED && (
         <div className="space-y-2 mb-4">
           <label className="text-sm font-medium">GitLab URL</label>
@@ -206,7 +206,7 @@ export function GitlabSync() {
         </div>
       )}
 
-      {/* Token 输入 */}
+      {/* Token */}
       <div className="space-y-2">
         <label className="text-sm font-medium">GitLab Access Token</label>
         <TokenInputControl
@@ -219,7 +219,7 @@ export function GitlabSync() {
         />
       </div>
 
-      {/* 自定义仓库 */}
+      {/* */}
       <div className="mt-4 space-y-2">
         <label className="text-sm font-medium">{t('settings.sync.customSyncRepo')}</label>
         <Input
@@ -230,7 +230,7 @@ export function GitlabSync() {
         <p className="text-xs text-muted-foreground">{t('settings.sync.customSyncRepoDesc')}</p>
       </div>
 
-      {/* 操作按钮 */}
+      {/* */}
       <div className="mt-4 flex gap-2 flex-wrap">
         {gitlabAccessToken ? (
           <>
@@ -267,7 +267,7 @@ export function GitlabSync() {
         )}
       </div>
 
-      {/* 仓库信息 */}
+      {/* */}
       {gitlabSyncProjectInfo && (
         <div className="border-t mt-4 pt-4">
           <div className="flex items-center gap-4">

@@ -13,17 +13,17 @@ import { toast } from '@/hooks/use-toast'
 import { useRecordCompletion } from './use-record-completion'
 import { getDefaultRecordSaveTagId } from '@/lib/record-save-target'
 
-// 常见的代码格式
+//
 const codeExtensions = [
-  // Web开发
+  // Web
   'js', 'jsx', 'ts', 'tsx', 'html', 'css', 'scss', 'sass', 'less', 'vue', 'svelte', 'php', 'mjs', 'mts',
-  // 编程语言
+  //
   'py', 'java', 'cpp', 'c', 'cs', 'go', 'rb', 'rs', 'swift', 'kt', 'scala', 'dart', 'lua', 'r',
-  // 标记/配置
+  // /
   'json', 'xml', 'yaml', 'yml', 'toml', 'ini', 'graphql', 'sql',
-  // Shell脚本
+  // Shell
   'sh', 'bash', 'zsh', 'fish', 'ps1',
-  // 其他
+  //
   'asm', 'pl', 'clj', 'ex', 'elm', 'f90', 'hs', 'jl', 'swift', 'ml'
 ];
 const textFileExtensions = ['txt', 'md', 'csv'];
@@ -74,13 +74,13 @@ export function ControlFile() {
   async function readFileByPath(path: string) {
     const tagId = await getDefaultRecordSaveTagId()
     const ext = path.substring(path.lastIndexOf('.') + 1)
-    // 提取文件名（不含路径）
+    // （）
     const fileName = path.split('/').pop() || path.split('\\').pop() || path
-    // 构建描述：文件名
+    // ：
     const desc = fileName
     let content = ''
 
-    // 处理 PDF 文件
+    // PDF
     if (pdfExtensions.includes(ext)) {
       const queueId = uuid()
       try {
@@ -91,15 +91,15 @@ export function ControlFile() {
         setQueue(queueId, { progress: t('record.mark.progress.save') })
       } catch (error) {
         console.error('PDF extraction failed:', error)
-        content = 'PDF 文本提取失败'
+        content = 'PDF text extraction failed'
       }
       removeQueue(queueId)
 
-      // 将完整路径存储在 url 字段，用于点击时打开文件夹
+      // url ，
       await saveFileRecord(path, desc, content, tagId)
       return
     }
-    // 处理文本文件和代码文件
+    //
     else if ([...textFileExtensions, ...codeExtensions].includes(ext)) {
       try {
         content = await readTextFile(path)
@@ -109,7 +109,7 @@ export function ControlFile() {
         content = t('record.capture.fileReadFailed')
       }
     }
-    // 不支持的文件类型
+    // Unsupported file type
     else {
       content = t('record.capture.fileUnsupportedContent')
       toast({
@@ -118,7 +118,7 @@ export function ControlFile() {
       })
     }
 
-    // 将完整路径存储在 url 字段，用于点击时打开文件夹
+    // Store the full path in the url field so clicking opens the folder
     await saveFileRecord(path, desc, content, tagId)
   }
 

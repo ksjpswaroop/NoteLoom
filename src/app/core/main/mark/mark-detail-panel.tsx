@@ -270,7 +270,7 @@ function TodoMetaControls({
   return (
     <div className="flex h-8 w-full min-w-0 flex-wrap items-center gap-x-6 gap-y-2 overflow-hidden">
       <div className="flex min-w-0 items-center gap-1.5">
-        <span className="shrink-0 text-xs text-muted-foreground/70">状态</span>
+        <span className="shrink-0 text-xs text-muted-foreground/70">Status</span>
         <button
           type="button"
           disabled={disabled}
@@ -325,7 +325,7 @@ function TextRecordMeta({ content }: { content: string }) {
   return (
     <div className="flex h-8 min-w-0 items-center">
       <span className="truncate text-xs text-muted-foreground">
-        {charCount > 0 ? `${charCount} 字 · ${lineCount} 行` : '空内容'}
+        {charCount > 0 ? `${charCount} · ${lineCount}` : 'Empty content'}
       </span>
     </div>
   )
@@ -790,7 +790,7 @@ function TodoDetailEditor({ mark }: { mark: Mark }) {
 
   return (
     <div className="flex w-full min-w-0 max-w-full flex-col overflow-hidden divide-y">
-      <SectionBlock title="标题">
+      <SectionBlock title="Title">
         <Input
           id="record-detail-todo-title"
           value={todoData.title}
@@ -799,7 +799,7 @@ function TodoDetailEditor({ mark }: { mark: Mark }) {
           className="w-full min-w-0 max-w-full"
         />
       </SectionBlock>
-      <SectionBlock title="内容" contentClassName="overflow-visible">
+      <SectionBlock title="Content" contentClassName="overflow-visible">
         <div
           id="record-detail-todo-description"
           className="record-detail-markdown-editor min-h-32 w-full min-w-0 max-w-full overflow-visible bg-background"

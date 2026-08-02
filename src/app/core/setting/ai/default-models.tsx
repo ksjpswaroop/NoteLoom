@@ -21,11 +21,11 @@ export default function DefaultModelsSection() {
   const t = useTranslations('settings.ai.defaultModels');
   const { theme, systemTheme } = useTheme();
   
-  // 确定当前主题
+  //
   const currentTheme = theme === 'system' ? systemTheme : theme;
   const isDark = currentTheme === 'dark';
   
-  // SiliconFlow 图片URL
+  // SiliconFlow URL
   const siliconFlowImageUrl = isDark 
     ? 'https://s2.loli.net/2025/09/10/KWPOA5XhIGmYTV9.png'
     : 'https://s2.loli.net/2025/09/10/gVhlriQ81PJabSY.png';
@@ -67,7 +67,7 @@ export default function DefaultModelsSection() {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        {/* 模型列表 */}
+        {/* */}
         <ItemGroup className="grid gap-3 lg:grid-cols-3">
           {models.map((model, index) => (
             <Item key={index} variant="outline">

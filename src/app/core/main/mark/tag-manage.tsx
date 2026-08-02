@@ -78,7 +78,7 @@ function AccordionItemWrapper({
                 const contextMenuTrigger = contextChild as React.ReactElement<{ children?: React.ReactNode }>
                 return React.cloneElement(contextMenuTrigger, {
                   children: React.Children.map(contextMenuTrigger.props.children, (triggerChild) => {
-                    // 将 sortable 属性应用到 AccordionTrigger
+                    // sortable AccordionTrigger
                     if (React.isValidElement(triggerChild) && triggerChild.type === AccordionTrigger) {
                       return (
                         <div ref={sortableActivatorRef} {...sortableAttributes} {...sortableListeners}>
@@ -118,7 +118,7 @@ function SortableTagItem({ tag, children }: { tag: Tag; children: React.ReactNod
     opacity: isDragging ? 0.5 : 1,
   }
 
-  // 将拖拽激活器引用传递给子组件
+  //
   return (
     <div ref={setNodeRef} style={style}>
       {React.cloneElement(children as React.ReactElement<Record<string, unknown>>, {
@@ -143,7 +143,7 @@ export function TagManage() {
   const { init } = useChatStore()
   const textSize = getContextMenuTextSize('record')
 
-  // 自定义传感器，忽略记录项的拖拽
+  // ，
   const customPointerSensor = useSensor(PointerSensor, {
     activationConstraint: {
       delay: 250,
@@ -158,11 +158,11 @@ export function TagManage() {
     })
   )
 
-  // 处理拖拽开始，检查是否是记录项
+  // ，
   const handleDragStart = (event: any) => {
     const target = event.active?.node?.current as HTMLElement
     
-    // 如果拖拽的是记录项，取消 dnd-kit 拖拽
+    // ， dnd-kit
     if (target?.querySelector('[data-mark-item]') || target?.closest('[data-mark-item]')) {
       event.cancel()
     }
@@ -203,7 +203,7 @@ export function TagManage() {
     await init(newTagId)
     setNewTagName("")
     setIsAdding(false)
-    // 添加新标签后自动展开
+    //
     setExpandedTagId(newTagId.toString())
   }
 
@@ -234,7 +234,7 @@ export function TagManage() {
     setEditingName(tag.name)
   }
 
-  // 获取当前标签下的记录
+  //
   const getTagMarks = (tagId: number) => {
     return marks.filter(mark => mark.tagId === tagId)
   }
@@ -267,7 +267,7 @@ export function TagManage() {
     return visibleTags.flatMap((tag) => getFilteredTagMarks(tag.id).map((mark: Mark) => mark.id))
   }, [getFilteredTagMarks, visibleTags])
 
-  // 处理拖拽结束
+  //
   async function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event
 
@@ -277,13 +277,13 @@ export function TagManage() {
 
       const newTags = arrayMove(tags, oldIndex, newIndex)
       
-      // 更新本地状态
+      //
       const updatedTags = newTags.map((tag, index) => ({
         ...tag,
         sortOrder: index
       }))
       
-      // 批量更新数据库
+      //
       await updateTagsOrder(updatedTags.map(tag => ({ id: tag.id, sortOrder: tag.sortOrder || 0 })))
       await fetchTags()
     }
@@ -315,7 +315,7 @@ export function TagManage() {
     fetchData()
   }, [initTags, fetchTags, fetchMarks])
 
-  // 初始化时展开当前标签（只执行一次）
+  // （）
   React.useEffect(() => {
     if (currentTag && !hasInitialized) {
       setExpandedTagId(currentTag.id.toString())
@@ -323,7 +323,7 @@ export function TagManage() {
     }
   }, [currentTag, hasInitialized])
 
-  // 监听刷新事件，展开当前标签
+  // ，
   React.useEffect(() => {
     const handleRefresh = () => {
       if (currentTagId) {
@@ -468,13 +468,13 @@ export function TagManage() {
             items={visibleTags.map(tag => tag.id)}
             strategy={verticalListSortingStrategy}
           >
-            {/* 标签列表 */}
+            {/* */}
             <Accordion
               type="single"
               collapsible
               value={expandedTagId}
               onValueChange={(value) => {
-                // 直接设置展开状态，允许折叠（折叠时 value 为空字符串）
+                // ，（ value ）
                 setExpandedTagId(value || "")
               }}
               className="w-full"
@@ -549,15 +549,15 @@ export function TagManage() {
                   </ContextMenu>
                   <AccordionContent className="h-auto px-0 pb-0">
 
-                    {/* 显示当前标签的队列（正在处理中的记录） */}
+                    {/* （） */}
                     {queues.filter(queue => queue.tagId === tag.id).map((queue) => (
                       <MarkLoading key={queue.queueId} mark={queue} />
                     ))}
 
-                    {/* 图片画廊 - 显示当前标签下所有无内容的图片 */}
+                    {/* - */}
                     <ImageGallery marks={getFilteredTagMarks(tag.id)} />
                     
-                    {/* 显示已完成的记录 - 过滤掉没有内容的图片记录 */}
+                    {/* - */}
                     {renderTagRecords(tag.id)}
                   </AccordionContent>
                 </AccordionItemWrapper>

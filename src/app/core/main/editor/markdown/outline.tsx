@@ -796,7 +796,7 @@ export function Outline({
     }
   }, [activeHeadingId, normalizedSearchQuery, outlineMeta, visibleHeadingIds])
 
-  // 如果编辑器还没准备好或没有打开Outline，直接返回 null
+  // Outline， null
   if (!isOpen || !isReady) return null
 
   const outlineContent = (

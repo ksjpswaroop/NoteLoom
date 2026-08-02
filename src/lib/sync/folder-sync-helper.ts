@@ -21,12 +21,12 @@ export async function syncFolderByItem(item: DirTree): Promise<FolderSyncResult>
 export function showFolderSyncToast(result: FolderSyncResult) {
   if (result.success) {
     toast({
-      title: '文件夹同步成功',
+      title: 'Folder sync succeeded',
       description: result.message
     })
   } else {
     toast({
-      title: '文件夹同步失败',
+      title: 'Folder sync failed',
       description: result.message,
       variant: 'destructive'
     })

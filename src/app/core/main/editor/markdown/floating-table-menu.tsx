@@ -45,11 +45,11 @@ export function FloatingTableMenu({ editor }: FloatingTableMenuProps) {
     // Get the coordinates of the selection
     const coords = editor.view.coordsAtPos(from)
 
-    // 转换为滚动容器内的相对坐标
+    //
     const relativeTop = coords.bottom - containerBounds.top + scrollContainer.scrollTop + 10
     const relativeLeft = coords.left - containerBounds.left + scrollContainer.scrollLeft
 
-    // 边界检测：left 在 [0, 容器宽度 - 菜单宽度] 范围内
+    // ：left [0, - ]
     const currentMenuWidth = menuRef.current?.offsetWidth || 200
     const maxLeft = Math.max(0, containerBounds.width - currentMenuWidth)
     const left = Math.min(relativeLeft, maxLeft)
@@ -165,7 +165,7 @@ export function FloatingTableMenu({ editor }: FloatingTableMenuProps) {
           <Button type="button" variant="ghost" size="icon-sm"
             onClick={insertTable}
             disabled={!canInsertTable}
-            title="插入表格"
+            title="Insert table"
           >
             <TableIcon />
           </Button>
@@ -177,25 +177,25 @@ export function FloatingTableMenu({ editor }: FloatingTableMenuProps) {
             {/* Add row/column */}
             <Button type="button" variant="ghost" size="icon-sm"
               onClick={addRowBefore}
-              title="在上方插入行"
+              title="Insert row above"
             >
               <Rows />
             </Button>
             <Button type="button" variant="ghost" size="icon-sm"
               onClick={addRowAfter}
-              title="在下方插入行"
+              title="Insert row below"
             >
               <Rows className="rotate-180" />
             </Button>
             <Button type="button" variant="ghost" size="icon-sm"
               onClick={addColumnBefore}
-              title="在左侧插入列"
+              title="Insert column left"
             >
               <Columns />
             </Button>
             <Button type="button" variant="ghost" size="icon-sm"
               onClick={addColumnAfter}
-              title="在右侧插入列"
+              title="Insert column right"
             >
               <Columns className="rotate-180" />
             </Button>
@@ -205,19 +205,19 @@ export function FloatingTableMenu({ editor }: FloatingTableMenuProps) {
             {/* Alignment */}
             <Button type="button" variant="ghost" size="icon-sm"
               onClick={setColumnAlignmentLeft}
-              title="左对齐"
+              title="Align left"
             >
               <AlignLeft />
             </Button>
             <Button type="button" variant="ghost" size="icon-sm"
               onClick={setColumnAlignmentCenter}
-              title="居中对齐"
+              title="Align center"
             >
               <AlignCenter />
             </Button>
             <Button type="button" variant="ghost" size="icon-sm"
               onClick={setColumnAlignmentRight}
-              title="右对齐"
+              title="Align right"
             >
               <AlignRight />
             </Button>
@@ -227,19 +227,19 @@ export function FloatingTableMenu({ editor }: FloatingTableMenuProps) {
             {/* Delete */}
             <Button type="button" variant="destructive" size="icon-sm"
               onClick={deleteColumn}
-              title="删除列"
+              title="Delete column"
             >
               <Trash2 />
             </Button>
             <Button type="button" variant="destructive" size="icon-sm"
               onClick={deleteRow}
-              title="删除行"
+              title="Delete row"
             >
               <Rows />
             </Button>
             <Button type="button" variant="destructive" size="icon-sm"
               onClick={deleteTable}
-              title="删除表格"
+              title="Delete table"
             >
               <Trash2 />
             </Button>

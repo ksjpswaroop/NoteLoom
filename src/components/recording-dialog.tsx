@@ -36,14 +36,14 @@ export function RecordingDialog({ open, onOpenChange, onTranscriptionComplete }:
 
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // 格式化录音时长
+  //
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // 开始录音
+  //
   const handleStart = async () => {
     try {
       await startRecording();
@@ -57,7 +57,7 @@ export function RecordingDialog({ open, onOpenChange, onTranscriptionComplete }:
     }
   };
 
-  // 暂停/继续录音
+  // /
   const handlePauseResume = () => {
     if (isPaused) {
       resumeRecording();
@@ -66,7 +66,7 @@ export function RecordingDialog({ open, onOpenChange, onTranscriptionComplete }:
     }
   };
 
-  // 停止录音并识别
+  //
   const handleStop = async () => {
     try {
       setIsProcessing(true);
@@ -98,7 +98,7 @@ export function RecordingDialog({ open, onOpenChange, onTranscriptionComplete }:
         });
       }
     } catch (error) {
-      console.error('语音识别失败:', error);
+      console.error('Speech recognition failed:', error);
       toast({
         title: t('error'),
         description: error instanceof Error ? error.message : t('transcriptionError'),
@@ -109,7 +109,7 @@ export function RecordingDialog({ open, onOpenChange, onTranscriptionComplete }:
     }
   };
 
-  // 取消录音
+  //
   const handleCancel = () => {
     cancelRecording();
     onOpenChange(false);
@@ -124,12 +124,12 @@ export function RecordingDialog({ open, onOpenChange, onTranscriptionComplete }:
         </DialogHeader>
 
         <div className="flex flex-col items-center gap-6 py-8">
-          {/* 录音时长显示 */}
+          {}
           <div className="text-5xl font-mono font-bold text-foreground">
             {formatDuration(recordingDuration)}
           </div>
 
-          {/* 录音状态指示器 */}
+          {}
           <div className="flex items-center gap-3">
             {isRecording && !isPaused && (
               <>
@@ -154,7 +154,7 @@ export function RecordingDialog({ open, onOpenChange, onTranscriptionComplete }:
             )}
           </div>
 
-          {/* 控制按钮 */}
+          {}
           <div className="flex gap-3">
             {!isRecording && !isProcessing && (
               <Button
@@ -190,7 +190,7 @@ export function RecordingDialog({ open, onOpenChange, onTranscriptionComplete }:
             )}
           </div>
 
-          {/* 取消按钮 */}
+          {}
           {(isRecording || isProcessing) && (
             <Button
               variant="ghost"

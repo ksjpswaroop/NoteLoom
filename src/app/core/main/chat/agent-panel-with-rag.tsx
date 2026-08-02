@@ -15,14 +15,14 @@ interface RagSourceDetail {
 }
 
 interface AgentPanelWithRagProps {
-  // RAG 相关
+  // RAG
   ragSources?: string[]
   ragSourceDetails?: RagSourceDetail[]
 
-  // Agent 历史模式
+  // Agent
   agentHistoryJson?: string
 
-  // Agent 实时模式（如果需要）
+  // Agent （）
   isRunning?: boolean
   isThinking?: boolean
   currentThought?: string
@@ -78,7 +78,7 @@ interface StructuredAgentHistory {
 }
 
 /**
- * Agent 面板组件 - 将知识库检索和 Agent 执行合并在一起
+ * Agent - Agent 
  */
 export function AgentPanelWithRag({
   ragSources = [],
@@ -122,20 +122,20 @@ export function AgentPanelWithRag({
     structuredHistory?.traceEvents?.length
   )
 
-  // 创建文件名到详情的映射
+  //
   const detailMap = React.useMemo(
     () => new Map(ragSourceDetails.map((d) => [d.filename, d])),
     [ragSourceDetails]
   )
 
-  // 打开文件
+  //
   const handleOpenFile = (e: React.MouseEvent, filepath: string) => {
     e.stopPropagation()
     setActiveFilePath(filepath)
     readArticle(filepath)
   }
 
-  // 切换单个文件的展开状态
+  //
   const toggleFileExpansion = (filename: string) => {
     setExpandedFiles((prev) =>
       prev.includes(filename)
@@ -144,10 +144,10 @@ export function AgentPanelWithRag({
     )
   }
 
-  // 确定模式：如果有 agentHistoryJson，使用历史模式；否则使用实时模式
+  // ： agentHistoryJson，；
   const mode: "live" | "history" = agentHistoryJson ? "history" : "live"
 
-  // 如果既没有 RAG 也没有 Agent 内容，不渲染
+  // RAG Agent ，
   const hasRag = ragSources.length > 0
   const hasAgent = agentHistoryJson || isRunning || thoughtHistory.length > 0
 
@@ -173,7 +173,7 @@ export function AgentPanelWithRag({
     <div className="w-full">
       <div className="overflow-hidden">
         <ul className="space-y-2">
-          {/* 知识库检索步骤 */}
+          {/* */}
           {hasRag && (
             <>
               <li>
@@ -199,7 +199,7 @@ export function AgentPanelWithRag({
                 </button>
               </li>
 
-              {/* 文件列表 */}
+              {/* */}
               {isRagExpanded && ragSources.map((source) => {
                 const hasDetail = detailMap.has(source)
                 const detail = detailMap.get(source)
@@ -240,7 +240,7 @@ export function AgentPanelWithRag({
                       </div>
                     </button>
 
-                    {/* 展开的详情内容 */}
+                    {/* */}
                     {isFileExpanded && hasDetail && detail?.content && (
                       <div className="border-muted mt-1 mr-2 mb-1.5 ml-10">
                         <div className="text-muted-foreground border-foreground/20 border-l border-dashed pl-3 text-xs">
@@ -272,7 +272,7 @@ export function AgentPanelWithRag({
             </>
           )}
 
-          {/* Agent 执行步骤 - 使用 AgentPlan embedded 模式 */}
+          {/* Agent - AgentPlan embedded */}
           {hasAgent && (
             <AgentPlan
               mode={mode}

@@ -1,11 +1,11 @@
-// Gitlab 实例类型枚举
+// Gitlab
 export enum GitlabInstanceType {
-  OFFICIAL = 'gitlab.com',      // 官方国际版
-  JIHULAB = 'gitlab.cn',        // 中国极狐版
-  SELF_HOSTED = 'self-hosted'   // 自建实例
+  OFFICIAL = 'gitlab.com',      //
+  JIHULAB = 'gitlab.cn',        // JiHu
+  SELF_HOSTED = 'self-hosted'   //
 }
 
-// Gitlab 实例配置
+// Gitlab
 export interface GitlabInstanceConfig {
   type: GitlabInstanceType;
   baseUrl: string;
@@ -13,35 +13,35 @@ export interface GitlabInstanceConfig {
   description: string;
 }
 
-// 预定义的 Gitlab 实例配置
+// Gitlab
 export const GITLAB_INSTANCES: Record<GitlabInstanceType, GitlabInstanceConfig> = {
   [GitlabInstanceType.OFFICIAL]: {
     type: GitlabInstanceType.OFFICIAL,
     baseUrl: 'https://gitlab.com',
     name: 'GitLab.com',
-    description: '官方国际版 GitLab'
+    description: 'GitLab'
   },
   [GitlabInstanceType.JIHULAB]: {
     type: GitlabInstanceType.JIHULAB,
     baseUrl: 'https://jihulab.com',
-    name: '极狐GitLab',
-    description: '中国版 GitLab'
+    name: 'GitLab',
+    description: 'GitLab'
   },
   [GitlabInstanceType.SELF_HOSTED]: {
     type: GitlabInstanceType.SELF_HOSTED,
     baseUrl: '',
-    name: '自建实例',
-    description: '自建 GitLab 服务器'
+    name: 'Self-hosted instance',
+    description: 'GitLab'
   }
 };
 
-// Gitlab 错误类型
+// Gitlab
 export interface GitlabError {
   status: number;
   message: string;
 }
 
-// Gitlab 用户信息类型
+// Gitlab
 export interface GitlabUserInfo {
   id: number;
   username: string;
@@ -60,7 +60,7 @@ export interface GitlabUserInfo {
   organization: string;
 }
 
-// Gitlab 项目信息类型
+// Gitlab
 export interface GitlabProjectInfo {
   id: number;
   name: string;
@@ -114,7 +114,7 @@ export interface GitlabProjectInfo {
   model_registry_access_level: string;
 }
 
-// Gitlab 文件信息类型
+// Gitlab
 export interface GitlabFile {
   file_name: string;
   file_path: string;
@@ -125,10 +125,10 @@ export interface GitlabFile {
   blob_id: string;
   commit_id: string;
   last_commit_id: string;
-  content?: string; // 文件内容，base64 编码
+  content?: string; // ，base64
 }
 
-// Gitlab 仓库文件列表项类型
+// Gitlab
 export interface GitlabRepositoryFile {
   id: string;
   name: string;
@@ -137,7 +137,7 @@ export interface GitlabRepositoryFile {
   mode: string;
 }
 
-// Gitlab 提交信息类型
+// Gitlab
 export interface GitlabCommit {
   id: string;
   short_id: string;
@@ -155,15 +155,15 @@ export interface GitlabCommit {
   web_url: string;
 }
 
-// Gitlab API 响应类型
+// Gitlab API
 export type GitlabResponse<T> = {
   data: T;
   status?: number;
   headers?: Record<string, string>;
 }
 
-// 同步状态枚举（复用现有的）
+// （）
 export { SyncStateEnum } from './github.types';
 
-// 仓库名称枚举（复用现有的）
+// （）
 export { RepoNames } from './github.types';

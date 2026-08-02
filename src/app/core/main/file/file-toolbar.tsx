@@ -62,9 +62,9 @@ export function FileToolbar() {
         baseUrl = 'https://gitee.com'
         break
       case 'gitlab':
-        // 处理 Gitlab 自建实例
+        // Gitlab
         if (gitlabInstanceType === GitlabInstanceType.SELF_HOSTED && gitlabCustomUrl) {
-          baseUrl = gitlabCustomUrl.replace(/\/$/, '') // 移除末尾斜杠
+          baseUrl = gitlabCustomUrl.replace(/\/$/, '') //
         } else if (gitlabInstanceType === GitlabInstanceType.JIHULAB) {
           baseUrl = 'https://jihulab.com'
         } else {
@@ -72,9 +72,9 @@ export function FileToolbar() {
         }
         break
       case 'gitea':
-        // 处理 Gitea 自建实例
+        // Gitea
         if (giteaInstanceType === GiteaInstanceType.SELF_HOSTED && giteaCustomUrl) {
-          baseUrl = giteaCustomUrl.replace(/\/$/, '') // 移除末尾斜杠
+          baseUrl = giteaCustomUrl.replace(/\/$/, '') //
         } else {
           baseUrl = 'https://gitea.com'
         }
@@ -89,14 +89,14 @@ export function FileToolbar() {
 
   return (
     <div className="flex items-center h-12 border-b px-2">
-      {/* 向量数据库 */}
+      {/* */}
       <TooltipButton
         icon={isProcessing ? <LoaderCircle className="animate-spin size-4" /> : <BookA className="text-primary" />}
         tooltipText={isProcessing ? t('processingVectors') : t('calculateVectors')}
         onClick={processAllDocuments}
         disabled={isProcessing}
       />
-      {/* 同步 */}
+      {/* */}
       {
         primaryBackupMethod && username ?
           <TooltipButton

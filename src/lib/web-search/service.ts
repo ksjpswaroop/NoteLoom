@@ -354,7 +354,7 @@ interface HtmlSearchEngine {
 const HTML_SEARCH_ENGINES: HtmlSearchEngine[] = [
   {
     provider: 'bing',
-    url: query => `https://cn.bing.com/search?q=${encodeURIComponent(query)}&setlang=zh-cn`,
+    url: query => `https://www.bing.com/search?q=${encodeURIComponent(query)}&setlang=en`,
     selectors: {
       result: 'li.b_algo',
       link: 'h2 a',
@@ -419,7 +419,7 @@ async function searchHtmlEngine(
       method: 'GET',
       headers: {
         Accept: 'text/html,application/xhtml+xml',
-        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.6',
+        'Accept-Language': 'en-US,en;q=0.9',
         'User-Agent': 'Mozilla/5.0 AppleWebKit/537.36 Chrome/131 Safari/537.36',
       },
       signal: timeout.signal,

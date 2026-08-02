@@ -2,7 +2,7 @@ import mitt from 'mitt'
 import type { OnboardingStepId } from '@/app/core/main/editor/onboarding-state'
 import type { CanvasDocument } from '@/types/canvas'
 
-// 定义事件类型
+//
 interface Events {
   'searchAndScroll': string;
   'ai-completion-loading': boolean;
@@ -128,7 +128,7 @@ interface Events {
   'abort-ai-streaming': void;
   'accept-ai-suggestion': void;
   'reject-ai-suggestion': void;
-  // Agent 编辑器工具事件 - 内联定义避免重复
+  // Agent -
   'editor-get-selection': { resolve: (data: { text: string; from: number; to: number; html?: string; startLine?: number; endLine?: number }) => void };
   'editor-get-content': { resolve: (data: { markdown: string; text: string; wordCount: number; charCount: number; totalLines?: number; numberedLines?: string; version: number; selection?: { text: string; from: number; to: number; startLine: number; endLine: number } }) => void };
   'editor-insert': { content: string; position?: number; resolve: (result: { success: boolean; insertedLength: number; newCursorPosition?: number }) => void };

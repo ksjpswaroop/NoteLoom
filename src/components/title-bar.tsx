@@ -54,20 +54,20 @@ export function TitleBar({ onSearchClick, onActivityClick, activityOpen = false 
   const { open: settingsOpen, openSettings, closeSettings } = useSettingsDialogStore()
   const { leftSidebarVisible, centerPanelVisible, rightSidebarVisible, toggleLeftSidebar, toggleCenterPanel, toggleRightSidebar } = useSidebarStore()
   
-  // 检查关闭面板后是否会导致"仅左"状态或无面板状态
+  // ""
   const wouldCauseLeftOnly = (currentVisible: boolean, panel: 'left' | 'center' | 'right') => {
-    // 如果面板本来就不可见，不会导致问题（打开面板总是允许的）
+    // ，（）
     if (!currentVisible) return false
     
     const visibleCount = [leftSidebarVisible, centerPanelVisible, rightSidebarVisible].filter(Boolean).length
     
-    if (visibleCount === 1) return true // 不允许关闭最后一个面板
+    if (visibleCount === 1) return true //
     
     if (visibleCount === 2) {
-      // 只有当关闭中间或右侧面板会导致"仅左"状态时才阻止
+      // ""
       if (panel === 'center' && leftSidebarVisible && !rightSidebarVisible) return true
       if (panel === 'right' && leftSidebarVisible && !centerPanelVisible) return true
-      // 关闭左侧面板不会导致"仅左"状态（它会变成"仅中"或"仅右"），所以允许
+      // ""（""""），
     }
     
     return false
@@ -87,7 +87,7 @@ export function TitleBar({ onSearchClick, onActivityClick, activityOpen = false 
   const searchPlaceholder = getFileName() || t('navigation.searchPlaceholder')
 
 
-  // 拖拽传感器配置
+  //
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -97,7 +97,7 @@ export function TitleBar({ onSearchClick, onActivityClick, activityOpen = false 
     })
   )
 
-  // 处理拖拽结束
+  //
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
 
@@ -115,7 +115,7 @@ export function TitleBar({ onSearchClick, onActivityClick, activityOpen = false 
   }
 
   useEffect(() => {
-    // 检查是否为移动设备
+    //
     setIsMobile(isMobileDevice())
     
     try {
@@ -161,18 +161,18 @@ export function TitleBar({ onSearchClick, onActivityClick, activityOpen = false 
     }
   }
 
-  // 移动端不显示标题栏
+  //
   if (isMobile) {
     return null
   }
 
-  // 平台未知时不显示
+  //
   if (currentPlatform === 'unknown') {
     return null
   }
 
-  // macOS: 红绿灯按钮在左侧，拖拽区域需要避开
-  // Windows/Linux: 控制按钮在右侧，拖拽区域需要避开
+  // macOS: ，
+  // Windows/Linux: ，
   const isMacOS = currentPlatform === 'macos'
 
   return (
@@ -180,12 +180,12 @@ export function TitleBar({ onSearchClick, onActivityClick, activityOpen = false 
       <div
         className="fixed top-0 right-0 left-0 z-40 flex h-[36px] w-full shrink-0 flex-nowrap items-center border-b bg-background select-none"
         style={{
-          // macOS 红绿灯按钮在左侧，需要留出空间（约 70px）
+          // macOS ，（ 70px）
           paddingLeft: isMacOS ? '70px' : '0',
         }}
         data-tauri-drag-region
       >
-        {/* 左侧记录工具栏按钮 */}
+        {/* */}
         <div id="onboarding-target-record-toolbar" className="flex items-center gap-0.5 px-2 shrink-0" data-tauri-drag-region="false">
           <TooltipProvider>
             <DndContext
@@ -240,7 +240,7 @@ export function TitleBar({ onSearchClick, onActivityClick, activityOpen = false 
           </TooltipProvider>
         </div>
 
-        {/* 中间搜索输入框 */}
+        {/* */}
         <div className="flex-1 flex items-center justify-center px-4 min-w-[200px] max-w-[600px] mx-auto" data-tauri-drag-region>
           <div 
             className="relative w-full h-6 max-w-md group cursor-pointer flex justify-center items-center border rounded-sm"
@@ -254,9 +254,9 @@ export function TitleBar({ onSearchClick, onActivityClick, activityOpen = false 
           </div>
         </div>
 
-        {/* 右侧按钮 */}
+        {/* */}
         <div className="flex items-center gap-0.5 px-2 shrink-0" data-tauri-drag-region="false">
-          {/* 左侧边栏切换按钮 */}
+          {/* */}
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -277,7 +277,7 @@ export function TitleBar({ onSearchClick, onActivityClick, activityOpen = false 
             </TooltipContent>
           </Tooltip>
 
-          {/* 中间面板切换按钮 */}
+          {/* */}
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -298,7 +298,7 @@ export function TitleBar({ onSearchClick, onActivityClick, activityOpen = false 
             </TooltipContent>
           </Tooltip>
 
-          {/* 右侧边栏切换按钮 */}
+          {/* */}
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -365,7 +365,7 @@ export function TitleBar({ onSearchClick, onActivityClick, activityOpen = false 
           <AppStatus />
         </div>
 
-        {/* Windows 控制按钮 */}
+        {/* Windows */}
         {!isMacOS && (
           <div className="flex items-center shrink-0 relative z-10">
             <Button

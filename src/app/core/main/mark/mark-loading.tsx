@@ -14,7 +14,7 @@ export function MarkLoading({mark}: {mark: MarkQueue}){
   const tagName = tags.find((tag) => tag.id === mark.tagId)?.name
 
   useEffect(() => {
-    // 挂载时执行的操作
+    //
     timer.current = setInterval(() => {
       setTimeNow(Date.now())
     }, 1000);

@@ -1,6 +1,6 @@
 import { invoke } from '@tauri-apps/api/core';
 
-// 匹配 Rust 类型的接口定义
+// Rust
 export interface SearchItem {
   id?: string;
   desc?: string;
@@ -18,14 +18,14 @@ export interface SearchItem {
   matches?: MatchInfo;
 }
 
-// 匹配信息接口
+//
 export interface MatchInfo {
   key: string;
   indices: [number, number][];
   value: string;
 }
 
-// 模糊搜索结果接口
+//
 export interface FuzzySearchResult {
   item: SearchItem;
   refIndex: number;
@@ -33,7 +33,7 @@ export interface FuzzySearchResult {
   score: number;
 }
 
-// 模糊搜索选项接口
+//
 export interface FuzzySearchOptions {
   keys: string[];
   threshold?: number;
@@ -41,16 +41,16 @@ export interface FuzzySearchOptions {
   includeMatches?: boolean;
 }
 
-// Rust 模糊搜索包装类
+// Rust
 export class RustFuzzySearch {
   private items: SearchItem[];
   private options: FuzzySearchOptions;
 
-  // 构造函数
+  //
   constructor(items: any[], options: Partial<FuzzySearchOptions> = {}) {
     this.items = items;
     this.options = {
-      keys: options.keys || [], // 确保有默认的键值
+      keys: options.keys || [], //
       threshold: 0.3,
       includeScore: true,
       includeMatches: true,
@@ -58,7 +58,7 @@ export class RustFuzzySearch {
     };
   }
 
-  // 执行模糊搜索
+  //
   async search(query: string): Promise<FuzzySearchResult[]> {
     if (!query) return [];
     
@@ -87,12 +87,12 @@ export class RustFuzzySearch {
       };
       });
     } catch (error) {
-      console.error('模糊搜索出错:', error);
+      console.error('Translated message', error);
       return [];
     }
   }
 
-  // 执行并行模糊搜索（适用于大数据集）
+  // （）
   async searchParallel(query: string): Promise<FuzzySearchResult[]> {
     if (!query) return [];
     
@@ -121,7 +121,7 @@ export class RustFuzzySearch {
         };
       });
     } catch (error) {
-      console.error('并行模糊搜索出错:', error);
+      console.error('Translated message', error);
       return [];
     }
   }
