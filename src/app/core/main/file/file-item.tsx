@@ -76,7 +76,7 @@ function buildFileRenamePlan({
 function showPdfExportStartToast() {
   toast({
     title: 'Preparing PDF',
-    description: '“ PDF”。',
+    description: 'In the system print dialog, choose “Save as PDF”.',
   })
 }
 

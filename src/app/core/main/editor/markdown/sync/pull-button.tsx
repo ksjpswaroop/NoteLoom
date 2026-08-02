@@ -150,7 +150,7 @@ export function PullButton({ editor }: PullButtonProps) {
           // ，
           setPullStatus('error')
           toast({
-            title: 'UpdateFailed',
+            title: 'Failed to fetch remote updates',
             description: 'Check your network connection and retry',
             variant: 'destructive',
           })

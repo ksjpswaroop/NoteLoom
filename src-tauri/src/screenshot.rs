@@ -90,7 +90,7 @@ pub fn screenshot(app: AppHandle) -> Result<Vec<ScreenshotImage>, String> {
         let image = match window.capture_image() {
             Ok(image) => image,
             Err(error) => {
-                println!("窗口截图失败: {:?}: {:?}", title, error);
+                println!("Window screenshot failed: {:?}: {:?}", title, error);
                 continue;
             }
         };
@@ -101,8 +101,8 @@ pub fn screenshot(app: AppHandle) -> Result<Vec<ScreenshotImage>, String> {
             normalized(&title)
         );
         match image.save(&path) {
-            Ok(_) => println!("保存成功: {:?}", path),
-            Err(e) => println!("保存失败: {:?}", e),
+            Ok(_) => println!("Saved screenshot: {:?}", path),
+            Err(e) => println!("Failed to save screenshot: {:?}", e),
         };
         files.push(ScreenshotImage {
             name: title,

@@ -86,7 +86,7 @@ export function MathEditorDialog({
               value={latex}
               onChange={(e) => setLatex(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="LaTeX ， : \frac{a}{b}"
+              placeholder="LaTeX, e.g. \frac{a}{b}"
               className="font-mono"
             />
             {error && <p className="text-red-500 text-xs mt-1">{error}</p>}

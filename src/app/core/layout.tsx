@@ -384,6 +384,21 @@ export default function RootLayout({
     dayjs.locale(en)
   }, [currentLocale])
 
+  // Migrate any legacy non-English locale prefs to English-only.
+  useEffect(() => {
+    void (async () => {
+      try {
+        const store = await Store.load('store.json')
+        await store.set('locale', 'English')
+        await store.set('note_locale', 'English')
+        await store.set('app-language', 'en')
+        await store.save()
+      } catch (error) {
+        console.debug('Failed to migrate locale preferences to English:', error)
+      }
+    })()
+  }, [])
+
   // （Backspace）（Cmd/Ctrl+F）
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

@@ -110,7 +110,7 @@ function formatReason(input: {
   if (input.workspace) reasons.push('Current workspace')
   if (input.vector >= 0.62) reasons.push('Semantically related')
   if (input.lexical > 0) reasons.push('Text match')
-  return reasons.join('、') || 'Related memory'
+  return reasons.join(', ') || 'Related memory'
 }
 
 class MemoryContextService {

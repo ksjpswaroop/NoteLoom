@@ -19,19 +19,19 @@ export const GITLAB_INSTANCES: Record<GitlabInstanceType, GitlabInstanceConfig> 
     type: GitlabInstanceType.OFFICIAL,
     baseUrl: 'https://gitlab.com',
     name: 'GitLab.com',
-    description: 'GitLab'
+    description: 'Official GitLab.com'
   },
   [GitlabInstanceType.JIHULAB]: {
     type: GitlabInstanceType.JIHULAB,
     baseUrl: 'https://jihulab.com',
-    name: 'GitLab',
-    description: 'GitLab'
+    name: 'JiHu GitLab',
+    description: 'GitLab China (JiHuLab)'
   },
   [GitlabInstanceType.SELF_HOSTED]: {
     type: GitlabInstanceType.SELF_HOSTED,
     baseUrl: '',
     name: 'Self-hosted instance',
-    description: 'GitLab'
+    description: 'Self-hosted GitLab server'
   }
 };
 

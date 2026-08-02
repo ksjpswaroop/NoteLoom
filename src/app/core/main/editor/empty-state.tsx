@@ -100,7 +100,7 @@ export function EmptyState({
       const selected = await open({
         directory: true,
         multiple: false,
-        title: 'Translated message'
+        title: 'Choose workspace folder'
       })
       
       if (selected && typeof selected === 'string') {

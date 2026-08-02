@@ -38,7 +38,8 @@
     "targets": "all",
     "resources": [
       "icons",
-      "resources/ocr/*"
+      "resources/ocr/*",
+      "resources/parakeet-stt/*"
     ],
     "fileAssociations": [
       {

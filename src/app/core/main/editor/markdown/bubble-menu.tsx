@@ -44,13 +44,13 @@ import {
 const POPULAR_LANGUAGES = [
   { name: 'English', code: 'English', i18nKey: 'languages.English' },
   { name: 'Japanese', code: 'Japanese', i18nKey: 'languages.Japanese' },
-  { name: '한국어', code: 'Korean', i18nKey: 'languages.Korean' },
-  { name: 'Français', code: 'French', i18nKey: 'languages.French' },
-  { name: 'Deutsch', code: 'German', i18nKey: 'languages.German' },
-  { name: 'Español', code: 'Spanish', i18nKey: 'languages.Spanish' },
-  { name: 'Português', code: 'Portuguese', i18nKey: 'languages.Portuguese' },
-  { name: 'Русский', code: 'Russian', i18nKey: 'languages.Russian' },
-  { name: 'العربية', code: 'Arabic', i18nKey: 'languages.Arabic' },
+  { name: 'Korean', code: 'Korean', i18nKey: 'languages.Korean' },
+  { name: 'French', code: 'French', i18nKey: 'languages.French' },
+  { name: 'German', code: 'German', i18nKey: 'languages.German' },
+  { name: 'Spanish', code: 'Spanish', i18nKey: 'languages.Spanish' },
+  { name: 'Portuguese', code: 'Portuguese', i18nKey: 'languages.Portuguese' },
+  { name: 'Russian', code: 'Russian', i18nKey: 'languages.Russian' },
+  { name: 'Arabic', code: 'Arabic', i18nKey: 'languages.Arabic' },
 ]
 
 function ToolbarButton({

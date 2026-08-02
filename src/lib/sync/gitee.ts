@@ -547,7 +547,7 @@ export async function checkSyncRepoState(name: string) {
     
     throw {
       status: response.status,
-      message: 'Translated message'
+      message: 'Repository does not exist'
     };
   } catch (error) {
     if ((error as GiteeError).status === 404) {
@@ -582,7 +582,7 @@ export async function createSyncRepo(name: string, isPrivate?: boolean) {
         name,
         private: isPrivate === undefined ? true : isPrivate,
         auto_init: false,
-        description: 'Note Gen'
+        description: 'Created automatically by NoteLoom'
       }),
       proxy
     };

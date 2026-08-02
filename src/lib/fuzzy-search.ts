@@ -87,7 +87,7 @@ export class RustFuzzySearch {
       };
       });
     } catch (error) {
-      console.error('Translated message', error);
+      console.error('Fuzzy search failed', error);
       return [];
     }
   }
@@ -121,7 +121,7 @@ export class RustFuzzySearch {
         };
       });
     } catch (error) {
-      console.error('Translated message', error);
+      console.error('Fuzzy search failed', error);
       return [];
     }
   }

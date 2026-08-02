@@ -163,22 +163,22 @@ export function getSkillDirectoryStructure(): {
   structure: Record<string, { description: string; required: boolean }>
 } {
   return {
-    description: 'Agent Skills ( )',
+    description: 'Agent Skills directory structure (follows the official specification)',
     structure: {
       [SKILL_FILE_NAME]: {
-        description: 'Skill File ( )',
+        description: 'Skill definition file (required)',
         required: true,
       },
       [SCRIPTS_DIR_NAME + '/']: {
-        description: '( )',
+        description: 'Executable scripts directory (optional)',
         required: false,
       },
       [REFERENCES_DIR_NAME + '/']: {
-        description: '( )',
+        description: 'Reference documents directory (optional)',
         required: false,
       },
       [ASSETS_DIR_NAME + '/']: {
-        description: '( )',
+        description: 'Static assets directory (optional)',
         required: false,
       },
     },
@@ -190,10 +190,10 @@ export function getSkillDirectoryStructure(): {
  */
 export function formatSkillList(skills: Array<{ id: string; name: string; description: string }>): string {
   if (skills.length === 0) {
-    return 'Skills'
+    return 'No skills available'
   }
 
-  const lines: string[] = [`Skills (${skills.length} )`, '']
+  const lines: string[] = [`Available skills (${skills.length}):`, '']
 
   for (const skill of skills) {
     lines.push(`- ${skill.name}`)
@@ -233,19 +233,19 @@ export function validateSkillDirectoryStructure(files: string[]): {
 
   if (hasOldReferenceFile) {
     warnings.push(
-      'Format REFERENCE.md File， references/'
+      'Detected legacy REFERENCE.md; consider moving it to the references/ directory'
     )
   }
 
   if (hasOldExamplesFile) {
     warnings.push(
-      'Format EXAMPLES.md File， references/'
+      'Detected legacy EXAMPLES.md; consider moving it to the references/ directory'
     )
   }
 
   if (hasOldKeywordsFile) {
     warnings.push(
-      'Format KEYWORDS.md File， SKILL.md references/'
+      'Detected legacy KEYWORDS.md; consider merging into SKILL.md or moving to references/'
     )
   }
 
@@ -269,33 +269,33 @@ export function getMigrationGuide(): {
   steps: Array<{ from: string; to: string; description: string }>
 } {
   return {
-    title: 'Skill',
-    description: 'Format Skill Format',
+    title: 'Skill directory structure migration guide',
+    description: 'Migrate a legacy skill layout to the official Agent Skills format',
     steps: [
       {
         from: 'REFERENCE.md',
         to: 'references/REFERENCE.md',
-        description: 'references/',
+        description: 'Move reference docs into the references/ directory',
       },
       {
         from: 'EXAMPLES.md',
         to: 'references/EXAMPLES.md',
-        description: 'references/',
+        description: 'Move example docs into the references/ directory',
       },
       {
         from: 'KEYWORDS.md',
-        to: 'SKILL.md references/KEYWORDS.md',
-        description: 'SKILL.md references/',
+        to: 'SKILL.md or references/KEYWORDS.md',
+        description: 'Merge keywords into SKILL.md or move them to references/',
       },
       {
-        from: 'None',
+        from: '(none)',
         to: 'scripts/',
-        description: 'scripts/',
+        description: 'Create a scripts/ directory for executable scripts',
       },
       {
-        from: 'None',
+        from: '(none)',
         to: 'assets/',
-        description: 'assets/ 、Image',
+        description: 'Create an assets/ directory for templates, images, and other static files',
       },
     ],
   }

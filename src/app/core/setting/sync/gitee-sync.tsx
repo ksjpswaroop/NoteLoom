@@ -98,7 +98,7 @@ export function GiteeSync() {
         if (err.message === 'Check timed out') {
           console.warn('Gitee repository check timed out; this may be a network issue')
         } else if (err.message === 'Network unavailable') {
-          console.warn('Network unavailable，')
+          console.warn('Network unavailable. Check your connection settings.')
         }
       }
     }

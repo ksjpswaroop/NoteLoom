@@ -13,8 +13,8 @@ export const DEFAULT_SYNC_EXCLUDE_PATTERNS: SyncExcludePattern[] = [
   { pattern: '*.tmp', description: 'Temporary files' },
   { pattern: '*.bak', description: 'Backup files' },
   { pattern: '*.swp', description: 'Editor temp files' },
-  { pattern: 'Thumbs.db', description: 'Windows' },
-  { pattern: '.DS_Store', description: 'macOS' },
+  { pattern: 'Thumbs.db', description: 'Windows thumbnail cache' },
+  { pattern: '.DS_Store', description: 'macOS system file' },
   { pattern: '*.lock', description: 'Lock files' },
 ]
 

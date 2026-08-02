@@ -8,14 +8,15 @@ pub fn delete_local_database(app: AppHandle) -> Result<(), String> {
     let config_dir = app
         .path()
         .app_config_dir()
-        .map_err(|error| format!("无法定位数据库目录：{error}"))?;
+        .map_err(|error| format!("Unable to locate the database directory: {error}"))?;
 
     for file_name in DATABASE_FILES {
         let path = config_dir.join(file_name);
         if !path.exists() {
             continue;
         }
-        fs::remove_file(&path).map_err(|error| format!("无法删除 {}：{error}", path.display()))?;
+        fs::remove_file(&path)
+            .map_err(|error| format!("Unable to delete {}: {error}", path.display()))?;
     }
 
     Ok(())

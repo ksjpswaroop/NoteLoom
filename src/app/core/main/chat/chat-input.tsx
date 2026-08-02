@@ -1020,7 +1020,7 @@ export const ChatInput = React.memo(function ChatInput() {
           const numberedLines = editorContent.numberedLines.split('\n')
           const previewLines = numberedLines.slice(0, 100)
           const totalLines = editorContent.totalLines || numberedLines.length
-          const truncatedNote = totalLines > 100 ? `\n... ( ${totalLines} ， ${totalLines - 100} )` : ''
+          const truncatedNote = totalLines > 100 ? `\n... (${totalLines} lines total, last ${totalLines - 100} omitted)` : ''
 
           return `Linked current editor file: ${filePath.split('/').pop() || filePath}
 You can use editor_replace_lines directly with the line numbers and version below.
@@ -1062,7 +1062,7 @@ Prefer:
       })
 
       const totalLines = lines.length
-      const truncatedNote = totalLines > 100 ? `\n... ( ${totalLines} ， ${totalLines - 100} )` : ''
+      const truncatedNote = totalLines > 100 ? `\n... (${totalLines} lines total, last ${totalLines - 100} omitted)` : ''
 
       return `Linked file: ${filePath.split('/').pop() || filePath}
 To edit this non-active file, generate updated Markdown from the full content and write it with note_update_file.

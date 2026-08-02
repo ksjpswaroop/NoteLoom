@@ -33,7 +33,7 @@ export function CopyButton({ editor, markdown }: CopyButtonProps) {
     } catch {
       toast({
         title: 'Copy failed',
-        description: 'None',
+        description: 'Could not copy to the clipboard',
         variant: 'destructive'
       })
     } finally {

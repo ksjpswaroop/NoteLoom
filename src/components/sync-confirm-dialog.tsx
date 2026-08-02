@@ -292,15 +292,15 @@ export function SyncConfirmDialog() {
 
                   <div className="flex flex-col gap-3">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Local SHA：</span>
+                      <span className="text-muted-foreground">Local SHA:</span>
                       <code className="bg-muted px-2 py-1 rounded text-xs">
-                        {localSha ? localSha.slice(0, 7) : 'None'}
+                        {localSha ? localSha.slice(0, 7) : 'N/A'}
                       </code>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">RemoteFile SHA：</span>
+                      <span className="text-muted-foreground">Remote file SHA:</span>
                       <code className="bg-muted px-2 py-1 rounded text-xs">
-                        {remoteSha ? remoteSha.slice(0, 7) : 'None'}
+                        {remoteSha ? remoteSha.slice(0, 7) : 'N/A'}
                       </code>
                     </div>
                   </div>
@@ -490,15 +490,15 @@ export function SyncConfirmDialog() {
 
                   <div className="flex flex-col gap-3">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Local SHA：</span>
+                      <span className="text-muted-foreground">Local SHA:</span>
                       <code className="bg-muted px-2 py-1 rounded text-xs">
-                        {localSha ? localSha.slice(0, 7) : 'None'}
+                        {localSha ? localSha.slice(0, 7) : 'N/A'}
                       </code>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">RemoteFile SHA：</span>
+                      <span className="text-muted-foreground">Remote file SHA:</span>
                       <code className="bg-muted px-2 py-1 rounded text-xs">
-                        {remoteSha ? remoteSha.slice(0, 7) : 'None'}
+                        {remoteSha ? remoteSha.slice(0, 7) : 'N/A'}
                       </code>
                     </div>
                   </div>

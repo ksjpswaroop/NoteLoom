@@ -169,7 +169,7 @@ export const readAttachmentTool: AgentTool = {
     const truncatedCount = results.filter((result) => result.truncated).length
     return {
       ok: readCount > 0,
- message: `Batch-read ${readCount}/${results.length} attachment files${truncatedCount > 0 ? `， ${truncatedCount} ` : ''}。`,
+ message: `Batch-read ${readCount}/${results.length} attachment files${truncatedCount > 0 ? `, ${truncatedCount} truncated` : ''}.`,
       data: { requestedCount: results.length, readCount, files: results },
       error: readCount > 0 ? undefined : 'ATTACHMENT_READ_FAILED',
     }

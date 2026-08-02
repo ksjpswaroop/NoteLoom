@@ -613,7 +613,8 @@ export const OrganizeNotes = forwardRef<{ openOrganize: () => void }, OrganizeNo
       const embeddableImageCount = processedImageMarks.filter(item => Boolean(item.url)).length
 
       const store = await Store.load('store.json')
-      const locale = await store.get<string>('locale') || 'zh'
+      // English-only product policy: always instruct the model to write English.
+      await store.set('locale', 'English')
 
       const request_content = `
         Here are text fragments recognized by OCR after screenshots:
@@ -643,7 +644,7 @@ export const OrganizeNotes = forwardRef<{ openOrganize: () => void }, OrganizeNo
         ${extraRequirement ? 'Additional requirements: '+extraRequirement : ''}
         If the record content is empty, return that there is no record information in this organization.
         Format requirements:
-        - Use ${locale} language for the output.
+        - Use English for the output.
         - Use Markdown syntax.
         - Ensure there is a level 1 heading (H1).
         ${preferredTitle ? `- The H1 title must be exactly: ${preferredTitle}` : '- Generate a clear H1 title based on the selected records.'}

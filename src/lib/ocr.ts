@@ -7,7 +7,8 @@ import {
 
 const DEFAULT_OCR_TIMEOUT_MS = 30000
 const OCR_TEMP_DIR = 'temp_ocr'
-const DEFAULT_OCR_LANGUAGES = ['zh-Hans', 'zh-Hant', 'en-US', 'ja-JP', 'ko-KR']
+// Prefer English recognition; keep CJK/Japanese/Korean so user note images can still be read.
+const DEFAULT_OCR_LANGUAGES = ['en-US', 'zh-Hans', 'zh-Hant', 'ja-JP', 'ko-KR']
 
 async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
   let timeoutId: ReturnType<typeof setTimeout> | undefined

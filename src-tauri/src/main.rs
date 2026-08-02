@@ -17,6 +17,7 @@ mod mcp;
 mod mcp_runtime;
 mod notion_import;
 mod ocr_packages;
+mod parakeet_stt;
 mod printing;
 mod remote_skills;
 mod screenshot;
@@ -44,6 +45,9 @@ use mcp_runtime::{
 };
 use notion_import::import_notion_zip;
 use ocr_packages::{list_ocr_providers, run_ocr_provider};
+use parakeet_stt::{
+    ensure_parakeet_stt, inspect_parakeet_stt, list_parakeet_models, transcribe_with_parakeet,
+};
 use remote_skills::{
     cancel_remote_skill_download, inspect_remote_skill, install_remote_skill, search_remote_skills,
     RemoteSkillManager,
@@ -131,6 +135,10 @@ fn main() {
             update_tray_record_toolbar_config,
             list_ocr_providers,
             run_ocr_provider,
+            list_parakeet_models,
+            inspect_parakeet_stt,
+            ensure_parakeet_stt,
+            transcribe_with_parakeet,
             printing::print_webview,
             file_open::drain_pending_open_files,
             system_trash::move_paths_to_trash,

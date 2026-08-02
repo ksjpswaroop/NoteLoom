@@ -783,7 +783,7 @@ Use folderPath to limit scope to a specific folder.`,
         return {
           success: true,
           data: formattedResults,
- message: `RAG search found ${ragResult.sources.length} related notes${normalizedFolderPath ? `（File：${normalizedFolderPath}）` : ''}`,
+ message: `RAG search found ${ragResult.sources.length} related notes${normalizedFolderPath ? ` (folder: ${normalizedFolderPath})` : ''}`,
         }
       }
 
@@ -853,7 +853,7 @@ Use folderPath to limit scope to a specific folder.`,
       return {
         success: true,
         data: results,
- message: `Found ${results.length} matching files${normalizedFolderPath ? `（File：${normalizedFolderPath}）` : ''}`,
+ message: `Found ${results.length} matching files${normalizedFolderPath ? ` (folder: ${normalizedFolderPath})` : ''}`,
       }
     } catch (error) {
       return {
@@ -1174,7 +1174,14 @@ export const listMarkdownFilesByDateTool: Tool = {
           accessedAt: metadata?.accessedAt?.toISOString(),
           isReadOnly: metadata?.isReadOnly,
         })),
-        message: `Found ${filteredFiles.length} matching files (${startDate ? `from ${startDate.toISOString()}` : ''}${endDate ? `to ${endDate.toISOString()}` : ''}）`,
+        message: [
+          'Found',
+          String(filteredFiles.length),
+          'matching files',
+          startDate || endDate
+            ? `(${[startDate ? `from ${startDate.toISOString()}` : '', endDate ? `to ${endDate.toISOString()}` : ''].filter(Boolean).join(' ')})`
+            : '',
+        ].filter(Boolean).join(' '),
       }
     } catch (error) {
       console.error('[list_markdown_files_by_date] Failed to get file list', {

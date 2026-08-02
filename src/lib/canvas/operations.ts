@@ -22,7 +22,7 @@ const DEFAULT_NODE_LABELS: Partial<Record<CanvasNodeType, string>> = {
   delay: 'Delay',
   display: 'Display',
   connector: 'Connector',
-  'off-page-connector': 'Translated message',
+  'off-page-connector': 'Off-page connector',
   'internal-storage': 'Internal storage',
   'stored-data': 'Stored data',
   text: 'Text',

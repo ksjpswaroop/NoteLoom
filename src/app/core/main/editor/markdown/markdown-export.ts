@@ -591,7 +591,7 @@ async function openTauriPrintWindow(html: string, title: string, outputPath?: st
         if (!outputPath) finish(true)
       })
       await printWindow.once<string>('tauri://error', (event) => {
- void finishWithError(new Error(`PDF failed：${event.payload}`))
+ void finishWithError(new Error(`Failed to open PDF print dialog: ${event.payload}`))
       })
     })().catch((reason: unknown) => {
       void finishWithError(reason)

@@ -2,6 +2,7 @@ import useSettingStore from '@/stores/setting'
 import { resolvePreferredSpeechEngine } from '@/lib/speech/runtime.ts'
 import type { SpeechTask } from '@/lib/speech/types.ts'
 import { NO_TRANSCRIPTION_MESSAGE } from '@/lib/speech/transcription-fallback.ts'
+import { inspectParakeetStt, transcribeWithParakeet } from '@/lib/speech/parakeet.ts'
 import { blobToBytes, invokeAiBinary, invokeAiMultipart, resolveAiRequestConfig } from '@/lib/ai/tauri-client'
 
 /**
@@ -19,7 +20,7 @@ export function speakWithSystemVoice(
 
   //
   if (!('speechSynthesis' in window)) {
-    throw new Error('Translated message')
+    throw new Error('This browser does not support speech synthesis')
   }
 
   //
@@ -84,7 +85,7 @@ export async function fetchAudioSpeech(text: string, customVoice?: string, custo
   const { aiModelList, audioModel } = useSettingStore.getState()
   
   if (!audioModel) {
-    throw new Error('Translated message')
+    throw new Error('No audio model is configured')
   }
 
   //
@@ -120,11 +121,11 @@ export async function fetchAudioSpeech(text: string, customVoice?: string, custo
   }
   
   if (!audioConfig) {
-    throw new Error('Translated message')
+    throw new Error('Audio model configuration was not found')
   }
 
   if (!audioConfig.baseURL || !audioConfig.apiKey) {
-    throw new Error('Translated message')
+    throw new Error('Audio model configuration is incomplete')
   }
 
   // voicevoice，alloy
@@ -183,7 +184,7 @@ class AudioController {
           audioBuffer.slice(0), // Duplicatedetached buffer
           (decodedData) => {
             if (!this.audioContext) {
-              reject(new Error('Translated message'))
+              reject(new Error('Audio context has been destroyed'))
               return
             }
 
@@ -273,7 +274,7 @@ export async function textToSpeechAndPlay(
   const resolution = resolveCurrentSpeechEngine('tts')
 
   if (!resolution.available) {
-    throw new Error('， Local')
+    throw new Error('The current speech mode is unavailable. Check local speech support or model settings.')
   }
 
   if (resolution.engine === 'local') {
@@ -368,9 +369,60 @@ export interface AudioTranscriptionResponse {
 export { NO_TRANSCRIPTION_MESSAGE }
 
 export async function transcribeRecording(audioBlob: Blob): Promise<string> {
-  const { sttModel } = useSettingStore.getState()
+  const {
+    sttModel,
+    speechToTextMode,
+    localSttEngine,
+    parakeetModelId,
+    parakeetLanguage,
+    parakeetAttentionMode,
+  } = useSettingStore.getState()
+
+  const preferParakeet =
+    localSttEngine === 'parakeet' &&
+    (speechToTextMode === 'local' || speechToTextMode === 'auto')
+
+  if (preferParakeet) {
+    try {
+      const status = await inspectParakeetStt(parakeetModelId)
+      if (status.runtimeReady) {
+        const result = await transcribeWithParakeet({
+          audioBlob,
+          fileName: getAudioFileName(audioBlob),
+          model: parakeetModelId,
+          language: parakeetLanguage || 'en',
+          localAttention: parakeetAttentionMode === 'local',
+        })
+        return result.text
+      }
+
+      if (speechToTextMode === 'local') {
+        throw new Error(
+          status.message ||
+            'Local Parakeet is not ready. Open Settings → Audio and install Local Parakeet.',
+        )
+      }
+      // auto mode: fall through to remote STT model when Parakeet is unavailable
+    } catch (error) {
+      if (speechToTextMode === 'local') {
+        throw error
+      }
+      console.warn('Local Parakeet transcription unavailable, falling back to model STT:', error)
+    }
+  }
+
+  if (speechToTextMode === 'local' && localSttEngine === 'browser') {
+    // Browser SpeechRecognition is live-only; recorded blobs need Parakeet or a remote model.
+    throw new Error(
+      'Browser speech recognition cannot transcribe saved recordings. Choose Local Parakeet or a remote STT model in Settings → Audio.',
+    )
+  }
 
   if (!sttModel) {
+    return ''
+  }
+
+  if (speechToTextMode === 'local') {
     return ''
   }
 
@@ -397,7 +449,7 @@ export async function fetchAudioTranscription(audioBlob: Blob): Promise<string> 
   const { aiModelList, sttModel } = useSettingStore.getState()
   
   if (!sttModel) {
-    throw new Error('Translated message')
+    throw new Error('No speech recognition model is configured')
   }
 
   // STT
@@ -429,11 +481,11 @@ export async function fetchAudioTranscription(audioBlob: Blob): Promise<string> 
   }
   
   if (!sttConfig) {
-    throw new Error('Translated message')
+    throw new Error('Speech recognition model configuration was not found')
   }
 
   if (!sttConfig.baseURL || !sttConfig.apiKey) {
-    throw new Error('Translated message')
+    throw new Error('Speech recognition model configuration is incomplete')
   }
 
   try {

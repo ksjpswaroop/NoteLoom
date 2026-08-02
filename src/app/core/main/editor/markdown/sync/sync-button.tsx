@@ -235,7 +235,7 @@ export function SyncButton() {
             hasRemoteSha: Boolean(getRemoteFileSha(fileInfo)),
           })
           if (Array.isArray(fileInfo)) {
-            throw new Error(`${activeFilePath} Yes ，None`)
+            throw new Error(`${activeFilePath} is a directory and cannot be pushed`)
           }
           const result = await githubModule.uploadFile({
             file: content,
@@ -271,7 +271,7 @@ export function SyncButton() {
             hasRemoteSha: Boolean(getRemoteFileSha(fileInfo)),
           })
           if (Array.isArray(fileInfo)) {
-            throw new Error(`${activeFilePath} Yes ，None`)
+            throw new Error(`${activeFilePath} is a directory and cannot be pushed`)
           }
           const result = await giteeModule.uploadFile({
             file: content,
@@ -307,7 +307,7 @@ export function SyncButton() {
             hasRemoteSha: Boolean(getRemoteFileSha(fileInfo)),
           })
           if (Array.isArray(fileInfo)) {
-            throw new Error(`${activeFilePath} Yes ，None`)
+            throw new Error(`${activeFilePath} is a directory and cannot be pushed`)
           }
           const result = await gitlabModule.uploadFile({
             file: content,
@@ -339,7 +339,7 @@ export function SyncButton() {
             hasRemoteSha: Boolean(getRemoteFileSha(fileInfo)),
           })
           if (Array.isArray(fileInfo)) {
-            throw new Error(`${activeFilePath} Yes ，None`)
+            throw new Error(`${activeFilePath} is a directory and cannot be pushed`)
           }
           const result = await giteaModule.uploadFile({
             file: content,

@@ -85,7 +85,7 @@ export const checkFolderExistsTool: Tool = {
       })
       return {
         success: false,
-        error: `FolderFailed: ${error}`,
+        error: `Folder operation failed: ${error}`,
       }
     }
   },
@@ -169,7 +169,7 @@ export const createFolderTool: Tool = {
     } catch (error) {
       return {
         success: false,
-        error: `FolderFailed: ${error}`,
+        error: `Folder operation failed: ${error}`,
       }
     }
   },
@@ -247,12 +247,12 @@ export const deleteFolderTool: Tool = {
         data: { folderPath: normalizedFolderPath, alreadyAbsent: !folderExists },
         message: folderExists
           ? `Folder: ${normalizedFolderPath}`
-          : `Folder ，None : ${normalizedFolderPath}`,
+          : `Folder no longer exists; nothing to delete: ${normalizedFolderPath}`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `FolderFailed: ${error}`,
+        error: `Folder operation failed: ${error}`,
       }
     }
   },
@@ -424,13 +424,13 @@ export const createFoldersBatchTool: Tool = {
           errorCount: errors.length,
         },
         message: errors.length === 0
-          ? `${created.length} ， ${skipped.length}`
-          : `Failed： ${created.length} ， ${skipped.length} ，${errors.length} Failed`,
+          ? `Created ${created.length}, skipped ${skipped.length}`
+          : `Partial failure: created ${created.length}, skipped ${skipped.length}, ${errors.length} failed`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `FolderFailed: ${error}`,
+        error: `Folder operation failed: ${error}`,
       }
     }
   },
@@ -515,12 +515,12 @@ export const deleteFoldersBatchTool: Tool = {
         },
         message: errors.length === 0
           ? `${results.length} Folder`
-          : `Failed： ${results.length} Folder，${errors.length} Failed`,
+          : `Partial failure: deleted ${results.length} folder(s), ${errors.length} failed`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `FolderFailed: ${error}`,
+        error: `Folder operation failed: ${error}`,
       }
     }
   },

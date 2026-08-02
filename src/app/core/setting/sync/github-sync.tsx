@@ -103,7 +103,7 @@ export function GithubSync() {
               <OpenBroswer title={syncRepoInfo?.full_name || ''} url={syncRepoInfo?.html_url || ''} />
             </h3>
             <p className="text-sm text-zinc-500">
-              {t('settings.sync.createdAt', { time: dayjs(syncRepoInfo?.created_at).fromNow() })}，{t('settings.sync.updatedAt', { time: dayjs(syncRepoInfo?.updated_at).fromNow() })}
+              {t('settings.sync.createdAt', { time: dayjs(syncRepoInfo?.created_at).fromNow() })}, {t('settings.sync.updatedAt', { time: dayjs(syncRepoInfo?.updated_at).fromNow() })}
             </p>
           </div>
         </div>

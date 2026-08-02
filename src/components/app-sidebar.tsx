@@ -1,5 +1,5 @@
 'use client'
-import { ImageUp, Search, Settings, SquarePen, X } from "lucide-react"
+import { ImageUp, LayoutDashboard, Search, Settings, SquarePen, X } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -32,10 +32,16 @@ export function AppSidebar({ onSearchClick }: AppSidebarProps) {
   const { open: settingsOpen, openSettings, closeSettings } = useSettingsDialogStore()
   const [items, setItems] = useState([
     {
+      title: t('navigation.dashboard'),
+      url: "/core/dashboard",
+      icon: LayoutDashboard,
+      isActive: true,
+    },
+    {
       title: t('navigation.write'),
       url: "/core/main",
       icon: SquarePen,
-      isActive: true,
+      isActive: false,
     },
     {
       title: t('navigation.search'),

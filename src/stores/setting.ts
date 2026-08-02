@@ -11,6 +11,15 @@ import { applyThemeColors, removeThemeColors } from '@/lib/theme-utils'
 import { getNormalizedImageHosting } from '@/lib/image-hosting-config'
 import { normalizeSpeechMode } from '@/lib/speech/preferences'
 import type { SpeechMode } from '@/lib/speech/types'
+import {
+  DEFAULT_PARAKEET_MODEL_ID,
+  normalizeLocalSttEngine,
+  normalizeParakeetAttentionMode,
+  normalizeParakeetLanguage,
+  normalizeParakeetModelId,
+  type LocalSttEngine,
+  type ParakeetAttentionMode,
+} from '@/lib/speech/parakeet-models'
 import { applyNoteGenDefaultConfig, loadNoteGenDefaultConfig } from '@/lib/ai/notegen-default-models-runtime'
 import { enqueueAutoDataSync, isAutoDataSyncApplyingRemote } from '@/lib/sync/auto-data-sync-queue'
 import { shouldExcludeFromSync } from '@/config/sync-exclusions'
@@ -160,6 +169,18 @@ interface SettingState {
 
   speechToTextMode: SpeechMode
   setSpeechToTextMode: (mode: SpeechMode) => Promise<void>
+
+  localSttEngine: LocalSttEngine
+  setLocalSttEngine: (engine: LocalSttEngine) => Promise<void>
+
+  parakeetModelId: string
+  setParakeetModelId: (modelId: string) => Promise<void>
+
+  parakeetLanguage: string
+  setParakeetLanguage: (language: string) => Promise<void>
+
+  parakeetAttentionMode: ParakeetAttentionMode
+  setParakeetAttentionMode: (mode: ParakeetAttentionMode) => Promise<void>
 
   systemPrompt: string
   setSystemPrompt: (systemPrompt: string) => Promise<void>
@@ -711,6 +732,18 @@ const useSettingStore = create<SettingState>((set, get) => ({
     const currentSpeechToTextMode = await store.get('speechToTextMode')
     set({ speechToTextMode: normalizeSpeechMode(currentSpeechToTextMode) })
 
+    const currentLocalSttEngine = await store.get('localSttEngine')
+    set({ localSttEngine: normalizeLocalSttEngine(currentLocalSttEngine) })
+
+    const currentParakeetModelId = await store.get('parakeetModelId')
+    set({ parakeetModelId: normalizeParakeetModelId(currentParakeetModelId) })
+
+    const currentParakeetLanguage = await store.get('parakeetLanguage')
+    set({ parakeetLanguage: normalizeParakeetLanguage(currentParakeetLanguage) })
+
+    const currentParakeetAttentionMode = await store.get('parakeetAttentionMode')
+    set({ parakeetAttentionMode: normalizeParakeetAttentionMode(currentParakeetAttentionMode) })
+
     //
     const modelTypes = [
       { storeKey: 'completionModel', modelType: 'chat' },
@@ -999,6 +1032,38 @@ const useSettingStore = create<SettingState>((set, get) => ({
     const store = await Store.load('store.json')
     await store.set('speechToTextMode', normalizedMode)
     set({ speechToTextMode: normalizedMode })
+  },
+
+  localSttEngine: 'parakeet',
+  setLocalSttEngine: async (engine) => {
+    const normalized = normalizeLocalSttEngine(engine)
+    const store = await Store.load('store.json')
+    await store.set('localSttEngine', normalized)
+    set({ localSttEngine: normalized })
+  },
+
+  parakeetModelId: DEFAULT_PARAKEET_MODEL_ID,
+  setParakeetModelId: async (modelId) => {
+    const normalized = normalizeParakeetModelId(modelId)
+    const store = await Store.load('store.json')
+    await store.set('parakeetModelId', normalized)
+    set({ parakeetModelId: normalized })
+  },
+
+  parakeetLanguage: 'en',
+  setParakeetLanguage: async (language) => {
+    const normalized = normalizeParakeetLanguage(language)
+    const store = await Store.load('store.json')
+    await store.set('parakeetLanguage', normalized)
+    set({ parakeetLanguage: normalized })
+  },
+
+  parakeetAttentionMode: 'full',
+  setParakeetAttentionMode: async (mode) => {
+    const normalized = normalizeParakeetAttentionMode(mode)
+    const store = await Store.load('store.json')
+    await store.set('parakeetAttentionMode', normalized)
+    set({ parakeetAttentionMode: normalized })
   },
 
   systemPrompt: '',

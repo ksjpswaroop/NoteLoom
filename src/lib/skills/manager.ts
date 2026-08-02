@@ -730,7 +730,7 @@ class SkillManager {
     //
     if (description.includes(input)) {
       score += 1
-      reasons.push('Translated message')
+      reasons.push('Description includes user input')
     }
 
     //

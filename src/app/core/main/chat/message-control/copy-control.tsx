@@ -26,7 +26,7 @@ export function CopyControl({ chat, translatedContent }: CopyControlProps) {
       textToCopy = textToCopy.trim()
       
       if (!textToCopy) {
-        console.warn('Translated message')
+        console.warn('Nothing to copy')
         return
       }
       

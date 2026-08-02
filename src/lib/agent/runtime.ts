@@ -391,7 +391,7 @@ function validateToolInputShape(tool: AgentTool, args: Record<string, unknown>):
   if (missingKeys.length > 0) {
     return {
       ok: false,
-      message: `Tool is missing required parameters: ${missingKeys.join(', ')}。`,
+      message: `Tool is missing required parameters: ${missingKeys.join(', ')}.`,
       error: 'MISSING_TOOL_ARGUMENTS',
     }
   }
@@ -920,7 +920,7 @@ export class AgentRuntime {
 
       const readCount = [...discovered].filter((path) => read.has(path)).length
       const unread = [...discovered].filter((path) => !read.has(path))
-      const unreadPreview = unread.slice(0, 20).join('、')
+      const unreadPreview = unread.slice(0, 20).join(', ')
       const omittedCount = Math.max(0, unread.length - 20)
       return [
         `Currently read ${readCount}/${discovered.size} discovered readable files.`,

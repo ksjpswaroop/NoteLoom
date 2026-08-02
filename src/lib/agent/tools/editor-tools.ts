@@ -322,7 +322,7 @@ export const getEditorSelectionTool: Tool = {
             success: true,
             data,
             message: data.text
- ? `：${data.text.slice(0, 50)}${data.text.length > 50 ? '...' : ''} ( ${data.startLine}-${data.endLine})`
+ ? `Selection: ${data.text.slice(0, 50)}${data.text.length > 50 ? '...' : ''} (lines ${data.startLine}-${data.endLine})`
               : `No text selected; cursor is on line ${data.startLine || 1}, position ${data.from}.`,
           })
         },

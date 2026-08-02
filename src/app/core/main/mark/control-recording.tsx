@@ -154,7 +154,7 @@ export function ControlRecording() {
     try {
       // Blob
       if (!audioBlob || audioBlob.size === 0) {
-        throw new Error('Translated message')
+        throw new Error('Audio data is empty')
       }
       
       //

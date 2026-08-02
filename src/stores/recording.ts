@@ -37,7 +37,7 @@ const useRecordingStore = create<RecordingState>((set, get) => ({
   startRecording: async () => {
     try {
       if (!navigator.mediaDevices?.getUserMedia) {
-        throw new Error('， Android WebView')
+        throw new Error('Microphone recording is not supported in this environment. Check Android WebView or app permission settings.')
       }
 
       //
@@ -100,15 +100,15 @@ const useRecordingStore = create<RecordingState>((set, get) => ({
       //
       if (error instanceof DOMException) {
         if (error.name === 'NotAllowedError') {
-          throw new Error('， NoteLoom')
+          throw new Error('Microphone permission was denied. Allow NoteLoom to access the microphone in system settings.')
         } else if (error.name === 'NotFoundError') {
-          throw new Error('，')
+          throw new Error('No microphone was found. Connect a microphone and try again.')
         } else if (error.name === 'NotReadableError') {
-          throw new Error('，')
+          throw new Error('The microphone is in use by another app. Close other apps and try again.')
         }
       }
       
-      throw new Error('None ，')
+      throw new Error('Could not start recording. Check the microphone and permission settings.')
     }
   },
 

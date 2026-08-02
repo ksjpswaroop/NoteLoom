@@ -30,7 +30,7 @@ export default function DownloadFolder({ item, mobile = false }: { item: DirTree
     if (!item.isDirectory) {
       toast({
         title: 'Not a directory',
-        description: 'Translated message',
+        description: 'Only directories can be downloaded',
         variant: 'destructive'
       });
       return;

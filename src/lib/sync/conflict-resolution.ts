@@ -143,7 +143,7 @@ export async function detectAndHandleConflict(
 ): Promise<ConflictResolution> {
   // ，
   if (localContent === remoteContent) {
-    return { action: 'keep_local', reason: '，None' }
+    return { action: 'keep_local', reason: 'Content is identical; nothing to do' }
   }
 
   // ，
@@ -155,7 +155,7 @@ export async function detectAndHandleConflict(
         reason: `${strategy} Conflict`
       }
     } else {
-      return { action: 'manual', reason: 'Translated message' }
+      return { action: 'manual', reason: 'Requires manual user resolution' }
     }
   }
 
@@ -165,7 +165,7 @@ export async function detectAndHandleConflict(
   switch (conflictType) {
     case 'simple_addition':
       // ，
-      return { action: 'merge', reason: '，' }
+      return { action: 'merge', reason: 'Simple content append detected; can auto-merge' }
 
     case 'significant_change':
       // ，
@@ -173,7 +173,7 @@ export async function detectAndHandleConflict(
 
     case 'format_only':
       // ，
-      return { action: 'keep_remote', reason: 'Format ，Use remote version' }
+      return { action: 'keep_remote', reason: 'Formatting-only change detected; using remote version' }
 
     default:
       return await promptUserForResolution(filePath, localContent, remoteContent)
@@ -247,12 +247,12 @@ async function promptUserForResolution(
   remoteContent: string
 ): Promise<ConflictResolution> {
   const choice = await confirm(
-    `File ${filePath} Conflict\n\n` +
-    `Local ：${localContent.length} \n` +
-    `：${remoteContent.length} \n\n` +
-    `：\n` +
-    `• ：Keep local version\n` +
-    `• Cancel：`,
+    `Conflict in file ${filePath}\n\n` +
+    `Local version: ${localContent.length} characters\n` +
+    `Remote version: ${remoteContent.length} characters\n\n` +
+    `Choose how to resolve:\n` +
+    `• OK: Keep local version\n` +
+    `• Cancel: Keep remote version`,
     { 
       title: 'Sync conflict',
       okLabel: 'Keep local',
@@ -262,7 +262,7 @@ async function promptUserForResolution(
   
   return {
     action: choice ? 'keep_local' : 'keep_remote',
-    reason: choice ? 'Keep local version' : 'Translated message'
+    reason: choice ? 'Keep local version' : 'Keep remote version'
   }
 }
 

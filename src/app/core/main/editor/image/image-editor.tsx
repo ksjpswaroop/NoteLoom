@@ -115,7 +115,7 @@ export function ImageEditor({ filePath }: ImageEditorProps) {
     } catch (error) {
       console.error('Failed to load image:', error)
       toast({
-        title: 'ImageFailed',
+        title: 'Failed to load image',
         description: String(error),
         variant: 'destructive'
       })
@@ -259,7 +259,7 @@ export function ImageEditor({ filePath }: ImageEditorProps) {
 
       toast({
         title: 'Saved',
-        description: 'Image Save'
+        description: 'Image saved'
       })
     } catch (error) {
       console.error('Failed to save image:', error)

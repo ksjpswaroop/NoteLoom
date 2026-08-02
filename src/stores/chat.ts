@@ -423,10 +423,14 @@ const useChatStore = create<ChatState>((set, get) => ({
   locale: locales[0],
   getLocale: async () => {
     const store = await Store.load('store.json');
-    const res = (await store.get<string>('note_locale')) || locales[0]
+    // Force English-only note output language regardless of any legacy store value.
+    const res = locales[0]
     set({ locale: res })
+    await store.set('note_locale', res)
   },
-  setLocale: async (locale) => {
+  setLocale: async (_locale) => {
+    void _locale
+    const locale = locales[0]
     set({ locale })
     const store = await Store.load('store.json');
     await store.set('note_locale', locale)

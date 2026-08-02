@@ -140,7 +140,7 @@ export async function getLocalFileMetadata(path: string): Promise<FileMetadata> 
     if (error instanceof Error && 
         (error.message.includes('no such file') || 
          error.message.includes('not found') ||
-         error.message.includes('Translated message'))) {
+         error.message.includes('系统找不到指定的路径') || error.message.includes('cannot find the path'))) {
       return {
         path,
         syncStatus: 'unknown'
@@ -276,7 +276,7 @@ export async function compareFileVersions(path: string): Promise<SyncResult> {
       return {
         shouldUpdate: true,
         action: 'pull',
-        reason: 'File Update（SHA ）， Update'
+        reason: 'Remote file updated (SHA mismatch); pull required'
       }
     }
 
@@ -288,7 +288,7 @@ export async function compareFileVersions(path: string): Promise<SyncResult> {
       return {
         shouldUpdate: false,
         action: 'none',
-        reason: 'SHA ，File'
+        reason: 'SHA matches; file is in sync'
       }
     }
   }
@@ -299,7 +299,7 @@ export async function compareFileVersions(path: string): Promise<SyncResult> {
       return {
         shouldUpdate: true,
         action: 'pull',
-        reason: 'LocalFile does not exist，'
+        reason: 'Local file does not exist; pull from remote'
       }
     }
     return { shouldUpdate: false, action: 'none' }
@@ -311,7 +311,7 @@ export async function compareFileVersions(path: string): Promise<SyncResult> {
       return {
         shouldUpdate: true,
         action: 'push',
-        reason: 'Remote file does not exist，'
+        reason: 'Remote file does not exist; push to remote'
       }
     }
     return { shouldUpdate: false, action: 'none' }
@@ -326,7 +326,7 @@ export async function compareFileVersions(path: string): Promise<SyncResult> {
     return {
       shouldUpdate: true,
       action: 'conflict',
-      reason: 'None FileUpdate ，'
+      reason: 'Could not determine file update times; manual resolution required'
     }
   }
 
@@ -335,7 +335,7 @@ export async function compareFileVersions(path: string): Promise<SyncResult> {
     return {
       shouldUpdate: true,
       action: 'pull',
-      reason: 'None FileUpdate ，'
+      reason: 'Could not determine remote file update time; pulling remote version'
     }
   }
 
@@ -344,7 +344,7 @@ export async function compareFileVersions(path: string): Promise<SyncResult> {
     return {
       shouldUpdate: true,
       action: 'push',
-      reason: 'None LocalFileUpdate ， Local'
+      reason: 'Could not determine local file update time; pushing local version'
     }
   }
 
@@ -359,7 +359,7 @@ export async function compareFileVersions(path: string): Promise<SyncResult> {
       return {
         shouldUpdate: false,
         action: 'none',
-        reason: 'Done ， ，'
+        reason: 'Recently synced or restored; within buffer period, skip push'
       }
     }
   }
@@ -368,21 +368,21 @@ export async function compareFileVersions(path: string): Promise<SyncResult> {
     return {
       shouldUpdate: true,
       action: 'pull',
-      reason: 'File ， Update'
+      reason: 'Remote file is newer; pull required'
     }
   } else if (localTime > remoteTime) {
     return {
       shouldUpdate: true,
       action: 'push',
-      reason: 'LocalFile ， Update'
+      reason: 'Local file is newer; push required'
     }
   }
 
-  // ，（）
+  // Same mtime → treat as in sync
   return {
     shouldUpdate: false,
     action: 'none',
-    reason: 'File ，'
+    reason: 'File modification times match; treated as in sync'
   }
 }
 
@@ -458,7 +458,7 @@ export async function pullRemoteFile(path: string): Promise<string> {
     throw error
   }
 
-  throw new Error('None File')
+  throw new Error('Could not fetch remote file content')
 }
 
 /**
@@ -711,7 +711,7 @@ async function performSync(path: string, enableConflictResolution: boolean): Pro
       if (error instanceof Error && 
           (error.message.includes('no such file') || 
            error.message.includes('not found') ||
-           error.message.includes('Translated message'))) {
+           error.message.includes('系统找不到指定的路径') || error.message.includes('cannot find the path'))) {
       } else {
         //
       }
@@ -748,13 +748,13 @@ async function performSync(path: string, enableConflictResolution: boolean): Pro
           finalContent = mergeSimpleContent(localContent, remoteContent)
           toast({
             title: 'Auto-merge succeeded',
-            description: 'Translated message'
+            description: 'Auto-merge succeeded'
           })
           break
         case 'manual':
           toast({
-            title: 'Translated message',
-            description: 'Conflict ，',
+            title: 'Manual resolution required',
+            description: 'Conflict is complex; please resolve it manually',
             variant: 'destructive'
           })
           return null
@@ -899,7 +899,7 @@ export async function compareS3FileVersions(path: string): Promise<SyncResult> {
       return {
         shouldUpdate: true,
         action: 'push',
-        reason: 'Remote file does not exist，'
+        reason: 'Remote file does not exist; push to remote'
       }
     }
     return { shouldUpdate: false, action: 'none' }
@@ -910,7 +910,7 @@ export async function compareS3FileVersions(path: string): Promise<SyncResult> {
     return {
       shouldUpdate: true,
       action: 'pull',
-      reason: 'LocalFile does not exist，'
+      reason: 'Local file does not exist; pull from remote'
     }
   }
 
@@ -919,7 +919,7 @@ export async function compareS3FileVersions(path: string): Promise<SyncResult> {
     return {
       shouldUpdate: true,
       action: 'pull',
-      reason: 'File Update（ETag ）， Update'
+      reason: 'Remote file updated (ETag mismatch); pull required'
     }
   }
 
@@ -928,7 +928,7 @@ export async function compareS3FileVersions(path: string): Promise<SyncResult> {
     return {
       shouldUpdate: false,
       action: 'none',
-      reason: 'ETag ，File'
+      reason: 'ETag matches; file is in sync'
     }
   }
 
@@ -941,14 +941,14 @@ export async function compareS3FileVersions(path: string): Promise<SyncResult> {
     return {
       shouldUpdate: true,
       action: 'push',
-      reason: 'LocalFile ，'
+      reason: 'Local file is newer; push required'
     }
   }
 
   return {
     shouldUpdate: true,
     action: 'pull',
-    reason: 'File ，'
+    reason: 'Remote file is newer; pull required'
   }
 }
 
@@ -961,7 +961,7 @@ export async function compareWebDAVFileVersions(path: string): Promise<SyncResul
   const store = await getStore()
   const config = await store.get<WebDAVConfig>('webdavSyncConfig')
   if (!config) {
-    return { shouldUpdate: false, action: 'none', reason: 'WebDAV' }
+    return { shouldUpdate: false, action: 'none', reason: 'WebDAV is not configured' }
   }
 
   // proxy
@@ -984,7 +984,7 @@ export async function compareWebDAVFileVersions(path: string): Promise<SyncResul
       return {
         shouldUpdate: true,
         action: 'push',
-        reason: 'Remote file does not exist，'
+        reason: 'Remote file does not exist; push to remote'
       }
     }
     return { shouldUpdate: false, action: 'none' }
@@ -995,7 +995,7 @@ export async function compareWebDAVFileVersions(path: string): Promise<SyncResul
     return {
       shouldUpdate: true,
       action: 'pull',
-      reason: 'LocalFile does not exist，'
+      reason: 'Local file does not exist; pull from remote'
     }
   }
 
@@ -1004,7 +1004,7 @@ export async function compareWebDAVFileVersions(path: string): Promise<SyncResul
     return {
       shouldUpdate: true,
       action: 'pull',
-      reason: 'File Update（ETag ）， Update'
+      reason: 'Remote file updated (ETag mismatch); pull required'
     }
   }
 
@@ -1013,7 +1013,7 @@ export async function compareWebDAVFileVersions(path: string): Promise<SyncResul
     return {
       shouldUpdate: false,
       action: 'none',
-      reason: 'ETag ，File'
+      reason: 'ETag matches; file is in sync'
     }
   }
 
@@ -1026,13 +1026,13 @@ export async function compareWebDAVFileVersions(path: string): Promise<SyncResul
     return {
       shouldUpdate: true,
       action: 'push',
-      reason: 'LocalFile ，'
+      reason: 'Local file is newer; push required'
     }
   }
 
   return {
     shouldUpdate: true,
     action: 'pull',
-    reason: 'File ，'
+    reason: 'Remote file is newer; pull required'
   }
 }

@@ -13,6 +13,8 @@ mod mcp_runtime;
 mod mobile_system_bars;
 mod notion_import;
 mod ocr_packages;
+#[cfg(not(any(target_os = "android", target_os = "ios")))]
+mod parakeet_stt;
 mod printing;
 mod remote_skills;
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
@@ -36,6 +38,10 @@ use mcp_runtime::{
 };
 use notion_import::import_notion_zip;
 use ocr_packages::{list_ocr_providers, run_ocr_provider};
+#[cfg(not(any(target_os = "android", target_os = "ios")))]
+use parakeet_stt::{
+    ensure_parakeet_stt, inspect_parakeet_stt, list_parakeet_models, transcribe_with_parakeet,
+};
 use remote_skills::{
     cancel_remote_skill_download, inspect_remote_skill, install_remote_skill, search_remote_skills,
     RemoteSkillManager,
@@ -115,6 +121,14 @@ pub fn run() {
             cancel_ai_request,
             list_ocr_providers,
             run_ocr_provider,
+            #[cfg(not(any(target_os = "android", target_os = "ios")))]
+            list_parakeet_models,
+            #[cfg(not(any(target_os = "android", target_os = "ios")))]
+            inspect_parakeet_stt,
+            #[cfg(not(any(target_os = "android", target_os = "ios")))]
+            ensure_parakeet_stt,
+            #[cfg(not(any(target_os = "android", target_os = "ios")))]
+            transcribe_with_parakeet,
             printing::print_webview,
             mobile_system_bars::set_mobile_system_bars,
             system_trash::move_paths_to_trash,

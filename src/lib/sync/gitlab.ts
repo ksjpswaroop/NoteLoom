@@ -36,7 +36,7 @@ async function getGitlabApiBaseUrl(): Promise<string> {
 
     // URL
     if (!customUrl) {
-      throw new Error('GitLab URL ， GitLab URL');
+      throw new Error('Self-hosted GitLab URL is not configured. Enter a GitLab URL in settings first.');
     }
 
     // URL
@@ -226,13 +226,13 @@ export async function uploadFile({
         const putErrorData = await putResponse.json();
         throw {
           status: putResponse.status,
-          message: putErrorData.message || 'UpdateFileFailed'
+          message: putErrorData.message || 'Failed to update file'
         } as GitlabError;
       }
 
       throw {
         status: commitResponse.status,
-        message: commitErrorData.error || 'UpdateFileFailed'
+        message: commitErrorData.error || 'Failed to update file'
       } as GitlabError;
     }
 
@@ -240,13 +240,13 @@ export async function uploadFile({
     const commitErrorData = await commitResponse.json();
     throw {
       status: commitResponse.status,
-      message: commitErrorData.error || commitErrorData.message || 'UpdateFileFailed'
+      message: commitErrorData.error || commitErrorData.message || 'Failed to update file'
     } as GitlabError;
 
   } catch (error) {
     toast({
-      title: 'File Error',
-      description: (error as GitlabError).message || 'File Error',
+      title: 'Sync failed',
+      description: (error as GitlabError).message || 'Sync failed',
       variant: 'destructive',
     });
     throw error;
@@ -406,7 +406,7 @@ export async function deleteFile({ path, repo }: { path: string; sha?: string; r
   } catch (error) {
     toast({
       title: 'Failed to delete file',
-      description: (error as GitlabError).message || 'File Error',
+      description: (error as GitlabError).message || 'Sync failed',
       variant: 'destructive',
     });
     return null; //
@@ -507,7 +507,7 @@ export async function getFileContent({ path, ref, repo }: { path: string; ref: s
   } catch (error) {
     toast({
       title: 'Failed to get file content',
-      description: (error as GitlabError).message || 'File Error',
+      description: (error as GitlabError).message || 'Sync failed',
       variant: 'destructive',
     });
     throw error;

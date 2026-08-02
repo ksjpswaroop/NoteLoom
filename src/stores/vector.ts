@@ -77,7 +77,7 @@ const useVectorStore = create<VectorState>((set, get) => ({
         if (!modelAvailable) {
           toast({
             title: 'Vector database',
-            description: 'Embed ， AI Embed',
+            description: 'No embedding model is configured or available. Configure one in AI settings.',
             variant: 'destructive',
           });
         }
@@ -112,7 +112,7 @@ const useVectorStore = create<VectorState>((set, get) => ({
       if (!modelAvailable) {
         toast({
           title: 'Vector processing',
-          description: 'Embed ， AI Embed',
+          description: 'No embedding model is configured or available. Configure one in AI settings.',
           variant: 'destructive',
         });
         return;
@@ -130,7 +130,7 @@ const useVectorStore = create<VectorState>((set, get) => ({
       //
       processingToast = toast({
         title: 'Vector processing',
-        description: 'Vector， ...',
+        description: 'Indexing documents for vector search. This may take a while…',
         duration: Infinity,
       });
 
@@ -138,7 +138,7 @@ const useVectorStore = create<VectorState>((set, get) => ({
       const result = await processAllMarkdownFiles((current, total, fileName) => {
         processingToast?.update({
           title: 'Processing vectors',
-          description: `${current}/${total}：${fileName}`,
+          description: `Processed ${current}/${total}: ${fileName}`,
           duration: Infinity,
         });
       });
@@ -167,18 +167,18 @@ const useVectorStore = create<VectorState>((set, get) => ({
       await get().refreshIndexStats();
 
       //
-      let description = `${result.success}`;
+      let description = `Successfully processed ${result.success} document(s)`;
       if (result.failed > 0) {
-        description += `，Failed ${result.failed}`;
+        description += `, ${result.failed} failed`;
         // ，
         if (result.failedFiles && result.failedFiles.length > 0) {
-          const failedSample = result.failedFiles.slice(0, 3).map(f => f.fileName).join('、');
-          description += `\nFailedFile: ${failedSample}${result.failedFiles.length > 3 ? ' etc.' : ''}`;
+          const failedSample = result.failedFiles.slice(0, 3).map(f => f.fileName).join(', ');
+          description += `\nFailed files: ${failedSample}${result.failedFiles.length > 3 ? ', …' : ''}`;
         }
       }
 
       processingToast.update({
-        title: result.failed > 0 ? 'Vector processing complete（ Failed）' : 'Vector processing complete',
+        title: result.failed > 0 ? 'Vector processing complete (with failures)' : 'Vector processing complete',
         description,
         variant: result.failed > 0 ? 'destructive' : 'default',
         duration: 5000,
@@ -199,7 +199,7 @@ const useVectorStore = create<VectorState>((set, get) => ({
 
       const errorToast = {
         title: 'Vector processing failed',
-        description: 'Vector Error，',
+        description: 'An error occurred while indexing documents. Check the console for details.',
         variant: 'destructive',
         duration: 5000,
       } as const;

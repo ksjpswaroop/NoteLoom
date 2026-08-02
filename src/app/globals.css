@@ -114,21 +114,21 @@
 
 @keyframes recordSearchBreathe {
   0% {
-    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.12);
-    border-color: rgba(245, 158, 11, 0.45);
-    background-color: rgba(254, 243, 199, 0.4);
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.12);
+    border-color: rgba(59, 130, 246, 0.45);
+    background-color: rgba(219, 234, 254, 0.4);
   }
 
   50% {
-    box-shadow: 0 0 0 6px rgba(245, 158, 11, 0.18);
-    border-color: rgba(245, 158, 11, 0.9);
-    background-color: rgba(254, 243, 199, 0.9);
+    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.18);
+    border-color: rgba(59, 130, 246, 0.9);
+    background-color: rgba(219, 234, 254, 0.9);
   }
 
   100% {
-    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.1);
-    border-color: rgba(245, 158, 11, 0.35);
-    background-color: rgba(254, 243, 199, 0.35);
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.35);
+    background-color: rgba(219, 234, 254, 0.35);
   }
 }
 
@@ -137,13 +137,14 @@
 }
 
 /*
-  NoteLoom brand — Deep Slate + Amber Thread
-  Hex reference (CSS tokens below store H S% L%):
+  NoteLoom brand — Deep Slate + Blue Thread
+  Hex reference (CSS tokens below store H S% L% where noted):
     --brand-slate-ink:   #1A2332
     --brand-slate-deep:  #0F1419
     --brand-slate-soft:  #F5F7FA
-    --brand-amber:       #C47D12  (light primary / loom frame)
-    --brand-amber-bright:#E9A825  (dark primary / warp thread)
+    --brand-blue:        #3b82f6  (primary accent / loom frame)
+    --brand-blue-deep:   #2563eb  (hover / stronger light primary)
+    --brand-blue-bright: #60a5fa  (dark primary / warp thread)
     --brand-teal-thread: #0F766E  (secondary accent / charts)
   Tagline vibe: "Capture first. Organize later."
 */
@@ -152,9 +153,13 @@
     --brand-slate-ink: #1A2332;
     --brand-slate-deep: #0F1419;
     --brand-slate-soft: #F5F7FA;
-    --brand-amber: #C47D12;
-    --brand-amber-bright: #E9A825;
+    --brand-blue: #3b82f6;
+    --brand-blue-deep: #2563eb;
+    --brand-blue-bright: #60a5fa;
     --brand-teal-thread: #0F766E;
+    /* Legacy aliases — map amber tokens to blue so older refs resolve correctly */
+    --brand-amber: var(--brand-blue);
+    --brand-amber-bright: var(--brand-blue-bright);
 
     --background: 220 33% 97%;
     --foreground: 214 32% 15%;
@@ -162,36 +167,36 @@
     --card-foreground: 214 32% 15%;
     --popover: 0 0% 100%;
     --popover-foreground: 214 32% 15%;
-    --primary: 36 83% 42%;
-    --primary-foreground: 40 100% 97%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 214 25% 93%;
     --secondary-foreground: 214 32% 15%;
     --third: 214 28% 87%;
     --third-foreground: 214 28% 22%;
     --muted: 220 20% 94%;
     --muted-foreground: 210 14% 42%;
-    --accent: 45 96% 89%;
-    --accent-foreground: 26 80% 26%;
+    --accent: 214 95% 93%;
+    --accent-foreground: 224 64% 33%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
     --border: 214 25% 88%;
     --input: 214 25% 88%;
-    --ring: 36 83% 42%;
+    --ring: 217 91% 60%;
     --shadow: 214 32% 15%;
-    --chart-1: 36 83% 42%;
+    --chart-1: 217 91% 60%;
     --chart-2: 174 72% 26%;
     --chart-3: 214 32% 28%;
-    --chart-4: 40 82% 53%;
+    --chart-4: 221 83% 53%;
     --chart-5: 198 40% 40%;
     --radius: 0.625rem;
     --sidebar-background: 220 28% 96%;
     --sidebar-foreground: 214 24% 28%;
-    --sidebar-primary: 36 83% 42%;
-    --sidebar-primary-foreground: 40 100% 97%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 214 25% 93%;
     --sidebar-accent-foreground: 214 32% 15%;
     --sidebar-border: 214 22% 90%;
-    --sidebar-ring: 36 83% 42%;
+    --sidebar-ring: 217 91% 60%;
     --component-inactive-color: var(--muted-foreground);
     --component-bg: var(--card);
     --component-shadow: var(--border);
@@ -213,35 +218,35 @@
     --card-foreground: 214 20% 93%;
     --popover: 214 25% 11%;
     --popover-foreground: 214 20% 93%;
-    --primary: 40 82% 53%;
-    --primary-foreground: 36 60% 7%;
+    --primary: 213 94% 68%;
+    --primary-foreground: 222 47% 11%;
     --secondary: 214 25% 16%;
     --secondary-foreground: 214 20% 93%;
     --third: 214 24% 20%;
     --third-foreground: 214 20% 88%;
     --muted: 214 25% 16%;
     --muted-foreground: 214 15% 64%;
-    --accent: 36 50% 16%;
-    --accent-foreground: 45 96% 76%;
+    --accent: 217 50% 18%;
+    --accent-foreground: 213 94% 78%;
     --destructive: 0 55% 36%;
     --destructive-foreground: 0 0% 98%;
     --border: 214 22% 21%;
     --input: 214 22% 21%;
-    --ring: 40 82% 53%;
+    --ring: 213 94% 68%;
     --shadow: 0 0% 0%;
-    --chart-1: 40 82% 53%;
+    --chart-1: 213 94% 68%;
     --chart-2: 174 55% 42%;
     --chart-3: 214 30% 55%;
-    --chart-4: 36 70% 48%;
+    --chart-4: 217 91% 60%;
     --chart-5: 198 45% 55%;
     --sidebar-background: 214 28% 10%;
     --sidebar-foreground: 214 20% 92%;
-    --sidebar-primary: 40 82% 53%;
-    --sidebar-primary-foreground: 36 60% 7%;
+    --sidebar-primary: 213 94% 68%;
+    --sidebar-primary-foreground: 222 47% 11%;
     --sidebar-accent: 214 25% 16%;
     --sidebar-accent-foreground: 214 20% 92%;
     --sidebar-border: 214 22% 18%;
-    --sidebar-ring: 40 82% 53%;
+    --sidebar-ring: 213 94% 68%;
     --component-inactive-color: var(--muted-foreground);
     --component-bg: var(--card);
     --component-shadow: var(--border);

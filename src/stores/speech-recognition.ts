@@ -81,7 +81,7 @@ const useSpeechRecognitionStore = create<SpeechRecognitionState>((set, get) => (
     try {
       //
       if (!get().isSupported()) {
-        throw new Error('， Chrome、Edge Safari')
+        throw new Error('Speech recognition is not supported in this browser. Use Chrome, Edge, or Safari.')
       }
 
       //

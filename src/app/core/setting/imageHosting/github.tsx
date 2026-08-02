@@ -241,7 +241,7 @@ export function GithubImageHosting() {
                   <OpenBroswer title={imageRepoInfo?.full_name || ''} url={imageRepoInfo?.html_url || ''} />
                 </ItemTitle>
                 <ItemDescription>
-                  {t('settings.sync.createdAt', { time: dayjs(imageRepoInfo?.created_at).fromNow() })}，
+                  {t('settings.sync.createdAt', { time: dayjs(imageRepoInfo?.created_at).fromNow() })}
                   {t('settings.sync.updatedAt', { time: dayjs(imageRepoInfo?.updated_at).fromNow() })}
                 </ItemDescription>
               </ItemContent>

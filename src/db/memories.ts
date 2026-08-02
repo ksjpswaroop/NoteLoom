@@ -287,7 +287,7 @@ export async function upsertMemory(
   const scopeType = input.scopeType || 'global'
   const scopeId = scopeType === 'workspace' ? input.scopeId?.trim() || undefined : undefined
   if (scopeType === 'workspace' && !scopeId) {
-    throw new Error('Translated message')
+    throw new Error('Workspace memory is missing a workspace identifier')
   }
 
   const existing = (await getAllMemories({ includeInactive: true })).find(memory =>
@@ -436,7 +436,7 @@ export async function updateMemory(id: string, updates: MemoryUpdateInput): Prom
     ? updates.scopeId === undefined ? current.scopeId : updates.scopeId?.trim()
     : undefined
   if (scopeType === 'workspace' && !scopeId) {
-    throw new Error('Translated message')
+    throw new Error('Workspace memory is missing a workspace identifier')
   }
 
   const contentChanged = content !== current.content

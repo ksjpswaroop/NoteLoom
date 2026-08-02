@@ -211,7 +211,7 @@ export class SyncManager {
   async pushFile(path: string, content: string): Promise<SyncResult> {
     //
     if (shouldExclude(path)) {
-      return { success: true, action: 'none', message: 'File' }
+      return { success: true, action: 'none', message: 'File is excluded from sync' }
     }
 
     try {
@@ -396,7 +396,7 @@ export class SyncManager {
 
       // S3 WebDAV SHA，
       if ((platform !== 's3' && platform !== 'webdav') && !sha) {
-        return { success: true, action: 'none', message: 'Remote file does not exist，None' }
+        return { success: true, action: 'none', message: 'Remote file does not exist; nothing to delete' }
       }
 
       let success = false
@@ -462,7 +462,7 @@ export class SyncManager {
       // ask，
       if (strategy === 'ask') {
         // UI ，
-        return { success: false, action: 'conflict', message: 'Translated message' }
+        return { success: false, action: 'conflict', message: 'User choice required' }
       }
 
       //
@@ -497,7 +497,7 @@ export class SyncManager {
           break
       }
 
-      return { success: true, action: 'push', message: 'Conflict' }
+      return { success: true, action: 'push', message: 'Conflict resolved' }
     } catch (error) {
       return { success: false, action: 'conflict', error: String(error) }
     }
@@ -512,7 +512,7 @@ export class SyncManager {
     //
     if (this.state.isSyncing) {
       this.state.pendingSync = true
-      return { success: true, action: 'none', message: '，' }
+      return { success: true, action: 'none', message: 'Sync in progress; marked as pending' }
     }
 
     this.state.isSyncing = true
@@ -526,7 +526,7 @@ export class SyncManager {
       const syncResult = await compareFileVersions(path)
 
       if (syncResult.action === 'none') {
-        return { success: true, action: 'none', message: 'File' }
+        return { success: true, action: 'none', message: 'File is already in sync' }
       }
 
       if (syncResult.action === 'push') {

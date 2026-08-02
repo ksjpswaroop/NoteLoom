@@ -39,7 +39,7 @@ export function ReadAloudControl({ chat, translatedContent }: ReadAloudControlPr
       textToRead = textToRead.trim()
       
       if (!textToRead) {
-        console.warn('Translated message')
+        console.warn('Nothing to read aloud')
         return
       }
       

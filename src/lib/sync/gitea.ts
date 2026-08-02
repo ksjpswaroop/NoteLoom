@@ -37,7 +37,7 @@ export async function getGiteaApiBaseUrl(): Promise<string> {
 
     // URL
     if (!customUrl) {
-      throw new Error('Gitea URL ， Gitea URL');
+      throw new Error('Self-hosted Gitea URL is not configured. Enter a Gitea URL in settings first.');
     }
 
     // URL
@@ -195,8 +195,8 @@ export async function uploadFile({
 
   } catch (error) {
     toast({
-      title: 'File Error',
-      description: (error as GiteaError).message || 'File Error',
+      title: 'Sync failed',
+      description: (error as GiteaError).message || 'Sync failed',
       variant: 'destructive',
     });
     throw error;
@@ -235,8 +235,8 @@ export async function updateFileContent({
     });
   } catch (error) {
     toast({
-      title: 'UpdateFileFailed',
-      description: (error as GiteaError).message || 'UpdateFile Error',
+      title: 'Failed to update file',
+      description: (error as GiteaError).message || 'Failed to update file',
       variant: 'destructive',
     });
     throw error;
@@ -388,7 +388,7 @@ export async function deleteFile({ path, sha, repo }: { path: string; sha?: stri
   } catch (error) {
     toast({
       title: 'Failed to delete file',
-      description: (error as GiteaError).message || 'File Error',
+      description: (error as GiteaError).message || 'Sync failed',
       variant: 'destructive',
     });
     return null; //
@@ -580,7 +580,7 @@ export async function getFileContent({ path, ref, repo }: { path: string; ref: s
   } catch (error) {
     toast({
       title: 'Failed to get file content',
-      description: (error as GiteaError).message || 'File Error',
+      description: (error as GiteaError).message || 'Sync failed',
       variant: 'destructive',
     });
     throw error;

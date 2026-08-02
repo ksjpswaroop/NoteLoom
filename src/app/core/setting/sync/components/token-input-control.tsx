@@ -1,7 +1,7 @@
 'use client'
 
 import { Eye, EyeOff } from 'lucide-react'
-import { useLocale, useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import { OpenBroswer } from '@/components/open-broswer'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -27,9 +27,8 @@ export function TokenInputControl({
   disabled = false,
   docsSection = 'sync',
 }: TokenInputControlProps) {
-  const locale = useLocale()
   const t = useTranslations()
-  const docsLocale = locale === 'zh' || locale === 'zh-TW' ? 'cn' : 'en'
+  const docsLocale = 'en'
   const docsUrl = `https://notegen.top/${docsLocale}/docs/settings/${docsSection}#token-permissions-guide`
 
   return (

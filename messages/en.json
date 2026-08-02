@@ -964,7 +964,7 @@
         "preferenceDescription": "Preferences: Settings like language, format, style - always loaded in conversations",
         "memoryDescription": "Memories: Facts, experiences, expertise - intelligently matched based on conversation context",
         "contentLabel": "Memory Content",
-        "contentPlaceholder": "e.g., I prefer Chinese responses, I'm a React expert...",
+        "contentPlaceholder": "e.g., I prefer concise English replies, I'm a React expert...",
         "categoryLabel": "Type",
         "preferenceLabel": "Preference",
         "memoryLabel": "Memory",
@@ -1141,10 +1141,43 @@
       "stt": {
         "title": "Speech-to-Text (STT)",
         "desc": "Configure voice recognition to convert speech to text records.",
-        "modeDesc": "Prefer native browser recognition by default, and fall back to a model when local support is unavailable.",
+        "modeDesc": "Auto prefers Local Parakeet when ready, then falls back to a remote STT model. Local uses only the selected local engine. Model uses only a remote STT provider.",
+        "localEngine": {
+          "title": "Local Engine",
+          "desc": "Choose how NoteLoom transcribes recordings on this device.",
+          "parakeet": "Local Parakeet (Recommended)",
+          "browser": "Browser speech (live only)"
+        },
+        "parakeet": {
+          "model": {
+            "title": "Parakeet Model",
+            "desc": "Select the on-device Parakeet model used for local transcription."
+          },
+          "language": {
+            "title": "Language",
+            "desc": "NoteLoom keeps transcription English-first. English is the default."
+          },
+          "languageEnglish": "English",
+          "attention": {
+            "title": "Attention Mode",
+            "desc": "Full attention is more accurate for short clips. Local attention uses less memory for longer recordings."
+          },
+          "attentionFull": "Full (default)",
+          "attentionLocal": "Local (long audio)",
+          "runtime": {
+            "title": "Local Parakeet Runtime",
+            "checking": "Checking Local Parakeet runtime…"
+          },
+          "install": "Install Local Parakeet",
+          "reinstall": "Reinstall Runtime",
+          "installing": "Installing…",
+          "refresh": "Refresh Status",
+          "installFailed": "Failed to install Local Parakeet. Check Python 3.10–3.13, network access, and try again.",
+          "statusError": "Could not read Local Parakeet status."
+        },
         "model": {
-          "title": "STT Model",
-          "desc": "Optional. Configure a model for auto fallback or for model-only mode."
+          "title": "Remote STT Model",
+          "desc": "Optional. Used for model-only mode, or as auto fallback when Local Parakeet is unavailable."
         }
       }
     },
@@ -2779,9 +2812,9 @@
         "outputLanguageZhTW": "Traditional Chinese",
         "outputLanguageEn": "English",
         "outputLanguageJa": "Japanese",
-        "outputLanguagePtBR": "Português",
+        "outputLanguagePtBR": "Portuguese",
         "outputLanguageCustom": "Custom",
-        "outputLanguageCustomPlaceholder": "For example: use French, or use natural conversational Chinese",
+        "outputLanguageCustomPlaceholder": "For example: use clear professional English",
         "outputLanguageHelp": "Choose a common language, or select Custom to manually enter the output language requirement.",
         "articleTitle": "Article title",
         "articleTitlePlaceholder": "Leave blank to let AI generate a title",
@@ -3600,6 +3633,7 @@
     "record": "Record",
     "quickRecord": "Quick Record",
     "write": "Write",
+    "dashboard": "Dashboard",
     "me": "My",
     "mobileDock": {
       "chat": "Chat",
@@ -3627,6 +3661,58 @@
     "hideRightSidebar": "Hide Right Sidebar",
     "searchPlaceholder": "Search notes, records, or canvases...",
     "navigate": "Navigate"
+  },
+  "dashboard": {
+    "title": "Overview",
+    "subtitle": "A quiet snapshot of notes, records, and recent activity across your workspace.",
+    "eyebrow": "Workspace",
+    "navLabel": "Dashboard navigation",
+    "navDescription": "Move between dashboard, writing, and settings.",
+    "openNav": "Open navigation",
+    "collapseSidebar": "Collapse",
+    "userMenu": "User menu",
+    "guestUser": "Local user",
+    "localWorkspace": "Local workspace",
+    "workspace": "Workspace",
+    "kpis": {
+      "label": "Key metrics",
+      "notes": "Notes",
+      "notesHint": "Markdown files in your workspace",
+      "records": "Records",
+      "recordsHint": "Captured marks and clips",
+      "canvases": "Canvases",
+      "canvasesHint": "Active canvas projects",
+      "tags": "Tags",
+      "activeDays": "Active days",
+      "activeDaysHint": "Days with activity in the last week"
+    },
+    "chart": {
+      "title": "Activity trend",
+      "description": "Records, writing, and chats over the last 14 days."
+    },
+    "activity": {
+      "title": "Recent activity",
+      "description": "Latest captures and writing sessions from your workspace.",
+      "empty": "No activity yet. Capture a record or open a note to get started.",
+      "columns": {
+        "type": "Type",
+        "title": "Title",
+        "detail": "Detail",
+        "when": "When"
+      }
+    },
+    "quickActions": {
+      "title": "Quick actions",
+      "description": "Jump into capture or writing without leaving the overview."
+    },
+    "actions": {
+      "newNote": "New note",
+      "captureText": "Capture text",
+      "recordVoice": "Record voice",
+      "addTodo": "Add todo",
+      "browseTags": "Browse tags",
+      "openNotes": "Open notes"
+    }
   },
   "activity": {
     "title": "Activity Calendar",
@@ -3738,14 +3824,14 @@
         "stepCompletedLabel": "Completed Task ({current}/{total})",
         "afterOrganizeDialog": {
           "title": "Completed Task (2/3)",
-          "description": "You've turned the record into a note. Do you want to continue and use the AI Agent to turn this note into a bilingual version?",
+          "description": "You've turned the record into a note. Do you want to continue and use the AI Agent to polish this note in English?",
           "confirm": "Continue",
           "cancel": "Not now"
         },
         "agentPrompt": {
           "label": "Sample Prompt",
           "use": "Use This Prompt",
-          "intro": "Please directly revise the note I just organized into a bilingual Chinese-English version.",
+          "intro": "Please revise the note I just organized into a clearer, polished English version.",
           "requirement1": "",
           "requirement2": "",
           "requirement3": "",
@@ -3762,8 +3848,8 @@
             "desc": "Turn that record into a structured note."
           },
           "aiPolish": {
-            "title": "Use Agent for bilingual translation",
-            "desc": "Use the AI Agent to turn the note you just organized into a bilingual version."
+            "title": "Use Agent to polish the note",
+            "desc": "Use the AI Agent to polish the note you just organized in English."
           }
         },
         "completedStates": {
@@ -3791,7 +3877,7 @@
           },
           "ai-polish": {
             "title": "Use the Agent on the note you just created here",
-            "desc": "Insert the sample prompt into chat and send it. The Agent will generate a bilingual version based on the current note."
+            "desc": "Insert the sample prompt into chat and send it. The Agent will polish the current note in English."
           }
         }
       }

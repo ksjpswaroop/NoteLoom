@@ -4,8 +4,10 @@ import { useEffect, useState } from 'react'
 import { platform } from '@tauri-apps/plugin-os'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 import { isMobileDevice } from '@/lib/check'
-import { Search, Settings, Minus, Square, X, PanelLeft, PanelRight, SquarePen, Cog, CalendarDays } from 'lucide-react'
+import { Search, Settings, Minus, Square, X, PanelLeft, PanelRight, SquarePen, Cog, CalendarDays, LayoutDashboard } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
+import { Store } from '@tauri-apps/plugin-store'
 import { useSidebarStore } from '@/stores/sidebar'
 import { PinToggle } from './pin-toggle'
 import { SyncToggle } from './title-bar-toolbars/sync-toggle'
@@ -51,8 +53,22 @@ interface TitleBarProps {
 export function TitleBar({ onSearchClick, onActivityClick, activityOpen = false }: TitleBarProps) {
   const [currentPlatform, setCurrentPlatform] = useState<Platform>('unknown')
   const [isMobile, setIsMobile] = useState(true)
+  const pathname = usePathname()
+  const router = useRouter()
   const { open: settingsOpen, openSettings, closeSettings } = useSettingsDialogStore()
   const { leftSidebarVisible, centerPanelVisible, rightSidebarVisible, toggleLeftSidebar, toggleCenterPanel, toggleRightSidebar } = useSidebarStore()
+  const isDashboard = pathname === '/core/dashboard'
+
+  async function openDashboard() {
+    router.push('/core/dashboard')
+    try {
+      const store = await Store.load('store.json')
+      await store.set('currentPage', '/core/dashboard')
+      await store.save()
+    } catch (error) {
+      console.debug('Failed to persist dashboard page preference:', error)
+    }
+  }
   
   // ""
   const wouldCauseLeftOnly = (currentVisible: boolean, panel: 'left' | 'center' | 'right') => {
@@ -319,6 +335,23 @@ export function TitleBar({ onSearchClick, onActivityClick, activityOpen = false 
             </TooltipContent>
           </Tooltip>
           
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`h-8 w-8 ${isDashboard ? 'bg-primary/10 text-primary hover:bg-primary/15' : ''}`}
+                onClick={() => void openDashboard()}
+                aria-label={t('navigation.dashboard')}
+              >
+                <LayoutDashboard className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p>{t('navigation.dashboard')}</p>
+            </TooltipContent>
+          </Tooltip>
+
           <Tooltip>
             <TooltipTrigger asChild>
               <Button

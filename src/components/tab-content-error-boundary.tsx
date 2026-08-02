@@ -55,9 +55,9 @@ export class TabContentErrorBoundary extends Component<
   private getErrorDetails() {
     const { error } = this.state
     return [
-      `：${this.props.tabName}`,
-      `Error：${error?.message || 'Unknown error'}`,
-      `：${new Date().toISOString()}`,
+      `Tab: ${this.props.tabName}`,
+      `Error: ${error?.message || 'Unknown error'}`,
+      `Time: ${new Date().toISOString()}`,
       error?.stack ? `\n${error.stack}` : '',
     ].filter(Boolean).join('\n')
   }
@@ -77,7 +77,7 @@ export class TabContentErrorBoundary extends Component<
       window.setTimeout(() => this.setState({ copied: false }), 2000)
     } catch (error) {
       console.error('Error Failed', error)
-      this.setState({ actionError: 'None Copy error details，' })
+      this.setState({ actionError: 'Could not copy error details. Check clipboard permissions.' })
     }
   }
 
@@ -98,11 +98,11 @@ export class TabContentErrorBoundary extends Component<
       this.setState({
         actionError: diagnosticsCopied
           ? ''
-          : 'GitHub ， Error Copy failed， 。',
+          : 'Opened GitHub, but copying error details failed. Please fill in the bug report manually.',
       })
     } catch (error) {
       console.error('GitHub Failed', error)
-      this.setState({ actionError: 'None GitHub ， 。' })
+      this.setState({ actionError: 'Could not open the GitHub feedback page. Check your network or browser settings.' })
     }
   }
 

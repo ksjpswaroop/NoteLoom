@@ -2347,7 +2347,7 @@ const useArticleStore = create<NoteState>((set, get) => ({
       const errorMsg = error instanceof Error ? error.message : String(error)
       const isFileNotFound = errorMsg.toLowerCase().includes('no such file') ||
                             errorMsg.toLowerCase().includes('not found') ||
-                            errorMsg.toLowerCase().includes('Translated message')
+                            errorMsg.toLowerCase().includes('系统找不到指定的路径') || errorMsg.toLowerCase().includes('cannot find the path')
 
       if (isFileNotFound && fileInfo && !fileInfo.isLocale) {
         // ，

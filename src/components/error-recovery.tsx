@@ -343,7 +343,7 @@ export function ErrorRecovery({
     return [
       `Error: ${error.message || 'Unknown error'}`,
       error.digest ? `Error ID: ${error.digest}` : '',
-      diagnosticContext.appVersion ? `NoteLoom：${diagnosticContext.appVersion}` : '',
+      diagnosticContext.appVersion ? `NoteLoom: ${diagnosticContext.appVersion}` : '',
       diagnosticContext.platform ? `System: ${diagnosticContext.platform} ${diagnosticContext.osVersion || ''}`.trim() : '',
       `Page: ${diagnosticContext.page || window.location.href}`,
       `Time: ${new Date().toISOString()}`,
@@ -564,7 +564,7 @@ export function ErrorRecovery({
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>？</AlertDialogTitle>
+                              <AlertDialogTitle>Delete this canvas?</AlertDialogTitle>
                               <AlertDialogDescription>
                                 {canvasContext.title
                                   ? `“${canvasContext.title}” will be moved to the canvas trash; other canvases and notes are unaffected.`
@@ -592,7 +592,7 @@ export function ErrorRecovery({
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Local？</AlertDialogTitle>
+                            <AlertDialogTitle>Clear all local canvases?</AlertDialogTitle>
                             <AlertDialogDescription>
                               All local canvases and thumbnails will be permanently deleted. Notes and records are unaffected. This cannot be undone.
                             </AlertDialogDescription>
@@ -617,7 +617,7 @@ export function ErrorRecovery({
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>？</AlertDialogTitle>
+                            <AlertDialogTitle>Reset app settings?</AlertDialogTitle>
                             <AlertDialogDescription>
                               Clears UI, model, sync, and workspace settings, but does not delete local notes, records, or the canvas database.
                             </AlertDialogDescription>
@@ -676,7 +676,7 @@ export function ErrorRecovery({
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Local？</AlertDialogTitle>
+                              <AlertDialogTitle>Permanently delete the local database?</AlertDialogTitle>
                               <AlertDialogDescription>
                                 This is the final recovery step. NoteLoom will close the database, delete database files, and restart. This cannot be undone.
                               </AlertDialogDescription>

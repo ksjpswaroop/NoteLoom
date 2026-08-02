@@ -43,7 +43,7 @@ export function parseCanvasProjectFile(source: string): Pick<CanvasPortableFile,
     ? candidate.canvasType as CanvasProjectType
     : 'blank'
   return {
-    title: isPortable && typeof candidate.title === 'string' ? candidate.title : 'Translated message',
+    title: isPortable && typeof candidate.title === 'string' ? candidate.title : 'Imported canvas',
     canvasType,
     document,
   }

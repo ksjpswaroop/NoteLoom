@@ -46,7 +46,7 @@ function validateCanvasOperations(document: CanvasDocument, rawOperations: unkno
         return `${item} add_node requires non-empty id, nodeType, label, and finite x, y.`
       }
       if (!CANVAS_NODE_TYPES.includes(nodeType as typeof CANVAS_NODE_TYPES[number])) {
-        return `${item}.nodeType must be one of ${CANVAS_NODE_TYPES.join('、')}.`
+        return `${item}.nodeType must be one of ${CANVAS_NODE_TYPES.join(', ')}.`
       }
       if (nodeIds.has(id)) {
         return `${item}.id="${id}" already exists; new nodes must use unique, stable IDs.`

@@ -84,7 +84,7 @@ export function DuplicateFolder({ item, shortcut }: DuplicateFolderProps) {
       toast({ title: `FolderCopied ${targetName}` })
     } catch (error) {
       console.error('Duplicate folder failed:', error)
-      toast({ title: 'FolderFailed', variant: 'destructive' })
+      toast({ title: 'Failed to duplicate folder', variant: 'destructive' })
     }
   }
 

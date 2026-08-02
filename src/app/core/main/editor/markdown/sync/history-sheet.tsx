@@ -153,7 +153,7 @@ export function HistorySheet({ editor }: HistorySheetProps) {
       console.error('Failed to load history:', error)
       toast({
         title: 'Failed to load',
-        description: 'None',
+        description: 'Could not load commit history',
         variant: 'destructive'
       })
     } finally {
@@ -231,7 +231,7 @@ export function HistorySheet({ editor }: HistorySheetProps) {
 
         toast({
           title: 'Restored',
-          description: 'File'
+          description: 'File restored from history'
         })
 
         setIsOpen(false)
@@ -240,7 +240,7 @@ export function HistorySheet({ editor }: HistorySheetProps) {
       console.error('Failed to restore version:', error)
       toast({
         title: 'Restore failed',
-        description: 'None File',
+        description: 'Could not restore the file from history',
         variant: 'destructive'
       })
     } finally {

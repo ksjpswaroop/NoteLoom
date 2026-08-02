@@ -390,7 +390,7 @@ class SyncPushQueue {
             // GitHub API ，
             // （）， sha，
             if (Array.isArray(fileInfo)) {
-              console.warn(`[SyncPushQueue] ${path} Yes ，None`)
+              console.warn(`[SyncPushQueue] ${path} is a directory and cannot be pushed`)
               emitter.emit('sync-push-completed', { path, success: false })
               logPerf('completed', {
                 attempt,
@@ -436,7 +436,7 @@ class SyncPushQueue {
             // Gitee API ，
             // （）， sha，
             if (Array.isArray(fileInfo)) {
-              console.warn(`[SyncPushQueue] ${path} Yes ，None`)
+              console.warn(`[SyncPushQueue] ${path} is a directory and cannot be pushed`)
               emitter.emit('sync-push-completed', { path, success: false })
               logPerf('completed', {
                 attempt,
@@ -480,7 +480,7 @@ class SyncPushQueue {
             })
             // GitLab getFiles ，（）
             if (Array.isArray(fileInfo)) {
-              console.warn(`[SyncPushQueue] ${path} Yes ，None`)
+              console.warn(`[SyncPushQueue] ${path} is a directory and cannot be pushed`)
               emitter.emit('sync-push-completed', { path, success: false })
               logPerf('completed', {
                 attempt,
@@ -525,7 +525,7 @@ class SyncPushQueue {
             })
             // Gitea getFiles ，（）
             if (Array.isArray(fileInfo)) {
-              console.warn(`[SyncPushQueue] ${path} Yes ，None`)
+              console.warn(`[SyncPushQueue] ${path} is a directory and cannot be pushed`)
               emitter.emit('sync-push-completed', { path, success: false })
               logPerf('completed', {
                 attempt,

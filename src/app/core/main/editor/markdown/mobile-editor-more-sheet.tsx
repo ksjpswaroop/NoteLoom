@@ -121,9 +121,9 @@ export function MobileEditorMoreSheet({
 
           {mode === 'ai' && (
             <>
-              <ActionButton label="Chinese" onClick={() => onAction('ai-polish')} />
-              <ActionButton label="Chinese" onClick={() => onAction('ai-concise')} />
-              <ActionButton label="Chinese" onClick={() => onAction('ai-expand')} />
+              <ActionButton label="Polish" onClick={() => onAction('ai-polish')} />
+              <ActionButton label="Make concise" onClick={() => onAction('ai-concise')} />
+              <ActionButton label="Expand" onClick={() => onAction('ai-expand')} />
             </>
           )}
 
@@ -135,7 +135,7 @@ export function MobileEditorMoreSheet({
               <Textarea
                 value={customAiInstruction}
                 onChange={(event) => onCustomAiInstructionChange(event.target.value)}
-                placeholder="AI ， ："
+                placeholder="Describe what you want the AI to do…"
                 rows={3}
                 maxRows={8}
               />
@@ -148,7 +148,7 @@ export function MobileEditorMoreSheet({
               <Textarea
                 value={customAiInstruction}
                 onChange={(event) => onCustomAiInstructionChange(event.target.value)}
-                placeholder="AI ， ："
+                placeholder="Describe what you want the AI to do…"
                 rows={3}
                 maxRows={8}
               />
