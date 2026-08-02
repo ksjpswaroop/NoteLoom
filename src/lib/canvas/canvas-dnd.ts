@@ -1,4 +1,4 @@
-export const CANVAS_DRAG_MIME = 'application/x-notegen-canvas'
+export const CANVAS_DRAG_MIME = 'application/x-noteloom-canvas'
 
 export function setCanvasDragData(dataTransfer: DataTransfer, canvasId: string) {
   dataTransfer.effectAllowed = 'copy'

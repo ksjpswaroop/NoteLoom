@@ -50,7 +50,7 @@ pub fn print_webview(
                     let output_path = PathBuf::from(output_path);
                     let parent = output_path.parent().unwrap_or_else(|| Path::new("."));
                     let temporary_path = parent.join(format!(
-                        ".notegen-pdf-{}.tmp",
+                        ".noteloom-pdf-{}.tmp",
                         uuid::Uuid::new_v4()
                     ));
                     (output_path, temporary_path)

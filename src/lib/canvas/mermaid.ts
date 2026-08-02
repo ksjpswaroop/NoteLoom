@@ -35,7 +35,7 @@ function stripComment(line: string) {
 export function mermaidToCanvasDocument(source: string): CanvasDocument {
   const typeOverrides = new Map<string, CanvasNodeType>()
   for (const line of source.split(/\r?\n/)) {
-    const match = line.trim().match(/^%%\s*notegen-type\s+([A-Za-z_][\w-]*)\s+([\w-]+)$/)
+    const match = line.trim().match(/^%%\s*(?:noteloom|notegen)-type\s+([A-Za-z_][\w-]*)\s+([\w-]+)$/)
     if (match && isCanvasFlowchartNodeType(match[2])) {
       typeOverrides.set(match[1], match[2])
     }
@@ -129,7 +129,7 @@ export function canvasDocumentToMermaid(document: CanvasDocument): string {
     .flatMap(node => {
       const id = aliases.get(node.id)!
       const label = escapeLabel(String(node.data.label || node.id))
-      const metadata = `  %% notegen-type ${id} ${node.type}`
+      const metadata = `  %% noteloom-type ${id} ${node.type}`
       if (node.type === 'decision') return [metadata, `  ${id}{"${label}"}`]
       if (node.type === 'terminator') return [metadata, `  ${id}(["${label}"])`]
       if (node.type === 'input-output') return [metadata, `  ${id}[/"${label}"/]`]

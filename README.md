@@ -4,14 +4,12 @@
 
 A local-first Markdown app that turns scattered records into clear notes with AI.
 
-> NoteLoom v0.1 is a fork of [NoteGen](https://github.com/codexu/note-gen) (GPL-3.0), rebranded and positioned as the consolidation home for related capture/organize products in this portfolio.
-
 ## Features (v0.1)
 
 - **Capture** text, voice, screenshots, images, links, files, and todos
 - **Organize later** — select records, pick a template, generate a Markdown note
 - **Dual capture shortcuts** — `⌘⇧T` text, `⌘⇧V` voice
-- Full NoteGen surface: editor, AI chat/agent, RAG, canvas, MCP, Skills, sync
+- Editor, AI chat/agent, RAG, canvas, MCP, Skills, and sync
 
 See [`PRD.md`](./PRD.md), [`docs/CONSOLIDATION_MANIFEST.md`](./docs/CONSOLIDATION_MANIFEST.md), and [`docs/mcp.md`](./docs/mcp.md) for MCP setup.
 
@@ -49,9 +47,8 @@ If the DMG/app is not Apple-notarized:
 ## License
 
 GNU General Public License v3.0 — see [`LICENSE`](./LICENSE).  
-Upstream copyright: NoteGen / codexu. NoteLoom modifications © contributors.
+Copyright notices for original authors are preserved in the license file. NoteLoom modifications © contributors.
 
-## Upstream
+## Source
 
-- Upstream remote: `https://github.com/codexu/note-gen.git`
-- Documentation site for upstream: https://notegen.top/
+- Repository: https://github.com/ksjpswaroop/NoteLoom

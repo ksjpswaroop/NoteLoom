@@ -3,10 +3,10 @@ import { getWorkspacePath } from '@/lib/workspace'
 import type { SkillScope } from './types'
 
 export const BUILTIN_SKILL_CREATOR = {
-  id: 'notegen-skill-creator',
-  name: 'notegen-skill-creator',
-  description: 'Create, install, or update reusable Agent Skills inside NoteGen. Use when the user asks to create a Skill, build a reusable AI workflow, install the created Skill, or modify an existing Skill.',
-  instructions: `# Create or update a NoteGen Skill
+  id: 'noteloom-skill-creator',
+  name: 'noteloom-skill-creator',
+  description: 'Create, install, or update reusable Agent Skills inside NoteLoom. Use when the user asks to create a Skill, build a reusable AI workflow, install the created Skill, or modify an existing Skill.',
+  instructions: `# Create or update a NoteLoom Skill
 
 Create a complete, reusable Agent Skill from the user's natural-language requirements and install it when requested.
 
@@ -16,7 +16,7 @@ Create a complete, reusable Agent Skill from the user's natural-language require
 2. Inspect installed Skills before choosing a name or updating an existing Skill. Use short verb-led kebab-case names under 64 characters.
 3. Keep SKILL.md concise. Put detailed domain material in references/, deterministic repeated logic in scripts/, and output templates in assets/. Do not add README, installation, changelog, or other process documentation.
 4. Write a description that says both what the Skill does and when it should trigger. Put all trigger guidance in the description.
-5. Prefer NoteGen tools and instruction-only Skills. Add scripts only when deterministic execution is genuinely required.
+5. Prefer NoteLoom tools and instruction-only Skills. Add scripts only when deterministic execution is genuinely required.
 6. Call skill_validate_package with the complete package. Fix every validation error before installation.
 7. Call skill_install_package only after validation succeeds. Use project scope for workspace-specific knowledge and global scope for reusable personal workflows. Set replaceExisting only when the user explicitly asks to update an existing Skill. Updates preserve existing resources unless their exact paths are listed in removeFiles.
 8. After installation, report the installed name, scope, resources, and whether executable scripts were added.

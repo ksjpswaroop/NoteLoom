@@ -1313,7 +1313,7 @@ mod tests {
     use zip::ZipWriter;
 
     fn test_directory(label: &str) -> PathBuf {
-        std::env::temp_dir().join(format!("notegen-{label}-{}", uuid::Uuid::new_v4()))
+        std::env::temp_dir().join(format!("noteloom-{label}-{}", uuid::Uuid::new_v4()))
     }
 
     fn write_test_archive(path: &Path, entries: &[(&str, &str)]) {

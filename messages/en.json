@@ -3926,7 +3926,7 @@
     "emptyState": {
       "title": "Capture first",
       "subtitle": "Start with a text or voice record, then organize it into a note when you're ready.",
-      "tip": "Capture first. Organize later. Derived from",
+      "tip": "Capture first. Organize later.",
       "actions": {
         "newNote": {
           "title": "Create Note",

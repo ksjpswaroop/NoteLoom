@@ -96,10 +96,10 @@ jobs:
           test -f "src-tauri/gen/android/app/src/main/res/values/themes.xml"
           test -f "src-tauri/gen/android/app/src/main/res/values-night/themes.xml"
           grep -q 'android.permission.RECORD_AUDIO' "$MANIFEST_PATH"
-          grep -q 'android:label="NoteGen"' "$MANIFEST_PATH"
+          grep -q 'android:label="NoteLoom"' "$MANIFEST_PATH"
           grep -q 'android:icon="@mipmap/ic_launcher"' "$MANIFEST_PATH"
           grep -q 'android:roundIcon="@mipmap/ic_launcher"' "$MANIFEST_PATH"
-          grep -q 'Theme.note_gen' "$MANIFEST_PATH"
+          grep -q 'Theme.noteloom' "$MANIFEST_PATH"
           grep -q 'class OcrPlugin' "src-tauri/gen/android/app/src/main/java/com/codexu/NoteGen/OcrPlugin.kt"
           grep -q 'class SystemBarsPlugin' "src-tauri/gen/android/app/src/main/java/com/codexu/NoteGen/SystemBarsPlugin.kt"
           grep -q 'Theme.MaterialComponents.DayNight.NoActionBar' "src-tauri/gen/android/app/src/main/res/values/themes.xml"
@@ -160,7 +160,7 @@ jobs:
           APKSIGNER="$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -n 1)/apksigner"
           APK_DIR="gen/android/app/build/outputs/apk/arm64/release"
           APK_PATH="${APK_DIR}/app-arm64-release-unsigned.apk"
-          SIGNED_APK="${APK_DIR}/NoteGen_${VERSION}_android-arm64.apk"
+          SIGNED_APK="${APK_DIR}/NoteLoom_${VERSION}_android-arm64.apk"
 
           if [ ! -f "$APK_PATH" ]; then
             echo "❌ APK file not found at $APK_PATH"
@@ -192,14 +192,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: src-tauri/gen/android/app/build/outputs/apk/arm64/release/NoteGen_*.apk
+          path: src-tauri/gen/android/app/build/outputs/apk/arm64/release/NoteLoom_*.apk
           if-no-files-found: error
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: note-gen-v${{ steps.get_version.outputs.version }}
-          files: src-tauri/gen/android/app/build/outputs/apk/arm64/release/NoteGen_*.apk
+          tag_name: note-loom-v${{ steps.get_version.outputs.version }}
+          files: src-tauri/gen/android/app/build/outputs/apk/arm64/release/NoteLoom_*.apk
           draft: false
           prerelease: false
 
@@ -220,24 +220,24 @@ jobs:
           - platform: 'macos-latest'
             args: '--target aarch64-apple-darwin'
             name: 'macos-arm64'
-            bundlePath: 'src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/NoteGen_*.dmg'
+            bundlePath: 'src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/NoteLoom_*.dmg'
           - platform: 'macos-latest'
             args: '--target x86_64-apple-darwin'
             name: 'macos-x64'
-            bundlePath: 'src-tauri/target/x86_64-apple-darwin/release/bundle/dmg/NoteGen_*.dmg'
+            bundlePath: 'src-tauri/target/x86_64-apple-darwin/release/bundle/dmg/NoteLoom_*.dmg'
           - platform: 'ubuntu-24.04'
             args: '--bundles deb,rpm'
             name: 'linux-deb-rpm'
-            bundlePath: 'src-tauri/target/release/bundle/(rpm|deb)/NoteGen_*.(rpm|deb)'
+            bundlePath: 'src-tauri/target/release/bundle/(rpm|deb)/NoteLoom_*.(rpm|deb)'
           - platform: 'ubuntu-22.04'
             args: '--bundles appimage'
             name: 'linux-appimage'
-            bundlePath: 'src-tauri/target/release/bundle/appimage/NoteGen_*.AppImage'
+            bundlePath: 'src-tauri/target/release/bundle/appimage/NoteLoom_*.AppImage'
             noSign: true
           - platform: 'windows-latest'
             args: ''
             name: 'windows'
-            bundlePath: 'src-tauri\target\release\bundle\(nsis|msi)\NoteGen_*.(exe|msi)'
+            bundlePath: 'src-tauri\target\release\bundle\(nsis|msi)\NoteLoom_*.(exe|msi)'
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -318,8 +318,8 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
           APPLE_SIGNING_IDENTITY: ${{ steps.import_apple_certificate.outputs.apple_signing_identity || secrets.APPLE_SIGNING_IDENTITY }}
         with:
-          tagName: note-gen-v__VERSION__
-          releaseName: 'NoteGen v__VERSION__'
+          tagName: note-loom-v__VERSION__
+          releaseName: 'NoteLoom v__VERSION__'
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: false
           prerelease: false
@@ -409,7 +409,7 @@ jobs:
         run: |
           set -euo pipefail
           test -n "$VERSION"
-          gh release download "note-gen-v${VERSION}" --dir dist-release --clobber
+          gh release download "note-loom-v${VERSION}" --dir dist-release --clobber
           test -f dist-release/latest.json
           mkdir -p dist-oss
           find dist-release -maxdepth 1 -type f ! -name 'latest.json' -exec cp {} dist-oss/ \;
@@ -447,7 +447,7 @@ jobs:
       - name: Mirror installers to OSS
         run: |
           set -euo pipefail
-          RELEASE_PREFIX="oss://${ALIYUN_OSS_BUCKET}/releases/note-gen-v${VERSION}/"
+          RELEASE_PREFIX="oss://${ALIYUN_OSS_BUCKET}/releases/note-loom-v${VERSION}/"
           if ! ossutil cp -r dist-oss/ "$RELEASE_PREFIX" \
               -c "$OSSUTIL_CONFIG" \
               --update \
@@ -467,7 +467,7 @@ jobs:
           CDN_DOMAIN="${CDN_DOMAIN#http://}"
           CDN_DOMAIN="${CDN_DOMAIN%/}"
           CDN_BASE_URL="https://${CDN_DOMAIN}"
-          RELEASE_BASE_URL="${CDN_BASE_URL}/releases/note-gen-v${VERSION}"
+          RELEASE_BASE_URL="${CDN_BASE_URL}/releases/note-loom-v${VERSION}"
           export RELEASE_BASE_URL
           node <<'NODE'
           const fs = require('node:fs')
@@ -476,7 +476,7 @@ jobs:
           const outputPath = 'latest.aliyun.json'
           const version = process.env.VERSION
           const releaseBaseUrl = process.env.RELEASE_BASE_URL
-          const tag = `note-gen-v${version}`
+          const tag = `note-loom-v${version}`
           const marker = `/releases/download/${tag}/`
           const original = JSON.parse(fs.readFileSync(latestJsonPath, 'utf8'))
           let replacements = 0

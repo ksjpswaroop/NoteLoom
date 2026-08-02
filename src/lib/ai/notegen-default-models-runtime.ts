@@ -137,7 +137,7 @@ async function fetchNoteGenDefaultModelsFromConfigCenter(versionCode?: number | 
 
   const models = normalizeNoteGenDefaultModelsPayload(result.payload)
   if (models.length === 0) {
-    throw new Error('Config center NoteGen default models payload is empty')
+    throw new Error('Config center default models payload is empty')
   }
 
   return {
@@ -166,7 +166,7 @@ export async function loadNoteGenDefaultConfig(builtinConfig: AiConfig): Promise
       return mergeNoteGenDefaultModels(builtinConfig, normalizeNoteGenDefaultModelsPayload(cached.content))
     }
   } catch (error) {
-    console.error('[notegen-default-models] failed to fetch config center models', error)
+    console.error('[default-models] failed to fetch config center models', error)
   }
 
   if (cached?.content?.models?.length) {

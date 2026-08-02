@@ -25,7 +25,7 @@ function PhotoToolbar({ scale, onScale }: OverlayProps) {
 
   return (
     <div
-      className="notegen-photo-preview-control fixed bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full border border-white/15 bg-black/70 p-1.5 text-white shadow-2xl backdrop-blur-md sm:bottom-8"
+      className="noteloom-photo-preview-control fixed bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full border border-white/15 bg-black/70 p-1.5 text-white shadow-2xl backdrop-blur-md sm:bottom-8"
       onClick={stopPreviewInteraction}
       onMouseDown={stopPreviewInteraction}
       onPointerDown={stopPreviewInteraction}
@@ -93,7 +93,7 @@ function PhotoOverlay(props: OverlayProps) {
   return (
     <>
       <div
-        className="notegen-photo-preview-control fixed left-4 top-[56px] rounded-full border border-white/15 bg-black/60 px-3 py-1 text-xs font-medium text-white/85 shadow-lg backdrop-blur-md sm:left-6"
+        className="noteloom-photo-preview-control fixed left-4 top-[56px] rounded-full border border-white/15 bg-black/60 px-3 py-1 text-xs font-medium text-white/85 shadow-lg backdrop-blur-md sm:left-6"
         onClick={stopPreviewInteraction}
         onMouseDown={stopPreviewInteraction}
         onPointerDown={stopPreviewInteraction}
@@ -102,7 +102,7 @@ function PhotoOverlay(props: OverlayProps) {
         {index + 1} / {images.length}
       </div>
       <div
-        className="notegen-photo-preview-control fixed right-4 top-[56px] flex items-center gap-1 rounded-full border border-white/15 bg-black/60 p-1 text-white shadow-lg backdrop-blur-md sm:right-6"
+        className="noteloom-photo-preview-control fixed right-4 top-[56px] flex items-center gap-1 rounded-full border border-white/15 bg-black/60 p-1 text-white shadow-lg backdrop-blur-md sm:right-6"
         onClick={stopPreviewInteraction}
         onMouseDown={stopPreviewInteraction}
         onPointerDown={stopPreviewInteraction}
@@ -141,8 +141,8 @@ export function PhotoPreviewProvider({ children }: { children: React.ReactNode }
       pullClosable
       maskOpacity={0.92}
       photoClosable={false}
-      className="notegen-photo-preview select-none"
-      photoClassName="notegen-photo-preview-photo rounded-lg shadow-2xl"
+      className="noteloom-photo-preview select-none"
+      photoClassName="noteloom-photo-preview-photo rounded-lg shadow-2xl"
       loadingElement={
         <div className="flex h-24 w-24 items-center justify-center rounded-lg bg-black/40 text-white">
           <LoaderCircle className="h-7 w-7 animate-spin" />

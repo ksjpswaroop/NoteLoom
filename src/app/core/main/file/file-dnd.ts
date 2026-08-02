@@ -3,7 +3,7 @@ import { exists, rename } from "@tauri-apps/plugin-fs"
 import { getFilePathOptions, getWorkspacePath } from "@/lib/workspace"
 import { rewriteWorkspaceMarkdownMediaPaths } from '@/lib/markdown-media-path'
 
-export const FILE_MANAGER_DRAG_MIME = "application/x-notegen-file-path"
+export const FILE_MANAGER_DRAG_MIME = "application/x-noteloom-file-path"
 let activeFileManagerDragPaths: string[] = []
 
 export type MoveFileManagerEntryResult =

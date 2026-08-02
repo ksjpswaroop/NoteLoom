@@ -4,8 +4,8 @@ import { check, Update } from '@tauri-apps/plugin-updater'
 import { fetch as httpFetch } from '@tauri-apps/plugin-http'
 import { compareVersions, extractVersionText } from '@/lib/version'
 
-export const MOBILE_UPDATE_MANIFEST_URL = 'https://download.notegen.top/updates/latest.json'
-export const ANDROID_DOWNLOAD_URL = 'https://notegen.top/download'
+export const MOBILE_UPDATE_MANIFEST_URL = 'https://github.com/ksjpswaroop/NoteLoom/releases/latest/download/latest.json'
+export const ANDROID_DOWNLOAD_URL = 'https://github.com/ksjpswaroop/NoteLoom/releases/latest'
 export const IOS_TESTFLIGHT_URL = 'https://testflight.apple.com/join/8KjFRTCq'
 
 export interface MobileUpdateInfo {

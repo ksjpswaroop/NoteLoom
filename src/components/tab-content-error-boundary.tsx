@@ -20,7 +20,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 
-const GITHUB_BUG_REPORT_URL = 'https://github.com/codexu/note-gen/issues/new'
+const GITHUB_BUG_REPORT_URL = 'https://github.com/ksjpswaroop/NoteLoom/issues/new'
 
 interface TabContentErrorBoundaryProps {
   children: ReactNode

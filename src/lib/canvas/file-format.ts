@@ -6,7 +6,7 @@ import {
 } from '@/types/canvas'
 
 export interface CanvasPortableFile {
-  format: 'notegen-canvas'
+  format: 'noteloom-canvas' | 'notegen-canvas'
   version: 1
   title: string
   canvasType: CanvasProjectType
@@ -18,9 +18,11 @@ const PROJECT_TYPES = new Set<CanvasProjectType>([
   'blank', 'flowchart', 'mindmap', 'timeline', 'quadrant', 'kanban', 'swot',
 ])
 
+const CANVAS_FORMATS = new Set(['noteloom-canvas', 'notegen-canvas'])
+
 export function serializeCanvasProject(project: Pick<CanvasProject, 'title' | 'canvasType' | 'document'>): string {
   const file: CanvasPortableFile = {
-    format: 'notegen-canvas',
+    format: 'noteloom-canvas',
     version: 1,
     title: project.title,
     canvasType: project.canvasType,
@@ -34,7 +36,7 @@ export function parseCanvasProjectFile(source: string): Pick<CanvasPortableFile,
   const parsed: unknown = JSON.parse(source)
   if (!parsed || typeof parsed !== 'object') throw new Error('Invalid canvas file')
   const candidate = parsed as Partial<CanvasPortableFile> & Partial<CanvasDocument>
-  const isPortable = candidate.format === 'notegen-canvas'
+  const isPortable = typeof candidate.format === 'string' && CANVAS_FORMATS.has(candidate.format)
   if (isPortable && candidate.version !== 1) throw new Error('Unsupported canvas file version')
   const rawDocument = isPortable ? candidate.document : candidate
   const document = normalizeCanvasDocument(rawDocument)

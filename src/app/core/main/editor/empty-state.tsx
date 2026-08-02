@@ -341,16 +341,7 @@ export function EmptyState({
 
         <div className="flex flex-col gap-2 pt-4 text-center">
           <p className="text-xs text-muted-foreground">
-            {t('tip')}{' '}
-            <a 
-              href="https://github.com/codexu/note-gen" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-primary hover:underline"
-            >
-              NoteGen
-            </a>
-            {' '}(GPL-3.0).
+            {t('tip')}
           </p>
         </div>
       </div>

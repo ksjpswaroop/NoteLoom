@@ -3,7 +3,7 @@ import { SettingSection, SettingType } from "../components/setting-base";
 import { Item, ItemGroup, ItemMedia, ItemContent, ItemTitle, ItemDescription, ItemActions } from "@/components/ui/item";
 import { useTranslations } from 'next-intl';
 import Updater from "./updater";
-import { BriefcaseBusiness, Bug, ExternalLink, GitFork, HandHeart, HomeIcon, MessageSquare } from "lucide-react";
+import { BriefcaseBusiness, Bug, ExternalLink, GitFork, HandHeart, MessageSquare } from "lucide-react";
 import { open } from "@tauri-apps/plugin-shell";
 import { Button } from "@/components/ui/button";
 import { ShineBorder } from '@/components/ui/shine-border'
@@ -39,13 +39,6 @@ export function SettingAbout({id, icon}: {id: string, icon?: React.ReactNode}) {
       buttonName: t('items.github.buttonName')
     },
     {
-      url: "https://github.com/codexu/note-gen",
-      title: "Upstream NoteGen",
-      desc: "NoteLoom is derived from NoteGen (GPL-3.0).",
-      icon: <HomeIcon />,
-      buttonName: t('items.home.buttonName')
-    },
-    {
       url: "https://github.com/ksjpswaroop/NoteLoom/issues",
       title: t('items.issues.title'),
       desc: t('items.issues.desc'),
@@ -63,15 +56,15 @@ export function SettingAbout({id, icon}: {id: string, icon?: React.ReactNode}) {
 
   const donationItems: AboutResource[] = [
     {
-      url: "https://github.com/sponsors/codexu",
+      url: "https://github.com/ksjpswaroop/NoteLoom",
       title: t('items.donate.title'),
-      desc: "Support upstream NoteGen maintainers.",
+      desc: t('items.donate.desc'),
       icon: <HandHeart />,
       buttonName: t('items.donate.buttonName'),
       shine: true
     },
     {
-      url: "https://notegen.top/business",
+      url: "https://github.com/ksjpswaroop/NoteLoom/discussions",
       title: t('items.business.title'),
       desc: t('items.business.desc'),
       icon: <BriefcaseBusiness />,

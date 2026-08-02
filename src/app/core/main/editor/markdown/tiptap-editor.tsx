@@ -3058,7 +3058,7 @@ export function TipTapEditor({
           const project = canvasId ? await getCanvasProject(canvasId) : null
           const activeFilePath = activeFilePathRef.current
           if (!project || !activeFilePath) throw new Error('Unable to read the canvas or current Markdown file')
-          const safeTitle = project.title.replace(/[\\/:*?"<>|]/g, '-').trim() || 'NoteGen-Canvas'
+          const safeTitle = project.title.replace(/[\\/:*?"<>|]/g, '-').trim() || 'NoteLoom-Canvas'
           const imageFile = await canvasDocumentToPngFile(project.document, `${safeTitle}.png`)
           const result = await saveImageToWorkspace(imageFile, activeFilePath)
           editor.chain()

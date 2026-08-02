@@ -15,7 +15,8 @@ export const CANVAS_SYNC_DIRECTORY = '.data/canvases'
 export const CANVAS_SYNC_PATH = `${CANVAS_SYNC_DIRECTORY}/index.json`
 export const CANVAS_SYNC_ITEMS_DIRECTORY = `${CANVAS_SYNC_DIRECTORY}/items`
 
-const CANVAS_SYNC_INDEX_FORMAT = 'notegen-canvases-index'
+const CANVAS_SYNC_INDEX_FORMAT = 'noteloom-canvases-index'
+const LEGACY_CANVAS_SYNC_INDEX_FORMAT = 'notegen-canvases-index'
 const CANVAS_SYNC_INDEX_VERSION = 1
 
 export interface CanvasSyncIndexEntry {
@@ -136,7 +137,7 @@ export function parseCanvasSyncIndex(content: string | null): CanvasSyncIndex | 
     const parsed: unknown = JSON.parse(content)
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return null
     const candidate = parsed as Record<string, unknown>
-    if (candidate.format !== CANVAS_SYNC_INDEX_FORMAT
+    if ((candidate.format !== CANVAS_SYNC_INDEX_FORMAT && candidate.format !== LEGACY_CANVAS_SYNC_INDEX_FORMAT)
       || candidate.version !== CANVAS_SYNC_INDEX_VERSION
       || !Array.isArray(candidate.canvases)) return null
     const canvases = candidate.canvases.map(normalizeIndexEntry)

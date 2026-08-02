@@ -410,7 +410,7 @@ export function CanvasToolsSidebar({
                           onDragStart={(event) => {
                             recordShapePreference(item.type)
                             event.dataTransfer.effectAllowed = 'copy'
-                            event.dataTransfer.setData('application/x-notegen-canvas-node', item.type)
+                            event.dataTransfer.setData('application/x-noteloom-canvas-node', item.type)
                           }}
                         >
                           <item.icon data-icon="inline-start" />
@@ -440,7 +440,7 @@ export function CanvasToolsSidebar({
                       }}
                       onDragStart={(event) => {
                         event.dataTransfer.effectAllowed = 'copy'
-                        event.dataTransfer.setData('application/x-notegen-canvas-component', component.id)
+                        event.dataTransfer.setData('application/x-noteloom-canvas-component', component.id)
                       }}
                     >
                       <Layers3 data-icon="inline-start" />

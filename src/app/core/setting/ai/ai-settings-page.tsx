@@ -57,7 +57,7 @@ export function AiSettingsPage({ mobile = false }: { mobile?: boolean }) {
     setAiModelList
   } = useSettingStore()
 
-  const userCustomModels = aiModelList.filter(model => !noteGenModelKeys.includes(model.key) && model.title !== 'NoteGen Limited')
+  const userCustomModels = aiModelList.filter(model => !noteGenModelKeys.includes(model.key) && model.title !== 'Built-in Limited')
   const [apiKeyVisible, setApiKeyVisible] = useState<boolean>(false)
   const [headerPairs, setHeaderPairs] = useState<Array<{key: string, value: string, id: string}>>([])
   const [expandedModels, setExpandedModels] = useState<string[]>([])
@@ -243,7 +243,7 @@ export function AiSettingsPage({ mobile = false }: { mobile?: boolean }) {
   const deleteCurrentConfig = async () => {
     if (!currentConfig) return
     
-    // NoteGen
+    // Built-in default model configs
     if (noteGenModelKeys.includes(currentConfig.key)) {
       return // Cannot delete the default model
     }
@@ -331,7 +331,7 @@ export function AiSettingsPage({ mobile = false }: { mobile?: boolean }) {
       const storedAiModelList = await store.get<AiConfig[]>('aiModelList') || []
       const migratedList = storedAiModelList.map(migrateOldConfig)
       const existingPlatforms = migratedList.filter(model => (
-        !noteGenModelKeys.includes(model.key) && model.title !== 'NoteGen Limited'
+        !noteGenModelKeys.includes(model.key) && model.title !== 'Built-in Limited'
       ))
       const missingTemplates = templates.filter(template => {
         const templateKey = template.templateKey || template.key
@@ -361,7 +361,7 @@ export function AiSettingsPage({ mobile = false }: { mobile?: boolean }) {
       setAiModelList(nextAiModelList)
 
       const userModels = nextAiModelList.filter(model => (
-        !noteGenModelKeys.includes(model.key) && model.title !== 'NoteGen Limited'
+        !noteGenModelKeys.includes(model.key) && model.title !== 'Built-in Limited'
       ))
       
       // ，，

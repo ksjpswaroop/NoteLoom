@@ -19,8 +19,8 @@ interface FontOption {
   previewFamily: string
 }
 
-const STATUS_OPTION_LOADING = '__notegen_font_loading__'
-const STATUS_OPTION_UNAVAILABLE = '__notegen_font_unavailable__'
+const STATUS_OPTION_LOADING = '__noteloom_font_loading__'
+const STATUS_OPTION_UNAVAILABLE = '__noteloom_font_unavailable__'
 
 export function FontFamilySettings() {
   const t = useTranslations('settings.general.interface')

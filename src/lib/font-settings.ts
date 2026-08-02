@@ -1,7 +1,7 @@
 import { invoke } from '@tauri-apps/api/core'
 import { checkIsTauri } from '@/lib/check'
 
-export const APP_FONT_SYSTEM_VALUE = '__notegen_system_font__'
+export const APP_FONT_SYSTEM_VALUE = '__noteloom_system_font__'
 
 export const APP_FONT_GENERIC_FAMILIES = ['sans-serif', 'serif', 'monospace'] as const
 
@@ -47,7 +47,7 @@ export function applyAppFontFamily(fontFamily?: string | null) {
     return
   }
 
-  document.documentElement.style.setProperty('--notegen-app-font-family', getAppFontFamilyCss(fontFamily))
+  document.documentElement.style.setProperty('--noteloom-app-font-family', getAppFontFamilyCss(fontFamily))
 }
 
 export function normalizeFontFamilies(fontFamilies: string[]) {

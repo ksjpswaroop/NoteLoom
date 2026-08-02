@@ -629,7 +629,7 @@ const useSettingStore = create<SettingState>((set, get) => ({
       set({ useImageRepo: savedUseImageRepo })
     }
 
-    // NoteGen
+    // Built-in default model configs
     const existingAiModelList = (await store.get('aiModelList') as AiConfig[]) || []
     const hasNoteGenModels = existingAiModelList.some(config => 
       config.key === 'note-gen-free' || 
@@ -779,8 +779,7 @@ const useSettingStore = create<SettingState>((set, get) => ({
       }
     }
 
-    // NoteGen
-    // ,,
+    // Built-in limited models from provider API
     try {
       const apiKey = noteGenDefaultModels[0].apiKey
       const headers = {
@@ -800,9 +799,9 @@ const useSettingStore = create<SettingState>((set, get) => ({
       const resModels = await res.json()
 
       if (resModels.data && resModels.data.length > 0) {
-        // NoteGen Limited
+        // Built-in Limited
         finalAiModelList = finalAiModelList.filter(model => 
-          model.title !== 'NoteGen Limited' && model.key !== 'note-gen-limited'
+          model.title !== 'Built-in Limited' && model.key !== 'note-gen-limited'
         )
         
         //
@@ -812,13 +811,13 @@ const useSettingStore = create<SettingState>((set, get) => ({
           return !noteGenFreeConfig?.models?.some(defaultModel => defaultModel.model === model.id)
         })
         
-        // , NoteGen Limited
+        // Built-in Limited provider entry
         if (limitedModels.length > 0) {
           const noteGenLimitedConfig = {
             apiKey,
             baseURL: "https://api.notegen.top/v1",
             key: "note-gen-limited",
-            title: "NoteGen Limited",
+            title: "Built-in Limited",
             models: limitedModels.map((model: any) => ({
               id: `note-gen-limited-${model.id}`,
               model: model.id,
@@ -836,7 +835,7 @@ const useSettingStore = create<SettingState>((set, get) => ({
       }
     } catch (error) {
       // ,
-      console.debug('NoteGen API service unavailable, skipping limited models:', error)
+      console.debug('Built-in API service unavailable, skipping limited models:', error)
     }
 
     const hydratedSettings: Record<string, unknown> = {}
@@ -863,7 +862,7 @@ const useSettingStore = create<SettingState>((set, get) => ({
             set({ [key]: res as GenTemplate[] })
           }, 0);
         } else if (key === 'aiModelList' && hasNoteGenModels) {
-          // NoteGen，
+          // Preserve built-in default model configs
           hydratedSettings[key] = res as AiConfig[]
         } else if (key === 'recordToolbarConfig') {
           // ，

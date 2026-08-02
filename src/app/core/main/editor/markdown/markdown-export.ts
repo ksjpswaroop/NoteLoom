@@ -80,7 +80,7 @@ const EXPORT_DOCUMENT_STYLES = `
     color: #24292f !important;
   }
 
-  body.notegen-export {
+  body.noteloom-export {
     max-width: 800px;
     margin: 0 auto;
     padding: 40px 24px;
@@ -89,109 +89,109 @@ const EXPORT_DOCUMENT_STYLES = `
     line-height: 1.65;
   }
 
-  .notegen-export .streamdown-document {
+  .noteloom-export .streamdown-document {
     color: #24292f !important;
   }
 
-  .notegen-export h1,
-  .notegen-export h2,
-  .notegen-export h3,
-  .notegen-export h4,
-  .notegen-export h5,
-  .notegen-export h6 {
+  .noteloom-export h1,
+  .noteloom-export h2,
+  .noteloom-export h3,
+  .noteloom-export h4,
+  .noteloom-export h5,
+  .noteloom-export h6 {
     break-after: avoid-page;
     color: #111827 !important;
   }
 
-  .notegen-export h1 { font-size: 28px; }
-  .notegen-export h2 { font-size: 22px; }
-  .notegen-export h3 { font-size: 18px; }
-  .notegen-export h4 { font-size: 16px; }
+  .noteloom-export h1 { font-size: 28px; }
+  .noteloom-export h2 { font-size: 22px; }
+  .noteloom-export h3 { font-size: 18px; }
+  .noteloom-export h4 { font-size: 16px; }
 
-  .notegen-export p,
-  .notegen-export li,
-  .notegen-export blockquote {
+  .noteloom-export p,
+  .noteloom-export li,
+  .noteloom-export blockquote {
     orphans: 3;
     widows: 3;
   }
 
-  .notegen-export ul,
-  .notegen-export ol,
-  .notegen-export li {
+  .noteloom-export ul,
+  .noteloom-export ol,
+  .noteloom-export li {
     break-inside: avoid-page;
     page-break-inside: avoid;
   }
 
-  .notegen-export a {
+  .noteloom-export a {
     color: #0969da !important;
     text-decoration: underline;
   }
 
-  .notegen-export blockquote {
+  .noteloom-export blockquote {
     border-left-color: #d0d7de !important;
     color: #57606a !important;
   }
 
-  .notegen-export pre,
-  .notegen-export table,
-  .notegen-export img,
-  .notegen-export .katex-display {
+  .noteloom-export pre,
+  .noteloom-export table,
+  .noteloom-export img,
+  .noteloom-export .katex-display {
     break-inside: avoid-page;
   }
 
-  .notegen-export pre {
+  .noteloom-export pre {
     white-space: pre-wrap !important;
     overflow-wrap: anywhere;
     background: #f6f8fa !important;
     color: #24292f !important;
   }
 
-  .notegen-export code {
+  .noteloom-export code {
     color: #24292f;
   }
 
-  .notegen-export table {
+  .noteloom-export table {
     width: 100%;
     border-collapse: collapse;
   }
 
-  .notegen-export th,
-  .notegen-export td {
+  .noteloom-export th,
+  .noteloom-export td {
     border: 1px solid #d0d7de !important;
     padding: 8px 10px;
     overflow-wrap: anywhere;
   }
 
-  .notegen-export th {
+  .noteloom-export th {
     background: #f6f8fa !important;
   }
 
-  .notegen-export img,
-  .notegen-export svg,
-  .notegen-export canvas {
+  .noteloom-export img,
+  .noteloom-export svg,
+  .noteloom-export canvas {
     max-width: 100%;
     height: auto;
   }
 
-  .notegen-export img[alt="Mermaid diagram"] {
+  .noteloom-export img[alt="Mermaid diagram"] {
     display: block;
     margin: 1rem auto;
     background: #ffffff;
   }
 
   @media print {
-    body.notegen-export {
+    body.noteloom-export {
       max-width: none;
       padding: 0;
       print-color-adjust: exact;
       -webkit-print-color-adjust: exact;
     }
 
-    .notegen-export [data-streamdown="table-wrapper"] {
+    .noteloom-export [data-streamdown="table-wrapper"] {
       overflow: visible;
     }
 
-    .notegen-export a {
+    .noteloom-export a {
       overflow-wrap: anywhere;
     }
   }
@@ -576,7 +576,7 @@ function buildHtmlDocument(title: string, body: string, styles: string) {
   <title>${escapeHtml(title)}</title>
   <style>${styles}</style>
 </head>
-<body class="notegen-export">
+<body class="noteloom-export">
 ${body}
 </body>
 </html>`
@@ -769,7 +769,7 @@ async function renderMarkdownToPngBytes(source: MarkdownExportSource) {
   const markdown = await prepareExportMarkdown(await getValue(source.markdown))
   const styles = await collectExportStyles()
   const container = document.createElement('div')
-  container.className = 'notegen-export'
+  container.className = 'noteloom-export'
   container.style.position = 'fixed'
   container.style.left = '-10000px'
   container.style.top = '0'

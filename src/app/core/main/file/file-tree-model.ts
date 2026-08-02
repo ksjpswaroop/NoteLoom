@@ -1,6 +1,6 @@
 import type { DirTree } from '@/stores/article'
 
-export const FILE_TREE_ROOT_ID = '__notegen_file_tree_root__'
+export const FILE_TREE_ROOT_ID = '__noteloom_file_tree_root__'
 
 export type FileTreeNode = {
   id: string

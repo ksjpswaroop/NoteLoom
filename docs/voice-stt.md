@@ -2,7 +2,7 @@
 
 ## Approach
 
-NoteLoom inherits NoteGen’s recording pipeline (`MediaRecorder` → audio blob → STT).
+NoteLoom uses a recording pipeline of `MediaRecorder` → audio blob → STT.
 
 From [VoiceNotesAI](https://github.com/ksjpswaroop/VoiceNotesAI):
 

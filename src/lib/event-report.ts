@@ -30,7 +30,7 @@ interface AptabaseEventPayload {
 
 declare global {
   interface Window {
-    __reportNoteGenAppStart?: () => Promise<boolean>
+    __reportNoteLoomAppStart?: () => Promise<boolean>
   }
 }
 
@@ -94,7 +94,7 @@ async function getSystemProps(): Promise<AptabaseEventPayload['systemProps']> {
     engineName: 'tauri',
     engineVersion: '2',
     appVersion,
-    sdkVersion: 'notegen-aptabase-native',
+    sdkVersion: 'noteloom-aptabase-native',
   }
 }
 
@@ -128,5 +128,5 @@ export async function reportAppStart(): Promise<boolean> {
 }
 
 if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
-  window.__reportNoteGenAppStart = reportAppStart
+  window.__reportNoteLoomAppStart = reportAppStart
 }

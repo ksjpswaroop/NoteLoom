@@ -2190,7 +2190,7 @@ function CanvasEditorInner({ canvasId, mobile = false }: CanvasEditorProps) {
             <div className="size-full">
               <ReactFlow
         className={cn(
-          'notegen-canvas',
+          'noteloom-canvas',
           tool === 'select' && '[&_.react-flow__pane]:!cursor-default',
           tool === 'hand' && '[&_.react-flow__node]:!cursor-grab [&_.react-flow__node:active]:!cursor-grabbing [&_.react-flow__pane]:!cursor-grab [&_.react-flow__pane.dragging]:!cursor-grabbing'
         )}
@@ -2203,8 +2203,8 @@ function CanvasEditorInner({ canvasId, mobile = false }: CanvasEditorProps) {
         onConnect={onConnect}
         onDragOver={(event) => {
           if (
-            event.dataTransfer.types.includes('application/x-notegen-canvas-node')
-            || event.dataTransfer.types.includes('application/x-notegen-canvas-component')
+            event.dataTransfer.types.includes('application/x-noteloom-canvas-node')
+            || event.dataTransfer.types.includes('application/x-noteloom-canvas-component')
             || event.dataTransfer.types.includes(CANVAS_MARK_DRAG_TYPE)
           ) {
             event.preventDefault()
@@ -2225,13 +2225,13 @@ function CanvasEditorInner({ canvasId, mobile = false }: CanvasEditorProps) {
             }
             return
           }
-          const nodeType = event.dataTransfer.getData('application/x-notegen-canvas-node')
+          const nodeType = event.dataTransfer.getData('application/x-noteloom-canvas-node')
           if (CANVAS_SHAPE_DEFINITIONS.some(item => item.type === nodeType)) {
             event.preventDefault()
             insertNodeAtScreenPosition(nodeType as InsertableCanvasNodeType, event.clientX, event.clientY, { select: true })
             return
           }
-          const componentId = event.dataTransfer.getData('application/x-notegen-canvas-component')
+          const componentId = event.dataTransfer.getData('application/x-noteloom-canvas-component')
           const component = customComponents.find(item => item.id === componentId)
           if (component) {
             event.preventDefault()

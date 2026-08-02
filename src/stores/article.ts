@@ -33,7 +33,7 @@ type SyncPushCompletedEvent = Events['sync-push-completed']
 type SyncPushCompletedListener = (event: SyncPushCompletedEvent) => void
 
 type ArticleSyncListenerGlobal = typeof globalThis & {
-  __noteGenArticleSyncPushCompletedListener?: SyncPushCompletedListener
+  __noteLoomArticleSyncPushCompletedListener?: SyncPushCompletedListener
 }
 
 // Store ，
@@ -541,8 +541,8 @@ const useArticleStore = create<NoteState>((set, get) => ({
   //
   initEventListeners: () => {
     const globalState = globalThis as ArticleSyncListenerGlobal
-    if (globalState.__noteGenArticleSyncPushCompletedListener) {
-      emitter.off('sync-push-completed', globalState.__noteGenArticleSyncPushCompletedListener)
+    if (globalState.__noteLoomArticleSyncPushCompletedListener) {
+      emitter.off('sync-push-completed', globalState.__noteLoomArticleSyncPushCompletedListener)
     }
 
     // ， sha
@@ -560,7 +560,7 @@ const useArticleStore = create<NoteState>((set, get) => ({
     }
 
     emitter.on('sync-push-completed', syncPushCompletedListener)
-    globalState.__noteGenArticleSyncPushCompletedListener = syncPushCompletedListener
+    globalState.__noteLoomArticleSyncPushCompletedListener = syncPushCompletedListener
   },
   setSortType: async (sortType: SortType) => {
     set({ sortType })

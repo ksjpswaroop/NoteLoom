@@ -97,7 +97,7 @@ interface AutoDataSyncGlobalRuntimeState {
   remoteMetaCheckTimer: ReturnType<typeof setInterval> | null
 }
 type AutoDataSyncGlobalScope = typeof globalThis & {
-  __noteGenAutoDataSyncRuntimeState?: AutoDataSyncGlobalRuntimeState
+  __noteLoomAutoDataSyncRuntimeState?: AutoDataSyncGlobalRuntimeState
 }
 
 const DEFAULT_AUTO_DATA_SYNC_DELAY = 10_000
@@ -148,14 +148,14 @@ const listeners = new Set<AutoDataSyncListener>()
 function getGlobalAutoDataSyncRuntimeState() {
   const globalScope = globalThis as AutoDataSyncGlobalScope
 
-  if (!globalScope.__noteGenAutoDataSyncRuntimeState) {
-    globalScope.__noteGenAutoDataSyncRuntimeState = {
+  if (!globalScope.__noteLoomAutoDataSyncRuntimeState) {
+    globalScope.__noteLoomAutoDataSyncRuntimeState = {
       ownerId: null,
       remoteMetaCheckTimer: null,
     }
   }
 
-  return globalScope.__noteGenAutoDataSyncRuntimeState
+  return globalScope.__noteLoomAutoDataSyncRuntimeState
 }
 
 interface TagMergeResult {

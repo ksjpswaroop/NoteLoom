@@ -164,7 +164,7 @@ pub async fn run_skill_script(
         .env("SKILL_ROOT_DIR", &skill_root)
         .env("SKILL_RUNTIME_DIR", &runtime_dir)
         .env("SKILL_OUTPUT_DIR", &output_dir)
-        .env("NOTEGEN_OUTPUT_DIR", &output_dir)
+        .env("NOTELOOM_OUTPUT_DIR", &output_dir)
         .env("PYTHONNOUSERSITE", "1")
         .env("PYTHONDONTWRITEBYTECODE", "1")
         .env("TMPDIR", &runtime_dir)
@@ -905,7 +905,7 @@ mod tests {
 
     #[tokio::test]
     async fn truncates_large_process_output_and_keeps_a_log() {
-        let directory = std::env::temp_dir().join(format!("notegen-output-{}", Uuid::new_v4()));
+        let directory = std::env::temp_dir().join(format!("noteloom-output-{}", Uuid::new_v4()));
         tokio::fs::create_dir_all(&directory).await.unwrap();
         let log_path = directory.join("stdout.log");
         let (mut writer, reader) = tokio::io::duplex(MAX_CAPTURE_BYTES * 2);

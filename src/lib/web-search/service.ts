@@ -342,7 +342,7 @@ export async function checkWebSearchProvider(
   return searchWithConfiguredProvider(
     provider,
     normalizedApiKey,
-    'NoteGen official website',
+    'NoteLoom official website',
     signal
   )
 }

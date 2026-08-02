@@ -28,8 +28,9 @@ export function TokenInputControl({
   docsSection = 'sync',
 }: TokenInputControlProps) {
   const t = useTranslations()
-  const docsLocale = 'en'
-  const docsUrl = `https://notegen.top/${docsLocale}/docs/settings/${docsSection}#token-permissions-guide`
+  const docsUrl = docsSection === 'image-hosting'
+    ? 'https://github.com/ksjpswaroop/NoteLoom/blob/main/README.md'
+    : 'https://github.com/ksjpswaroop/NoteLoom/blob/main/README.md'
 
   return (
     <div className="flex flex-col gap-2">

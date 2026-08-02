@@ -91,8 +91,8 @@
     background-position: 100% 100%;}
   to {
     background-position: 0% 0%;}}
-  --font-heading: var(--notegen-app-font-family);
-  --font-sans: var(--notegen-app-font-family);
+  --font-heading: var(--noteloom-app-font-family);
+  --font-sans: var(--noteloom-app-font-family);
   --color-sidebar-ring: hsl(var(--sidebar-ring));
   --color-sidebar-border: hsl(var(--sidebar-border));
   --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
@@ -207,7 +207,7 @@
     --component-active-bg: var(--secondary);
     --component-line-inactive-color: var(--border);
     --component-active-color-default: var(--accent-foreground);
-    --notegen-app-font-family: "Avenir Next", "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", "WenQuanYi Micro Hei", system-ui, sans-serif;
+    --noteloom-app-font-family: "Avenir Next", "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", "WenQuanYi Micro Hei", system-ui, sans-serif;
     --noteloom-brand-font: "Iowan Old Style", "Palatino Linotype", Palatino, "Songti SC", "Noto Serif CJK SC", Georgia, serif;
   }
 
@@ -253,7 +253,7 @@
     --component-active-bg: var(--secondary);
     --component-line-inactive-color: var(--muted-foreground);
     --component-active-color-default: var(--accent-foreground);
-    --notegen-app-font-family: "Avenir Next", "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", "WenQuanYi Micro Hei", system-ui, sans-serif;
+    --noteloom-app-font-family: "Avenir Next", "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", "WenQuanYi Micro Hei", system-ui, sans-serif;
   }
 
   * {
@@ -264,7 +264,7 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-family: var(--notegen-app-font-family);
+    font-family: var(--noteloom-app-font-family);
     @apply bg-background text-foreground;
   }
   html {
@@ -674,12 +674,12 @@ ol {
 
   body {
     @apply bg-background text-foreground;
-    font-family: var(--notegen-app-font-family);
+    font-family: var(--noteloom-app-font-family);
   }
 }
 
 /* Canvas anchors use larger hit areas and keep resize handles away from connection points. */
-.notegen-canvas .react-flow__handle {
+.noteloom-canvas .react-flow__handle {
   z-index: 32;
   box-sizing: border-box;
   width: 8px;
@@ -690,23 +690,23 @@ ol {
   transition: box-shadow 120ms ease, background-color 120ms ease;
 }
 
-.notegen-canvas .react-flow__handle::after {
+.noteloom-canvas .react-flow__handle::after {
   position: absolute;
   inset: -10px;
   border-radius: 9999px;
   content: "";
 }
 
-.notegen-canvas .react-flow__handle:hover,
-.notegen-canvas .react-flow__handle.connecting,
-.notegen-canvas .react-flow__handle.valid {
+.noteloom-canvas .react-flow__handle:hover,
+.noteloom-canvas .react-flow__handle.connecting,
+.noteloom-canvas .react-flow__handle.valid {
   background: hsl(var(--ring));
   box-shadow:
     0 0 0 4px hsl(var(--ring) / 0.18),
     0 1px 5px hsl(var(--foreground) / 0.24);
 }
 
-.notegen-canvas .react-flow__resize-control.handle {
+.noteloom-canvas .react-flow__resize-control.handle {
   z-index: 31;
   box-sizing: border-box;
   width: 10px;
@@ -717,21 +717,21 @@ ol {
   box-shadow: 0 1px 5px hsl(var(--foreground) / 0.22);
 }
 
-.notegen-canvas .react-flow__resize-control.handle::after {
+.noteloom-canvas .react-flow__resize-control.handle::after {
   position: absolute;
   inset: -9px;
   content: "";
 }
 
 /* Edge-center resize handles overlap connection handles; border lines still resize each axis. */
-.notegen-canvas .react-flow__resize-control.handle.top:not(.left):not(.right),
-.notegen-canvas .react-flow__resize-control.handle.bottom:not(.left):not(.right),
-.notegen-canvas .react-flow__resize-control.handle.left:not(.top):not(.bottom),
-.notegen-canvas .react-flow__resize-control.handle.right:not(.top):not(.bottom) {
+.noteloom-canvas .react-flow__resize-control.handle.top:not(.left):not(.right),
+.noteloom-canvas .react-flow__resize-control.handle.bottom:not(.left):not(.right),
+.noteloom-canvas .react-flow__resize-control.handle.left:not(.top):not(.bottom),
+.noteloom-canvas .react-flow__resize-control.handle.right:not(.top):not(.bottom) {
   display: none;
 }
 
-.notegen-canvas .react-flow__resize-control.line {
+.noteloom-canvas .react-flow__resize-control.line {
   z-index: 30;
   border-color: hsl(var(--ring) / 0.75);
 }
@@ -764,27 +764,27 @@ ol {
 }
 
 /* Photo preview should leave breathing room around large images. */
-.PhotoView-Portal.notegen-photo-preview .PhotoView-Slider__BannerWrap {
+.PhotoView-Portal.noteloom-photo-preview .PhotoView-Slider__BannerWrap {
   display: none;
 }
 
-.PhotoView-Portal.notegen-photo-preview .PhotoView-Slider__Overlay {
+.PhotoView-Portal.noteloom-photo-preview .PhotoView-Slider__Overlay {
   pointer-events: none;
   position: relative;
   z-index: 30;
 }
 
-.PhotoView-Portal.notegen-photo-preview .notegen-photo-preview-control {
+.PhotoView-Portal.noteloom-photo-preview .noteloom-photo-preview-control {
   pointer-events: auto;
 }
 
-.PhotoView-Portal.notegen-photo-preview .notegen-photo-preview-photo {
+.PhotoView-Portal.noteloom-photo-preview .noteloom-photo-preview-photo {
   scale: 0.9;
   transform-origin: center;
 }
 
 @media (max-width: 640px) {
-  .PhotoView-Portal.notegen-photo-preview .notegen-photo-preview-photo {
+  .PhotoView-Portal.noteloom-photo-preview .noteloom-photo-preview-photo {
     scale: 0.88;
   }
 }

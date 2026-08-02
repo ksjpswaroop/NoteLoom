@@ -396,7 +396,7 @@ export async function createSyncRepo(name: string, isPrivate?: boolean) {
       headers,
       body: JSON.stringify({
         name,
-        description: 'This is a NoteGen sync repository.',
+        description: 'This is a NoteLoom sync repository.',
         private: isPrivate
       }),
       proxy
@@ -442,7 +442,7 @@ export async function getRelease(): Promise<GithubRelease | false | undefined> {
       proxy
     };
     
-    const url = `https://api.github.com/repos/codexu/note-gen/releases/latest`;
+    const url = `https://api.github.com/repos/ksjpswaroop/NoteLoom/releases/latest`;
     const response = await fetch(url, requestOptions);
     
     if (response.status >= 200 && response.status < 300) {
@@ -493,7 +493,7 @@ export async function getReleases(options: GetReleasesOptions = {}): Promise<Git
       proxy
     };
 
-    const url = `https://api.github.com/repos/codexu/note-gen/releases?per_page=100`;
+    const url = `https://api.github.com/repos/ksjpswaroop/NoteLoom/releases?per_page=100`;
     const response = await fetch(url, requestOptions);
 
     if (response.status >= 200 && response.status < 300) {

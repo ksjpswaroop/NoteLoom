@@ -632,7 +632,7 @@ export async function createSyncProject(name: string, isPrivate: boolean = true)
     const requestBody = {
       name: name,
       path: name,
-      description: `note-gen - ${name}`,
+      description: `NoteLoom - ${name}`,
       visibility: isPrivate ? 'private' : 'public',
       initialize_with_readme: true,
       default_branch: 'main'

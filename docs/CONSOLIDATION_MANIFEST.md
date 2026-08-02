@@ -6,13 +6,13 @@
 
 ## License
 
-NoteLoom is a derivative of [codexu/note-gen](https://github.com/codexu/note-gen) and is released under the **GNU GPL-3.0**. Upstream attribution is required for redistribution.
+NoteLoom is released under the **GNU GPL-3.0**. Copyright notices for original authors are preserved in [`LICENSE`](../LICENSE).
 
 ## Sources absorbed
 
 | Source | Path / remote | Absorbed as | Status |
 |--------|---------------|-------------|--------|
-| NoteGen | `upstream` → https://github.com/codexu/note-gen | Full application codebase | Active foundation |
+| NoteLoom foundation | this repository | Full application codebase | Active |
 | NoteWeave | `docs/prior-art/noteweave/` (from `06-private-knowledge-studio`) | Product DNA, capture-first requirements | Prior art |
 | VoiceNotesAI | `docs/prior-art/voicenotesai/` · https://github.com/ksjpswaroop/VoiceNotesAI | Voice/STT patterns, export/search ideas | Frozen donor |
 | voiceforge-ai | `docs/prior-art/voiceforge-ai/` · https://github.com/ksjpswaroop/voiceforge-ai | PRD bullets | Superseded |
@@ -24,7 +24,7 @@ deskvault, WhisperDeck, meetingmind-ai, Lecturn, documind-ai, PDFOracle, FileMin
 
 ## Decisions
 
-1. NoteLoom = NoteGen fork rebranded to **NoteLoom** / `com.swaroop.NoteLoom` / version **0.1.0**.
+1. Product identity is **NoteLoom** / `com.swaroop.NoteLoom` / version **0.1.0**.
 2. Do not merge 06 legacy source trees into this repo.
 3. VoiceNotesAI remains a historical code donor; new voice-note product work happens here.
 4. voiceforge-ai and voiceweave-ai are superseded by NoteLoom.
@@ -33,6 +33,5 @@ deskvault, WhisperDeck, meetingmind-ai, Lecturn, documind-ai, PDFOracle, FileMin
 ## Provenance notes
 
 - App UI strings and packaging use NoteLoom branding.
-- Optional upstream NoteGen free model endpoints may still appear in model templates; they remain third-party services.
-- Auto-updater endpoints for notegen.top are disabled in v0.1.
+- Built-in free model endpoints, when present, are third-party services and are not product branding.
 - Voice STT approach: see `docs/voice-stt.md`.

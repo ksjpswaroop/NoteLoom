@@ -1932,7 +1932,7 @@ Gitea 用户名未配置	Gitea Username is not configured
 更新文件时发生错误	UpdateFile Error — translated from Chinese
 检查仓库状态失败	Failed — translated from Chinese
 创建仓库时发生错误	Error — translated from Chinese
-note-gen 同步仓库 - ${name}	note-gen - ${name} — translated from Chinese
+NoteLoom sync repo - ${name}	NoteLoom - ${name} — translated from Chinese
 内容相同，无需处理	，None — translated from Chinese
 需要用户手动处理	Translated message
 检测到简单的内容追加，可以自动合并	， — translated from Chinese
@@ -2000,7 +2000,7 @@ GitLab Access Token 未配置	GitLab Access Token — translated from Chinese
 Gitlab 用户名或项目 ID 未配置	Gitlab Project ID is not configured — translated from Chinese
 检查项目状态失败	Failed — translated from Chinese
 创建项目时发生错误	Error — translated from Chinese
-note-gen 同步项目 - ${name}	note-gen - ${name} — translated from Chinese
+NoteLoom sync project - ${name}	NoteLoom - ${name} — translated from Chinese
 远程路径指向的是目录	Yes — translated from Chinese
 远程文件不存在: ${path}	Remote file does not exist: ${path}
 远程路径指向的是目录，不是文件: ${path}	Yes ， YesFile: ${path} — translated from Chinese
@@ -2216,7 +2216,7 @@ ${selected.slice(0, perFileContentLimit)}\n…内容已截断，可按行继续�
 没有提供可执行的画布操作。	。 — translated from Chinese
 画布操作未能完整应用，整批未写入。	， 。 — translated from Chinese
 读取当前画布	Translated message
-读取 NoteGen 当前打开的原生可视化画布，包括节点、连线、位置和设置。仅在用户要检查或操作当前画布时使用；一般性的图表、节点或连线问题不需要读取画布。	NoteGen ， 、 、 。 ； Chart、 。 — translated from Chinese
+读取 NoteLoom 当前打开的原生可视化画布，包括节点、连线、位置和设置。仅在用户要检查或操作当前画布时使用；一般性的图表、节点或连线问题不需要读取画布。	NoteLoom ， 、 、 。 ； Chart、 。 — translated from Chinese
 创建完整画布图表	Chart — translated from Chinese
 在当前原生画布中一次创建由多个命名节点和连线组成的完整图表。新建流程图、思维导图或关系图时优先使用；不要拆成缺少名称或端点的操作。每个节点需要唯一 ID、类型、可见名称和坐标，每条连线用 source、target 精确引用这些节点 ID。	Chart。 Flowchart、 ； 。 ID、 、 ， source、target Quote ID。 — translated from Chinese
 为 true 时先清空当前画布；为 false 时保留现有内容并追加图表。	true ； false Chart。 — translated from Chinese
@@ -2230,7 +2230,7 @@ ${selected.slice(0, perFileContentLimit)}\n…内容已截断，可按行继续�
 终点节点 ID。	ID。 — translated from Chinese
 分支条件等可见连线名称。	。 — translated from Chinese
 编辑当前画布	Translated message
-增量编辑 NoteGen 当前打开的原生可视化画布，例如更新、移动或删除已有节点和连线。创建包含多个新节点和连线的完整图表时改用 canvas_create_diagram。所有操作会先整批校验，任何参数缺失时均不写入。	NoteGen ， Update、 。 Chart canvas_create_diagram。 ， 。 — translated from Chinese
+增量编辑 NoteLoom 当前打开的原生可视化画布，例如更新、移动或删除已有节点和连线。创建包含多个新节点和连线的完整图表时改用 canvas_create_diagram。所有操作会先整批校验，任何参数缺失时均不写入。	NoteLoom ， Update、 。 Chart canvas_create_diagram。 ， 。 — translated from Chinese
 按顺序执行的原子画布编辑。先添加节点，再用相同的稳定节点 ID 添加连线；任意一项无效时整批不执行。	。 ， ID ； None 。 — translated from Chinese
 操作类型。不同类型所需字段由工具描述和运行时校验决定。	。 Tool 。 — translated from Chinese
 节点或连线的稳定 ID。除 clear 外均需要。	ID。 clear 。 — translated from Chinese
@@ -2297,10 +2297,10 @@ ${Math.floor(diffMins / 60)} 小时前	${Math.floor(diffMins / 60)} — translat
 恢复操作失败:	Failed — translated from Chinese
 恢复操作失败，请重试	Failed， — translated from Chinese
 临时缓存和界面布局已清理，可以重新加载或返回应用。	， 。 — translated from Chinese
-已在文件管理器中打开数据目录。修改文件前请先退出 NoteGen 并做好备份。	File 。 File NoteGen 。 — translated from Chinese
+已在文件管理器中打开数据目录。修改文件前请先退出 NoteLoom 并做好备份。	File 。 File NoteLoom 。 — translated from Chinese
 清理启动状态失败，将继续重置数据库:	Failed， — translated from Chinese
 数据库连接未打开或关闭失败，将继续尝试删除:	Failed， — translated from Chinese
-导出 NoteGen 完整数据备份	Export NoteGen — translated from Chinese
+导出 NoteLoom 完整数据备份	Export NoteLoom — translated from Chinese
 复制错误信息失败:	Copy error detailsFailed:
 [bug] 应用进入错误恢复模式	[bug] Error — translated from Chinese
 已打开 GitHub Bug 反馈页面，错误信息也已复制，请粘贴到报错日志中并补充复现步骤。	GitHub Bug ，Error Copied， 。 — translated from Chinese
@@ -4699,8 +4699,8 @@ export function TipTapEditor({
           const project = canvasId ? await getCanvasProject(canvasId) : null
           const activeFilePath = activeFilePathRef.current
           if (!project || !activeFilePath) throw new Error('无法读取画布或当前 Markdown 文件')
-          const safeTitle = project.title.replace(/[\\/:*?"<>|]/g, '-').trim() || 'NoteGen-Canvas'
-          const imageFile = await canvasDocumentToPngFile(project.document, 	} } } // applyFontSize() }, [contentTextScale, editor]) // Track active file path for image uploads (ref to avoid re-initializing editor) const activeFilePathRef = useRef(activeFilePath) useEffect(() => { activeFilePathRef.current = activeFilePath }, [activeFilePath]) // Handle image paste and file drop useEffect(() => { // Check if editor is fully initialized if (!editor || !editor.view || !editor.view.dom) return const handlePaste = (event: ClipboardEvent) => { const files = event.clipboardData?.files if (!files || files.length === 0) return const imageFiles = Array.from(files).filter(file => file.type.startsWith('image/')) if (imageFiles.length === 0) return const imageFile = imageFiles[0] // Prevent default to avoid base64 image being inserted event.preventDefault() // Insert "Uploading..." text as placeholder const { from } = editor.state.selection editor.chain() .focus() .insertContentAt(from, { type: 'text', text: 'Uploading... ', }) .run() // Get the position range of the placeholder const placeholderStart = from const placeholderEnd = from + 'Uploading... '.length handleImageUpload(imageFile, activeFilePathRef.current) .then(result => { // Delete the placeholder text editor.chain() .focus() .deleteRange({ from: placeholderStart, to: placeholderEnd }) .run() // Insert the actual image editor.chain() .insertContentAt(placeholderStart, { type: 'image', attrs: { src: result.src, alt: imageFile.name, relativeSrc: result.relativePath, }, }) .run() }) .catch(error => { // Remove the placeholder on error editor.chain() .focus() .deleteRange({ from: placeholderStart, to: placeholderEnd }) .run() toast({ title: tImage('failed'), description: error instanceof Error ? error.message : undefined, variant: 'destructive', }) }) } const handleDrop = (event: DragEvent) => { const dataTransfer = event.dataTransfer if (!dataTransfer) return const hasCanvas = hasCanvasDragData(dataTransfer) const hasDroppedFiles = hasCanvas || hasFileManagerDragData(dataTransfer) || dataTransfer.files.length > 0 || getFileUrlsFromDataTransfer(dataTransfer).length > 0 if (!hasDroppedFiles) return event.preventDefault() event.stopPropagation() event.stopImmediatePropagation() clearEditorNativeDropCursor(editor) const droppedFiles = Array.from(dataTransfer.files || []) const droppedImageFiles = droppedFiles.filter(file => file.type.startsWith('image/') || INTERNAL_IMAGE_FILE_PATH_RE.test(file.name) ) const pos = editor.view.posAtCoords({ left: event.clientX, top: event.clientY }) const insertPos = pos?.pos || editor.state.selection.from if (hasCanvas) { setIsCanvasDragOver(false) setIsCanvasDropPending(true) } void (async () => { if (hasCanvas) { const canvasId = getCanvasDragId(dataTransfer) const project = canvasId ? await getCanvasProject(canvasId) : null const activeFilePath = activeFilePathRef.current if (!project || !activeFilePath) throw new Error('None Markdown File') const safeTitle = project.title.replace(/[\\/:*?"<>|]/g, '-').trim() || 'NoteGen-Canvas' const imageFile = await canvasDocumentToPngFile(project.document — translated from Chinese
+          const safeTitle = project.title.replace(/[\\/:*?"<>|]/g, '-').trim() || 'NoteLoom-Canvas'
+          const imageFile = await canvasDocumentToPngFile(project.document, 	} } } // applyFontSize() }, [contentTextScale, editor]) // Track active file path for image uploads (ref to avoid re-initializing editor) const activeFilePathRef = useRef(activeFilePath) useEffect(() => { activeFilePathRef.current = activeFilePath }, [activeFilePath]) // Handle image paste and file drop useEffect(() => { // Check if editor is fully initialized if (!editor || !editor.view || !editor.view.dom) return const handlePaste = (event: ClipboardEvent) => { const files = event.clipboardData?.files if (!files || files.length === 0) return const imageFiles = Array.from(files).filter(file => file.type.startsWith('image/')) if (imageFiles.length === 0) return const imageFile = imageFiles[0] // Prevent default to avoid base64 image being inserted event.preventDefault() // Insert "Uploading..." text as placeholder const { from } = editor.state.selection editor.chain() .focus() .insertContentAt(from, { type: 'text', text: 'Uploading... ', }) .run() // Get the position range of the placeholder const placeholderStart = from const placeholderEnd = from + 'Uploading... '.length handleImageUpload(imageFile, activeFilePathRef.current) .then(result => { // Delete the placeholder text editor.chain() .focus() .deleteRange({ from: placeholderStart, to: placeholderEnd }) .run() // Insert the actual image editor.chain() .insertContentAt(placeholderStart, { type: 'image', attrs: { src: result.src, alt: imageFile.name, relativeSrc: result.relativePath, }, }) .run() }) .catch(error => { // Remove the placeholder on error editor.chain() .focus() .deleteRange({ from: placeholderStart, to: placeholderEnd }) .run() toast({ title: tImage('failed'), description: error instanceof Error ? error.message : undefined, variant: 'destructive', }) }) } const handleDrop = (event: DragEvent) => { const dataTransfer = event.dataTransfer if (!dataTransfer) return const hasCanvas = hasCanvasDragData(dataTransfer) const hasDroppedFiles = hasCanvas || hasFileManagerDragData(dataTransfer) || dataTransfer.files.length > 0 || getFileUrlsFromDataTransfer(dataTransfer).length > 0 if (!hasDroppedFiles) return event.preventDefault() event.stopPropagation() event.stopImmediatePropagation() clearEditorNativeDropCursor(editor) const droppedFiles = Array.from(dataTransfer.files || []) const droppedImageFiles = droppedFiles.filter(file => file.type.startsWith('image/') || INTERNAL_IMAGE_FILE_PATH_RE.test(file.name) ) const pos = editor.view.posAtCoords({ left: event.clientX, top: event.clientY }) const insertPos = pos?.pos || editor.state.selection.from if (hasCanvas) { setIsCanvasDragOver(false) setIsCanvasDropPending(true) } void (async () => { if (hasCanvas) { const canvasId = getCanvasDragId(dataTransfer) const project = canvasId ? await getCanvasProject(canvasId) : null const activeFilePath = activeFilePathRef.current if (!project || !activeFilePath) throw new Error('None Markdown File') const safeTitle = project.title.replace(/[\\/:*?"<>|]/g, '-').trim() || 'NoteLoom-Canvas' const imageFile = await canvasDocumentToPngFile(project.document — translated from Chinese
 )
           const result = await saveImageToWorkspace(imageFile, activeFilePath)
           editor.chain()

@@ -98,7 +98,7 @@ const LAYOUT_STORAGE_KEYS = [
 ] as const
 const LAYOUT_STORAGE_PREFIX = 'react-resizable-panels:main-layout:'
 const DATABASE_RESET_PHRASE = 'Delete database'
-const GITHUB_BUG_REPORT_URL = 'https://github.com/codexu/note-gen/issues/new'
+const GITHUB_BUG_REPORT_URL = 'https://github.com/ksjpswaroop/NoteLoom/issues/new'
 
 function getCanvasIdFromTab(tab?: StoredTab) {
   if (!tab) return null
@@ -313,7 +313,7 @@ export function ErrorRecovery({
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
       const outputPath = await save({
         title: 'Export a full NoteLoom data backup',
-        defaultPath: `note-gen-full-backup-${timestamp}.zip`,
+        defaultPath: `noteloom-full-backup-${timestamp}.zip`,
         filters: [{
           name: 'ZIP Files',
           extensions: ['zip'],

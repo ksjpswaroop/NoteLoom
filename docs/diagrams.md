@@ -1,5 +1,7 @@
 # Diagrams and mind maps in NoteLoom
 
+See also: [Drawing board merge plan](./drawing-board-merge-plan.md).
+
 ## Recommendation
 
 **Do not ship MindFusion.Diagramming in this GPL-3.0 tree.** Prefer the existing stack:

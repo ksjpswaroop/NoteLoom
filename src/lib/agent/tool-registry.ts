@@ -1375,7 +1375,7 @@ function buildSkillInstallPackageTool(): AgentTool {
   return {
     name: 'skill_install_package',
     title: 'Install Skill package',
-    description: 'Atomically install a package that already passed skill_validate_package. This writes to NoteGen Skills, backs up an explicitly replaced version, reloads Skills, and requires write approval according to the current permission mode.',
+    description: 'Atomically install a package that already passed skill_validate_package. This writes to NoteLoom Skills, backs up an explicitly replaced version, reloads Skills, and requires write approval according to the current permission mode.',
     category: 'skill',
     risk: 'skill-install',
     inputSchema: SKILL_PACKAGE_SCHEMA,
@@ -2037,7 +2037,7 @@ function buildTools(): AgentTool[] {
     adaptLegacyTool({
       name: 'note_list_files',
       title: 'List note files',
-      description: 'List Markdown files in the NoteGen workspace. Never use this tool to inspect a user-selected folder attachment; use attachment_list for attachments.',
+      description: 'List Markdown files in the NoteLoom workspace. Never use this tool to inspect a user-selected folder attachment; use attachment_list for attachments.',
       category: 'note',
       risk: 'read',
       legacy: listMarkdownFilesTool,
@@ -2053,7 +2053,7 @@ function buildTools(): AgentTool[] {
     adaptLegacyTool({
       name: 'note_read_file',
       title: 'Read note file',
-      description: 'Read a text-based NoteGen workspace file by canonical workspace-relative path. Pass a path returned by note_search_files unchanged. Search snippets often already contain enough evidence, so read only when more context is necessary. Never use this tool for a user-selected attachment; use attachment_read with its attachment ID.',
+      description: 'Read a text-based NoteLoom workspace file by canonical workspace-relative path. Pass a path returned by note_search_files unchanged. Search snippets often already contain enough evidence, so read only when more context is necessary. Never use this tool for a user-selected attachment; use attachment_read with its attachment ID.',
       category: 'note',
       risk: 'read',
       legacy: readMarkdownFileTool,
@@ -2062,7 +2062,7 @@ function buildTools(): AgentTool[] {
     adaptLegacyTool({
       name: 'note_open_file',
       title: 'Open note file',
-      description: 'Open an existing NoteGen workspace note in the editor only when the user explicitly asks to open or switch to that note. Never use this tool to inspect, read, summarize, or analyze a user-selected attachment; use attachment_read for attachments.',
+      description: 'Open an existing NoteLoom workspace note in the editor only when the user explicitly asks to open or switch to that note. Never use this tool to inspect, read, summarize, or analyze a user-selected attachment; use attachment_read for attachments.',
       category: 'note',
       risk: 'read',
       legacy: openMarkdownFileTool,
@@ -2093,7 +2093,7 @@ function buildTools(): AgentTool[] {
       name: 'note_search_files',
       title: 'Find related notes',
       description: [
-        'Search the user’s NoteGen notes when the answer depends on their personal records, prior decisions, past writing, or information spread across notes.',
+        'Search the user’s NoteLoom notes when the answer depends on their personal records, prior decisions, past writing, or information spread across notes.',
         'Decide automatically: search when the user asks about their notes, history, plans, opinions, or explicitly asks to find/compare/summarize recorded material. Do not search for general-knowledge questions or when the current open note already contains enough evidence. Respect explicit requests not to search other notes.',
         'Use mode=rag for answering natural-language questions, including questions containing exact names, project IDs, dates, or code symbols. Use mode=keyword only when the user explicitly asks for every literal occurrence or exact-match location; rag is the default when mode is omitted.',
         'Results are retrieval candidates, not automatically trusted evidence. Judge each candidate against the user’s original question, including whether it actually supports the answer, conflicts with another source, or appears outdated. Use snippets directly when sufficient. For comparisons or multi-part questions, you may search with distinct queries and then read only candidates that need more context. Pass returned paths unchanged and never call batch reading with an empty array. The configured search-round budget is enforced automatically. Before the final answer, call note_cite_sources with only the paths actually used.',

@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/carousel"
 import { Card, CardContent } from "@/components/ui/card"
 import { useRef } from "react";
-import { ScreenshotImage } from "note-gen/screenshot"
+import { ScreenshotImage } from "noteloom/screenshot"
 import { BaseDirectory, exists, mkdir, remove, writeFile } from "@tauri-apps/plugin-fs"
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';

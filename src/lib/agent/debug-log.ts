@@ -6,9 +6,9 @@ export interface AgentDebugEntry {
 
 declare global {
   interface Window {
-    __NOTEGEN_AGENT_DEBUG_LOGS__?: AgentDebugEntry[]
-    __NOTEGEN_AGENT_DEBUG_DUMP__?: () => string
-    __NOTEGEN_AGENT_DEBUG_CLEAR__?: () => void
+    __NOTELOOM_AGENT_DEBUG_LOGS__?: AgentDebugEntry[]
+    __NOTELOOM_AGENT_DEBUG_DUMP__?: () => string
+    __NOTELOOM_AGENT_DEBUG_CLEAR__?: () => void
   }
 }
 
@@ -22,7 +22,7 @@ function isDebugEnabled() {
     return false
   }
 
-  return window.localStorage?.getItem('notegen.agent.debug') === 'true'
+  return window.localStorage?.getItem('noteloom.agent.debug') === 'true'
 }
 
 function sanitizeValue(value: unknown, depth = 0): unknown {
@@ -64,13 +64,13 @@ function sanitizeValue(value: unknown, depth = 0): unknown {
 }
 
 function ensureDebugBuffer() {
-  window.__NOTEGEN_AGENT_DEBUG_LOGS__ ||= []
-  window.__NOTEGEN_AGENT_DEBUG_DUMP__ = () =>
-    JSON.stringify(window.__NOTEGEN_AGENT_DEBUG_LOGS__ || [], null, 2)
-  window.__NOTEGEN_AGENT_DEBUG_CLEAR__ = () => {
-    window.__NOTEGEN_AGENT_DEBUG_LOGS__ = []
+  window.__NOTELOOM_AGENT_DEBUG_LOGS__ ||= []
+  window.__NOTELOOM_AGENT_DEBUG_DUMP__ = () =>
+    JSON.stringify(window.__NOTELOOM_AGENT_DEBUG_LOGS__ || [], null, 2)
+  window.__NOTELOOM_AGENT_DEBUG_CLEAR__ = () => {
+    window.__NOTELOOM_AGENT_DEBUG_LOGS__ = []
   }
-  return window.__NOTEGEN_AGENT_DEBUG_LOGS__
+  return window.__NOTELOOM_AGENT_DEBUG_LOGS__
 }
 
 export function agentDebugLog(event: string, payload?: unknown) {

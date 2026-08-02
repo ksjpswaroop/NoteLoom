@@ -698,7 +698,7 @@ export async function createSyncRepo(name: string, isPrivate: boolean = true): P
 
     const requestBody = {
       name: name,
-      description: `note-gen - ${name}`,
+      description: `NoteLoom - ${name}`,
       private: isPrivate,
       auto_init: true,
       default_branch: 'main'
