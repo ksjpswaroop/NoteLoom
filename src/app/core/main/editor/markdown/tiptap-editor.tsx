@@ -2611,6 +2611,10 @@ export function TipTapEditor({
         closeSheet()
         document.dispatchEvent(new CustomEvent('tiptap-insert-mermaid', { detail: { type: 'flowchart' } }))
         return
+      case 'insert-mermaid-mindmap':
+        closeSheet()
+        document.dispatchEvent(new CustomEvent('tiptap-insert-mermaid', { detail: { type: 'mindmap' } }))
+        return
       case 'insert-mermaid-sequence':
         closeSheet()
         document.dispatchEvent(new CustomEvent('tiptap-insert-mermaid', { detail: { type: 'sequence' } }))

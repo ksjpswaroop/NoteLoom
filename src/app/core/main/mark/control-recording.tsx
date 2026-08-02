@@ -160,19 +160,31 @@ export function ControlRecording() {
       //
       audioPath = await saveAudioFile(audioBlob)
       
-      // STT API
       let transcription = ''
+      let transcriptionError: string | null = null
       try {
         transcription = await transcribeRecording(audioBlob)
       } catch (error) {
         console.error('STT', error)
+        transcriptionError =
+          error instanceof Error ? error.message : t('recording.transcriptionError')
       }
-      
-      // ，
+
       const noContent = !transcription || !transcription.trim()
-      const fallbackMessage = getTranscriptionFallbackMessage(sttModel)
-      const displayContent = noContent ? (fallbackMessage || t('recording.noContentDetected')) : transcription
-      
+      const {
+        speechToTextMode,
+        localSttEngine,
+      } = useSettingStore.getState()
+      const fallbackMessage = getTranscriptionFallbackMessage({
+        sttModel,
+        speechToTextMode,
+        localSttEngine,
+      })
+      // Keep a stable fallback string in the mark so retry UI can detect it.
+      const displayContent = noContent
+        ? (fallbackMessage || t('recording.noContentDetected'))
+        : transcription
+
       const result = await insertMark({
         tagId,
         type: 'recording',
@@ -181,17 +193,29 @@ export function ControlRecording() {
         url: audioPath  // Save
       })
       const markId = Number(result.lastInsertId || 0) || null
-      
-      //
+
       removeQueue(queueId)
 
-      await completeRecord({
-        markId,
-        tagId,
-        typeLabel: t('record.mark.type.recording'),
-      })
-      
-      //
+      if (noContent) {
+        toast({
+          title: t('recording.audioSavedTitle'),
+          description: transcriptionError || fallbackMessage || t('recording.audioSavedDesc'),
+          variant: 'destructive',
+        })
+        // Refresh the list so the saved audio record is visible; skip the success toast.
+        await completeRecord({
+          markId,
+          tagId,
+          typeLabel: t('record.mark.type.recording'),
+          silentToast: true,
+        })
+      } else {
+        await completeRecord({
+          markId,
+          tagId,
+          typeLabel: t('record.mark.type.recording'),
+        })
+      }
     } catch (error) {
       console.error('Recognition failed:', error)
       

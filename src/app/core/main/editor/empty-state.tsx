@@ -7,7 +7,7 @@ import { open } from '@tauri-apps/plugin-dialog'
 import { Store } from '@tauri-apps/plugin-store'
 import Image from 'next/image'
 import emitter from '@/lib/emitter'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import useShortcutStore from '@/stores/shortcut'
 import useSettingStore from '@/stores/setting'
 import { useSidebarStore } from '@/stores/sidebar'
@@ -16,6 +16,7 @@ import { createNewNoteFromEmptyState } from './empty-state-actions'
 import { Button } from '@/components/ui/button'
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
 import { Kbd } from '@/components/ui/kbd'
+import { cn } from '@/lib/utils'
 
 interface ActionItem {
   icon: React.ReactNode
@@ -23,6 +24,7 @@ interface ActionItem {
   description: string
   shortcut?: string
   onClick: () => void
+  primary?: boolean
 }
 
 interface EmptyStateProps {
@@ -33,6 +35,16 @@ interface EmptyStateProps {
   onStartOnboardingStep: (step: OnboardingStepId) => void | Promise<void>
   onContinueToNextStep: () => void | Promise<void>
   onDismissOnboarding: () => void | Promise<void>
+}
+
+function formatShortcut(value: string, isMac: boolean) {
+  return value
+    .replace('CommandOrControl', isMac ? '⌘' : 'Ctrl')
+    .replace('Command', '⌘')
+    .replace('Control', 'Ctrl')
+    .replace('Shift', '⇧')
+    .replace('Alt', '⌥')
+    .replace(/\+/g, ' ')
 }
 
 export function EmptyState({
@@ -51,6 +63,11 @@ export function EmptyState({
   const { addWorkspaceHistory } = useSettingStore()
   const [textRecordShortcut, setTextRecordShortcut] = useState('')
   const [voiceRecordShortcut, setVoiceRecordShortcut] = useState('')
+  const isMac = useMemo(
+    () => typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform),
+    [],
+  )
+  const modKey = isMac ? '⌘' : 'Ctrl'
 
   const handleCreateNote = async () => {
     await createNewNoteFromEmptyState({
@@ -59,10 +76,8 @@ export function EmptyState({
     })
   }
 
-  //
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Cmd/Ctrl + N
       if ((e.metaKey || e.ctrlKey) && e.key === 'n') {
         e.preventDefault()
         void handleCreateNote()
@@ -73,34 +88,24 @@ export function EmptyState({
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [newFile, setLeftSidebarTab])
 
-  // /
   useEffect(() => {
-    const formatShortcut = (value: string) =>
-      value
-        .replace('CommandOrControl', '⌘')
-        .replace('Command', '⌘')
-        .replace('Control', 'Ctrl')
-        .replace('Shift', '⇧')
-        .replace('Alt', '⌥')
-        .replace('+', ' ')
-
     const textShortcut = shortcuts.find(s => s.key === 'quickRecordText')
     if (textShortcut) {
-      setTextRecordShortcut(formatShortcut(textShortcut.value))
+      setTextRecordShortcut(formatShortcut(textShortcut.value, isMac))
     }
 
     const voiceShortcut = shortcuts.find(s => s.key === 'quickRecordVoice')
     if (voiceShortcut) {
-      setVoiceRecordShortcut(formatShortcut(voiceShortcut.value))
+      setVoiceRecordShortcut(formatShortcut(voiceShortcut.value, isMac))
     }
-  }, [shortcuts])
+  }, [shortcuts, isMac])
 
   const handleOpenWorkspace = async () => {
     try {
       const selected = await open({
         directory: true,
         multiple: false,
-        title: 'Choose workspace folder'
+        title: t('actions.openWorkspace.dialogTitle'),
       })
       
       if (selected && typeof selected === 'string') {
@@ -108,10 +113,8 @@ export function EmptyState({
         await store.set('workspacePath', selected)
         await store.save()
         
-        //
         await addWorkspaceHistory(selected)
         
-        //
         window.location.reload()
       }
     } catch (error) {
@@ -120,7 +123,6 @@ export function EmptyState({
   }
 
   const handleOpenRecord = () => {
-    //
     emitter.emit('quickRecordTextHandler')
   }
 
@@ -129,7 +131,6 @@ export function EmptyState({
   }
 
   const handleGlobalSearch = () => {
-    // (Cmd/Ctrl + F)
     const event = new KeyboardEvent('keydown', {
       key: 'f',
       metaKey: true,
@@ -139,33 +140,36 @@ export function EmptyState({
     window.dispatchEvent(event)
   }
 
+  // Capture-first ordering: text + voice are the primary first-run path.
   const actions: ActionItem[] = [
-    {
-      icon: <FileText className="w-5 h-5" />,
-      title: t('actions.newNote.title'),
-      description: t('actions.newNote.desc'),
-      shortcut: '⌘ N',
-      onClick: () => void handleCreateNote()
-    },
     {
       icon: <MessageSquareText className="w-5 h-5" />,
       title: t('actions.newRecord.title'),
       description: t('actions.newRecord.desc'),
       shortcut: textRecordShortcut,
-      onClick: handleOpenRecord
+      onClick: handleOpenRecord,
+      primary: true,
     },
     {
       icon: <Mic className="w-5 h-5" />,
-      title: 'Voice record',
-      description: 'Capture a voice recording and transcribe it into a record.',
+      title: t('actions.voiceRecord.title'),
+      description: t('actions.voiceRecord.desc'),
       shortcut: voiceRecordShortcut,
-      onClick: handleOpenVoiceRecord
+      onClick: handleOpenVoiceRecord,
+      primary: true,
+    },
+    {
+      icon: <FileText className="w-5 h-5" />,
+      title: t('actions.newNote.title'),
+      description: t('actions.newNote.desc'),
+      shortcut: `${modKey} N`,
+      onClick: () => void handleCreateNote()
     },
     {
       icon: <Search className="w-5 h-5" />,
       title: t('actions.globalSearch.title'),
       description: t('actions.globalSearch.desc'),
-      shortcut: '⌘ F',
+      shortcut: `${modKey} F`,
       onClick: handleGlobalSearch
     },
     {
@@ -211,7 +215,6 @@ export function EmptyState({
   return (
     <Empty className="h-full rounded-none bg-background p-8">
       <div className="flex w-full max-w-2xl flex-col gap-8 text-left text-pretty">
-        {/* Header */}
         <EmptyHeader className="mx-auto gap-3 text-center text-balance">
           <div className="flex items-center justify-center gap-3 mb-2">
             <Image 
@@ -299,7 +302,6 @@ export function EmptyState({
           </div>
         )}
 
-        {/* Actions Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {actions.map((action, index) => (
             <Button
@@ -307,9 +309,15 @@ export function EmptyState({
               variant="outline"
               key={index}
               onClick={action.onClick}
-              className="group h-auto items-start justify-start gap-4 whitespace-normal p-4 text-left"
+              className={cn(
+                'group h-auto items-start justify-start gap-4 whitespace-normal p-4 text-left',
+                action.primary && 'border-primary/40 bg-primary/5 hover:bg-primary/10',
+              )}
             >
-              <div className="flex-shrink-0 mt-1 text-muted-foreground group-hover:text-primary transition-colors">
+              <div className={cn(
+                'flex-shrink-0 mt-1 text-muted-foreground group-hover:text-primary transition-colors',
+                action.primary && 'text-primary',
+              )}>
                 {action.icon}
               </div>
               <div className="flex-1 min-w-0">
@@ -331,10 +339,9 @@ export function EmptyState({
           ))}
         </div>
 
-        {/* Tips */}
         <div className="flex flex-col gap-2 pt-4 text-center">
           <p className="text-xs text-muted-foreground">
-            Capture first. Organize later. Derived from{' '}
+            {t('tip')}{' '}
             <a 
               href="https://github.com/codexu/note-gen" 
               target="_blank" 

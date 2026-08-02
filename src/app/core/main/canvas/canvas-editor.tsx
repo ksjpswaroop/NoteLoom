@@ -97,6 +97,7 @@ import useCanvasStore from '@/stores/canvas'
 import useArticleStore from '@/stores/article'
 import useSettingStore from '@/stores/setting'
 import useMarkStore from '@/stores/mark'
+import useChatStore from '@/stores/chat'
 import { useSidebarStore } from '@/stores/sidebar'
 import { insertMark, type Mark } from '@/db/marks'
 import type {
@@ -1642,12 +1643,21 @@ function CanvasEditorInner({ canvasId, mobile = false }: CanvasEditorProps) {
     if (nodes.length === 0) return
     if (recordHistory) pushHistory()
     const layoutDirection = document?.settings.layoutDirection === 'LR' ? 'RIGHT' : 'DOWN'
-    const layoutOptions = {
-      'elk.algorithm': 'layered',
-      'elk.direction': layoutDirection,
-      'elk.spacing.nodeNode': '48',
-      'elk.layered.spacing.nodeNodeBetweenLayers': '72',
-    }
+    const canvasType = projects.find(item => item.id === canvasId)?.canvasType
+    const useMindmapLayout = canvasType === 'mindmap'
+    const layoutOptions: Record<string, string> = useMindmapLayout
+      ? {
+          'elk.algorithm': 'mrtree',
+          'elk.direction': layoutDirection,
+          'elk.spacing.nodeNode': '56',
+          'elk.mrtree.searchOrder': 'dfs',
+        }
+      : {
+          'elk.algorithm': 'layered',
+          'elk.direction': layoutDirection,
+          'elk.spacing.nodeNode': '48',
+          'elk.layered.spacing.nodeNodeBetweenLayers': '72',
+        }
     const getLayoutSize = (node: FlowCanvasNode) => ({
       width: node.type === 'group'
         ? node.width || node.measured?.width || 360
@@ -1776,7 +1786,7 @@ function CanvasEditorInner({ canvasId, mobile = false }: CanvasEditorProps) {
     }
     setNodes(current => current.map(node => arrangedById.get(node.id) || node))
     requestAnimationFrame(() => void fitView({ padding: 0.2, duration: 300 }))
-  }, [document?.settings.layoutDirection, edges, fitView, nodes, pushHistory, setNodes])
+  }, [canvasId, document?.settings.layoutDirection, edges, fitView, nodes, projects, pushHistory, setNodes])
 
   useEffect(() => {
     const autoLayout = ({ recordHistory = true }: { recordHistory?: boolean }) => {
@@ -2390,6 +2400,7 @@ function CanvasEditorInner({ canvasId, mobile = false }: CanvasEditorProps) {
           tool={tool}
           customComponents={customComponents}
           chartOpen={chartEditorOpen}
+          hasSelection={selectedCount > 0}
           onToolChange={setTool}
           onAddNode={addNode}
           onAddImage={() => void addImageNode()}
@@ -2399,6 +2410,11 @@ function CanvasEditorInner({ canvasId, mobile = false }: CanvasEditorProps) {
           onInsertCustomComponent={insertCustomComponent}
           onDeleteCustomComponent={deleteCustomComponent}
           onShapePreferenceChange={setPreferredNodeType}
+          onGenerateWithAi={async (prompt) => {
+            const sidebar = useSidebarStore.getState()
+            if (!sidebar.rightSidebarVisible) await sidebar.toggleRightSidebar()
+            useChatStore.getState().setOnboardingPromptDraft(prompt)
+          }}
           mobile={mobile}
         />
 

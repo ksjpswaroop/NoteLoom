@@ -25,6 +25,7 @@ import {
   Pencil,
   RectangleHorizontal,
   Shapes,
+  Sparkles,
   SquareRoundCorner,
   Timer,
   Trash2,
@@ -36,14 +37,21 @@ import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
+import { Textarea } from '@/components/ui/textarea'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import type { CanvasCustomComponent, CanvasTool } from '@/types/canvas'
 import type { CanvasFlowchartNodeType } from '@/lib/canvas/shapes'
+import {
+  CANVAS_AI_PRESETS,
+  buildCanvasAiPrompt,
+  type CanvasAiPreset,
+  type CanvasAiScope,
+} from '@/lib/canvas/ai-prompt'
 import { cn } from '@/lib/utils'
 
 export type InsertableCanvasNodeType = CanvasFlowchartNodeType | 'text'
 
-type ToolPanel = 'shapes' | 'customComponents'
+type ToolPanel = 'shapes' | 'customComponents' | 'ai'
 type ShapeGroup = 'common' | 'flowchart' | 'data'
 
 interface ShapeDefinition {
@@ -79,9 +87,10 @@ interface RailButtonProps {
   onClick: () => void
   icon: LucideIcon
   mobile?: boolean
+  accent?: boolean
 }
 
-function RailButton({ label, active, onClick, icon: Icon, mobile = false }: RailButtonProps) {
+function RailButton({ label, active, onClick, icon: Icon, mobile = false, accent = false }: RailButtonProps) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -92,7 +101,11 @@ function RailButton({ label, active, onClick, icon: Icon, mobile = false }: Rail
           aria-label={label}
           aria-pressed={active}
           onClick={onClick}
-          className={cn(mobile && 'h-12 min-w-0 flex-1 rounded-md')}
+          className={cn(
+            mobile && 'h-12 min-w-0 flex-1 rounded-md',
+            accent && !active && 'text-[#3b82f6] hover:text-[#3b82f6]',
+            accent && active && 'bg-[#3b82f6]/15 text-[#3b82f6]',
+          )}
         >
           <Icon data-icon="inline-start" />
         </Button>
@@ -106,6 +119,7 @@ export function CanvasToolsSidebar({
   tool,
   customComponents,
   chartOpen,
+  hasSelection = false,
   onToolChange,
   onAddNode,
   onAddImage,
@@ -115,11 +129,13 @@ export function CanvasToolsSidebar({
   onInsertCustomComponent,
   onDeleteCustomComponent,
   onShapePreferenceChange,
+  onGenerateWithAi,
   mobile = false,
 }: {
   tool: CanvasTool
   customComponents: CanvasCustomComponent[]
   chartOpen: boolean
+  hasSelection?: boolean
   onToolChange: (tool: CanvasTool) => void
   onAddNode: (nodeType: InsertableCanvasNodeType) => void
   onAddImage: () => void
@@ -129,10 +145,14 @@ export function CanvasToolsSidebar({
   onInsertCustomComponent: (component: CanvasCustomComponent) => void
   onDeleteCustomComponent: (id: string) => void
   onShapePreferenceChange: (nodeType: InsertableCanvasNodeType) => void
+  onGenerateWithAi?: (prompt: string) => void
   mobile?: boolean
 }) {
   const t = useTranslations('canvas')
   const [panel, setPanel] = useState<ToolPanel | null>(null)
+  const [aiDescription, setAiDescription] = useState('')
+  const [aiScope, setAiScope] = useState<CanvasAiScope>('append')
+  const [aiPreset, setAiPreset] = useState<CanvasAiPreset | null>('mindmap')
 
   const shapeGroups = useMemo(() => {
     return [
@@ -148,6 +168,28 @@ export function CanvasToolsSidebar({
       onPanelOpenChange(false)
     }
   }, [customComponents.length, onPanelOpenChange, panel])
+
+  useEffect(() => {
+    if (aiScope === 'selection' && !hasSelection) {
+      setAiScope('append')
+    }
+  }, [aiScope, hasSelection])
+
+  const submitAiPrompt = () => {
+    if (!onGenerateWithAi) return
+    const description = aiDescription.trim()
+    if (!description && !aiPreset) return
+    onGenerateWithAi(buildCanvasAiPrompt({
+      description,
+      scope: aiScope,
+      scopePrompt: t(`toolbox.aiScopes.${aiScope}Prompt`),
+      preset: aiPreset,
+      presetPrompt: aiPreset ? t(`toolbox.aiPresets.${aiPreset}Prompt`) : undefined,
+      baseInstruction: t('toolbox.aiPrompt'),
+    }))
+    setPanel(null)
+    onPanelOpenChange(false)
+  }
 
   const openPanel = (nextPanel: ToolPanel) => {
     onCloseChart()
@@ -226,6 +268,14 @@ export function CanvasToolsSidebar({
         />
         {!mobile && <Separator />}
         <RailButton
+          label={t('toolbox.ai')}
+          active={panel === 'ai'}
+          icon={Sparkles}
+          onClick={() => openPanel('ai')}
+          mobile={mobile}
+          accent
+        />
+        <RailButton
           label={t('toolbox.shapes')}
           active={panel === 'shapes'}
           icon={Shapes}
@@ -289,6 +339,59 @@ export function CanvasToolsSidebar({
             </Button>
           </div>
           <Separator />
+          {panel === 'ai' && (
+            <div className="flex min-h-0 flex-1 flex-col gap-3 p-3">
+              <div className="flex flex-wrap gap-1">
+                {(['append', 'replace', ...(hasSelection ? ['selection'] as const : [])] as CanvasAiScope[]).map(scope => (
+                  <Button
+                    key={scope}
+                    type="button"
+                    size="xs"
+                    variant={aiScope === scope ? 'default' : 'outline'}
+                    className={cn(aiScope === scope && 'bg-[#3b82f6] text-white hover:bg-[#2563eb]')}
+                    onClick={() => setAiScope(scope)}
+                  >
+                    {t(`toolbox.aiScopes.${scope}`)}
+                  </Button>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {CANVAS_AI_PRESETS.map(preset => (
+                  <Button
+                    key={preset}
+                    type="button"
+                    size="xs"
+                    variant={aiPreset === preset ? 'secondary' : 'ghost'}
+                    className={cn(
+                      'border',
+                      aiPreset === preset && 'border-[#3b82f6]/40 text-[#3b82f6]',
+                    )}
+                    onClick={() => setAiPreset(current => current === preset ? null : preset)}
+                  >
+                    {t(`toolbox.aiPresets.${preset}`)}
+                  </Button>
+                ))}
+              </div>
+              <Textarea
+                value={aiDescription}
+                onChange={event => setAiDescription(event.target.value)}
+                placeholder={t('toolbox.aiPlaceholder')}
+                rows={4}
+                maxRows={10}
+                className="min-h-24 resize-none"
+              />
+              <p className="text-xs text-muted-foreground">{t('toolbox.aiHint')}</p>
+              <Button
+                type="button"
+                className="bg-[#3b82f6] text-white hover:bg-[#2563eb]"
+                disabled={!aiDescription.trim() && !aiPreset}
+                onClick={submitAiPrompt}
+              >
+                <Sparkles data-icon="inline-start" />
+                {t('toolbox.aiGenerate')}
+              </Button>
+            </div>
+          )}
           {panel === 'shapes' && (
             <ScrollArea className="min-h-0 flex-1">
               <div className="flex flex-col gap-4 p-3">

@@ -20,10 +20,15 @@ const MINDMAP_TEMPLATE: CanvasDocument = {
   ...structuredClone(DEFAULT_CANVAS_DOCUMENT),
   settings: { ...DEFAULT_CANVAS_DOCUMENT.settings, layoutDirection: 'LR' },
   nodes: [
-    { id: 'topic', type: 'process', position: { x: 0, y: 160 }, data: { label: 'Central topic' } },
-    { id: 'branch-1', type: 'process', position: { x: 280, y: 40 }, data: { label: 'Branch 1' } },
-    { id: 'branch-2', type: 'process', position: { x: 280, y: 160 }, data: { label: 'Branch 2' } },
-    { id: 'branch-3', type: 'process', position: { x: 280, y: 280 }, data: { label: 'Branch 3' } },
+    {
+      id: 'topic',
+      type: 'process',
+      position: { x: 0, y: 160 },
+      data: { label: 'Central topic', color: '#3b82f6', fillColor: '#3b82f6', fillStyle: 'tint' },
+    },
+    { id: 'branch-1', type: 'process', position: { x: 280, y: 40 }, data: { label: 'Branch 1', color: '#3b82f6' } },
+    { id: 'branch-2', type: 'process', position: { x: 280, y: 160 }, data: { label: 'Branch 2', color: '#3b82f6' } },
+    { id: 'branch-3', type: 'process', position: { x: 280, y: 280 }, data: { label: 'Branch 3', color: '#3b82f6' } },
   ],
   edges: [
     { id: 'topic-branch-1', source: 'topic', target: 'branch-1', type: 'smoothstep' },

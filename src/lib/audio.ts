@@ -382,6 +382,8 @@ export async function transcribeRecording(audioBlob: Blob): Promise<string> {
     localSttEngine === 'parakeet' &&
     (speechToTextMode === 'local' || speechToTextMode === 'auto')
 
+  let parakeetUnavailableMessage = ''
+
   if (preferParakeet) {
     try {
       const status = await inspectParakeetStt(parakeetModelId)
@@ -396,17 +398,22 @@ export async function transcribeRecording(audioBlob: Blob): Promise<string> {
         return result.text
       }
 
+      parakeetUnavailableMessage =
+        status.message ||
+        'Local Parakeet is not ready. Open Settings → Audio and click Install Local Parakeet.'
+
       if (speechToTextMode === 'local') {
-        throw new Error(
-          status.message ||
-            'Local Parakeet is not ready. Open Settings → Audio and install Local Parakeet.',
-        )
+        throw new Error(parakeetUnavailableMessage)
       }
       // auto mode: fall through to remote STT model when Parakeet is unavailable
     } catch (error) {
       if (speechToTextMode === 'local') {
         throw error
       }
+      parakeetUnavailableMessage =
+        error instanceof Error
+          ? error.message
+          : 'Local Parakeet transcription failed. Falling back to a remote STT model if configured.'
       console.warn('Local Parakeet transcription unavailable, falling back to model STT:', error)
     }
   }
@@ -419,11 +426,22 @@ export async function transcribeRecording(audioBlob: Blob): Promise<string> {
   }
 
   if (!sttModel) {
-    return ''
+    if (preferParakeet) {
+      throw new Error(
+        parakeetUnavailableMessage ||
+          'Local Parakeet is not ready and no remote speech-to-text model is configured. Open Settings → Audio to Install Local Parakeet, or switch mode and pick a remote STT model.',
+      )
+    }
+    throw new Error(
+      'No speech-to-text path is ready. Open Settings → Audio to Install Local Parakeet or configure a remote STT model.',
+    )
   }
 
   if (speechToTextMode === 'local') {
-    return ''
+    throw new Error(
+      parakeetUnavailableMessage ||
+        'Local speech-to-text is not available. Install Local Parakeet in Settings → Audio, or switch Mode to Auto/Model.',
+    )
   }
 
   return fetchAudioTranscription(audioBlob)

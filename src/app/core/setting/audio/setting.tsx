@@ -1,10 +1,11 @@
 import { Item, ItemGroup, ItemMedia, ItemContent, ItemTitle, ItemDescription, ItemActions } from '@/components/ui/item';
 import { useTranslations } from 'next-intl';
 import { ModelSelect } from "../components/model-select";
-import { Gauge, Volume2, Mic, Cpu, Languages, Download } from "lucide-react";
+import { Gauge, Volume2, Mic, Cpu, Languages, Download, Loader2 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Store } from "@tauri-apps/plugin-store";
+import { listen } from '@tauri-apps/api/event';
 import useSettingStore from "@/stores/setting";
 import { ResponsiveSelect } from "@/components/responsive-select";
 import type { SpeechMode } from '@/lib/speech/types';
@@ -16,6 +17,32 @@ import {
   type ParakeetAttentionMode,
 } from '@/lib/speech/parakeet-models';
 import { ensureParakeetStt, inspectParakeetStt, type ParakeetStatus } from '@/lib/speech/parakeet';
+
+interface ParakeetProgressEvent {
+  stage: string
+  message: string
+}
+
+function mapInstallError(raw: string, t: (key: string) => string): string {
+  const lower = raw.toLowerCase()
+  if (lower.includes('python') && (lower.includes('3.10') || lower.includes('required') || lower.includes('not found'))) {
+    return t('stt.parakeet.installFailedPython')
+  }
+  if (lower.includes('ffmpeg')) {
+    return t('stt.parakeet.installFailedFfmpeg')
+  }
+  if (
+    lower.includes('network') ||
+    lower.includes('connection') ||
+    lower.includes('timed out') ||
+    lower.includes('timeout') ||
+    lower.includes('could not resolve') ||
+    lower.includes('http')
+  ) {
+    return t('stt.parakeet.installFailedNetwork')
+  }
+  return raw.trim() || t('stt.parakeet.installFailed')
+}
 
 export function Setting() {
   const t = useTranslations('settings.audio');
@@ -38,7 +65,9 @@ export function Setting() {
   const [speed, setSpeed] = useState(1);
   const [parakeetStatus, setParakeetStatus] = useState<ParakeetStatus | null>(null);
   const [isInstallingParakeet, setIsInstallingParakeet] = useState(false);
+  const [installProgressMessage, setInstallProgressMessage] = useState<string | null>(null);
   const [parakeetActionError, setParakeetActionError] = useState<string | null>(null);
+  const installingRef = useRef(false);
 
   const modeOptions: Array<{ value: SpeechMode; label: string }> = [
     { value: 'auto', label: t('mode.auto') },
@@ -79,6 +108,53 @@ export function Setting() {
     void refreshParakeetStatus();
   }, [refreshParakeetStatus]);
 
+  useEffect(() => {
+    let unlisten: (() => void) | undefined
+
+    async function bindProgress() {
+      try {
+        unlisten = await listen<ParakeetProgressEvent>('parakeet-stt-progress', (event) => {
+          if (!installingRef.current) {
+            return
+          }
+          const { stage, message } = event.payload
+          if (message) {
+            setInstallProgressMessage(message)
+            return
+          }
+          switch (stage) {
+            case 'preparing':
+              setInstallProgressMessage(t('stt.parakeet.progress.preparing'))
+              break
+            case 'installing':
+              setInstallProgressMessage(t('stt.parakeet.progress.installing'))
+              break
+            case 'verifying':
+              setInstallProgressMessage(t('stt.parakeet.progress.verifying'))
+              break
+            case 'completed':
+              setInstallProgressMessage(t('stt.parakeet.progress.completed'))
+              break
+            case 'failed':
+              setInstallProgressMessage(t('stt.parakeet.progress.failed'))
+              break
+            default:
+              break
+          }
+        })
+      } catch {
+        // Progress events are desktop-only; ignore listen failures in web/dev shells.
+      }
+    }
+
+    void bindProgress()
+    return () => {
+      if (unlisten) {
+        unlisten()
+      }
+    }
+  }, [t]);
+
   // TTS
   useEffect(() => {
     async function loadSpeed() {
@@ -87,10 +163,8 @@ export function Setting() {
       const models = await store.get<any[]>('aiModelList');
       if (!models) return;
       
-      // TTS，
       let currentSpeed = 1;
       for (const config of models) {
-        // models
         if (config.models && config.models.length > 0) {
           const targetModel = config.models.find((model: any) => 
             model.id === audioModel && model.modelType === 'tts'
@@ -100,7 +174,6 @@ export function Setting() {
             break;
           }
         } else {
-          // ：
           if (config.key === audioModel && config.modelType === 'tts' && config.speed !== undefined) {
             currentSpeed = config.speed;
             break;
@@ -114,7 +187,6 @@ export function Setting() {
     loadSpeed();
   }, [audioModel]);
 
-  // TTS
   const handleSpeedChange = async (value: number[]) => {
     const newSpeed = value[0];
     setSpeed(newSpeed);
@@ -124,9 +196,7 @@ export function Setting() {
     const store = await Store.load('store.json');
     const models = await store.get<any[]>('aiModelList') || [];
     
-    // TTS，
     const updatedModels = models.map(config => {
-      // models
       if (config.models && config.models.length > 0) {
         const updatedConfig = { ...config };
         updatedConfig.models = config.models.map((model: any) => {
@@ -137,7 +207,6 @@ export function Setting() {
         });
         return updatedConfig;
       } else {
-        // ：
         if (config.key === audioModel && config.modelType === 'tts') {
           return { ...config, speed: newSpeed };
         }
@@ -151,23 +220,55 @@ export function Setting() {
   };
 
   const handleInstallParakeet = async () => {
+    installingRef.current = true;
     setIsInstallingParakeet(true);
     setParakeetActionError(null);
+    setInstallProgressMessage(t('stt.parakeet.progress.preparing'));
     try {
       const result = await ensureParakeetStt(parakeetModelId);
       setParakeetStatus(result.status);
       if (!result.success) {
-        setParakeetActionError(result.status.message || t('stt.parakeet.installFailed'));
+        const detail = [result.status.message, result.stderr].filter(Boolean).join(' ')
+        setParakeetActionError(mapInstallError(detail, t));
+        setInstallProgressMessage(null);
+      } else {
+        setInstallProgressMessage(
+          result.status.modelCached
+            ? t('stt.parakeet.runtime.ready')
+            : t('stt.parakeet.runtime.readyNeedsModel'),
+        );
       }
     } catch (error) {
-      setParakeetActionError(error instanceof Error ? error.message : t('stt.parakeet.installFailed'));
+      const message = error instanceof Error ? error.message : t('stt.parakeet.installFailed');
+      setParakeetActionError(mapInstallError(message, t));
+      setInstallProgressMessage(null);
     } finally {
+      installingRef.current = false;
       setIsInstallingParakeet(false);
     }
   };
 
   const showParakeetSettings = localSttEngine === 'parakeet' && speechToTextMode !== 'model';
   const selectedParakeetModel = PARAKEET_MODEL_OPTIONS.find(option => option.id === parakeetModelId);
+
+  const runtimeDescription = (() => {
+    if (parakeetActionError) {
+      return parakeetActionError;
+    }
+    if (isInstallingParakeet && installProgressMessage) {
+      return installProgressMessage;
+    }
+    if (installProgressMessage && parakeetStatus?.runtimeReady) {
+      return installProgressMessage;
+    }
+    if (!parakeetStatus) {
+      return t('stt.parakeet.runtime.checking');
+    }
+    if (!parakeetStatus.runtimeReady && (speechToTextMode === 'local' || speechToTextMode === 'auto')) {
+      return parakeetStatus.message || t('stt.parakeet.notReadyHint');
+    }
+    return parakeetStatus.message || t('stt.parakeet.runtime.checking');
+  })();
 
   return (
     <div className="flex flex-col gap-6">
@@ -269,14 +370,19 @@ export function Setting() {
               <ItemContent>
                 <ItemTitle>{t('stt.parakeet.model.title')}</ItemTitle>
                 <ItemDescription>
-                  {selectedParakeetModel?.description || t('stt.parakeet.model.desc')}
+                  {selectedParakeetModel
+                    ? `${selectedParakeetModel.label} — ${selectedParakeetModel.description}`
+                    : t('stt.parakeet.model.desc')}
                 </ItemDescription>
               </ItemContent>
               <ItemActions>
                 <ResponsiveSelect
                   title={t('stt.parakeet.model.title')}
                   value={parakeetModelId}
-                  onValueChange={value => setParakeetModelId(value)}
+                  onValueChange={value => {
+                    setInstallProgressMessage(null);
+                    void setParakeetModelId(value);
+                  }}
                   className="w-full sm:w-[280px]"
                   options={parakeetModelOptions}
                 />
@@ -318,11 +424,17 @@ export function Setting() {
             </Item>
 
             <Item variant="outline">
-              <ItemMedia variant="icon"><Download className="size-4" /></ItemMedia>
+              <ItemMedia variant="icon">
+                {isInstallingParakeet ? (
+                  <Loader2 className="size-4 animate-spin text-primary" />
+                ) : (
+                  <Download className="size-4" />
+                )}
+              </ItemMedia>
               <ItemContent>
                 <ItemTitle>{t('stt.parakeet.runtime.title')}</ItemTitle>
                 <ItemDescription>
-                  {parakeetActionError || parakeetStatus?.message || t('stt.parakeet.runtime.checking')}
+                  {runtimeDescription}
                   {parakeetStatus?.platform ? ` (${parakeetStatus.platform})` : ''}
                 </ItemDescription>
               </ItemContent>

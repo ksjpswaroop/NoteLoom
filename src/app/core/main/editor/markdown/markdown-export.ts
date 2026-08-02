@@ -1,28 +1,39 @@
 'use client'
 
 import { save } from '@tauri-apps/plugin-dialog'
-import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs'
+import { readTextFile, writeFile, writeTextFile } from '@tauri-apps/plugin-fs'
 import type { JSONContent } from '@tiptap/core'
 import TaskItem from '@tiptap/extension-task-item'
 import TaskList from '@tiptap/extension-task-list'
 import { MarkdownManager } from '@tiptap/markdown'
 import StarterKit from '@tiptap/starter-kit'
+import { toPng } from 'html-to-image'
+import MarkdownIt from 'markdown-it'
 import { createElement } from 'react'
 import { flushSync } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 import { StreamdownRenderer } from '@/components/markdown/streamdown-renderer'
 import { checkIsTauri } from '@/lib/check'
+import { markdownToDocxBlob } from '@/lib/markdown-to-docx'
 import { resolveImagePathFromMarkdown } from '@/lib/markdown-image-path'
 import { convertImageByWorkspace } from '@/lib/utils'
 import { getFilePathOptions } from '@/lib/workspace'
 import { shouldTransformImageSrcToWorkspaceAsset } from './image-src'
 
-export type MarkdownExportFormat = 'markdown' | 'html' | 'json' | 'pdf'
+export type MarkdownExportFormat =
+  | 'markdown'
+  | 'html'
+  | 'text'
+  | 'json'
+  | 'docx'
+  | 'pdf'
+  | 'png'
 
 export interface MarkdownExportSource {
   baseName: string
   markdown: string | (() => string | Promise<string>)
   json?: JSONContent | (() => JSONContent | Promise<JSONContent>)
+  text?: string | (() => string | Promise<string>)
   sourcePath?: string
 }
 
@@ -35,7 +46,10 @@ const PRINT_FRAME_CLEANUP_DELAY_MS = 60000
 const PRINT_EXPORT_STORE = 'print-export.json'
 const PRINT_WINDOW_START_TIMEOUT_MS = 15000
 const DIRECT_PDF_EXPORT_TIMEOUT_MS = 75000
+const PNG_EXPORT_WIDTH_PX = 800
+const PNG_EXPORT_PIXEL_RATIO = 2
 const CSS_URL_PATTERN = /url\(\s*(['"]?)([^'"\)]+)\1\s*\)/g
+const plainTextMarkdown = new MarkdownIt({ html: false, linkify: true, breaks: true })
 
 interface TauriPrintDocument {
   html: string
@@ -245,6 +259,46 @@ async function saveTextExport(
 
   downloadTextFile(content, filename, mimeType)
   return true
+}
+
+async function saveBinaryExport(
+  data: Uint8Array | Blob,
+  filename: string,
+  extension: string,
+  mimeType: string,
+  filterName: string,
+) {
+  const bytes = data instanceof Blob
+    ? new Uint8Array(await data.arrayBuffer())
+    : data
+
+  if (checkIsTauri()) {
+    const selectedPath = await save({
+      title: 'Export',
+      defaultPath: filename,
+      filters: [{ name: filterName, extensions: [extension] }],
+    })
+
+    if (!selectedPath) {
+      return false
+    }
+
+    await writeFile(ensureExtension(selectedPath, extension), bytes)
+    return true
+  }
+
+  downloadBlob(new Blob([bytes], { type: mimeType }), filename)
+  return true
+}
+
+function markdownToPlainText(markdown: string) {
+  const template = document.createElement('template')
+  template.innerHTML = plainTextMarkdown.render(markdown || '')
+  return (template.content.textContent || '')
+    .replace(/\u00a0/g, ' ')
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
 }
 
 function getMarkdownManager() {
@@ -511,7 +565,7 @@ function createPrintFrame(html: string) {
   const frameDocument = iframe.contentDocument
   if (!frameDocument) {
     iframe.remove()
- throw new Error(' PDF ')
+    throw new Error('Unable to prepare the PDF print frame')
   }
 
   frameDocument.open()
@@ -542,7 +596,11 @@ async function openTauriPrintWindow(html: string, title: string, outputPath?: st
     let settled = false
     let removeCompletionListener: (() => void) | undefined
     const timeout = window.setTimeout(() => {
- void finishWithError(new Error(outputPath ? 'PDF Export' : 'PDF '))
+      void finishWithError(new Error(
+        outputPath
+          ? 'PDF export timed out before the file was written'
+          : 'PDF print window failed to open in time',
+      ))
     }, outputPath ? DIRECT_PDF_EXPORT_TIMEOUT_MS : PRINT_WINDOW_START_TIMEOUT_MS)
 
     const removeStoredDocument = async () => {
@@ -573,14 +631,14 @@ async function openTauriPrintWindow(html: string, title: string, outputPath?: st
           if (event.payload.success) {
             finish(true)
           } else {
- void finishWithError(new Error(event.payload.error || ' PDF Export failed'))
+            void finishWithError(new Error(event.payload.error || 'PDF export failed'))
           }
         })
       }
 
       const printWindow = new WebviewWindow(windowLabel, {
         url: `/print?key=${encodeURIComponent(documentKey)}`,
- title: outputPath ? `${title} - Export PDF` : `${title} - PDF `,
+        title: outputPath ? `${title} — Export PDF` : `${title} — Print PDF`,
         width: 900,
         height: 700,
         center: true,
@@ -591,7 +649,7 @@ async function openTauriPrintWindow(html: string, title: string, outputPath?: st
         if (!outputPath) finish(true)
       })
       await printWindow.once<string>('tauri://error', (event) => {
- void finishWithError(new Error(`Failed to open PDF print dialog: ${event.payload}`))
+        void finishWithError(new Error(`Failed to open PDF print dialog: ${event.payload}`))
       })
     })().catch((reason: unknown) => {
       void finishWithError(reason)
@@ -639,7 +697,7 @@ async function printExportDocument(source: MarkdownExportSource, options?: Markd
     const frameDocument = iframe.contentDocument
     const printWindow = iframe.contentWindow
     if (!frameDocument || !printWindow || typeof printWindow.print !== 'function') {
- throw new Error(' PDF ')
+      throw new Error('Unable to open the PDF print dialog')
     }
 
     await waitForDocumentResources(frameDocument)
@@ -661,6 +719,92 @@ async function printExportDocument(source: MarkdownExportSource, options?: Markd
     iframe.remove()
     throw error
   }
+}
+
+async function renderMarkdownToPngBytes(source: MarkdownExportSource) {
+  const markdown = await getValue(source.markdown)
+  const styles = await collectExportStyles()
+  const container = document.createElement('div')
+  container.className = 'notegen-export'
+  container.style.position = 'fixed'
+  container.style.left = '-10000px'
+  container.style.top = '0'
+  container.style.width = `${PNG_EXPORT_WIDTH_PX}px`
+  container.style.padding = '40px 24px'
+  container.style.background = '#ffffff'
+  container.style.color = '#24292f'
+  container.style.pointerEvents = 'none'
+  container.setAttribute('aria-hidden', 'true')
+
+  const styleTag = document.createElement('style')
+  styleTag.textContent = styles
+  container.appendChild(styleTag)
+
+  const bodyHost = document.createElement('div')
+  container.appendChild(bodyHost)
+  document.body.appendChild(container)
+
+  const root = createRoot(bodyHost)
+
+  try {
+    flushSync(() => {
+      root.render(createElement(StreamdownRenderer, { markdown }))
+    })
+    await waitForAnimationFrame()
+    await Promise.all(Array.from(container.querySelectorAll('img')).map(waitForImage))
+    await document.fonts?.ready
+    await waitForAnimationFrame()
+
+    const resolvedHtml = await resolveMarkdownImageSources(
+      sanitizeExportHtml(bodyHost.innerHTML),
+      source.sourcePath,
+    )
+    bodyHost.innerHTML = resolvedHtml
+    await Promise.all(Array.from(container.querySelectorAll('img')).map(waitForImage))
+    await waitForAnimationFrame()
+
+    const dataUrl = await toPng(container, {
+      cacheBust: true,
+      pixelRatio: PNG_EXPORT_PIXEL_RATIO,
+      backgroundColor: '#ffffff',
+      width: PNG_EXPORT_WIDTH_PX,
+      style: {
+        margin: '0',
+      },
+    })
+    const response = await fetch(dataUrl)
+    return new Uint8Array(await response.arrayBuffer())
+  } finally {
+    root.unmount()
+    container.remove()
+  }
+}
+
+async function exportDocxDocument(source: MarkdownExportSource) {
+  const fileName = getMarkdownExportBaseName(source.baseName)
+  const markdown = await getValue(source.markdown)
+  const blob = await markdownToDocxBlob(markdown, fileName)
+
+  return await saveBinaryExport(
+    blob,
+    `${fileName}.docx`,
+    'docx',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'Word Documents',
+  )
+}
+
+async function exportPngDocument(source: MarkdownExportSource) {
+  const fileName = getMarkdownExportBaseName(source.baseName)
+  const bytes = await renderMarkdownToPngBytes(source)
+
+  return await saveBinaryExport(
+    bytes,
+    `${fileName}.png`,
+    'png',
+    'image/png',
+    'PNG Images',
+  )
 }
 
 export async function exportMarkdownSource(
@@ -690,18 +834,50 @@ export async function exportMarkdownSource(
     )
   }
 
-  if (format === 'json') {
-    const jsonContent = source.json
-      ? await getValue(source.json)
-      : getMarkdownManager().parse(await getValue(source.markdown))
+  if (format === 'text') {
+    const plainText = source.text
+      ? await getValue(source.text)
+      : markdownToPlainText(await getValue(source.markdown))
 
     return await saveTextExport(
-      JSON.stringify(jsonContent, null, 2),
+      plainText,
+      `${fileName}.txt`,
+      'txt',
+      'text/plain',
+      'Text Files',
+    )
+  }
+
+  if (format === 'json') {
+    const markdown = await getValue(source.markdown)
+    const document = source.json
+      ? await getValue(source.json)
+      : getMarkdownManager().parse(markdown)
+
+    const payload = {
+      version: 1,
+      title: fileName,
+      sourcePath: source.sourcePath ?? null,
+      exportedAt: new Date().toISOString(),
+      markdown,
+      document,
+    }
+
+    return await saveTextExport(
+      JSON.stringify(payload, null, 2),
       `${fileName}.json`,
       'json',
       'application/json',
       'JSON Files',
     )
+  }
+
+  if (format === 'docx') {
+    return await exportDocxDocument(source)
+  }
+
+  if (format === 'png') {
+    return await exportPngDocument(source)
   }
 
   return await printExportDocument(source, options)

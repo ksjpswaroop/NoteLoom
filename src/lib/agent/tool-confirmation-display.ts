@@ -82,8 +82,13 @@ const TOOL_CONFIRMATION_DISPLAY: Record<string, ToolConfirmationDisplayConfig> =
   canvas_create_diagram: {
     titleKey: 'record.chat.input.agent.confirmation.tools.canvas_apply_operations.title',
     descriptionKey: 'record.chat.input.agent.confirmation.tools.canvas_apply_operations.description',
-    summaryFields: ['replaceExisting', 'nodes', 'edges'],
+    summaryFields: ['replaceExisting', 'diagramKind', 'nodes', 'edges'],
     contentFields: ['nodes', 'edges'],
+  },
+  canvas_create_project: {
+    titleKey: 'record.chat.input.agent.confirmation.tools.canvas_create_project.title',
+    descriptionKey: 'record.chat.input.agent.confirmation.tools.canvas_create_project.description',
+    summaryFields: ['title', 'canvasType'],
   },
   note_delete_file: {
     titleKey: 'record.chat.input.agent.confirmation.tools.delete_markdown_file.title',

@@ -36,6 +36,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { BaseDirectory, readFile } from "@tauri-apps/plugin-fs";
 import { useRouter } from "next/navigation";
 import { NO_TRANSCRIPTION_MESSAGE, transcribeRecording } from "@/lib/audio";
+import { canTranscribeWithoutRemoteModel } from "@/lib/speech/transcription-fallback";
 import { cn, isHttpUrl } from "@/lib/utils";
 import { getMarkTypeListBadgeClasses } from "./mark-type-meta";
 import { getMarkListItemContent } from "./mark-list-item-content";
@@ -249,11 +250,14 @@ export const MarkWrapper = React.memo(({mark, variant = 'list', interactive = tr
   const captureT = useTranslations('record.capture');
   const recordingT = useTranslations('recording');
   const { isMultiSelectMode, selectedMarkIds, toggleMarkSelection } = useMarkStore();
-  const { recordTextSize, sttModel } = useSettingStore();
+  const { recordTextSize, sttModel, speechToTextMode, localSttEngine } = useSettingStore();
   const { fetchMarks } = useMarkStore();
   const router = useRouter();
   const isMobile = useIsMobile();
   const [isRetryingTranscription, setIsRetryingTranscription] = useState(false);
+  const canRetryTranscription =
+    Boolean(sttModel) ||
+    canTranscribeWithoutRemoteModel({ speechToTextMode, localSttEngine });
   const imageStatusLabels: ImageRecordStatusLabels = useMemo(() => ({
     pending: captureT('screenshotRecognitionPending'),
     failed: captureT('screenshotRecognitionFailed'),
@@ -265,9 +269,10 @@ export const MarkWrapper = React.memo(({mark, variant = 'list', interactive = tr
 
   const lineHeight = useMemo(() => getLineHeight(recordTextSize), [recordTextSize])
   const lineHeightRem = useMemo(() => getLineHeightRem(recordTextSize), [recordTextSize])
-  const shouldShowRecordingAction = mark.type === 'recording' && mark.content === NO_TRANSCRIPTION_MESSAGE
+  const shouldShowRecordingAction =
+    mark.type === 'recording' && mark.content === NO_TRANSCRIPTION_MESSAGE
   const recordingPendingTitle = shouldShowRecordingAction
-    ? (sttModel ? recordingT('pendingTranscription') : recordingT('pendingModelConfiguration'))
+    ? (canRetryTranscription ? recordingT('pendingTranscription') : recordingT('pendingModelConfiguration'))
     : ''
   const itemContent = useMemo(() => getMarkListItemContent(mark), [mark])
   const listTitleClassName = `block max-w-full truncate text-${recordTextSize} font-semibold ${interactive ? 'hover:underline' : ''}`
@@ -313,7 +318,7 @@ export const MarkWrapper = React.memo(({mark, variant = 'list', interactive = tr
   }, [mark.id, toggleMarkSelection]);
 
   const handleRecordingAction = useCallback(async () => {
-    if (!sttModel) {
+    if (!canRetryTranscription) {
       if (isMobile) {
         router.push('/mobile/setting/pages/audio')
       } else {
@@ -370,7 +375,7 @@ export const MarkWrapper = React.memo(({mark, variant = 'list', interactive = tr
     } finally {
       setIsRetryingTranscription(false)
     }
-  }, [fetchMarks, isMobile, isRetryingTranscription, mark, recordingT, router, sttModel])
+  }, [canRetryTranscription, fetchMarks, isMobile, isRetryingTranscription, mark, recordingT, router])
 
   const renderListTextBlock = (title: string, preview?: string) => {
     const displayTitle = compactRecordText(title) || imageStatusText || t(mark.type)
@@ -655,11 +660,11 @@ export const MarkWrapper = React.memo(({mark, variant = 'list', interactive = tr
                   className="shrink-0 text-muted-foreground"
                   onClick={handleRecordingAction}
                   disabled={isRetryingTranscription}
-                  title={sttModel
+                  title={canRetryTranscription
                     ? (isRetryingTranscription ? recordingT('retrying') : recordingT('retryTranscription'))
                     : recordingT('configureModel')}
                 >
-                  {sttModel ? (
+                  {canRetryTranscription ? (
                     <RefreshCw className={isRetryingTranscription ? 'animate-spin' : undefined} />
                   ) : (
                     <Settings2 />

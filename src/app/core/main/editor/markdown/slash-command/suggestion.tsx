@@ -25,6 +25,7 @@ import {
   PieChart,
   Database,
   Map,
+  BrainCircuit,
   Image as ImageIcon,
   FilePlus,
 } from 'lucide-react'
@@ -227,7 +228,7 @@ async function createMarkdownLinksForFilePaths(paths: string[], currentFilePath:
 
 // : Mermaid
 const createMermaidCommand = (
-  type: 'flowchart' | 'sequence' | 'gantt' | 'classDiagram' | 'stateDiagram' | 'pie' | 'er' | 'journey'
+  type: 'flowchart' | 'mindmap' | 'sequence' | 'gantt' | 'classDiagram' | 'stateDiagram' | 'pie' | 'er' | 'journey'
 ) => ({
   command: ({ editor, range }: { editor: Editor; range: Range }) => {
     editor.chain().focus().deleteRange(range).run()
@@ -322,6 +323,8 @@ export interface SlashCommandTranslations {
     blockMathDesc: string
     flowchart: string
     flowchartDesc: string
+    mindmap: string
+    mindmapDesc: string
     sequence: string
     sequenceDesc: string
     gantt: string
@@ -420,6 +423,8 @@ export const suggestionItems = (t?: SlashCommandTranslations): SlashCommandItem[
       blockMathDesc: 'Insert block LaTeX formula',
       flowchart: 'Flowchart',
       flowchartDesc: 'Insert flowchart',
+      mindmap: 'Mind map',
+      mindmapDesc: 'Insert Mermaid mind map',
       sequence: 'Sequence diagram',
       sequenceDesc: 'Insert sequence diagram',
       gantt: 'Gantt chart',
@@ -770,6 +775,14 @@ export const suggestionItems = (t?: SlashCommandTranslations): SlashCommandItem[
       group: tr.groups.chart,
       searchTerms: ['mermaid', 'flowchart', 'diagram'],
       ...createMermaidCommand('flowchart'),
+    },
+    {
+      title: tr.items.mindmap,
+      description: tr.items.mindmapDesc,
+      icon: <BrainCircuit className="w-4 h-4" />,
+      group: tr.groups.chart,
+      searchTerms: ['mermaid', 'mindmap', 'mind map', 'brainstorm'],
+      ...createMermaidCommand('mindmap'),
     },
     {
       title: tr.items.sequence,

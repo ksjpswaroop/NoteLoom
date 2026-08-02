@@ -116,6 +116,20 @@ function formatActiveFile(context: AgentContextSnapshot) {
   ].join('\n')
 }
 
+function formatDiagramGuidance(context: AgentContextSnapshot) {
+  const lines = [
+    '## Diagrams and Mind Maps',
+    'NoteLoom has two diagram surfaces:',
+    '1) Native canvas (React Flow): editable nodes/edges persisted as canvas documents. Use canvas_create_project when no canvas is open, then canvas_create_diagram with diagramKind (mindmap, flowchart, orgChart, architecture, sequence, classDiagram, timeline, or generic). Prefer this for mind maps, org charts, and other diagrams the user wants to keep editing visually.',
+    '2) Inline Mermaid in Markdown notes: insert a ```mermaid fenced block via editor tools when the user wants a diagram inside the note (mindmap, flowchart/graph, sequenceDiagram, classDiagram, stateDiagram-v2, erDiagram, gantt, pie, journey).',
+    'Do not invent a third diagram library. Coordinates can be approximate; the canvas auto-layout will refine placement after writes.',
+  ]
+  if (!context.activeCanvasId) {
+    lines.push('No canvas is currently open. If the user asks to generate an editable diagram or mind map, create one with canvas_create_project first.')
+  }
+  return lines.join('\n')
+}
+
 function formatActiveCanvas(context: AgentContextSnapshot) {
   if (!context.activeCanvasId) {
     return ''
@@ -126,7 +140,7 @@ function formatActiveCanvas(context: AgentContextSnapshot) {
     `The current canvas ID is "${context.activeCanvasId}".`,
     'The user is working in NoteLoom\'s native visual canvas, not in a Markdown or Mermaid file.',
     'When the user asks to inspect or modify this current canvas, use the canvas tools. A conceptual question that merely mentions diagrams, nodes, or connections does not by itself require canvas tools.',
-    'For a complete new diagram with multiple nodes and connections, use canvas_create_diagram. Choose short stable node and edge IDs, give every node a visible label, and place nodes on a readable grid.',
+    'For a complete new diagram with multiple nodes and connections, use canvas_create_diagram and set diagramKind appropriately (mindmap, flowchart, orgChart, etc.). Choose short stable node and edge IDs, give every node a visible label, and place nodes on a readable grid.',
     'For incremental changes to existing content, call canvas_get_state first so you can reference its real IDs, then use canvas_apply_operations. Use decision nodes only for branches or questions. Do not create freehand strokes with AI tools.',
   ].join('\n')
 }
@@ -257,6 +271,7 @@ export class AgentPromptAssembler {
       'Structured tool definitions contain the authoritative descriptions and parameters. Use these exact names:',
       formatToolCatalog(tools),
       formatActiveFile(context),
+      formatDiagramGuidance(context),
       formatActiveCanvas(context),
       formatEditorSelection(context),
       formatQuote(context),

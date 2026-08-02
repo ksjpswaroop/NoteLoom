@@ -97,6 +97,8 @@ export const SlashMenu = forwardRef<SlashMenuRef, SlashMenuProps>(({ editor, que
       blockMathDesc: t('items.blockMathDesc'),
       flowchart: t('items.flowchart'),
       flowchartDesc: t('items.flowchartDesc'),
+      mindmap: t('items.mindmap'),
+      mindmapDesc: t('items.mindmapDesc'),
       sequence: t('items.sequence'),
       sequenceDesc: t('items.sequenceDesc'),
       gantt: t('items.gantt'),

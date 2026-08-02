@@ -29,6 +29,7 @@ import {
   Table2,
   Undo2,
   Workflow,
+  BrainCircuit,
 } from 'lucide-react'
 import { useState, type MouseEvent, type PointerEvent } from 'react'
 
@@ -62,6 +63,7 @@ type MobileWritingToolbarAction =
   | 'insert-inline-math'
   | 'insert-block-math'
   | 'insert-mermaid-flowchart'
+  | 'insert-mermaid-mindmap'
   | 'insert-mermaid-sequence'
   | 'insert-mermaid-gantt'
   | 'insert-mermaid-class'
@@ -139,11 +141,12 @@ const SECONDARY_ITEMS: Record<Exclude<MobileWritingToolbarMenu, 'root'>, Toolbar
   ],
   diagram: [
     { kind: 'action', action: 'insert-mermaid-flowchart', label: 'Flowchart', icon: GitBranch },
+    { kind: 'action', action: 'insert-mermaid-mindmap', label: 'Mind map', icon: BrainCircuit },
     { kind: 'action', action: 'insert-mermaid-sequence', label: 'Sequence diagram', icon: GitCommit },
     { kind: 'action', action: 'insert-mermaid-gantt', label: 'Gantt chart', icon: Calendar },
     { kind: 'action', action: 'insert-mermaid-class', label: 'Class diagram', icon: Layers },
     { kind: 'action', action: 'insert-mermaid-state', label: 'State diagram', icon: Workflow },
-    { kind: 'action', action: 'insert-mermaid-pie', label: 'ER diagram', icon: PieChart },
+    { kind: 'action', action: 'insert-mermaid-pie', label: 'Pie chart', icon: PieChart },
     { kind: 'action', action: 'insert-mermaid-er', label: 'ER diagram', icon: Database },
     { kind: 'action', action: 'insert-mermaid-journey', label: 'User journey', icon: Map },
   ],

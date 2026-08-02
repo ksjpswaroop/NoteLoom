@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Kbd } from "@/components/ui/kbd";
 import useArticleStore, { DirTree } from "@/stores/article";
 import { BaseDirectory, exists, rename, writeTextFile } from "@tauri-apps/plugin-fs";
-import { Copy, Database, Download, File, FileCode, FileJson, FileText, FileUp, FolderOpen, ImageIcon, LoaderCircle, RefreshCwOff, Trash2 } from "lucide-react"
+import { Copy, Database, Download, File, FileCode, FileImage, FileJson, FileText, FileType, FileUp, FolderOpen, ImageIcon, LoaderCircle, RefreshCwOff, Trash2, Type } from "lucide-react"
 import { useEffect, useRef, useState, useCallback } from "react";
 import { ask } from '@tauri-apps/plugin-dialog';
 import { platform } from '@tauri-apps/plugin-os';
@@ -999,7 +999,7 @@ export function FileItem({
                     menuType="file"
                   >
                     <FileText className="mr-2 h-4 w-4" />
-                    Markdown
+                    Markdown (.md)
                   </ContextMenuItem>
                   <ContextMenuItem
                     inset
@@ -1008,7 +1008,16 @@ export function FileItem({
                     menuType="file"
                   >
                     <FileCode className="mr-2 h-4 w-4" />
-                    HTML
+                    HTML (.html)
+                  </ContextMenuItem>
+                  <ContextMenuItem
+                    inset
+                    disabled={exportingFormat !== null}
+                    onClick={() => { void handleExportFile('text') }}
+                    menuType="file"
+                  >
+                    <Type className="mr-2 h-4 w-4" />
+                    Plain text (.txt)
                   </ContextMenuItem>
                   <ContextMenuItem
                     inset
@@ -1017,7 +1026,17 @@ export function FileItem({
                     menuType="file"
                   >
                     <FileJson className="mr-2 h-4 w-4" />
-                    JSON
+                    JSON (.json)
+                  </ContextMenuItem>
+                  <ContextMenuSeparator />
+                  <ContextMenuItem
+                    inset
+                    disabled={exportingFormat !== null}
+                    onClick={() => { void handleExportFile('docx') }}
+                    menuType="file"
+                  >
+                    <FileType className="mr-2 h-4 w-4" />
+                    Word (.docx)
                   </ContextMenuItem>
                   <ContextMenuItem
                     inset
@@ -1026,7 +1045,16 @@ export function FileItem({
                     menuType="file"
                   >
                     <FileText className="mr-2 h-4 w-4" />
-                    PDF
+                    PDF (.pdf)
+                  </ContextMenuItem>
+                  <ContextMenuItem
+                    inset
+                    disabled={exportingFormat !== null}
+                    onClick={() => { void handleExportFile('png') }}
+                    menuType="file"
+                  >
+                    <FileImage className="mr-2 h-4 w-4" />
+                    Image (.png)
                   </ContextMenuItem>
                 </ContextMenuSubContent>
               </ContextMenuSub>

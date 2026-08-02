@@ -19,11 +19,11 @@ On **macOS Apple Silicon (arm64)**, NoteLoom can transcribe recordings with NVID
 |---------|-----------|--------|
 | STT mode | `speechToTextMode` | `auto` (default), `local`, `model` |
 | Local engine | `localSttEngine` | `parakeet` (default) or `browser` |
-| Parakeet model | `parakeetModelId` | Default `mlx-community/parakeet-tdt-0.6b-v2` (English) |
+| Parakeet model | `parakeetModelId` | Default `mlx-community/parakeet-tdt-0.6b-v2` (English). Also: TDT v3 (multilingual), CTC 0.6B (English) |
 | Language | `parakeetLanguage` | Default `en` |
 | Attention | `parakeetAttentionMode` | `full` (default) or `local` (long audio) |
 
-**Auto mode:** try Local Parakeet when the runtime is ready, otherwise fall back to a configured remote STT model.  
+**Auto mode:** try Local Parakeet when the runtime is ready, otherwise fall back to a configured remote STT model. If neither is ready, transcription fails with English guidance (no silent empty result).  
 **Local mode:** Parakeet only (browser SpeechRecognition cannot transcribe saved blobs).  
 **Model mode:** remote OpenAI-compatible `/audio/transcriptions` only.
 
@@ -34,10 +34,13 @@ Settings UI: **Settings → Audio → Speech-to-Text**.
 1. Install **Python 3.10–3.13** and **ffmpeg** (`brew install ffmpeg`).
 2. Open **Settings → Audio**.
 3. Set **Mode** to Auto or Local, **Local Engine** to Local Parakeet.
-4. Pick a Parakeet model, then click **Install Local Parakeet**.
-5. Record a voice note; the first run downloads model weights into the app data cache.
+4. Pick a Parakeet model (Install and Record both use the selected `parakeetModelId`).
+5. Click **Install Local Parakeet** — the UI shows English progress (creating env → installing packages → verifying).
+6. Record a voice note from the empty state (**Capture Voice** / `⌘⇧V`) or the toolbar mic; the first run downloads model weights into the app data cache.
 
 Sidecar files live under `src-tauri/resources/parakeet-stt/`. Runtime + HF cache live under the app data `parakeet-stt/` directory.
+
+Install progress is emitted on the Tauri event `parakeet-stt-progress` (`preparing` / `installing` / `verifying` / `completed` / `failed`).
 
 ### Manual smoke test (CLI)
 
@@ -56,9 +59,8 @@ python src-tauri/resources/parakeet-stt/transcribe.py transcribe \
 
 ## v0.1 wiring
 
-- Global shortcut `CommandOrControl+Shift+V` → `quickRecordVoice`
-- Global shortcut `CommandOrControl+Shift+T` → `quickRecordText`
+- Empty state primary CTAs: **Capture Text** (`CommandOrControl+Shift+T`) and **Capture Voice** (`CommandOrControl+Shift+V`)
 - Organize templates: Meeting Notes, Voice Dump, Weekly Digest
-- Transcription fallback message points users to Settings → Audio / Local Parakeet
+- Failed transcription still saves audio; toast explains Install Local Parakeet / remote STT; retry works with Parakeet even without a remote `sttModel`
 
 Remote / Web Speech paths remain available; Parakeet is the preferred local path for recorded audio on Apple Silicon.

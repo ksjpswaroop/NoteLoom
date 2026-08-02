@@ -1,13 +1,37 @@
 import emitter from '@/lib/emitter'
 import { applyCanvasOperations } from '@/lib/canvas/operations'
-import type { CanvasDocument } from '@/types/canvas'
+import type { CanvasDocument, CanvasProjectType } from '@/types/canvas'
 import type { AgentTool, AgentToolExecutionContext, AgentToolResult } from '../types'
 import { FLOWCHART_NODE_TYPES } from '@/lib/canvas/shapes'
+import { createCanvasTab } from '@/app/core/main/canvas/canvas-tab'
 
 const CANVAS_NODE_TYPES = [
   ...FLOWCHART_NODE_TYPES,
   'text',
 ] as const
+
+const CANVAS_PROJECT_TYPES = [
+  'blank',
+  'flowchart',
+  'mindmap',
+  'timeline',
+  'quadrant',
+  'kanban',
+  'swot',
+] as const satisfies readonly CanvasProjectType[]
+
+const DIAGRAM_KINDS = [
+  'mindmap',
+  'flowchart',
+  'architecture',
+  'sequence',
+  'orgChart',
+  'classDiagram',
+  'timeline',
+  'generic',
+] as const
+
+type DiagramKind = typeof DIAGRAM_KINDS[number]
 
 function asRecord(value: unknown): Record<string, unknown> {
   return value && typeof value === 'object' && !Array.isArray(value)
@@ -21,6 +45,21 @@ function asNonEmptyString(value: unknown) {
 
 function isFiniteNumber(value: unknown) {
   return typeof value === 'number' && Number.isFinite(value)
+}
+
+function isDiagramKind(value: string): value is DiagramKind {
+  return (DIAGRAM_KINDS as readonly string[]).includes(value)
+}
+
+function isCanvasProjectType(value: string): value is CanvasProjectType {
+  return (CANVAS_PROJECT_TYPES as readonly string[]).includes(value)
+}
+
+function layoutDirectionForDiagramKind(kind: DiagramKind | null): 'TB' | 'LR' | null {
+  if (!kind) return null
+  if (kind === 'mindmap' || kind === 'sequence' || kind === 'timeline') return 'LR'
+  if (kind === 'orgChart' || kind === 'flowchart' || kind === 'architecture' || kind === 'classDiagram') return 'TB'
+  return null
 }
 
 function validateCanvasOperations(document: CanvasDocument, rawOperations: unknown[]) {
@@ -144,9 +183,22 @@ function summarizeDocument(document: CanvasDocument) {
   }
 }
 
+function applyDiagramKindSettings(document: CanvasDocument, diagramKind: DiagramKind | null): CanvasDocument {
+  const direction = layoutDirectionForDiagramKind(diagramKind)
+  if (!direction || document.settings.layoutDirection === direction) return document
+  return {
+    ...document,
+    settings: {
+      ...document.settings,
+      layoutDirection: direction,
+    },
+  }
+}
+
 async function executeCanvasOperations(
   operations: unknown[],
-  context: AgentToolExecutionContext
+  context: AgentToolExecutionContext,
+  diagramKind: DiagramKind | null = null,
 ): Promise<AgentToolResult> {
   const { store, canvasId, document, project } = await getActiveCanvas(context.context.activeCanvasId)
   if (!canvasId || !document) {
@@ -173,8 +225,9 @@ async function executeCanvasOperations(
       error: 'INCOMPLETE_CANVAS_OPERATIONS',
     }
   }
-  store.updateDocument(canvasId, result.document)
-  emitter.emit('canvas-document-replace', { canvasId, document: result.document })
+  const nextDocument = applyDiagramKindSettings(result.document, diagramKind)
+  store.updateDocument(canvasId, nextDocument)
+  emitter.emit('canvas-document-replace', { canvasId, document: nextDocument })
   requestAnimationFrame(() => {
     emitter.emit('canvas-auto-layout', { recordHistory: false })
   })
@@ -182,13 +235,13 @@ async function executeCanvasOperations(
   return {
     ok: true,
     message: `Applied ${result.applied} changes on canvas “${project?.title || canvasId}”.`,
-    data: summarizeDocument(result.document),
+    data: summarizeDocument(nextDocument),
     changes: [{
       id: crypto.randomUUID(),
       type: 'canvas',
       target: canvasId,
       before,
-      after: JSON.stringify(summarizeDocument(result.document)),
+      after: JSON.stringify(summarizeDocument(nextDocument)),
       reversible: true,
       summary: `Edit canvas “${project?.title || canvasId}”`,
     }],
@@ -198,7 +251,7 @@ async function executeCanvasOperations(
 const getCanvasStateTool: AgentTool = {
   name: 'canvas_get_state',
   title: 'Read current canvas',
-  description: 'Read the native visual canvas currently open in NoteGen, including nodes, edges, positions, and settings. Use only when the user wants to inspect or operate on the current canvas; general questions about diagrams, nodes, or edges do not require reading the canvas.',
+  description: 'Read the native visual canvas currently open in NoteLoom, including nodes, edges, positions, and settings. Use only when the user wants to inspect or operate on the current canvas; general questions about diagrams, nodes, or edges do not require reading the canvas.',
   category: 'canvas',
   risk: 'read',
   inputSchema: {
@@ -215,7 +268,74 @@ const getCanvasStateTool: AgentTool = {
     return {
       ok: true,
       message: `Read canvas “${project?.title || canvasId}”: ${document.nodes.length} nodes, ${document.edges.length} edges.`,
-      data: { canvasId, title: project?.title || '', ...summarizeDocument(document) },
+      data: { canvasId, title: project?.title || '', canvasType: project?.canvasType || 'blank', ...summarizeDocument(document) },
+    }
+  },
+}
+
+const createCanvasProjectTool: AgentTool = {
+  name: 'canvas_create_project',
+  title: 'Create and open a canvas',
+  description: 'Create a new native visual canvas, open it in a tab, and make it the active canvas. Use this when the user asks for a mind map, flowchart, org chart, timeline, or other diagram and no suitable canvas is open yet. After creating, call canvas_create_diagram to populate it.',
+  category: 'canvas',
+  risk: 'editor-write',
+  inputSchema: {
+    type: 'object',
+    properties: {
+      title: {
+        type: 'string',
+        description: 'Canvas title shown in the sidebar and tab.',
+      },
+      canvasType: {
+        type: 'string',
+        enum: [...CANVAS_PROJECT_TYPES],
+        description: 'Template type. Use mindmap for mind maps, flowchart for process flows, timeline for stages, blank when starting from scratch.',
+      },
+    },
+    required: ['title', 'canvasType'],
+    additionalProperties: false,
+  },
+  execute: async (input): Promise<AgentToolResult> => {
+    const title = asNonEmptyString(input.title) || 'Untitled canvas'
+    const canvasTypeRaw = asNonEmptyString(input.canvasType) || 'blank'
+    if (!isCanvasProjectType(canvasTypeRaw)) {
+      return {
+        ok: false,
+        message: `canvasType must be one of ${CANVAS_PROJECT_TYPES.join(', ')}.`,
+        error: 'INVALID_CANVAS_TYPE',
+      }
+    }
+
+    const { default: useCanvasStore } = await import('@/stores/canvas')
+    const { default: useArticleStore } = await import('@/stores/article')
+    const { useSidebarStore } = await import('@/stores/sidebar')
+
+    const project = await useCanvasStore.getState().createProject(canvasTypeRaw, title)
+    if (!project) {
+      return { ok: false, message: 'Failed to create canvas.', error: 'CANVAS_CREATE_FAILED' }
+    }
+
+    await useArticleStore.getState().addTab(createCanvasTab(project))
+    await useSidebarStore.getState().setLeftSidebarTab('canvases')
+
+    return {
+      ok: true,
+      message: `Created and opened canvas “${project.title}” (${project.canvasType}).`,
+      data: {
+        canvasId: project.id,
+        title: project.title,
+        canvasType: project.canvasType,
+        ...summarizeDocument(project.document),
+      },
+      changes: [{
+        id: crypto.randomUUID(),
+        type: 'canvas',
+        target: project.id,
+        before: '',
+        after: JSON.stringify({ canvasId: project.id, title: project.title, canvasType: project.canvasType }),
+        reversible: false,
+        summary: `Create canvas “${project.title}”`,
+      }],
     }
   },
 }
@@ -223,7 +343,7 @@ const getCanvasStateTool: AgentTool = {
 const createCanvasDiagramTool: AgentTool = {
   name: 'canvas_create_diagram',
   title: 'Create a complete canvas diagram',
-  description: 'Create a complete diagram of named nodes and edges on the current native canvas in one call. Prefer this when building a new flowchart, mind map, or relationship diagram; do not split into operations that omit names or endpoints. Each node needs a unique ID, type, visible name, and coordinates; each edge must reference those node IDs exactly via source and target.',
+  description: 'Create a complete diagram of named nodes and edges on the current native canvas in one call. Prefer this when building a new flowchart, mind map, org chart, architecture diagram, or relationship diagram; do not split into operations that omit names or endpoints. Each node needs a unique ID, type, visible name, and coordinates; each edge must reference those node IDs exactly via source and target. Pass diagramKind so layout direction matches the diagram style.',
   category: 'canvas',
   risk: 'editor-write',
   inputSchema: {
@@ -232,6 +352,11 @@ const createCanvasDiagramTool: AgentTool = {
       replaceExisting: {
         type: 'boolean',
         description: 'When true, clear the current canvas first; when false, keep existing content and append the diagram.',
+      },
+      diagramKind: {
+        type: 'string',
+        enum: [...DIAGRAM_KINDS],
+        description: 'Diagram style hint used for layout. Use mindmap for radial/tree mind maps, orgChart for hierarchy, flowchart for process flows, classDiagram for entity relationships.',
       },
       nodes: {
         type: 'array',
@@ -277,19 +402,21 @@ const createCanvasDiagramTool: AgentTool = {
   execute: async (input, context): Promise<AgentToolResult> => {
     const nodes = Array.isArray(input.nodes) ? input.nodes : []
     const edges = Array.isArray(input.edges) ? input.edges : []
+    const diagramKindRaw = asNonEmptyString(input.diagramKind)
+    const diagramKind = diagramKindRaw && isDiagramKind(diagramKindRaw) ? diagramKindRaw : null
     const operations: unknown[] = [
       ...(input.replaceExisting === true ? [{ type: 'clear' }] : []),
       ...nodes.map(node => ({ type: 'add_node', ...asRecord(node) })),
       ...edges.map(edge => ({ type: 'add_edge', ...asRecord(edge) })),
     ]
-    return executeCanvasOperations(operations, context)
+    return executeCanvasOperations(operations, context, diagramKind)
   },
 }
 
 const applyCanvasOperationsTool: AgentTool = {
   name: 'canvas_apply_operations',
   title: 'Edit current canvas',
-  description: 'Incrementally edit the native visual canvas currently open in NoteGen—for example update, move, or delete existing nodes and edges. To create a full diagram with many new nodes and edges, use canvas_create_diagram instead. All operations are validated as a batch first; nothing is written if any argument is missing.',
+  description: 'Incrementally edit the native visual canvas currently open in NoteLoom—for example update, move, or delete existing nodes and edges. To create a full diagram with many new nodes and edges, use canvas_create_diagram instead. All operations are validated as a batch first; nothing is written if any argument is missing.',
   category: 'canvas',
   risk: 'editor-write',
   inputSchema: {
@@ -336,6 +463,7 @@ const applyCanvasOperationsTool: AgentTool = {
 
 export const canvasTools: AgentTool[] = [
   getCanvasStateTool,
+  createCanvasProjectTool,
   createCanvasDiagramTool,
   applyCanvasOperationsTool,
 ]

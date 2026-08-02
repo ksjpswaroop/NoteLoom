@@ -1151,7 +1151,7 @@
         "parakeet": {
           "model": {
             "title": "Parakeet Model",
-            "desc": "Select the on-device Parakeet model used for local transcription."
+            "desc": "Select the on-device Parakeet model used for local transcription. Changing this selects which model Install and Record use."
           },
           "language": {
             "title": "Language",
@@ -1166,14 +1166,28 @@
           "attentionLocal": "Local (long audio)",
           "runtime": {
             "title": "Local Parakeet Runtime",
-            "checking": "Checking Local Parakeet runtime…"
+            "checking": "Checking Local Parakeet runtime…",
+            "ready": "Local Parakeet is ready. Record a voice note to transcribe on-device.",
+            "readyNeedsModel": "Local Parakeet runtime is ready. The selected model downloads on first transcription.",
+            "notReady": "Local Parakeet is not installed yet. Click Install Local Parakeet to set it up."
+          },
+          "progress": {
+            "preparing": "Creating isolated Python environment…",
+            "installing": "Installing Parakeet runtime and dependencies (this can take several minutes)…",
+            "verifying": "Verifying Parakeet runtime…",
+            "completed": "Local Parakeet is ready.",
+            "failed": "Local Parakeet install failed."
           },
           "install": "Install Local Parakeet",
           "reinstall": "Reinstall Runtime",
           "installing": "Installing…",
           "refresh": "Refresh Status",
           "installFailed": "Failed to install Local Parakeet. Check Python 3.10–3.13, network access, and try again.",
-          "statusError": "Could not read Local Parakeet status."
+          "installFailedPython": "Python 3.10–3.13 is required. Install Python from python.org or Homebrew, then try again.",
+          "installFailedFfmpeg": "ffmpeg was not found. Install it with `brew install ffmpeg`, then retry Install Local Parakeet.",
+          "installFailedNetwork": "Could not download Parakeet packages. Check your network connection and try again.",
+          "statusError": "Could not read Local Parakeet status.",
+          "notReadyHint": "Local Parakeet is not ready. Click Install Local Parakeet, or switch Mode to Model and configure a remote STT provider."
         },
         "model": {
           "title": "Remote STT Model",
@@ -3066,6 +3080,10 @@
                 "title": "Modify current canvas",
                 "description": "Preview the node and connection operations AI will apply to the native canvas."
               },
+              "canvas_create_project": {
+                "title": "Create canvas",
+                "description": "Create a new native canvas and open it so AI can generate a diagram."
+              },
               "delete_markdown_file": {
                 "title": "Delete file",
                 "description": "The selected file will be permanently deleted."
@@ -3386,8 +3404,14 @@
         "sequence": "Sequence flow",
         "sequencePrompt": "Express a participant interaction sequence with independently editable nodes and edges",
         "mindmap": "Mind map",
-        "mindmapPrompt": "Create a mind map branching outward from a central topic"
-      }
+        "mindmapPrompt": "Create a mind map branching outward from a central topic",
+        "orgChart": "Org chart",
+        "orgChartPrompt": "Create an organization chart with a root role and clear reporting lines",
+        "classDiagram": "Class diagram",
+        "classDiagramPrompt": "Create a class/relationship diagram with named entities and labeled associations"
+      },
+      "aiPlaceholder": "e.g. Mind map of note-taking workflows with branches for capture, organize, and review",
+      "aiHint": "Sends a prompt to Chat Agent. Approve the canvas tool preview before changes apply."
     },
     "brush": {
       "penTitle": "Pen",
@@ -3789,30 +3813,35 @@
       "confirmPull": "Confirm Pull"
     },
     "emptyState": {
-      "title": "Start Creating",
-      "subtitle": "Select a file to start editing, or create a new note",
-      "tip": "💡 Tip: You can also select files from the left sidebar",
+      "title": "Capture first",
+      "subtitle": "Start with a text or voice record, then organize it into a note when you're ready.",
+      "tip": "Capture first. Organize later. Derived from",
       "actions": {
         "newNote": {
           "title": "Create Note",
-          "desc": "Create a new Markdown note"
+          "desc": "Open a blank Markdown note to write freely"
         },
         "newRecord": {
-          "title": "Create Record",
-          "desc": "Open text recording feature"
+          "title": "Capture Text",
+          "desc": "Quickly save a text record to your inbox"
+        },
+        "voiceRecord": {
+          "title": "Capture Voice",
+          "desc": "Record with your mic, then transcribe into a record"
         },
         "globalSearch": {
           "title": "Global Search",
-          "desc": "Quickly find your note content"
+          "desc": "Find notes and records across your workspace"
         },
         "openWorkspace": {
           "title": "Open Workspace",
-          "desc": "Select or switch workspace directory"
+          "desc": "Choose or switch the folder NoteLoom uses",
+          "dialogTitle": "Choose workspace folder"
         }
       },
       "onboarding": {
-        "title": "Onboarding",
-        "subtitle": "Walk through these three tasks to learn the core NoteLoom flow.",
+        "title": "Getting started",
+        "subtitle": "Three quick tasks: capture, organize, then polish with AI.",
         "dismiss": "Skip onboarding",
         "reopen": "Show onboarding again",
         "start": "Start",
@@ -3832,24 +3861,24 @@
           "label": "Sample Prompt",
           "use": "Use This Prompt",
           "intro": "Please revise the note I just organized into a clearer, polished English version.",
-          "requirement1": "",
-          "requirement2": "",
-          "requirement3": "",
-          "requirement4": "",
-          "outro": ""
+          "requirement1": "Keep the meaning accurate and stay in English.",
+          "requirement2": "Tighten wording and improve structure with clear headings.",
+          "requirement3": "Call out action items or follow-ups if any appear.",
+          "requirement4": "Preserve names, dates, and concrete details.",
+          "outro": "Return the full revised note only."
         },
         "steps": {
           "createRecord": {
-            "title": "Create your first record",
-            "desc": "Save a sample record and learn where quick capture lives."
+            "title": "Capture your first record",
+            "desc": "Save a sample text record, or use Capture Voice when you prefer speech."
           },
           "organizeNote": {
             "title": "Organize it into a note",
-            "desc": "Turn that record into a structured note."
+            "desc": "Turn that record into a structured Markdown note."
           },
           "aiPolish": {
-            "title": "Use Agent to polish the note",
-            "desc": "Use the AI Agent to polish the note you just organized in English."
+            "title": "Polish the note with Agent",
+            "desc": "Use the AI Agent to refine the note you just organized in English."
           }
         },
         "completedStates": {
@@ -3869,7 +3898,7 @@
         "spotlight": {
           "create-record": {
             "title": "This is the quick record entry",
-            "desc": "Click here to open text capture. We'll preload a sample record so you can save it right away."
+            "desc": "Click here to open text capture. We'll preload a sample record so you can save it right away. Voice capture is also available from the empty state (Capture Voice)."
           },
           "organize-note": {
             "title": "This button organizes records into a note",
@@ -4340,7 +4369,7 @@
   },
   "recording": {
     "title": "Voice Recording",
-    "description": "Click the microphone button to start recording, the system will automatically recognize and convert to text",
+    "description": "NoteLoom needs the microphone to record audio and run speech-to-text. Click the mic to start, then stop to save a transcript into a record.",
     "recording": "Recording",
     "paused": "Paused",
     "ready": "Ready",
@@ -4348,22 +4377,24 @@
     "cancel": "Cancel",
     "error": "Error",
     "success": "Success",
-    "noModelConfigured": "Speech recognition model not configured, please configure in settings first",
-    "speechUnavailable": "The current speech recognition mode is unavailable. Check local speech support or model configuration.",
-    "fallbackToModel": "Local speech recognition is unavailable, so the app switched to model transcription automatically.",
+    "noModelConfigured": "Speech recognition is not ready. Open Settings → Audio to Install Local Parakeet or configure a remote STT model.",
+    "speechUnavailable": "The current speech recognition mode is unavailable. Install Local Parakeet or configure a remote model in Settings → Audio.",
+    "fallbackToModel": "Local Parakeet is unavailable, so the app fell back to remote model transcription.",
     "startError": "Unable to start recording",
     "noAudioData": "No audio data recorded",
-    "transcriptionSuccess": "Speech recognition completed",
-    "transcriptionEmpty": "Recognition result is empty",
-    "transcriptionError": "Speech recognition failed",
-    "configureModel": "Configure model",
+    "transcriptionSuccess": "Transcription complete — your voice record is ready.",
+    "transcriptionEmpty": "No speech was detected in the recording.",
+    "transcriptionError": "Transcription failed",
+    "audioSavedTitle": "Audio saved — transcription needed",
+    "audioSavedDesc": "Your recording was saved. Install Local Parakeet in Settings → Audio, or configure a remote STT model, then retry.",
+    "configureModel": "Open Audio settings",
     "retryTranscription": "Retry transcription",
     "retrying": "Retrying...",
     "retrySuccess": "Transcription updated",
     "retryError": "Retry transcription failed",
     "noContentDetected": "No content detected",
     "pendingTranscription": "Original audio saved. Ready to retry transcription.",
-    "pendingModelConfiguration": "Original audio saved. Configure speech recognition to transcribe it.",
+    "pendingModelConfiguration": "Original audio saved. Open Settings → Audio to Install Local Parakeet or configure a remote STT model.",
     "doubleClickToSelectFile": "Double click to select audio file",
     "mode": {
       "builtin": "Browser Recognition",
@@ -4519,8 +4550,10 @@
       "placeholder": "Enter Mermaid diagram code...",
       "preview": "Preview",
       "done": "Done",
+      "title": "Diagram type",
       "diagramTypes": {
         "flowchart": "Flowchart",
+        "mindmap": "Mind map",
         "sequence": "Sequence",
         "classDiagram": "Class Diagram",
         "stateDiagram": "State Diagram",
@@ -4531,6 +4564,7 @@
       },
       "templates": {
         "flowchart": "graph TD\n    A[Start] --> B[Process]\n    B --> C[End]",
+        "mindmap": "mindmap\n  Root\n    Branch A\n      Detail A1\n      Detail A2\n    Branch B\n      Detail B1\n    Branch C",
         "sequence": "sequenceDiagram\n    participant Alice\n    participant Bob\n    Alice->>Bob: Hello\n    Bob-->>Alice: Reply",
         "classDiagram": "classDiagram\n    Animal <|-- Duck\n    Animal <|-- Fish\n    Animal : +int age\n    Animal : +String gender",
         "stateDiagram": "stateDiagram-v2\n    [*] --> Active\n    Active --> [*]",
@@ -4596,6 +4630,8 @@
         "blockMathDesc": "Insert block LaTeX formula",
         "flowchart": "Flowchart",
         "flowchartDesc": "Insert a flowchart",
+        "mindmap": "Mind map",
+        "mindmapDesc": "Insert a Mermaid mind map",
         "sequence": "Sequence Diagram",
         "sequenceDesc": "Insert a sequence diagram",
         "gantt": "Gantt Chart",

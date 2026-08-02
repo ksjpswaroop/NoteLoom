@@ -19,6 +19,10 @@ interface CompleteRecordOptions {
   markId?: number | null
   tagId?: number | null
   typeLabel?: string
+  toastTitle?: string
+  toastDescription?: string
+  /** When true, refresh/navigate but do not show the saved toast. */
+  silentToast?: boolean
 }
 
 export function useRecordCompletion() {
@@ -81,7 +85,14 @@ export function useRecordCompletion() {
     await useSidebarStore.getState().showCenterPanel()
   }, [pathname, refreshRecords, router, t])
 
-  return useCallback(async ({ markId, tagId, typeLabel }: CompleteRecordOptions = {}) => {
+  return useCallback(async ({
+    markId,
+    tagId,
+    typeLabel,
+    toastTitle,
+    toastDescription,
+    silentToast = false,
+  }: CompleteRecordOptions = {}) => {
     if (tagId) {
       await useSettingStore.getState().setLastRecordTagId(tagId)
     }
@@ -94,18 +105,23 @@ export function useRecordCompletion() {
     } else {
       await highlightSavedRecord(markId, tagId)
     }
+
+    if (silentToast) {
+      return
+    }
     
     const tagName = tagId
       ? useTagStore.getState().tags.find((tag) => tag.id === tagId)?.name
       : undefined
-    const savedDescription = typeLabel
-      ? t('record.capture.savedWithType', { type: typeLabel })
-      : undefined
+    const savedDescription = toastDescription
+      ?? (typeLabel
+        ? t('record.capture.savedWithType', { type: typeLabel })
+        : undefined)
 
     toast({
-      title: t('record.capture.saved'),
+      title: toastTitle || t('record.capture.saved'),
       description: tagName
-        ? `${savedDescription || t('record.capture.saved')} · ${t('record.capture.saveTarget')}: ${tagName}`
+        ? `${savedDescription || toastTitle || t('record.capture.saved')} · ${t('record.capture.saveTarget')}: ${tagName}`
         : savedDescription,
       action: markId ? {
         label: t('record.capture.viewRecord'),
