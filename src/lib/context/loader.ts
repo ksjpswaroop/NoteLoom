@@ -106,11 +106,11 @@ function formatReason(input: {
   lexical: number
 }) {
   const reasons: string[] = []
-  if (input.always) reasons.push('固定偏好')
-  if (input.workspace) reasons.push('当前工作区')
-  if (input.vector >= 0.62) reasons.push('语义相关')
-  if (input.lexical > 0) reasons.push('文本匹配')
-  return reasons.join('、') || '相关记忆'
+  if (input.always) reasons.push('Fixed preference')
+  if (input.workspace) reasons.push('Current workspace')
+  if (input.vector >= 0.62) reasons.push('Semantically related')
+  if (input.lexical > 0) reasons.push('Text match')
+  return reasons.join('、') || 'Related memory'
 }
 
 class MemoryContextService {

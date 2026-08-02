@@ -361,7 +361,7 @@ export const MarkWrapper = React.memo(({mark, variant = 'list', interactive = tr
         description: recordingT('retrySuccess'),
       })
     } catch (error) {
-      console.error('重新识别录音失败:', error)
+      console.error('Failed', error)
       toast({
         title: recordingT('error'),
         description: error instanceof Error ? error.message : recordingT('retryError'),
@@ -766,7 +766,7 @@ export const MarkItem = React.memo(({mark, variant = 'list', interactive = true}
     e.dataTransfer.setData(CANVAS_MARK_DRAG_TYPE, JSON.stringify(mark));
     e.dataTransfer.effectAllowed = 'copy';
 
-    // 添加拖拽时的视觉反馈
+    //
     if (e.currentTarget instanceof HTMLElement) {
       e.currentTarget.style.opacity = '0.5'
     }
@@ -781,12 +781,12 @@ export const MarkItem = React.memo(({mark, variant = 'list', interactive = true}
   const handleDelMark = useCallback(async (e?: React.MouseEvent) => {
     e?.stopPropagation()
     if (isMultiSelectMode && selectedMarkIds.size > 0) {
-      // 多选删除
+      //
       const selectedMarks = Array.from(selectedMarkIds)
       await deleteMarks(selectedMarks)
       clearSelection()
     } else {
-      // 单个删除
+      //
       await delMark(mark.id)
     }
     await fetchMarks()
@@ -806,14 +806,14 @@ export const MarkItem = React.memo(({mark, variant = 'list', interactive = true}
     if (!accepted) return
 
     if (isMultiSelectMode && selectedMarkIds.size > 0) {
-      // 多选永久删除
+      //
       const selectedMarks = Array.from(selectedMarkIds)
       for (const markId of selectedMarks) {
         await delMarkForever(markId)
       }
       clearSelection()
     } else {
-      // 单个永久删除
+      //
       await delMarkForever(mark.id)
     }
     await fetchAllTrashMarks()
@@ -838,10 +838,10 @@ export const MarkItem = React.memo(({mark, variant = 'list', interactive = true}
   const handleTransfer = useCallback(async (tagId: number, e?: React.MouseEvent) => {
     e?.stopPropagation()
     if (isMultiSelectMode && selectedMarkIds.size > 0) {
-      // 多选转移 - 只处理选中的记录
+      // -
       const selectedMarks = Array.from(selectedMarkIds)
       for (const markId of selectedMarks) {
-        // 获取完整的mark对象并更新tagId
+        // marktagId
         const existingMark = marks.find((m: Mark) => m.id === markId)
         if (existingMark) {
           await updateMark({ ...existingMark, tagId })
@@ -849,7 +849,7 @@ export const MarkItem = React.memo(({mark, variant = 'list', interactive = true}
       }
       clearSelection()
     } else {
-      // 单个转移
+      //
       await updateMark({ ...mark, tagId })
     }
     await fetchTags()

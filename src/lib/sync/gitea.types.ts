@@ -1,10 +1,10 @@
-// Gitea 实例类型枚举
+// Gitea
 export enum GiteaInstanceType {
-  OFFICIAL = 'gitea.com',      // 官方实例
-  SELF_HOSTED = 'self-hosted'   // 自建实例
+  OFFICIAL = 'gitea.com',      //
+  SELF_HOSTED = 'self-hosted'   //
 }
 
-// Gitea 实例配置
+// Gitea
 export interface GiteaInstanceConfig {
   type: GiteaInstanceType;
   baseUrl: string;
@@ -12,36 +12,36 @@ export interface GiteaInstanceConfig {
   description: string;
 }
 
-// 预定义的 Gitea 实例配置
+// Gitea
 export const GITEA_INSTANCES: Record<GiteaInstanceType, GiteaInstanceConfig> = {
   [GiteaInstanceType.OFFICIAL]: {
     type: GiteaInstanceType.OFFICIAL,
     baseUrl: 'https://gitea.com',
     name: 'Gitea.com',
-    description: '官方 Gitea 实例'
+    description: 'Gitea'
   },
   [GiteaInstanceType.SELF_HOSTED]: {
     type: GiteaInstanceType.SELF_HOSTED,
     baseUrl: '',
-    name: '自建实例',
-    description: '自建 Gitea 服务器'
+    name: 'Self-hosted instance',
+    description: 'Gitea'
   }
 };
 
-// Gitea 错误类型
+// Gitea
 export interface GiteaError {
   status: number;
   message: string;
 }
 
-// Gitea 用户信息类型
+// Gitea
 export interface GiteaUserInfo {
   id: number;
   login: string;
   full_name: string;
   email: string;
   avatar_url: string;
-  html_url?: string; // 用户主页 URL
+  html_url?: string; // URL
   language: string;
   is_admin: boolean;
   last_login: string;
@@ -59,7 +59,7 @@ export interface GiteaUserInfo {
   username: string;
 }
 
-// Gitea 仓库信息类型
+// Gitea
 export interface GiteaRepositoryInfo {
   id: number;
   owner: {
@@ -137,7 +137,7 @@ export interface GiteaRepositoryInfo {
   mirror_updated: string;
 }
 
-// Gitea 文件内容类型
+// Gitea
 export interface GiteaFileContent {
   name: string;
   path: string;
@@ -148,7 +148,7 @@ export interface GiteaFileContent {
   git_url: string;
   download_url: string;
   type: string;
-  content?: string;  // base64 编码的内容
+  content?: string;  // base64
   encoding?: string;
   _links: {
     self: string;
@@ -157,7 +157,7 @@ export interface GiteaFileContent {
   };
 }
 
-// Gitea 目录内容类型
+// Gitea
 export interface GiteaDirectoryItem {
   name: string;
   path: string;
@@ -175,7 +175,7 @@ export interface GiteaDirectoryItem {
   };
 }
 
-// Gitea 提交信息类型
+// Gitea
 export interface GiteaCommit {
   sha: string;
   commit: {
@@ -234,15 +234,15 @@ export interface GiteaCommit {
   created: string;
 }
 
-// Gitea API 响应类型
+// Gitea API
 export type GiteaResponse<T> = {
   data: T;
   status?: number;
   headers?: Record<string, string>;
 }
 
-// 同步状态枚举（复用现有的）
+// （）
 export { SyncStateEnum } from './github.types';
 
-// 仓库名称枚举（复用现有的）
+// （）
 export { RepoNames } from './github.types';

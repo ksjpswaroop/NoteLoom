@@ -48,7 +48,7 @@ function enqueueRecordsAutoSync(reason: string) {
 }
 
 
-// 创建 marks 表
+// marks
 export async function initMarksDb() {
   const isExist = await exists('screenshot', { baseDir: BaseDirectory.AppData})
   if (!isExist) {
@@ -83,7 +83,7 @@ export async function initMarksDb() {
 
 export async function getMarks(id: number) {
   const db = await getDb();
-  // 根据 tagId 获取 marks，根据 createdAt 倒序
+  // tagId marks， createdAt
   return await db.select<Mark[]>("select * from marks where tagId = $1 order by createdAt desc", [id])
 }
 
@@ -204,7 +204,7 @@ export async function restoreMark(id: number) {
 
 export async function delMark(id: number) {
   const db = await getDb();
-  // 判断有没有 deleted 列，没有就添加
+  // deleted ，
   const res = await db.select<Mark[]>("select * from marks where id = $1", [id])
   if (res[0].deleted === undefined) {
     await db.execute("alter table marks add column deleted integer default 0")

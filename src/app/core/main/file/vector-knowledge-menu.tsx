@@ -24,7 +24,7 @@ export function VectorKnowledgeMenu({ item, hasVector, onVectorUpdated }: Vector
   const [excludeFromKB, setExcludeFromKB] = useState(false)
   const filePath = computedParentPath(item)
 
-  // 加载向量配置状态
+  //
   useEffect(() => {
     async function loadVectorSettings() {
       const store = await Store.load('store.json')
@@ -40,10 +40,10 @@ export function VectorKnowledgeMenu({ item, hasVector, onVectorUpdated }: Vector
     if (!item.isFile) return
 
     try {
-      // 设置为计算中状态
+      //
       setVectorCalcStatus(filePath, 'calculating')
 
-      // 获取完整文件路径
+      //
       const { getFilePathOptions } = await import('@/lib/workspace')
       const pathOptions = await getFilePathOptions(filePath)
 
@@ -54,21 +54,21 @@ export function VectorKnowledgeMenu({ item, hasVector, onVectorUpdated }: Vector
         content = await readTextFile(pathOptions.path)
       }
 
-      // 直接调用 RAG 库计算向量，与文件夹批量计算保持一致
+      // RAG ，
       const { processMarkdownFile } = await import('@/lib/rag')
       await processMarkdownFile(filePath, content)
 
-      // 更新向量索引状态
+      //
       await checkFileVectorIndexed(filePath)
       onVectorUpdated()
 
-      // 设置为完成状态
+      //
       setVectorCalcStatus(filePath, 'completed')
 
       toast({ title: hasVector ? t('context.vectorCalculated') : t('context.vectorCalcCompleted') })
     } catch (error) {
-      console.error('向量计算失败:', error)
-      // 失败时恢复为空闲状态
+      console.error('Vector calculation failed:', error)
+      //
       setVectorCalcStatus(filePath, 'idle')
       toast({ title: t('context.vectorCalcFailed'), variant: 'destructive' })
     }
@@ -82,7 +82,7 @@ export function VectorKnowledgeMenu({ item, hasVector, onVectorUpdated }: Vector
       onVectorUpdated()
       toast({ title: t('context.vectorDeleted') })
     } catch (error) {
-      console.error('删除向量失败:', error)
+      console.error('Failed to delete vectors:', error)
       toast({ title: t('context.vectorDeleteFailed'), variant: 'destructive' })
     }
   }

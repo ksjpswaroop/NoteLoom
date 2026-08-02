@@ -73,73 +73,73 @@ export function MobileEditorMoreSheet({
   onAction,
 }: MobileEditorMoreSheetProps) {
   const titleMap: Record<Exclude<MobileSheetMode, null>, string> = {
-    insert: '插入内容',
-    format: '文本格式',
-    ai: 'AI 处理',
-    'ai-write': 'AI 写作',
-    'ai-custom': '自定义 AI',
-    'mobile-more': '更多写作工具',
-    'image-src': '编辑图片地址',
-    'image-alt': '编辑图片说明',
-    'table-align': '表格对齐',
-    'table-more': '更多表格操作',
+    insert: 'Insert',
+    format: 'Text formatting',
+    ai: 'AI actions',
+    'ai-write': 'AI writing',
+    'ai-custom': 'Custom AI',
+    'mobile-more': 'Tool',
+    'image-src': 'Image',
+    'image-alt': 'Image',
+    'table-align': 'Table alignment',
+    'table-more': 'Table',
   }
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="max-h-[80vh]">
         <DrawerHeader>
-          <DrawerTitle>{mode ? titleMap[mode] : '更多操作'}</DrawerTitle>
+          <DrawerTitle>{mode ? titleMap[mode] : 'More actions'}</DrawerTitle>
         </DrawerHeader>
 
         <div className="flex flex-col gap-3 overflow-y-auto px-4 pb-6">
           {mode === 'insert' && (
             <>
-              <ActionButton label="标题" description="插入或切换为二级标题" onClick={() => onAction('insert-heading-2')} />
-              <ActionButton label="无序列表" onClick={() => onAction('insert-bullet-list')} />
-              <ActionButton label="有序列表" onClick={() => onAction('insert-ordered-list')} />
-              <ActionButton label="待办列表" onClick={() => onAction('insert-task-list')} />
-              <ActionButton label="引用" onClick={() => onAction('insert-blockquote')} />
-              <ActionButton label="代码块" onClick={() => onAction('insert-code-block')} />
-              <ActionButton label="分割线" onClick={() => onAction('insert-horizontal-rule')} />
-              <ActionButton label="图片" description="从本地选择图片插入当前光标位置" onClick={() => onAction('insert-image')} />
-              <ActionButton label="表格" onClick={() => onAction('insert-table')} />
+              <ActionButton label="Title" description="Heading 2" onClick={() => onAction('insert-heading-2')} />
+              <ActionButton label="Bullet list" onClick={() => onAction('insert-bullet-list')} />
+              <ActionButton label="Numbered list" onClick={() => onAction('insert-ordered-list')} />
+              <ActionButton label="Task list" onClick={() => onAction('insert-task-list')} />
+              <ActionButton label="Quote" onClick={() => onAction('insert-blockquote')} />
+              <ActionButton label="Code block" onClick={() => onAction('insert-code-block')} />
+              <ActionButton label="Divider" onClick={() => onAction('insert-horizontal-rule')} />
+              <ActionButton label="Image" description="Local Image" onClick={() => onAction('insert-image')} />
+              <ActionButton label="Table" onClick={() => onAction('insert-table')} />
             </>
           )}
 
           {mode === 'format' && (
             <>
-              <ActionButton label="正文" onClick={() => onAction('format-paragraph')} />
-              <ActionButton label="一级标题" onClick={() => onAction('format-heading-1')} />
-              <ActionButton label="二级标题" onClick={() => onAction('format-heading-2')} />
-              <ActionButton label="三级标题" onClick={() => onAction('format-heading-3')} />
-              <ActionButton label="粗体" onClick={() => onAction('format-bold')} />
-              <ActionButton label="斜体" onClick={() => onAction('format-italic')} />
-              <ActionButton label="高亮" onClick={() => onAction('format-highlight')} />
+              <ActionButton label="Paragraph" onClick={() => onAction('format-paragraph')} />
+              <ActionButton label="Heading 1" onClick={() => onAction('format-heading-1')} />
+              <ActionButton label="Heading 2" onClick={() => onAction('format-heading-2')} />
+              <ActionButton label="Heading 3" onClick={() => onAction('format-heading-3')} />
+              <ActionButton label="Bold" onClick={() => onAction('format-bold')} />
+              <ActionButton label="Italic" onClick={() => onAction('format-italic')} />
+              <ActionButton label="Highlight" onClick={() => onAction('format-highlight')} />
             </>
           )}
 
           {mode === 'ai' && (
             <>
-              <ActionButton label="润色选中文本" onClick={() => onAction('ai-polish')} />
-              <ActionButton label="精简选中文本" onClick={() => onAction('ai-concise')} />
-              <ActionButton label="扩写选中文本" onClick={() => onAction('ai-expand')} />
+              <ActionButton label="Chinese" onClick={() => onAction('ai-polish')} />
+              <ActionButton label="Chinese" onClick={() => onAction('ai-concise')} />
+              <ActionButton label="Chinese" onClick={() => onAction('ai-expand')} />
             </>
           )}
 
           {mode === 'ai-write' && (
             <>
-              <ActionButton label="继续写" description="根据光标前后内容续写" onClick={() => onAction('ai-continue')} />
-              <ActionButton label="生成章节" description="在当前位置补充一个完整段落" onClick={() => onAction('ai-generate-section')} />
-              <ActionButton label="总结全文" description="基于当前笔记生成摘要" onClick={() => onAction('ai-generate-summary')} />
+              <ActionButton label="Continue writing" description="Continue writing from surrounding context" onClick={() => onAction('ai-continue')} />
+              <ActionButton label="Generate section" description="Add a full paragraph at the cursor" onClick={() => onAction('ai-generate-section')} />
+              <ActionButton label="Summarize" description="Generate a summary from this note" onClick={() => onAction('ai-generate-summary')} />
               <Textarea
                 value={customAiInstruction}
                 onChange={(event) => onCustomAiInstructionChange(event.target.value)}
-                placeholder="输入自定义 AI 指令，例如：整理成会议纪要"
+                placeholder="AI ， ："
                 rows={3}
                 maxRows={8}
               />
-              <Button onClick={onSubmitCustomAiInstruction}>执行自定义指令</Button>
+              <Button onClick={onSubmitCustomAiInstruction}>Run custom instruction</Button>
             </>
           )}
 
@@ -148,56 +148,56 @@ export function MobileEditorMoreSheet({
               <Textarea
                 value={customAiInstruction}
                 onChange={(event) => onCustomAiInstructionChange(event.target.value)}
-                placeholder="输入自定义 AI 指令，例如：整理成会议纪要"
+                placeholder="AI ， ："
                 rows={3}
                 maxRows={8}
               />
-              <Button onClick={onSubmitCustomAiInstruction}>执行自定义指令</Button>
+              <Button onClick={onSubmitCustomAiInstruction}>Run custom instruction</Button>
             </>
           )}
 
           {mode === 'mobile-more' && (
             <>
-              <ActionButton label="文本格式" onClick={() => onAction('open-format-sheet')} />
-              <ActionButton label="搜索替换" onClick={() => onAction('open-search-replace')} />
-              <ActionButton label="大纲" onClick={() => onAction('toggle-outline')} />
-              <ActionButton label="行内公式" onClick={() => onAction('insert-inline-math')} />
-              <ActionButton label="块级公式" onClick={() => onAction('insert-block-math')} />
-              <ActionButton label="Mermaid 图表" onClick={() => onAction('insert-mermaid')} />
+              <ActionButton label="Text formatting" onClick={() => onAction('open-format-sheet')} />
+              <ActionButton label="Find and replace" onClick={() => onAction('open-search-replace')} />
+              <ActionButton label="Outline" onClick={() => onAction('toggle-outline')} />
+              <ActionButton label="Inline math" onClick={() => onAction('insert-inline-math')} />
+              <ActionButton label="Block math" onClick={() => onAction('insert-block-math')} />
+              <ActionButton label="Mermaid Diagram" onClick={() => onAction('insert-mermaid')} />
             </>
           )}
 
           {mode === 'image-src' && (
             <>
-              <Input value={imageSrc} onChange={(event) => onImageSrcChange(event.target.value)} placeholder="输入图片地址" />
-              <Button onClick={onSubmitImageSrc}>保存地址</Button>
+              <Input value={imageSrc} onChange={(event) => onImageSrcChange(event.target.value)} placeholder="Image" />
+              <Button onClick={onSubmitImageSrc}>Save URL</Button>
             </>
           )}
 
           {mode === 'image-alt' && (
             <>
-              <Input value={imageAlt} onChange={(event) => onImageAltChange(event.target.value)} placeholder="输入图片说明" />
-              <Button onClick={onSubmitImageAlt}>保存说明</Button>
+              <Input value={imageAlt} onChange={(event) => onImageAltChange(event.target.value)} placeholder="Image" />
+              <Button onClick={onSubmitImageAlt}>Save caption</Button>
             </>
           )}
 
           {mode === 'table-align' && (
             <>
-              <ActionButton label="左对齐" onClick={() => onAction('align-left')} />
-              <ActionButton label="居中对齐" onClick={() => onAction('align-center')} />
-              <ActionButton label="右对齐" onClick={() => onAction('align-right')} />
+              <ActionButton label="Align left" onClick={() => onAction('align-left')} />
+              <ActionButton label="Align center" onClick={() => onAction('align-center')} />
+              <ActionButton label="Align right" onClick={() => onAction('align-right')} />
             </>
           )}
 
           {mode === 'table-more' && (
             <>
-              <ActionButton label="在上方插入行" onClick={() => onAction('add-row-before')} />
-              <ActionButton label="在下方插入行" onClick={() => onAction('add-row-after')} />
-              <ActionButton label="在左侧插入列" onClick={() => onAction('add-column-before')} />
-              <ActionButton label="在右侧插入列" onClick={() => onAction('add-column-after')} />
-              <ActionButton label="删除当前行" onClick={() => onAction('delete-row')} destructive />
-              <ActionButton label="删除当前列" onClick={() => onAction('delete-column')} destructive />
-              <ActionButton label="删除整个表格" onClick={() => onAction('delete-table')} destructive />
+              <ActionButton label="Insert row above" onClick={() => onAction('add-row-before')} />
+              <ActionButton label="Insert row below" onClick={() => onAction('add-row-after')} />
+              <ActionButton label="Insert column left" onClick={() => onAction('add-column-before')} />
+              <ActionButton label="Insert column right" onClick={() => onAction('add-column-after')} />
+              <ActionButton label="Delete current row" onClick={() => onAction('delete-row')} destructive />
+              <ActionButton label="Delete current column" onClick={() => onAction('delete-column')} destructive />
+              <ActionButton label="Table" onClick={() => onAction('delete-table')} destructive />
             </>
           )}
         </div>

@@ -100,23 +100,23 @@ export function pickNestedFileEntry(entries: RemoteDirectoryEntry[], requestedPa
 
 export function getRemoteFileContent(file: unknown, path: string) {
   if (!file) {
-    throw new Error(`远程文件不存在: ${path}`)
+    throw new Error(`Remote file does not exist: ${path}`)
   }
 
   if (Array.isArray(file)) {
-    throw new Error(`远程路径指向的是目录，不是文件: ${path}`)
+    throw new Error(`Remote path points to a directory, not a file: ${path}`)
   }
 
   const content = (file as { content?: unknown }).content
   if (typeof content !== 'string') {
-    throw new Error(`远程文件内容格式无效: ${path}`)
+    throw new Error(`Invalid remote file content format: ${path}`)
   }
 
   return content
 }
 
 export function isMissingRemoteFileError(message: string) {
-  return message.includes('远程文件不存在') || message.includes('远程路径指向的是目录')
+  return message.includes('Remote file does not exist') || message.includes('Remote path points to a directory')
 }
 
 export function hasEmptyRemoteFileContent(file: unknown) {
@@ -134,7 +134,7 @@ export function decodeBase64ToString(content: unknown) {
 
 export function decodeBase64ToBytes(content: unknown): Uint8Array {
   if (typeof content !== 'string') {
-    throw new Error('远程文件内容不是有效的 Base64 字符串')
+    throw new Error('Remote file content is not a valid Base64 string')
   }
 
   const normalized = content.replace(/\s+/g, '')
@@ -143,7 +143,7 @@ export function decodeBase64ToBytes(content: unknown): Uint8Array {
   }
 
   if (!/^[A-Za-z0-9+/]*={0,2}$/.test(normalized) || normalized.length % 4 === 1) {
-    throw new Error('远程文件内容不是有效的 Base64 字符串')
+    throw new Error('Remote file content is not a valid Base64 string')
   }
 
   return new Uint8Array(Buffer.from(normalized, 'base64'))

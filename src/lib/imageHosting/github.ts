@@ -6,20 +6,20 @@ import { v4 as uuid } from 'uuid';
 import { fileToBase64 } from "../sync/github";
 import { getImageRepoName } from "../sync/repo-utils";
 
-// 创建 Github 图床仓库
+// Github
 export async function createImageRepo(name: string, isPrivate?: boolean) {
   const store = await Store.load('store.json');
   const accessToken = await store.get('githubImageAccessToken')
   if (!accessToken) return;
   
-  // 获取代理设置
+  //
   const proxyUrl = await store.get<string>('proxy')
   const proxy: Proxy | undefined = proxyUrl ? {
     all: proxyUrl
   } : undefined
   
   try {
-    // 设置请求头
+    //
     const headers = new Headers();
     headers.append('Authorization', `Bearer ${accessToken}`);
     headers.append('Accept', 'application/vnd.github+json');
@@ -50,20 +50,20 @@ export async function createImageRepo(name: string, isPrivate?: boolean) {
   }
 }
 
-// 检查 Github 仓库
+// Github
 export async function checkImageRepoState(name: string) {
   const store = await Store.load('store.json');
   const githubUsername = await store.get('githubImageUsername')
   const accessToken = await store.get('githubImageAccessToken')
   if (!accessToken) return;
   
-  // 获取代理设置
+  //
   const proxyUrl = await store.get<string>('proxy')
   const proxy: Proxy | undefined = proxyUrl ? {
     all: proxyUrl
   } : undefined
   
-  // 设置请求头
+  //
   const headers = new Headers();
   headers.append('Authorization', `Bearer ${accessToken}`);
   headers.append('Accept', 'application/vnd.github+json');
@@ -99,7 +99,7 @@ export async function uploadImageByGithub(file: File) {
 
   const id = uuid()
 
-  // 获取代理设置
+  //
   const proxyUrl = await store.get<string>('proxy')
   const proxy: Proxy | undefined = proxyUrl ? {
     all: proxyUrl
@@ -109,7 +109,7 @@ export async function uploadImageByGithub(file: File) {
     const ext = file.type.split('/')[1]
     const filename = `${id}.${ext}`.replace(/\s/g, '_')
     
-    // 设置请求头
+    //
     const headers = new Headers();
     headers.append('Authorization', `Bearer ${accessToken}`);
     headers.append('Accept', 'application/vnd.github+json');
@@ -156,7 +156,7 @@ export async function uploadImageByGithub(file: File) {
       description: (error as GithubError).message,
       variant: 'destructive',
     })
-    throw error  // 抛出错误，让 handleImageUpload 知道上传失败
+    throw error  // ， handleImageUpload Upload failed
   }
 }
 
@@ -168,17 +168,17 @@ export async function getImageFiles({ path }: { path: string }) {
   const githubImageUsername = await store.get('githubImageUsername')
   path = path.replace(/\s/g, '_')
   
-  // 获取实际使用的仓库名（自定义或默认）
+  // （）
   const repoName = await getImageRepoName()
   
-  // 获取代理设置
+  //
   const proxyUrl = await store.get<string>('proxy')
   const proxy: Proxy | undefined = proxyUrl ? {
     all: proxyUrl
   } : undefined
   
   try {
-    // 设置请求头
+    //
     const headers = new Headers();
     headers.append('Authorization', `Bearer ${accessToken}`);
     headers.append('Accept', 'application/vnd.github+json');
@@ -206,7 +206,7 @@ export async function getImageFiles({ path }: { path: string }) {
   } catch (error) {
     if ((error as GithubError).status !== 404) {
       toast({
-        title: '查询失败',
+        title: 'Query failed',
         description: (error as GithubError).message,
         variant: 'destructive',
       })

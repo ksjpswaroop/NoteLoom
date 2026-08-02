@@ -262,13 +262,13 @@ interface Owner {
 }
 
 export enum SyncStateEnum {
-  checking = '检测中',
-  success = '可用',
-  creating = '创建中',
-  fail = '不可用',
+  checking = 'checking',
+  success = 'success',
+  creating = 'creating',
+  fail = 'fail',
 }
 
-// 自定义类型，代替 OctokitResponse
+// Custom type replacing OctokitResponse
 export type OctokitResponse<T> = {
   data: T;
   status?: number;

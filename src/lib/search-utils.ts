@@ -21,7 +21,7 @@ export interface SearchResult<T = any> {
 }
 
 /**
- * 在文本中查找所有精确匹配项
+ * 
  */
 function findExactMatches(text: string, query: string): SearchMatch[] {
   const matches: SearchMatch[] = []
@@ -49,7 +49,7 @@ function findExactMatches(text: string, query: string): SearchMatch[] {
 }
 
 /**
- * 在文本中查找模糊匹配项（分词匹配）
+ * （）
  */
 function findFuzzyMatches(text: string, query: string): SearchMatch[] {
   const matches: SearchMatch[] = []
@@ -58,17 +58,17 @@ function findFuzzyMatches(text: string, query: string): SearchMatch[] {
   
   if (!searchQuery || searchQuery.length < 2) return matches
   
-  // 将查询词拆分成单个字符进行模糊匹配
+  //
   const queryChars = searchQuery.split('')
   
-  // 对于中文和英文都有效的模糊匹配
-  // 查找包含查询词中任意字符的词语
+  //
+  //
   const words = text.split(/[\s\n,.，。、；;！!？?()（）\[\]【】]+/).filter(w => w.length > 0)
   
   for (const word of words) {
     const wordLower = word.toLowerCase()
     
-    // 检查是否包含查询词的部分字符
+    //
     let matchCount = 0
     for (const char of queryChars) {
       if (wordLower.includes(char)) {
@@ -76,7 +76,7 @@ function findFuzzyMatches(text: string, query: string): SearchMatch[] {
       }
     }
     
-    // 如果匹配了查询词的大部分字符，认为是模糊匹配
+    // ，
     const matchRatio = matchCount / queryChars.length
     if (matchRatio >= 0.5 && word.length >= 2) {
       const wordIndex = searchText.indexOf(wordLower)
@@ -95,7 +95,7 @@ function findFuzzyMatches(text: string, query: string): SearchMatch[] {
 }
 
 /**
- * 计算搜索结果的评分
+ * 
  */
 function calculateScore(
   contentMatches: SearchMatch[],
@@ -104,30 +104,30 @@ function calculateScore(
 ): number {
   let score = 0
   
-  // 精确匹配基础分更高
+  //
   const baseScore = matchType === 'exact' ? 100 : 50
   
-  // 标题匹配权重 3x
+  // 3x
   score += titleMatches.length * baseScore * 3
   
-  // 内容匹配权重 1x
+  // 1x
   score += contentMatches.length * baseScore
   
-  // 匹配数量加成
+  //
   score += (contentMatches.length + titleMatches.length) * 5
   
   return score
 }
 
 /**
- * 生成高亮文本片段
+ * 
  */
 function generateHighlight(text: string, matches: SearchMatch[], maxLength: number = 200): string {
   if (matches.length === 0) {
     return text.substring(0, maxLength)
   }
   
-  // 使用第一个匹配位置作为中心
+  //
   const firstMatch = matches[0]
   const start = Math.max(0, firstMatch.index - 50)
   const end = Math.min(text.length, firstMatch.index + maxLength)
@@ -141,7 +141,7 @@ function generateHighlight(text: string, matches: SearchMatch[], maxLength: numb
 }
 
 /**
- * 执行搜索（自动合并精确和模糊搜索结果）
+ * （）
  */
 export function search<T extends SearchableItem>(
   items: T[],
@@ -155,7 +155,7 @@ export function search<T extends SearchableItem>(
   const fuzzyResults: SearchResult<T>[] = []
   
   for (const item of items) {
-    // 精确搜索
+    //
     const exactTitleMatches = findExactMatches(item.title, query)
     const exactContentMatches = findExactMatches(item.content, query)
     
@@ -171,7 +171,7 @@ export function search<T extends SearchableItem>(
         matchType: 'exact'
       })
     } else {
-      // 只有在没有精确匹配时才进行模糊搜索
+      //
       const fuzzyTitleMatches = findFuzzyMatches(item.title, query)
       const fuzzyContentMatches = findFuzzyMatches(item.content, query)
       
@@ -190,15 +190,15 @@ export function search<T extends SearchableItem>(
     }
   }
   
-  // 精确匹配按评分排序
+  //
   exactResults.sort((a, b) => b.score - a.score)
   
-  // 模糊匹配按评分排序
+  //
   fuzzyResults.sort((a, b) => b.score - a.score)
   
-  // 合并结果：精确匹配在前，模糊匹配在后
+  // ：，
   const allResults = [...exactResults, ...fuzzyResults]
   
-  // 限制结果数量
+  //
   return allResults.slice(0, maxResults)
 }

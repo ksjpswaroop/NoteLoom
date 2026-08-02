@@ -10,7 +10,7 @@ export interface Note {
   createdAt: number
 }
 
-// 创建 marks 表
+// marks
 export async function initNotesDb() {
   const isExist = await exists('article', { baseDir: BaseDirectory.AppData})
   if (!isExist) {
@@ -45,7 +45,7 @@ export async function getNoteByTagId(tagId: number) {
 
 export async function getNoteById(id: number) {
   const db = await getDb()
-  // 根据 id 获取 note
+  // id note
   return (await db.select<Note[]>("select * from notes where id = $1", [id]))[0]
 }
 
@@ -54,7 +54,7 @@ export async function getNotesByTagId(tagId: number) {
   return await db.select<Note[]>("select * from notes where tagId = $1 order by createdAt desc", [tagId])
 }
 
-// 删除
+//
 export async function delNote(id: number) {
   const db = await getDb()
   return await db.execute("delete from notes where id = $1", [id])

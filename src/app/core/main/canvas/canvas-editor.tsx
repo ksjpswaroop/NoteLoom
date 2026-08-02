@@ -1128,8 +1128,8 @@ function CanvasEditorInner({ canvasId, mobile = false }: CanvasEditorProps) {
 
       const sourceExtension = imageName.split('.').pop()?.toLowerCase()
       const extension = sourceExtension === 'jpeg' ? 'jpg' : sourceExtension || 'png'
-      const relativePath = `画布资源/${crypto.randomUUID()}.${extension}`
-      const directoryOptions = await getFilePathOptions('画布资源')
+      const relativePath = `Canvas asset/${crypto.randomUUID()}.${extension}`
+      const directoryOptions = await getFilePathOptions('canvas-assets')
       await mkdir(
         directoryOptions.path,
         directoryOptions.baseDir ? { baseDir: directoryOptions.baseDir, recursive: true } : { recursive: true }
@@ -1331,8 +1331,8 @@ function CanvasEditorInner({ canvasId, mobile = false }: CanvasEditorProps) {
       event.preventDefault()
       try {
         const extension = image.type.split('/')[1]?.replace('svg+xml', 'svg') || 'png'
-        const relativePath = `画布资源/${crypto.randomUUID()}.${extension}`
-        const directoryOptions = await getFilePathOptions('画布资源')
+        const relativePath = `Canvas asset/${crypto.randomUUID()}.${extension}`
+        const directoryOptions = await getFilePathOptions('canvas-assets')
         await mkdir(
           directoryOptions.path,
           directoryOptions.baseDir ? { baseDir: directoryOptions.baseDir, recursive: true } : { recursive: true }
@@ -1832,7 +1832,7 @@ function CanvasEditorInner({ canvasId, mobile = false }: CanvasEditorProps) {
     try {
       const bytes = await renderCanvasImage(format, pixelRatio)
       const projectTitle = projects.find(project => project.id === canvasId)?.title || t('untitled')
-      const safeTitle = projectTitle.replace(/[\\/:*?"<>|]/g, '-').trim() || 'NoteGen-Canvas'
+      const safeTitle = projectTitle.replace(/[\\/:*?"<>|]/g, '-').trim() || 'NoteLoom-Canvas'
       const extension = format
 
       const path = await save({
@@ -1902,10 +1902,10 @@ function CanvasEditorInner({ canvasId, mobile = false }: CanvasEditorProps) {
     try {
       const project = projects.find(item => item.id === canvasId)
       const title = project?.title || t('untitled')
-      const safeTitle = title.replace(/[\\/:*?"<>|]/g, '-').trim() || 'NoteGen-Canvas'
+      const safeTitle = title.replace(/[\\/:*?"<>|]/g, '-').trim() || 'NoteLoom-Canvas'
       const path = await save({
         defaultPath: `${safeTitle}.${format === 'canvas' ? 'canvas.json' : 'mmd'}`,
-        filters: [{ name: format === 'canvas' ? 'NoteGen Canvas' : 'Mermaid', extensions: format === 'canvas' ? ['json'] : ['mmd'] }],
+        filters: [{ name: format === 'canvas' ? 'NoteLoom Canvas' : 'Mermaid', extensions: format === 'canvas' ? ['json'] : ['mmd'] }],
       })
       if (!path) return
       const currentDocument = getCurrentDocument()

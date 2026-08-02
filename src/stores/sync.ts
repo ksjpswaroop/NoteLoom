@@ -5,7 +5,7 @@ import { GiteaUserInfo, GiteaRepositoryInfo } from '@/lib/sync/gitea.types'
 import { create } from 'zustand'
 
 interface SyncState {
-  // Github 相关状态
+  // Github
   userInfo?: UserInfo
   setUserInfo: (userInfo?: UserInfo) => void
 
@@ -14,7 +14,7 @@ interface SyncState {
   syncRepoInfo?: GithubRepoInfo
   setSyncRepoInfo: (syncRepoInfo?: GithubRepoInfo) => void
 
-  // Gitee 相关状态
+  // Gitee
   giteeUserInfo?: any
   setGiteeUserInfo: (giteeUserInfo?: any) => void
 
@@ -23,7 +23,7 @@ interface SyncState {
   giteeSyncRepoInfo?: GiteeRepoInfo
   setGiteeSyncRepoInfo: (giteeSyncRepoInfo?: GiteeRepoInfo) => void
 
-  // Gitlab 相关状态
+  // Gitlab
   gitlabUserInfo?: GitlabUserInfo
   setGitlabUserInfo: (gitlabUserInfo?: GitlabUserInfo) => void
 
@@ -32,7 +32,7 @@ interface SyncState {
   gitlabSyncProjectInfo?: GitlabProjectInfo
   setGitlabSyncProjectInfo: (gitlabSyncProjectInfo?: GitlabProjectInfo) => void
 
-  // Gitea 相关状态
+  // Gitea
   giteaUserInfo?: GiteaUserInfo
   setGiteaUserInfo: (giteaUserInfo?: GiteaUserInfo) => void
 
@@ -41,7 +41,7 @@ interface SyncState {
   giteaSyncRepoInfo?: GiteaRepositoryInfo
   setGiteaSyncRepoInfo: (giteaSyncRepoInfo?: GiteaRepositoryInfo) => void
 
-  // S3 相关状态
+  // S3
   s3Connected: boolean
   setS3Connected: (connected: boolean) => void
 
@@ -50,7 +50,7 @@ interface SyncState {
   updateS3FileEtag: (path: string, etag: string) => void
   removeS3FileEtag: (path: string) => void
 
-  // WebDAV 相关状态
+  // WebDAV
   webdavConnected: boolean
   setWebDAVConnected: (connected: boolean) => void
 
@@ -61,7 +61,7 @@ interface SyncState {
 }
 
 const useSyncStore = create<SyncState>((set) => ({
-  // Github 相关状态
+  // Github
   userInfo: undefined,
   setUserInfo: (userInfo) => {
     set({ userInfo })
@@ -76,7 +76,7 @@ const useSyncStore = create<SyncState>((set) => ({
     set({ syncRepoInfo })
   },
 
-  // Gitee 相关状态
+  // Gitee
   giteeUserInfo: undefined,
   setGiteeUserInfo: (giteeUserInfo) => {
     set({ giteeUserInfo })
@@ -91,7 +91,7 @@ const useSyncStore = create<SyncState>((set) => ({
     set({ giteeSyncRepoInfo })
   },
 
-  // Gitlab 相关状态
+  // Gitlab
   gitlabUserInfo: undefined,
   setGitlabUserInfo: (gitlabUserInfo) => {
     set({ gitlabUserInfo })
@@ -106,7 +106,7 @@ const useSyncStore = create<SyncState>((set) => ({
     set({ gitlabSyncProjectInfo })
   },
 
-  // Gitea 相关状态
+  // Gitea
   giteaUserInfo: undefined,
   setGiteaUserInfo: (giteaUserInfo) => {
     set({ giteaUserInfo })
@@ -121,7 +121,7 @@ const useSyncStore = create<SyncState>((set) => ({
     set({ giteaSyncRepoInfo })
   },
 
-  // S3 相关状态
+  // S3
   s3Connected: false,
   setS3Connected: (connected) => {
     set({ s3Connected: connected })
@@ -144,7 +144,7 @@ const useSyncStore = create<SyncState>((set) => ({
     })
   },
 
-  // WebDAV 相关状态
+  // WebDAV
   webdavConnected: false,
   setWebDAVConnected: (connected) => {
     set({ webdavConnected: connected })

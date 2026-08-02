@@ -73,7 +73,7 @@ import { buildFileTreeSyncStatusMap } from './file-tree-action-policy'
 
 type SearchPhase = 'idle' | 'local' | 'remote' | 'complete'
 
-// 递归过滤文件树，移除云端文件（如果 showCloudFiles 为 false）
+// ，（ showCloudFiles false）
 function filterFileTree(tree: DirTree[], showCloud: boolean): DirTree[] {
   if (showCloud) return tree
 
@@ -85,8 +85,8 @@ function filterFileTree(tree: DirTree[], showCloud: boolean): DirTree[] {
     }))
 }
 
-// 搜索结果按“本地优先、远程补充”展示。同一来源内保持文件树原有顺序，
-// 避免远程结果到达后让已经展示的本地结果相互跳动。
+// “、”。，
+// 。
 function prioritizeLocalSearchResults(tree: DirTree[]): DirTree[] {
   return tree
     .map(item => ({
@@ -492,7 +492,7 @@ export function FileManager({ focusSidebar }: { focusSidebar: () => void }) {
         const files = e.dataTransfer.files
         for (let i = 0; i < files.length; i += 1) {
           const file = files[i]
-          // 接受 markdown 和图片文件
+          // markdown
           if (file.name.endsWith('.md')) {
             const text = await file.text()
             const { getFilePathOptions } = await import('@/lib/workspace')
@@ -514,7 +514,7 @@ export function FileManager({ focusSidebar }: { focusSidebar: () => void }) {
               isSymlink: false
             })
           } else if (file.name.match(/\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i)) {
-            // 处理图片文件，同样需要处理文件名以保持一致性
+            // ，
             const arrayBuffer = await file.arrayBuffer()
             const uint8Array = new Uint8Array(arrayBuffer)
             const { getFilePathOptions } = await import('@/lib/workspace')
@@ -713,8 +713,8 @@ export function FileManager({ focusSidebar }: { focusSidebar: () => void }) {
     const timer = window.setTimeout(async () => {
       const locallyLoadedPaths = new Set<string>()
 
-      // 第一阶段只读取本地目录。fileTree 会在每个批次完成后立即更新，
-      // 因此用户无需等待远程请求即可看到本地匹配结果。
+      // 。fileTree ，
+      // 。
       while (generation === searchLoadGenerationRef.current) {
         const folderPaths = flattenFileTree(useArticleStore.getState().fileTree)
           .filter(entry => entry.isDirectory && !locallyLoadedPaths.has(entry.path))
@@ -763,15 +763,15 @@ export function FileManager({ focusSidebar }: { focusSidebar: () => void }) {
         setSearchPhase('remote')
         try {
 
-        // 先更新远程根目录，保证此前尚未出现在本地树中的远程文件夹
-        // 也能进入后续搜索。
+        // ，
+        // 。
         if (!remoteSearchRootLoadedRef.current) {
           await useArticleStore.getState().loadRemoteSyncFiles()
           remoteSearchRootLoadedRef.current = true
         }
 
-        // 第二阶段再逐层加载远程目录。每批远程结果合并进 fileTree 后会
-        // 自动参与当前搜索，新发现的远程文件夹也会在下一轮继续加载。
+        // 。 fileTree
+        // ，。
         const remotelyLoadedPaths = remoteSearchLoadedPathsRef.current
         while (generation === searchLoadGenerationRef.current) {
           const folderPaths = flattenFileTree(useArticleStore.getState().fileTree)
@@ -826,7 +826,7 @@ export function FileManager({ focusSidebar }: { focusSidebar: () => void }) {
     }
   }, [handleDeleteSelectedEntries])
 
-  // 根据开关状态过滤文件树 - 使用 useMemo 缓存结果
+  // - useMemo
   const filteredFileTree = useMemo(
     () => filterFileTree(fileTree, showCloudFiles),
     [fileTree, showCloudFiles]

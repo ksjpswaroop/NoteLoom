@@ -44,7 +44,7 @@ export function ModelSelect({
   const [open, setOpen] = React.useState(false)
   const t = useTranslations('settings.defaultModel')
 
-  // 获取正确的存储键名
+  //
   function getStoreKey(modelKey: string): string {
     switch (modelKey) {
       case 'primaryModel':
@@ -105,7 +105,7 @@ export function ModelSelect({
     }
   }
 
-  // 获取需要过滤的模型类型
+  //
   function getTargetModelType(modelKey: string): string {
     switch (modelKey) {
       case 'embedding':
@@ -130,13 +130,13 @@ export function ModelSelect({
     const targetModelType = getTargetModelType(modelKey)
     
     aiConfigs.forEach(config => {
-      // 检查配置是否有效
+      //
       if (!config.baseURL) return
       
-      // 处理新的 models 数组结构
+      // models
       if (config.models && config.models.length > 0) {
         config.models.forEach(model => {
-          // 根据modelKey过滤对应类型的模型
+          // modelKey
           if (model.modelType === targetModelType && model.model) {
             models.push({
               configKey: config.key,
@@ -146,7 +146,7 @@ export function ModelSelect({
           }
         })
       } else {
-        // 向后兼容：处理旧的单模型结构
+        // ：
         const configModelType = config.modelType || 'chat'
         if (configModelType === targetModelType && config.model) {
           models.push({
@@ -192,18 +192,18 @@ export function ModelSelect({
     await onValueChange?.('')
   }
 
-  // 检查模型是否被选中（支持向后兼容）
+  // （）
   const isModelSelected = (item: GroupedModel): boolean => {
     if (!model) return false
     
     return model === item.model.id || model === `${item.configKey}-${item.model.id}`
   }
 
-  // 查找当前选中的模型显示信息
+  //
   const findSelectedModelDisplay = () => {
     if (!model || !groupedModels.length) return null
     
-    // 首先尝试精确匹配（新格式的组合键）
+    // （）
     const selectedItem = groupedModels.find(isModelSelected)
     
     if (selectedItem) {
@@ -213,7 +213,7 @@ export function ModelSelect({
     return null
   }
 
-  // 按配置分组模型
+  //
   const groupedByConfig = groupedModels.reduce((acc, item) => {
     if (!acc[item.configTitle]) {
       acc[item.configTitle] = []

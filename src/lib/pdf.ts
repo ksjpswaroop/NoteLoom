@@ -2,22 +2,22 @@ import * as pdfjsLib from 'pdfjs-dist'
 import { readFile } from '@tauri-apps/plugin-fs'
 import { recognizeImageBlob } from '@/lib/ocr'
 
-// 初始化 PDF.js worker
+// PDF.js worker
 if (typeof window !== 'undefined') {
   pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`
 }
 
-// 类型守卫：检查是否为 TextItem
+// ： TextItem
 function isTextItem(item: any): item is { str: string; transform: number[] } {
   return item && typeof item.str === 'string' && Array.isArray(item.transform)
 }
 
 /**
- * 使用 OCR 识别 PDF 页面（用于图片型 PDF）
+ * OCR PDF （ PDF）
  */
 async function ocrPage(canvas: HTMLCanvasElement, pageNum: number): Promise<string> {
   try {
-    // 将 canvas 转换为图片数据
+    // canvas
     const blob = await new Promise<Blob>((resolve) => {
       canvas.toBlob((b) => resolve(b!), 'image/png')
     })
@@ -30,29 +30,29 @@ async function ocrPage(canvas: HTMLCanvasElement, pageNum: number): Promise<stri
 }
 
 /**
- * 从文件路径读取 PDF 并提取文本内容（Tauri 桌面应用）
- * @param filePath PDF 文件的本地路径
- * @param onProgress 进度回调函数
- * @returns 提取的文本内容
+ * PDF （Tauri ）
+ * @param filePath PDF 
+ * @param onProgress 
+ * @returns 
  */
 export async function extractTextFromPDF(
   filePath: string,
   onProgress?: (progress: string) => void
 ): Promise<string> {
   try {
-    // 使用 Tauri 的 readFile 读取文件为 Uint8Array
+    // Tauri readFile Uint8Array
     const fileData = await readFile(filePath)
 
-    // 加载 PDF 文档（直接传递 Uint8Array）
+    // PDF （ Uint8Array）
     const loadingTask = pdfjsLib.getDocument({ data: fileData })
     const pdfDocument = await loadingTask.promise
 
-    onProgress?.(`读取 PDF (${pdfDocument.numPages} 页)`)
+    onProgress?.(`PDF (${pdfDocument.numPages} )`)
 
     let fullText = ''
     let needsOCR = false
 
-    // 先尝试直接提取文本
+    //
     for (let pageNum = 1; pageNum <= pdfDocument.numPages; pageNum++) {
       const page = await pdfDocument.getPage(pageNum)
       const textContent = await page.getTextContent()
@@ -64,7 +64,7 @@ export async function extractTextFromPDF(
         break
       }
 
-      // 检查是否真的有文本内容（过滤掉空字符串）
+      // （）
       const hasRealText = textItems.some((item: any) =>
         isTextItem(item) && item.str.trim().length > 0
       )
@@ -75,21 +75,21 @@ export async function extractTextFromPDF(
       }
     }
 
-    // 如果需要 OCR，使用 OCR 提取所有页面
+    // OCR， OCR
     if (needsOCR) {
-      onProgress?.('OCR 识别中...')
+      onProgress?.('OCR')
       return await extractTextWithOCR(pdfDocument, onProgress)
     }
 
-    // 否则使用常规文本提取
-    onProgress?.('提取文本中...')
+    //
+    onProgress?.('Extracting text...')
     for (let pageNum = 1; pageNum <= pdfDocument.numPages; pageNum++) {
       const page = await pdfDocument.getPage(pageNum)
       const textContent = await page.getTextContent()
 
       const textItems = textContent.items
 
-      // 按行组织文本
+      //
       const textByLine = new Map<number, any[]>()
 
       for (const item of textItems) {
@@ -119,7 +119,7 @@ export async function extractTextFromPDF(
       }
 
       fullText += '\n'
-      onProgress?.(`提取文本中 (${pageNum}/${pdfDocument.numPages})`)
+      onProgress?.(`Text (${pageNum}/${pdfDocument.numPages})`)
     }
 
     const result = fullText.trim()
@@ -131,7 +131,7 @@ export async function extractTextFromPDF(
 }
 
 /**
- * 使用 OCR 从 PDF 中提取文本（用于图片型 PDF）
+ * OCR PDF （ PDF）
  */
 async function extractTextWithOCR(
   pdfDocument: pdfjsLib.PDFDocumentProxy,
@@ -140,24 +140,24 @@ async function extractTextWithOCR(
   let fullText = ''
 
   for (let pageNum = 1; pageNum <= pdfDocument.numPages; pageNum++) {
-    onProgress?.(`OCR 识别中 (${pageNum}/${pdfDocument.numPages})`)
+    onProgress?.(`OCR (${pageNum}/${pdfDocument.numPages})`)
 
     const page = await pdfDocument.getPage(pageNum)
-    const viewport = page.getViewport({ scale: 2.0 }) // 使用更高分辨率以提高 OCR 准确率
+    const viewport = page.getViewport({ scale: 2.0 }) // OCR
 
-    // 创建 canvas
+    // canvas
     const canvas = document.createElement('canvas')
     const context = canvas.getContext('2d')!
     canvas.height = viewport.height
     canvas.width = viewport.width
 
-    // 渲染 PDF 页面到 canvas
+    // PDF canvas
     await page.render({
       canvasContext: context,
       viewport: viewport
     }).promise
 
-    // 使用 OCR 识别页面文本
+    // OCR
     const pageText = await ocrPage(canvas, pageNum)
     if (pageText.trim()) {
       fullText += pageText.trim() + '\n\n'
@@ -169,26 +169,26 @@ async function extractTextWithOCR(
 }
 
 /**
- * 从文件对象读取 PDF 并提取文本内容（移动端使用）
- * @param file PDF 文件对象
- * @returns 提取的文本内容
+ * PDF （）
+ * @param file PDF 
+ * @returns 
  */
 export async function extractTextFromPDFFile(file: File): Promise<string> {
   try {
     const arrayBuffer = await file.arrayBuffer()
 
-    // 加载 PDF 文档
+    // PDF
     const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer })
     const pdfDocument = await loadingTask.promise
 
     let fullText = ''
 
-    // 遍历所有页面
+    //
     for (let pageNum = 1; pageNum <= pdfDocument.numPages; pageNum++) {
       const page = await pdfDocument.getPage(pageNum)
       const textContent = await page.getTextContent()
 
-      // 提取文本并合并
+      //
       const pageText = textContent.items
         .map((item: any) => item.str)
         .join(' ')
@@ -204,9 +204,9 @@ export async function extractTextFromPDFFile(file: File): Promise<string> {
 }
 
 /**
- * 获取 PDF 文件的基本信息
- * @param filePath PDF 文件的本地路径
- * @returns PDF 文件信息（页数等）
+ * PDF 
+ * @param filePath PDF 
+ * @returns PDF （）
  */
 export async function getPDFInfo(filePath: string): Promise<{ numPages: number }> {
   try {
@@ -226,9 +226,9 @@ export async function getPDFInfo(filePath: string): Promise<{ numPages: number }
 }
 
 /**
- * 从文件对象获取 PDF 信息
- * @param file PDF 文件对象
- * @returns PDF 文件信息（页数等）
+ * PDF 
+ * @param file PDF 
+ * @returns PDF （）
  */
 export async function getPDFInfoFromFile(file: File): Promise<{ numPages: number }> {
   try {

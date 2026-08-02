@@ -75,8 +75,8 @@ function buildFileRenamePlan({
 
 function showPdfExportStartToast() {
   toast({
-    title: '正在准备 PDF',
-    description: '请在系统打印窗口中选择“另存为 PDF”。',
+    title: 'Preparing PDF',
+    description: '“ PDF”。',
   })
 }
 
@@ -147,7 +147,7 @@ export function FileItem({
   const [exportingFormat, setExportingFormat] = useState<MarkdownExportFormat | null>(null)
   const [isUploading, setIsUploading] = useState(false)
 
-  // 检查路径是否在 skills 文件夹下
+  // skills
   const isInSkillsFolder = (itemPath: string): boolean => {
     const parts = itemPath.split('/')
     return parts.some(part => isSkillsFolder(part))
@@ -155,12 +155,12 @@ export function FileItem({
 
   const path = computedParentPath(item)
 
-  // 向量状态更新回调
+  //
   const handleVectorUpdated = useCallback(() => {
     checkFileVectorIndexed(path)
   }, [path, checkFileVectorIndexed])
 
-  // 根据文字大小映射图标大小
+  //
   const getIconSize = (textSize: string) => {
     const sizeMap = {
       'xs': 'size-3',
@@ -176,16 +176,16 @@ export function FileItem({
   const syncStatus = providedSyncStatus ?? getFileTreeSyncStatus(item)
   const syncStatusTitle = item.syncError ?? t(`syncStatus.${syncStatus}`)
 
-  // 检查文件是否被剪切
+  //
   const isCut = clipboardOperation === 'cut' && clipboardItems.some(entry => entry.path === path)
   const isSelected = selectedPathSet.has(path)
   const useSelectionMenu = isSelected && selectionEntries.length > 1
 
-  // 检查文件是否已计算向量（skills 文件夹下的文件不显示）
+  // （skills ）
   const hasVector = item.isFile && !isInSkillsFolder(path) && vectorIndexedFiles.has(path)
   const canExportMarkdownFile = item.isLocale && item.name !== '' && /\.(md|markdown|txt)$/i.test(item.name)
 
-  // 向量计算状态图标
+  //
   const renderVectorIcon = () => {
     if (!showKnowledgeBaseStatus || isInSkillsFolder(path)) return null
 
@@ -224,28 +224,28 @@ export function FileItem({
   }
 
   const folderPath = path.includes('/') ? path.split('/').slice(0, -1).join('/') : ''
-  // 不需要 cloneDeep，因为 getCurrentFolder 只读取数据不修改
+  // cloneDeep， getCurrentFolder
   const currentFolder = getCurrentFolder(folderPath, fileTree)
 
-  // 优化的输入处理，支持输入法
+  // ，
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value)
     setRenameError(null)
   }, [])
 
-  // 输入法合成开始
+  //
   const handleCompositionStart = useCallback(() => {
     setIsComposing(true)
   }, [])
 
-  // 输入法合成结束
+  //
   const handleCompositionEnd = useCallback((e: React.CompositionEvent<HTMLInputElement>) => {
     setIsComposing(false)
     setName(e.currentTarget.value)
   }, [])
 
   async function handleSelectFile() {
-    // 让文件管理器获得焦点，以便响应快捷键
+    // ，
     focusSidebar?.()
     const currentPath = computedParentPath(item)
 
@@ -267,16 +267,16 @@ export function FileItem({
     }
 
     if (item.name.match(/\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i)) {
-      // 图片文件：设置 activeFilePath，让 EditorLayout 显示图片编辑器
+      // ： activeFilePath， EditorLayout
       setActiveFilePath(currentPath)
     } else if (item.name.match(/\.(md|txt|markdown|py|js|ts|jsx|tsx|css|scss|less|html|xml|json|yaml|yml|sh|bash|java|c|cpp|h|go|rs|sql|rb|php|vue|svelte|astro|toml|ini|conf|cfg|gitignore|env|example|template)$/i)) {
-      // Markdown/文本文件：设置 activeFilePath
+      // Markdown/： activeFilePath
       setActiveFilePath(currentPath)
 
-      // 检查是否是远程文件
-      // 读取内容的逻辑移到 EditorLayout 中处理，避免重复渲染
+      //
+      // EditorLayout ，
     } else {
-      // 其他文件类型：设置 activeFilePath，让 EditorLayout 显示 UnsupportedFile 组件
+      // ： activeFilePath， EditorLayout UnsupportedFile
       setActiveFilePath(currentPath)
     }
   }
@@ -299,15 +299,15 @@ export function FileItem({
   }
 
   async function handleDeleteFile() {
-    // 添加确认弹窗
+    //
     const answer = await ask(t('deleteConfirm'), {
       title: item.name,
       kind: 'warning',
     });
-    // 如果用户确认删除，则继续执行
+    // ，
     if (answer) {
       try {
-        // 使用当前路径，而不是重新计算的路径
+        // ，
         const currentPath = computedParentPath(item)
         const trashed = await moveEntryToSystemTrash(currentPath)
 
@@ -325,7 +325,7 @@ export function FileItem({
         console.error('Delete file failed:', error)
         toast({
           title: t('context.deleteLocalFile'),
-          description: '删除文件失败: ' + error,
+          description: 'Failed to delete file: ' + error,
           variant: 'destructive'
         })
       }
@@ -343,7 +343,7 @@ export function FileItem({
       setEntryLoading(currentPath, true)
 
       try {
-        // 获取当前主要备份方式
+        //
         const store = await Store.load('store.json');
         const backupMethod = await store.get<'github' | 'gitee' | 'gitlab' | 'gitea' | 's3' | 'webdav'>('primaryBackupMethod') || 'github';
         const repoName = backupMethod === 's3' || backupMethod === 'webdav'
@@ -399,11 +399,11 @@ export function FileItem({
           });
         } else {
           setEntryLoading(currentPath, false)
-          throw new Error('删除操作返回失败')
+          throw new Error('Failed')
         }
       } catch (error) {
         setEntryLoading(currentPath, false)
-        console.error('[handleDeleteSyncFile] 删除远程文件失败:', error);
+        console.error('[handleDeleteSyncFile] FileFailed', error);
         toast({
           title: t('context.delete'),
           description: t('context.deleteSyncFileError'),
@@ -414,7 +414,7 @@ export function FileItem({
   }
 
   async function handleStartRename() {
-    // 延迟执行，确保上下文菜单完全关闭
+    // ，
     setTimeout(() => {
       setIsEditing(true)
       setRenameError(null)
@@ -422,7 +422,7 @@ export function FileItem({
         const input = inputRef.current
         if (input) {
           input.focus()
-          // 只选中文件名，不包含扩展名
+          // ，
           const lastDotIndex = item.name.lastIndexOf('.')
           if (lastDotIndex > 0) {
             input.setSelectionRange(0, lastDotIndex)
@@ -435,7 +435,7 @@ export function FileItem({
   }
 
   async function handleRename() {
-    // 获取工作区路径信息
+    //
     const { getFilePathOptions, getWorkspacePath } = await import('@/lib/workspace')
     const workspace = await getWorkspacePath()
     const originalName = item.name
@@ -444,7 +444,7 @@ export function FileItem({
     
     let finalName = name
     
-    // 如果输入为空字符串，生成默认文件名
+    // ，
     if (!name || name.trim() === '') {
       const parentPath = path.includes('/') ? path.split('/').slice(0, -1).join('/') : ''
       finalName = await generateUniqueFilename(parentPath, 'Untitled')
@@ -473,7 +473,7 @@ export function FileItem({
       })
       const { displayName, operation, targetRelativePath } = renamePlan
       
-      // 更新缓存树中的名称
+      //
       if (nextFolder && nextFolder.children) {
         const fileIndex = nextFolder?.children?.findIndex(file => file.name === originalName)
         if (fileIndex !== undefined && fileIndex !== -1) {
@@ -487,10 +487,10 @@ export function FileItem({
           nextTree[fileIndex].isEditing = false
         }
       }
-      // 确定是重命名现有文件还是创建新文件
+      //
       if (operation === 'rename') {
-        // 重命名现有文件
-        // 获取源路径和目标路径
+        //
+        //
         const oldPathOptions = await getFilePathOptions(path)
         const newPathOptions = await getFilePathOptions(targetRelativePath)
         const targetExists = workspace.isCustom
@@ -502,7 +502,7 @@ export function FileItem({
           return
         }
         
-        // 根据工作区类型执行重命名操作
+        //
         try {
           if (workspace.isCustom) {
             await rename(oldPathOptions.path, newPathOptions.path)
@@ -536,10 +536,10 @@ export function FileItem({
         const { renameVectorDocumentsByFilename } = await import('@/db/vector')
         await renameVectorDocumentsByFilename(path, targetRelativePath)
       } else {
-        // 创建新文件
+        //
         const pathOptions = await getFilePathOptions(targetRelativePath)
         
-        // 检查文件是否已存在
+        //
         let isExists = false
         if (workspace.isCustom) {
           isExists = await exists(pathOptions.path)
@@ -552,7 +552,7 @@ export function FileItem({
           setTimeout(() => inputRef.current?.focus(), 0)
           return
         } else {
-          // 创建新文件
+          //
           if (workspace.isCustom) {
             await writeTextFile(pathOptions.path, '')
           } else {
@@ -562,19 +562,19 @@ export function FileItem({
       }
       setFileTree(nextTree)
       
-      // 构建新文件的完整路径用于激活文件
+      //
       let newPath = targetRelativePath
-      // 判断 newPath 是否以 / 开头
+      // newPath /
       if (newPath.startsWith('/')) {
         newPath = newPath.slice(1)
       }
       setActiveFilePath(newPath)
-      // 新建文件后自动选择该文件并读取内容
+      //
       readArticle(newPath, '', shouldAutoSyncOnInitialRead({ isNewFile: true }))
     } else {
-      // 处理取消创建或无变更的情况
+      //
       if (originalName === '') {
-        // 只有当原文件名为空（新建文件）时才删除列表项
+        // （）
         if (currentFolder && currentFolder.children) {
           const index = currentFolder?.children?.findIndex(item => item.name === '')
           if (index !== undefined && index !== -1 && currentFolder?.children) {
@@ -582,7 +582,7 @@ export function FileItem({
           }
           setFileTree(fileTree)
         } else {
-          // 根目录文件：需要克隆 fileTree 来更新
+          // ： fileTree
           const cacheTree = cloneDeep(fileTree)
           const index = cacheTree.findIndex(item => item.name === '')
           if (index !== -1) {
@@ -591,7 +591,7 @@ export function FileItem({
           setFileTree(cacheTree)
         }
       } else {
-        // 对于重命名现有文件，如果没有输入新名称，则保持原状态
+        // ，，
         if (currentFolder && currentFolder.children) {
           const fileIndex = currentFolder?.children?.findIndex(file => file.name === item.name)
           if (fileIndex !== undefined && fileIndex !== -1) {
@@ -599,7 +599,7 @@ export function FileItem({
           }
           setFileTree(fileTree)
         } else {
-          // 根目录文件：需要克隆 fileTree 来更新
+          // ： fileTree
           const cacheTree = cloneDeep(fileTree)
           const fileIndex = cacheTree.findIndex(file => file.name === item.name)
           if (fileIndex !== -1 && fileIndex !== undefined) {
@@ -614,20 +614,20 @@ export function FileItem({
   }
 
   async function handleShowFileManager() {
-    // 获取工作区路径信息
+    //
     const { getFilePathOptions, getWorkspacePath } = await import('@/lib/workspace')
     const workspace = await getWorkspacePath()
     
-    // 确定文件所在的目录路径
+    //
     const folderPath = item.parent ? computedParentPath(item.parent) : ''
     
-    // 根据工作区类型确定正确的路径
+    //
     if (workspace.isCustom) {
-      // 自定义工作区 - 直接使用工作区路径
+      // -
       const pathOptions = await getFilePathOptions(folderPath)
       openPath(pathOptions.path)
     } else {
-      // 默认工作区 - 使用 AppData 目录
+      // - AppData
       const appDir = await appDataDir()
       openPath(await join(appDir, 'article', folderPath))
     }
@@ -689,12 +689,12 @@ export function FileItem({
       )
 
       if (exported) {
-        toast({ title: format === 'pdf' ? '已打开 PDF 打印窗口' : '导出成功' })
+        toast({ title: format === 'pdf' ? 'Opened PDF print window' : 'Export succeeded' })
       }
     } catch (error) {
       console.error(`Export selected file failed: ${path}`, error)
       toast({
-        title: '导出失败',
+        title: 'Export failed',
         description: error instanceof Error ? error.message : String(error),
         variant: 'destructive',
       })
@@ -750,7 +750,7 @@ export function FileItem({
       }
       setFileTree(fileTree)
     } else {
-      // 根目录文件：需要克隆 fileTree 来更新
+      // ： fileTree
       const cacheTree = cloneDeep(fileTree)
       const index = cacheTree.findIndex(item => item.name === '')
       if (index !== -1) {
@@ -769,7 +769,7 @@ export function FileItem({
     }
   }, [item])
 
-  // 监听文件管理器统一快捷键触发的自定义事件
+  //
   useEffect(() => {
     const handleRenameEvent = (e: Event) => {
       const customEvent = e as CustomEvent<{ path: string }>
@@ -787,7 +787,7 @@ export function FileItem({
 
     const handlePasteEvent = (e: Event) => {
       const customEvent = e as CustomEvent<{ targetPath: string }>
-      // 粘贴到文件所在目录（同级粘贴）
+      // （）
       if (customEvent.detail.targetPath === path) {
         handlePasteFile()
       }
@@ -804,7 +804,7 @@ export function FileItem({
     }
   }, [path, handleStartRename, handleDeleteFile, handlePasteFile])
 
-  // 获取当前平台（用于显示快捷键）
+  // （）
   const [currentPlatform, setCurrentPlatform] = useState<Platform>('unknown')
 
   useEffect(() => {
@@ -822,7 +822,7 @@ export function FileItem({
     }
   }, [])
 
-  // 快捷键显示文本
+  //
   const modKey = currentPlatform === 'macos' ? '⌘' : 'Ctrl'
   const deleteKey = currentPlatform === 'macos' ? '⌫' : 'Del'
   const renameKey = currentPlatform === 'macos' ? '↩' : 'F2'
@@ -856,7 +856,7 @@ export function FileItem({
                   onCompositionEnd={handleCompositionEnd}
                   onClick={(event) => event.stopPropagation()}
                   onKeyDown={(e) => {
-                    // 阻止删除快捷键冒泡到全局快捷键处理器
+                    //
                     if (e.key === 'Backspace' || e.key === 'Delete') {
                       e.stopPropagation()
                     }

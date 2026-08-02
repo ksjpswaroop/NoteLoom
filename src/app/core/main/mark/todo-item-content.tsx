@@ -35,7 +35,7 @@ export function TodoItemContent({ mark, interactive = true }: { mark: Mark, inte
     setTodoData(parseTodoMarkContent(mark))
   }, [mark])
 
-  // 根据文字大小映射行高
+  //
   const getLineHeight = (textSize: string) => {
     const heightMap = {
       'xs': 'leading-3',
@@ -61,7 +61,7 @@ export function TodoItemContent({ mark, interactive = true }: { mark: Mark, inte
   const lineHeight = getLineHeight(recordTextSize)
   const lineHeightRem = getLineHeightRem(recordTextSize)
 
-  // 获取优先级颜色（用于圆点）
+  // （）
   const getPriorityColor = (priority: Priority) => {
     const colors = {
       low: 'bg-green-500',
@@ -71,7 +71,7 @@ export function TodoItemContent({ mark, interactive = true }: { mark: Mark, inte
     return colors[priority]
   }
 
-  // 切换完成状态
+  //
   const handleToggleComplete = async () => {
     if (!interactive) return
 
@@ -101,16 +101,16 @@ export function TodoItemContent({ mark, interactive = true }: { mark: Mark, inte
             {t('record.mark.type.todo')}
           </span>
 
-          {/* 优先级圆点 */}
+          {/* */}
           <span className={cn("h-2 w-2 shrink-0 rounded-full", priorityDotColor)} />
-          {/* 创建时间 */}
+          {/* */}
           <span className="ml-auto shrink-0">{dayjs(mark.createdAt).fromNow()}</span>
         </div>
 
-        {/* 待办内容 */}
+        {/* */}
         <div className="mt-2 min-w-0 max-w-full overflow-hidden">
           <div className="flex min-w-0 max-w-full items-center gap-3 overflow-hidden">
-            {/* 完成状态复选框 */}
+            {/* */}
             <button
               onClick={handleToggleComplete}
               disabled={!interactive}

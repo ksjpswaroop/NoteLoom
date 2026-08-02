@@ -29,7 +29,7 @@ export function FileLink({ onFileLinkClick, disabled = false }: FileLinkProps) {
   )
 }
 
-// 独立的关联资源显示组件
+//
 interface LinkedResourceDisplayProps {
   linkedResource: LinkedResource | null
   onFileRemove: () => void

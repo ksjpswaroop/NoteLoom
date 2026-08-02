@@ -7,7 +7,7 @@ export function joinRelativePath(...parts: string[]) {
     .join('/')
 }
 
-// 计算父目录路径
+//
 export function computedParentPath(item: DirTree) {
   let path = item.name
   function readParentPath(item: DirTree) {

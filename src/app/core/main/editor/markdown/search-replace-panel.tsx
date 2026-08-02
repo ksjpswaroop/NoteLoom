@@ -10,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
 import { isMobileDevice } from '@/lib/check'
 
-// 搜索替换存储类型
+//
 interface SearchAndReplaceStorage {
   searchTerm: string
   replaceTerm: string
@@ -25,13 +25,13 @@ interface SearchReplacePanelProps {
   onOpenChange: (open: boolean) => void
 }
 
-// 获取搜索替换存储的辅助函数
+//
 function getSearchAndReplaceStorage(editor: Editor): SearchAndReplaceStorage | undefined {
   return (editor.storage as any).searchAndReplace
 }
 
-// 辅助函数来运行搜索替换命令
-// 直接触发 transaction 来更新插件状态
+//
+// transaction
 function setSearchTerm(editor: Editor, term: string) {
   try {
     const storage = getSearchAndReplaceStorage(editor)
@@ -40,7 +40,7 @@ function setSearchTerm(editor: Editor, term: string) {
       editor.view.dispatch(editor.state.tr)
     }
   } catch {
-    // 忽略错误
+    //
   }
 }
 
@@ -51,7 +51,7 @@ function setReplaceTerm(editor: Editor, term: string) {
       storage.replaceTerm = term
     }
   } catch {
-    // 忽略错误
+    //
   }
 }
 
@@ -62,7 +62,7 @@ function setSearchCaseSensitive(editor: Editor, value: boolean) {
       storage.caseSensitive = value
     }
   } catch {
-    // 忽略错误
+    //
   }
 }
 
@@ -90,7 +90,7 @@ function nextResult(editor: Editor) {
       }
     }
   } catch {
-    // 忽略错误
+    //
   }
 }
 
@@ -118,7 +118,7 @@ function prevResult(editor: Editor) {
       }
     }
   } catch {
-    // 忽略错误
+    //
   }
 }
 
@@ -134,7 +134,7 @@ function replaceCurrent(editor: Editor) {
       editor.view.dispatch(editor.state.tr)
     }
   } catch {
-    // 忽略错误
+    //
   }
 }
 
@@ -154,11 +154,11 @@ function replaceAll(editor: Editor) {
       editor.view.dispatch(editor.state.tr)
     }
   } catch {
-    // 忽略错误
+    //
   }
 }
 
-// 直接清除搜索状态
+//
 function clearSearch(editor: Editor) {
   try {
     const storage = getSearchAndReplaceStorage(editor)
@@ -169,7 +169,7 @@ function clearSearch(editor: Editor) {
       editor.view.dispatch(editor.state.tr)
     }
   } catch {
-    // 忽略错误
+    //
   }
 }
 
@@ -181,7 +181,7 @@ export function SearchReplacePanel({ editor, open, onOpenChange }: SearchReplace
   const [currentIndex, setCurrentIndex] = useState(0)
   const isMobile = isMobileDevice()
 
-  // 更新搜索结果计数
+  //
   const updateResults = useCallback(() => {
     if (!editor) {
       setResultCount(0)
@@ -203,7 +203,7 @@ export function SearchReplacePanel({ editor, open, onOpenChange }: SearchReplace
     setCurrentIndex(storage?.resultIndex || 0)
   }, [editor])
 
-  // 监听编辑器状态变化
+  //
   useEffect(() => {
     if (!editor || !open) return
 
@@ -217,35 +217,35 @@ export function SearchReplacePanel({ editor, open, onOpenChange }: SearchReplace
     }
   }, [editor, open, updateResults])
 
-  // 替换当前
+  //
   const handleReplace = useCallback(() => {
     if (!editor) return
     replaceCurrent(editor)
     updateResults()
   }, [editor, updateResults])
 
-  // 替换全部
+  //
   const handleReplaceAll = useCallback(() => {
     if (!editor) return
     replaceAll(editor)
     updateResults()
   }, [editor, updateResults])
 
-  // 查找上一个
+  //
   const handlePrev = useCallback(() => {
     if (!editor) return
     prevResult(editor)
     updateResults()
   }, [editor, updateResults])
 
-  // 查找下一个
+  //
   const handleNext = useCallback(() => {
     if (!editor) return
     nextResult(editor)
     updateResults()
   }, [editor, updateResults])
 
-  // 关闭面板时清除搜索
+  //
   const handleClose = useCallback(() => {
     if (editor) {
       clearSearch(editor)
@@ -255,7 +255,7 @@ export function SearchReplacePanel({ editor, open, onOpenChange }: SearchReplace
     onOpenChange(false)
   }, [editor, onOpenChange])
 
-  // 搜索文本变化
+  //
   const handleSearchChange = useCallback((value: string) => {
     setSearchText(value)
     if (editor && value) {
@@ -268,7 +268,7 @@ export function SearchReplacePanel({ editor, open, onOpenChange }: SearchReplace
     }, 0)
   }, [editor, updateResults])
 
-  // 替换文本变化
+  //
   const handleReplaceChange = useCallback((value: string) => {
     setReplaceText(value)
     if (editor) {
@@ -276,7 +276,7 @@ export function SearchReplacePanel({ editor, open, onOpenChange }: SearchReplace
     }
   }, [editor])
 
-  // 大小写切换
+  //
   const handleCaseSensitiveToggle = useCallback(() => {
     const newValue = !caseSensitive
     setCaseSensitive(newValue)
@@ -298,7 +298,7 @@ export function SearchReplacePanel({ editor, open, onOpenChange }: SearchReplace
           <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             id="searchAndReplace-replace-input"
-            placeholder="搜索..."
+            placeholder="Search..."
             value={searchText}
             onChange={(e) => handleSearchChange(e.target.value)}
             onKeyDown={(e) => {
@@ -328,7 +328,7 @@ export function SearchReplacePanel({ editor, open, onOpenChange }: SearchReplace
           className="size-8"
           onClick={handlePrev}
           disabled={resultCount === 0}
-          title="上一个 (Shift+Enter)"
+          title="(Shift+Enter)"
         >
           <ChevronUp className="w-4 h-4" />
         </Button>
@@ -338,7 +338,7 @@ export function SearchReplacePanel({ editor, open, onOpenChange }: SearchReplace
           className="size-8"
           onClick={handleNext}
           disabled={resultCount === 0}
-          title="下一个 (Enter)"
+          title="Next (Enter)"
         >
           <ChevronDown className="w-4 h-4" />
         </Button>
@@ -347,7 +347,7 @@ export function SearchReplacePanel({ editor, open, onOpenChange }: SearchReplace
           size="icon"
           className="size-8"
           onClick={handleClose}
-          title="关闭 (Esc)"
+          title="Close (Esc)"
         >
           <X className="w-4 h-4" />
         </Button>
@@ -357,7 +357,7 @@ export function SearchReplacePanel({ editor, open, onOpenChange }: SearchReplace
         <div className="relative flex-1">
           <Replace className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="替换为..."
+            placeholder="Replace with..."
             value={replaceText}
             onChange={(e) => handleReplaceChange(e.target.value)}
             onKeyDown={(e) => {
@@ -377,20 +377,20 @@ export function SearchReplacePanel({ editor, open, onOpenChange }: SearchReplace
           size="sm"
           onClick={handleReplace}
           disabled={resultCount === 0}
-          title="替换当前 (Enter)"
+          title="Replace (Enter)"
         >
           <Replace className="w-3 h-3 mr-1" />
-          替换
+          Replace
         </Button>
         <Button
           variant="outline"
           size="sm"
           onClick={handleReplaceAll}
           disabled={resultCount === 0}
-          title="替换全部 (Shift+Enter)"
+          title="Replace all (Shift+Enter)"
         >
           <ReplaceAll className="w-3 h-3 mr-1" />
-          全部
+          All
         </Button>
       </div>
 
@@ -400,7 +400,7 @@ export function SearchReplacePanel({ editor, open, onOpenChange }: SearchReplace
             checked={caseSensitive}
             onCheckedChange={handleCaseSensitiveToggle}
           />
-          <span>区分大小写</span>
+          <span>Match case</span>
         </label>
       </div>
     </>
@@ -411,7 +411,7 @@ export function SearchReplacePanel({ editor, open, onOpenChange }: SearchReplace
       <Drawer open={open} onOpenChange={onOpenChange}>
         <DrawerContent className="max-h-[80vh]">
           <DrawerHeader>
-            <DrawerTitle>搜索和替换</DrawerTitle>
+            <DrawerTitle>Find and replace</DrawerTitle>
           </DrawerHeader>
           <div className="px-4 pb-6">
             {panelContent}

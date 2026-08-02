@@ -15,22 +15,19 @@ import {
 import emitter from '@/lib/emitter'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import 'dayjs/locale/zh-cn'
 import 'dayjs/locale/en'
-import useSettingStore from '@/stores/setting'
 
-// 初始化 dayjs 插件
+// dayjs
 dayjs.extend(relativeTime)
 
-// 格式化相对时间
-function formatRelativeTime(timestamp: number, locale: string): string {
-  const dayjsLocale = locale === 'en' ? 'en' : 'zh-cn'
+//
+function formatRelativeTime(timestamp: number): string {
+  const dayjsLocale = 'en'
   return dayjs(timestamp).locale(dayjsLocale).fromNow()
 }
 
 export default function ChatEmpty() {
   const t = useTranslations('record.chat.empty')
-  const { language } = useSettingStore()
 
   const {
     conversations,
@@ -40,19 +37,19 @@ export default function ChatEmpty() {
     isTemporaryConversation,
   } = useChatStore()
 
-  // 快速 prompt 模板 - 默认模板
+  // prompt -
   const quickPrompts = useMemo(() => [
-    { id: 1, icon: <FileEdit className="w-4 h-4" />, text: t('quickPrompts.writeNote') || '帮我写一篇笔记' },
-    { id: 2, icon: <FileText className="w-4 h-4" />, text: t('quickPrompts.summarize') || '帮我总结这段内容' },
-    { id: 3, icon: <Lightbulb className="w-4 h-4" />, text: t('quickPrompts.brainstorm') || '帮我头脑风暴一些想法' },
+    { id: 1, icon: <FileEdit className="w-4 h-4" />, text: t('quickPrompts.writeNote') || 'Help me write a note' },
+    { id: 2, icon: <FileText className="w-4 h-4" />, text: t('quickPrompts.summarize') || 'Help me summarize this content' },
+    { id: 3, icon: <Lightbulb className="w-4 h-4" />, text: t('quickPrompts.brainstorm') || 'Help me brainstorm some ideas' },
   ], [t])
 
   const handleQuickPrompt = (prompt: string) => {
-    // 将文本插入到输入框
+    //
     emitter.emit('quick-prompt-insert', prompt)
   }
 
-  // 获取最近 3 条会话（排除当前会话和空会话）
+  // 3 （）
   const recentConversations = useMemo(() => {
     return conversations
       .filter(c => c.id !== currentConversationId && c.messageCount > 0)
@@ -124,7 +121,7 @@ export default function ChatEmpty() {
 
         {/* Quick Prompts */}
         <div className="space-y-2">
-          <p className="text-xs text-muted-foreground px-1">{t('quickPrompts.title') || '快速开始'}</p>
+          <p className="text-xs text-muted-foreground px-1">{t('quickPrompts.title') || 'Quick start'}</p>
           {quickPrompts.map((prompt) => (
             <button
               type="button"
@@ -166,11 +163,11 @@ export default function ChatEmpty() {
                   </div>
                 </button>
                 <div className="relative ml-auto flex shrink-0 items-center justify-end">
-                    {/* 时间戳 - 悬停时隐藏 */}
+                    {/* - */}
                     <span className="absolute right-0 hidden whitespace-nowrap text-xs text-muted-foreground opacity-100 transition-opacity duration-200 ease-out md:inline md:group-hover:opacity-0">
-                      {formatRelativeTime(conv.updatedAt, language)}
+                      {formatRelativeTime(conv.updatedAt)}
                     </span>
-                    {/* 删除按钮 - 悬停时显示 */}
+                    {/* - */}
                     <Button
                       variant="ghost"
                       size="icon"

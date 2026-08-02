@@ -68,7 +68,7 @@ export default function ShortcutsInput({
     await setShortcut(name, '')
   }
 
-  // 根据系统转化 CommandOrControl
+  // CommandOrControl
   function transformKey(key: string) {
     if (platform() === 'macos') {
       switch (key) {

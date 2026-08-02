@@ -92,7 +92,7 @@ const renderInfographicError = (container: HTMLElement, error: unknown) => {
   const message = error instanceof Error ? error.message : String(error);
   container.innerHTML = `
     <div style="color: #b91c1c; padding: 10px; border: 1px solid #b91c1c; background: rgba(185, 28, 28, 0.08);">
-      Infographic 渲染失败: ${message}
+      Infographic render failed: ${message}
     </div>
   `;
 };
@@ -114,7 +114,7 @@ const ensureInfographicContainer = (element: HTMLElement) => {
   container.style.width = '100%';
   container.style.minHeight = `${INFOGRAPHIC_MIN_HEIGHT}px`;
   container.style.overflow = 'hidden';
-  container.textContent = '正在加载 Infographic...';
+  container.textContent = 'Loading Infographic...';
 
   element.innerHTML = '';
   element.appendChild(container);
@@ -167,7 +167,7 @@ export const renderInfographicElements = (
     node.setAttribute(DATA_PROCESSED_ATTR, 'true');
 
     const container = ensureInfographicContainer(node);
-    container.textContent = '正在加载 Infographic...';
+    container.textContent = 'Loading infographic...';
     void renderInfographic(container, code, { themeMode });
   });
 };

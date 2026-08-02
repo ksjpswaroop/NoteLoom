@@ -3,7 +3,7 @@ import { AiConfig } from "@/app/core/setting/config";
 import { handleAIError } from "./utils";
 import { invokeAiJson, resolveAiRequestConfig } from "./tauri-client";
 
-// 嵌入请求响应类型
+//
 interface EmbeddingResponse {
   object: string;
   model: string;
@@ -28,7 +28,7 @@ interface RerankResponse {
 }
 
 /**
- * 获取嵌入模型信息
+ * 
  */
 export async function getEmbeddingModelInfo() {
   const store = await Store.load('store.json');
@@ -38,15 +38,15 @@ export async function getEmbeddingModelInfo() {
   const aiModelList = await store.get<AiConfig[]>('aiModelList');
   if (!aiModelList) return null;
   
-  // 在新的数据结构中，需要找到包含指定模型ID的配置
+  // ，ID
   for (const config of aiModelList) {
-    // 检查新的 models 数组结构
+    // models
     if (config.models && config.models.length > 0) {
       const targetModel = config.models.find(model => 
         model.id === embeddingModel && model.modelType === 'embedding'
       );
       if (targetModel) {
-        // 返回合并了模型配置的 AiConfig
+        // AiConfig
         return {
           ...config,
           model: targetModel.model,
@@ -58,7 +58,7 @@ export async function getEmbeddingModelInfo() {
         };
       }
     } else {
-      // 向后兼容：处理旧的单模型结构
+      // ：
       if (config.key === embeddingModel && config.modelType === 'embedding') {
         return config;
       }
@@ -81,7 +81,7 @@ export async function getEmbeddingModelDescriptor(): Promise<{
 }
 
 /**
- * 获取重排序模型信息
+ * 
  */
 export async function getRerankModelInfo() {
   const store = await Store.load('store.json');
@@ -91,15 +91,15 @@ export async function getRerankModelInfo() {
   const aiModelList = await store.get<AiConfig[]>('aiModelList');
   if (!aiModelList) return null;
   
-  // 在新的数据结构中，需要找到包含指定模型ID的配置
+  // ，ID
   for (const config of aiModelList) {
-    // 检查新的 models 数组结构
+    // models
     if (config.models && config.models.length > 0) {
       const targetModel = config.models.find(model => 
         model.id === rerankModel && model.modelType === 'rerank'
       );
       if (targetModel) {
-        // 返回合并了模型配置的 AiConfig
+        // AiConfig
         return {
           ...config,
           model: targetModel.model,
@@ -111,7 +111,7 @@ export async function getRerankModelInfo() {
         };
       }
     } else {
-      // 向后兼容：处理旧的单模型结构
+      // ：
       if (config.key === rerankModel && config.modelType === 'rerank') {
         return config;
       }
@@ -122,25 +122,25 @@ export async function getRerankModelInfo() {
 }
 
 /**
- * 检查是否有重排序模型可用
+ * 
  */
 export async function checkRerankModelAvailable(): Promise<boolean> {
   try {
-    // 获取重排序模型信息
+    //
     const modelInfo = await getRerankModelInfo();
     if (!modelInfo) return false;
     
     const { baseURL, model } = modelInfo;
     if (!baseURL || !model) return false;
     
-    // 测试重排序模型
-    const testQuery = '测试查询';
+    //
+    const testQuery = 'Test query';
     const testDocuments = [
-      '这是一个测试文档', 
-      '这是另一个测试文档'
+      'This is a test document', 
+      'This is another test document'
     ];
     
-    // 发送测试请求
+    //
     const data = await invokeAiJson<RerankResponse>({
       config: await resolveAiRequestConfig(modelInfo),
       path: '/rerank',
@@ -153,15 +153,15 @@ export async function checkRerankModelAvailable(): Promise<boolean> {
     });
     return !!(data && data.results);
   } catch (error) {
-    console.error('重排序模型检查失败:', error);
+    console.error('Rerank model check failed:', error);
     return false;
   }
 }
 
 /**
- * 请求嵌入向量
- * @param text 需要嵌入的文本
- * @returns 嵌入向量结果，如果失败则返回null
+ * 
+ * @param text 
+ * @returns ，null
  */
 export async function fetchEmbedding(
   text: string,
@@ -169,19 +169,19 @@ export async function fetchEmbedding(
 ): Promise<number[] | null> {
   try {
     if (text.length) {
-      // 获取嵌入模型信息
+      //
       const modelInfo = await getEmbeddingModelInfo();
       if (!modelInfo) {
-        throw new Error('未配置嵌入模型或模型配置不正确');
+        throw new Error('Embedding model not configured or misconfigured');
       }
       
       const { baseURL, model } = modelInfo;
 
       if (!baseURL || !model) {
-        throw new Error('嵌入模型配置不完整');
+        throw new Error('Embedding model configuration incomplete');
       }
       
-      // 发送嵌入请求
+      //
       const data = await invokeAiJson<EmbeddingResponse>({
         config: await resolveAiRequestConfig(modelInfo),
         path: '/embeddings',
@@ -193,7 +193,7 @@ export async function fetchEmbedding(
         }
       });
       if (!data || !data.data || !data.data[0] || !data.data[0].embedding) {
-        throw new Error('嵌入结果格式不正确');
+        throw new Error('Invalid embedding result format');
       }
       
       return data.data[0].embedding;
@@ -207,7 +207,7 @@ export async function fetchEmbedding(
 }
 
 /**
- * 批量计算嵌入。提供商不支持数组输入或返回不完整时，自动退回逐条请求。
+ * 。，。
  */
 export async function fetchEmbeddings(texts: string[]): Promise<Array<number[] | null>> {
   if (texts.length === 0) return [];
@@ -231,11 +231,11 @@ export async function fetchEmbeddings(texts: string[]): Promise<Array<number[] |
     });
     const ordered = [...(data?.data || [])].sort((a, b) => a.index - b.index);
     if (ordered.length !== texts.length || ordered.some(item => !Array.isArray(item.embedding))) {
-      throw new Error('批量嵌入结果数量不匹配');
+      throw new Error('Batch embedding result count mismatch');
     }
     return ordered.map(item => item.embedding);
   } catch (error) {
-    console.warn('[Embedding] 批量请求失败，退回逐条计算:', error);
+    console.warn('[Embedding] Batch request failed; falling back to per-item calculation:', error);
     const results: Array<number[] | null> = [];
     for (const text of texts) {
       results.push(await fetchEmbedding(text));
@@ -245,10 +245,10 @@ export async function fetchEmbeddings(texts: string[]): Promise<Array<number[] |
 }
 
 /**
- * 使用重排序模型重新排序检索的文档
- * @param query 用户查询
- * @param documents 要重新排序的文档列表
- * @returns 重新排序后的文档列表
+ * 
+ * @param query 
+ * @param documents 
+ * @returns 
  */
 export async function rerankDocuments(
   query: string,
@@ -285,7 +285,7 @@ export async function rerankDocuments(
     });
 
     if (!data || !data.results) {
-      throw new Error('重排序结果格式不正确');
+      throw new Error('Invalid rerank result format');
     }
 
     const scoredResults = data.results.flatMap((result, index) => {
@@ -296,7 +296,7 @@ export async function rerankDocuments(
       return Number.isFinite(candidateScore) ? [{ originalDoc, candidateScore }] : [];
     });
     if (scoredResults.length === 0) {
-      throw new Error('重排序结果没有有效分数');
+      throw new Error('Rerank results have no valid scores');
     }
 
     const rawScores = scoredResults.map(result => result.candidateScore);
@@ -308,13 +308,13 @@ export async function rerankDocuments(
       return maxRawScore > 0 ? score / maxRawScore : 0;
     };
 
-    // 将常见的概率、logit 和正数打分统一到 0-1，再应用同一个相关性阈值。
+    // 、logit 0-1，。
     const normalizedResults = scoredResults.map(result => ({
       ...result.originalDoc,
       similarity: normalizeRerankScore(result.candidateScore)
     }));
     const maxRerankScore = Math.max(...normalizedResults.map(result => result.similarity));
-    // 如果 rerank 模型认为没有相关文档，返回空结果而不是为了凑数量引入噪声。
+    // rerank ，。
     if (maxRerankScore < relevanceThreshold) {
       return [];
     }
@@ -323,7 +323,7 @@ export async function rerankDocuments(
 
     return rerankResults.sort((a: {similarity: number}, b: {similarity: number}) => b.similarity - a.similarity);
   } catch (error) {
-    console.error('[Rerank] 重排序失败:', error);
+    console.error('[Rerank] Rerank failed:', error);
     return documents;
   }
 }

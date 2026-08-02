@@ -17,12 +17,12 @@ function getDefaultLayout(layoutKey: string) {
   if (layout) {
     try {
       const parsed = JSON.parse(layout);
-      // 验证总和是否为 100
+      // 100
       const sum = parsed.reduce((a: number, b: number) => a + b, 0);
       if (Math.abs(sum - 100) < 0.1) {
         return parsed;
       }
-      // 如果总和不是 100，清除这个无效的值
+      // 100，
       console.warn(`Invalid layout sum ${sum} for ${layoutKey}, using defaults`);
       localStorage.removeItem(storageKey);
     } catch (e) {
@@ -30,24 +30,24 @@ function getDefaultLayout(layoutKey: string) {
     }
   }
   
-  // 根据布局组合返回默认值，但始终返回3个面板的尺寸
+  // ，3
   switch (layoutKey) {
     case 'left-center-right':
       return [20, 50, 30]
     case 'left-center':
-      return [30, 70, 0] // 右侧折叠
+      return [30, 70, 0] //
     case 'center-right':
-      return [0, 60, 40] // 左侧折叠
+      return [0, 60, 40] //
     case 'left-right':
-      return [50, 0, 50] // 中间折叠
+      return [50, 0, 50] //
     case 'left':
-      return [100, 0, 0] // 只有左侧
+      return [100, 0, 0] //
     case 'center':
-      return [0, 100, 0] // 只有中间
+      return [0, 100, 0] //
     case 'right':
-      return [0, 0, 100] // 只有右侧
+      return [0, 0, 100] //
     default:
-      return [30, 40, 30] // 默认三等分
+      return [30, 40, 30] //
   }
 }
 
@@ -70,7 +70,7 @@ function ResizableWrapper() {
   const [minRightSidebarSize, setMinRightSidebarSize] = useState(20)
   const [minEditorSize, setMinEditorSize] = useState(30)
   
-  // 使用稳定的 layoutKey 用于存储，但不作为 React key
+  // layoutKey ， React key
   const visiblePanels = [
     leftSidebarVisible && 'left',
     centerPanelVisible && 'center',
@@ -88,7 +88,7 @@ function ResizableWrapper() {
     setMinEditorSize(Math.min(minEditorPercent, 50))
   }
 
-  // 初始化侧边栏状态
+  //
   useEffect(() => {
     initSidebarState()
     calculateMinSizes()
@@ -97,7 +97,7 @@ function ResizableWrapper() {
     return () => window.removeEventListener('resize', calculateMinSizes)
   }, [])
 
-  // 当面板可见性变化时，控制面板的折叠和展开
+  // ，
   useEffect(() => {
     const expandPanel = (panel: PanelImperativeHandle, fallbackSize: number) => {
       panel.expand()
@@ -107,7 +107,7 @@ function ResizableWrapper() {
     }
 
     const timer = setTimeout(() => {
-      // 左侧面板
+      //
       if (leftPanelRef.current) {
         if (leftSidebarVisible) {
           expandPanel(leftPanelRef.current, minLeftSidebarSize)
@@ -116,7 +116,7 @@ function ResizableWrapper() {
         }
       }
       
-      // 中间面板
+      //
       if (centerPanelRef.current) {
         if (centerPanelVisible) {
           expandPanel(centerPanelRef.current, minEditorSize)
@@ -125,7 +125,7 @@ function ResizableWrapper() {
         }
       }
       
-      // 右侧面板
+      //
       if (rightPanelRef.current) {
         if (rightSidebarVisible) {
           expandPanel(rightPanelRef.current, minRightSidebarSize)
@@ -137,37 +137,37 @@ function ResizableWrapper() {
     return () => clearTimeout(timer)
   }, [leftSidebarVisible, centerPanelVisible, rightSidebarVisible, minEditorSize, minLeftSidebarSize, minRightSidebarSize])
 
-  // 根据面板可见性渲染布局
-  // 注意：左侧面板始终渲染，所以 layoutKey 用于存储，但实际布局计算需要考虑左侧始终存在
+  //
+  // ：， layoutKey ，
   
-  // 计算实际需要的默认尺寸（所有面板始终存在）
+  // （）
   const getActualLayout = () => {
     const savedLayout = getDefaultLayout(layoutKey)
     
-    // 所有面板都始终渲染，直接返回保存的布局或默认布局
+    // ，
     if (savedLayout.length === 3) {
       return savedLayout
     }
     
-    // 如果保存的布局不是3个值，使用默认布局
-    return [30, 40, 30] // 左侧30%，中间40%，右侧30%
+    // 3，
+    return [30, 40, 30] // 30%，40%，30%
   }
   
   const actualLayout = getActualLayout()
   
   const onLayout = (layout: Layout) => {
-    // 保存当前面板布局
+    //
     const storageKey = `react-resizable-panels:main-layout:${layoutKey}`
     const sizes = ['left', 'center', 'right'].map((id) => layout[id] ?? 0)
     localStorage.setItem(storageKey, JSON.stringify(sizes));
   };
 
-  // 根据可见面板数量动态构建布局
+  //
   const renderLayout = () => {
     const panels = []
     let index = 0
 
-    // 左侧面板
+    //
     panels.push(
       <ResizablePanel
         key="left"
@@ -182,8 +182,8 @@ function ResizableWrapper() {
       </ResizablePanel>
     )
 
-    // 左侧和中间之间的分隔条
-    // 当中间面板可见时显示；当中间面板不可见但左右都可见时也显示（作为左右分隔条）
+    //
+    // ；（）
     const shouldShowLeftHandle = leftSidebarVisible && (centerPanelVisible || rightSidebarVisible)
     panels.push(
       <ResizableHandle
@@ -192,7 +192,7 @@ function ResizableWrapper() {
       />
     )
 
-    // 中间面板
+    //
     panels.push(
       <ResizablePanel
         key="center"
@@ -207,8 +207,8 @@ function ResizableWrapper() {
       </ResizablePanel>
     )
 
-    // 中间和右侧之间的分隔条
-    // 只有当中间面板可见时才显示此分隔条
+    //
+    //
     panels.push(
       <ResizableHandle
         key="handle-center-right"
@@ -216,7 +216,7 @@ function ResizableWrapper() {
       />
     )
 
-    // 右侧面板
+    //
     panels.push(
       <ResizablePanel
         key="right"
@@ -247,7 +247,7 @@ function ResizableWrapper() {
 
 function Page() {
   useEffect(() => {
-    // 保存当前页面路径
+    //
     async function saveCurrentPage() {
       const store = await Store.load('store.json')
       await store.set('currentPage', '/core/main')

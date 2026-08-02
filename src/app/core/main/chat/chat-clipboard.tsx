@@ -64,7 +64,7 @@ export function ChatClipboard({chat}: { chat: Chat }) {
   async function handleInset() {
     setLoading(true)
     const queueId = uuid()
-    // 获取文件后缀
+    //
     addQueue({ queueId, tagId: currentTagId!, progress: t('record.mark.progress.saveImage'), type: 'image', startTime: Date.now() })
     const isImageFolderExists = await exists('image', { baseDir: BaseDirectory.AppData})
     if (!isImageFolderExists) {
@@ -108,7 +108,7 @@ export function ChatClipboard({chat}: { chat: Chat }) {
     const fileData = await readFile(toPath, { baseDir: BaseDirectory.AppData  })
     const blob = new Blob([new Uint8Array(fileData)], { type: 'image/png' })
     const file = new File([blob], `${queueId}.png`, { type: 'image/png' })
-    // 上传图片
+    //
     const url = await uploadImage(file)
     if (url) {
       mark.url = url

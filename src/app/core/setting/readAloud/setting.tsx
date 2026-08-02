@@ -19,7 +19,7 @@ export function Setting() {
     { value: 'model', label: t('options.mode.model') },
   ];
 
-  // 加载语速设置
+  //
   useEffect(() => {
     async function loadSpeed() {
       if (!audioModel) return;
@@ -27,10 +27,10 @@ export function Setting() {
       const models = await store.get<any[]>('aiModelList');
       if (!models) return;
       
-      // 查找音频模型配置，适配新的多模型数据结构
+      // ，
       let currentSpeed = 1;
       for (const config of models) {
-        // 检查新的 models 数组结构
+        // models
         if (config.models && config.models.length > 0) {
           const targetModel = config.models.find((model: any) => 
             model.id === audioModel && model.modelType === 'audio'
@@ -40,7 +40,7 @@ export function Setting() {
             break;
           }
         } else {
-          // 向后兼容：处理旧的单模型结构
+          // ：
           if (config.key === audioModel && config.modelType === 'audio' && config.speed !== undefined) {
             currentSpeed = config.speed;
             break;
@@ -54,7 +54,7 @@ export function Setting() {
     loadSpeed();
   }, [audioModel]);
 
-  // 保存语速设置
+  //
   const handleSpeedChange = async (value: number[]) => {
     const newSpeed = value[0];
     setSpeed(newSpeed);
@@ -64,9 +64,9 @@ export function Setting() {
     const store = await Store.load('store.json');
     const models = await store.get<any[]>('aiModelList') || [];
     
-    // 更新音频模型的语速设置，适配新的多模型数据结构
+    // ，
     const updatedModels = models.map(config => {
-      // 检查新的 models 数组结构
+      // models
       if (config.models && config.models.length > 0) {
         const updatedConfig = { ...config };
         updatedConfig.models = config.models.map((model: any) => {
@@ -77,7 +77,7 @@ export function Setting() {
         });
         return updatedConfig;
       } else {
-        // 向后兼容：处理旧的单模型结构
+        // ：
         if (config.key === audioModel && config.modelType === 'audio') {
           return { ...config, speed: newSpeed };
         }

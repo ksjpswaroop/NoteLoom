@@ -83,9 +83,9 @@ export function MobileRecordTools({ onClose, onOrganize }: MobileRecordToolsProp
       return
     }
 
-    // 发射工具快捷键事件
+    //
     emitter.emit(`toolbar-shortcut-${toolId}` as any)
-    // 点击后关闭弹窗
+    //
     if (onClose) {
       onClose()
     }

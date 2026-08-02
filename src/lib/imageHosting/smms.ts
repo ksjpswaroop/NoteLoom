@@ -34,7 +34,7 @@ export async function uploadImageBySmms(file: File) {
   }
 }
 
-// 使用 S.EE 文件域名接口校验 Token 是否可用
+// S.EE Token
 export async function getUserInfo() {
   const store = await Store.load('store.json');
   const config = await store.get<SMMSImageHostingSetting>('smms')

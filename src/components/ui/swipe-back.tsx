@@ -11,8 +11,8 @@ export interface SwipeBackHandle {
 
 interface SwipeBackProps {
   children: React.ReactNode
-  edgeWidth?: number // 左侧边缘触发区域宽度（像素）
-  threshold?: number // 触发返回的滑动距离阈值（像素）
+  edgeWidth?: number // （）
+  threshold?: number // （）
   enabled?: boolean
   onBack?: () => void
   className?: string
@@ -44,7 +44,7 @@ export const SwipeBack = forwardRef<SwipeBackHandle, SwipeBackProps>(
   const navigating = useRef(false)
   const exiting = useRef(false)
 
-  // 检查是否可以返回
+  //
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setCanGoBack(Boolean(onBack) || window.history.length > 1)
@@ -73,7 +73,7 @@ export const SwipeBack = forwardRef<SwipeBackHandle, SwipeBackProps>(
     const touch = e.touches[0]
     const touchX = touch.clientX
 
-    // 只在左侧边缘区域响应
+    //
     if (touchX <= edgeWidth && !navigating.current && !exiting.current) {
       touchStartX.current = touch.clientX
       touchStartY.current = touch.clientY

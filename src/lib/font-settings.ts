@@ -6,7 +6,7 @@ export const APP_FONT_SYSTEM_VALUE = '__notegen_system_font__'
 export const APP_FONT_GENERIC_FAMILIES = ['sans-serif', 'serif', 'monospace'] as const
 
 export const DEFAULT_APP_FONT_FAMILY =
-  '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", "WenQuanYi Micro Hei", Arial, sans-serif'
+  '"Avenir Next", "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", "WenQuanYi Micro Hei", system-ui, sans-serif'
 
 interface SystemFontPayload {
   family: string

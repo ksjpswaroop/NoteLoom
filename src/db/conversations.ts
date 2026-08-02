@@ -9,7 +9,7 @@ export interface Conversation {
   isPinned: boolean
 }
 
-// 创建 conversations 表
+// conversations
 export async function initConversationsDb() {
   const db = await getDb()
   await db.execute(`
@@ -23,7 +23,7 @@ export async function initConversationsDb() {
     )
   `)
 
-  // 创建索引
+  //
   await db.execute(`
     create index if not exists idx_conversations_created on conversations(createdAt desc)
   `)
@@ -31,71 +31,71 @@ export async function initConversationsDb() {
     create index if not exists idx_conversations_updated on conversations(updatedAt desc)
   `)
 
-  // 检查并添加 conversationId 列到 chats 表
+  // conversationId chats
   try {
     await db.execute(`
       alter table chats add column conversationId integer default null
     `)
   } catch {
-    // 如果列已存在，忽略错误
+    // ，
   }
 
-  // 迁移现有数据到默认会话
+  //
   await migrateExistingChats()
 }
 
-// 迁移现有聊天记录到默认会话
+//
 async function migrateExistingChats() {
   const db = await getDb()
 
-  // 获取所有现有聊天记录
+  //
   const allChats = await db.select<{ createdAt: number }[]>(
     "select createdAt from chats order by createdAt",
     []
   )
 
-  // 如果没有聊天记录，不需要迁移
+  // ，
   if (allChats.length === 0) {
     return
   }
 
-  // 检查是否有聊天记录没有 conversationId
+  // conversationId
   const chatsWithoutConversation = await db.select<{ id: number }[]>(
     "select id from chats where conversationId is null limit 1",
     []
   )
 
-  // 如果所有聊天记录都已经有 conversationId，不需要迁移
+  // conversationId，
   if (chatsWithoutConversation.length === 0) {
     return
   }
 
-  // 检查是否已经有默认会话
+  //
   const existingConversations = await db.select<Conversation[]>(
-    "select * from conversations where title = '历史对话' limit 1",
+    "select * from conversations where title = 'Chat history' limit 1",
     []
   )
 
   let defaultConversationId: number
 
   if (existingConversations.length === 0) {
-    // 创建历史会话
+    //
     const firstChat = allChats[0]
     const lastChat = allChats[allChats.length - 1]
     const result = await db.execute(
       "insert into conversations (title, createdAt, updatedAt, messageCount, isPinned) values ($1, $2, $3, $4, $5)",
-      ['历史对话', firstChat.createdAt, lastChat.createdAt, allChats.length, 0]
+      ['Chat history', firstChat.createdAt, lastChat.createdAt, allChats.length, 0]
     )
     defaultConversationId = result.lastInsertId as number
 
-    // 更新所有现有聊天记录的 conversationId
+    // conversationId
     await db.execute(
       "update chats set conversationId = $1 where conversationId is null",
       [defaultConversationId]
     )
   } else {
     defaultConversationId = existingConversations[0].id
-    // 更新所有没有 conversationId 的聊天记录
+    // conversationId
     await db.execute(
       "update chats set conversationId = $1 where conversationId is null",
       [defaultConversationId]
@@ -103,7 +103,7 @@ async function migrateExistingChats() {
   }
 }
 
-// 创建新会话
+//
 export async function createConversation(title: string): Promise<number> {
   const db = await getDb()
   const now = Date.now()
@@ -114,7 +114,7 @@ export async function createConversation(title: string): Promise<number> {
   return result.lastInsertId as number
 }
 
-// 获取所有会话
+//
 export async function getAllConversations(): Promise<Conversation[]> {
   const db = await getDb()
   const result = await db.select<Conversation[]>(
@@ -124,7 +124,7 @@ export async function getAllConversations(): Promise<Conversation[]> {
   return result
 }
 
-// 获取单个会话
+//
 export async function getConversation(id: number): Promise<Conversation | null> {
   const db = await getDb()
   const result = await db.select<Conversation[]>(
@@ -134,7 +134,7 @@ export async function getConversation(id: number): Promise<Conversation | null> 
   return result[0] || null
 }
 
-// 更新会话标题
+//
 export async function updateConversationTitle(id: number, title: string): Promise<void> {
   const db = await getDb()
   await db.execute(
@@ -143,7 +143,7 @@ export async function updateConversationTitle(id: number, title: string): Promis
   )
 }
 
-// 更新会话消息数量
+//
 export async function updateConversationMessageCount(id: number, delta: number): Promise<void> {
   const db = await getDb()
   await db.execute(
@@ -152,7 +152,7 @@ export async function updateConversationMessageCount(id: number, delta: number):
   )
 }
 
-// 更新会话的最后更新时间
+//
 export async function updateConversationTime(id: number): Promise<void> {
   const db = await getDb()
   await db.execute(
@@ -161,7 +161,7 @@ export async function updateConversationTime(id: number): Promise<void> {
   )
 }
 
-// 删除会话及其相关聊天记录
+//
 export async function deleteConversation(id: number): Promise<void> {
   const db = await getDb()
   await db.execute(
@@ -176,19 +176,19 @@ export async function deleteConversation(id: number): Promise<void> {
     "delete from conversation_compactions where conversationId = $1",
     [id]
   )
-  // 先删除会话的所有聊天记录
+  //
   await db.execute(
     "delete from chats where conversationId = $1",
     [id]
   )
-  // 再删除会话
+  //
   await db.execute(
     "delete from conversations where id = $1",
     [id]
   )
 }
 
-// 切换会话置顶状态
+//
 export async function toggleConversationPin(id: number): Promise<boolean> {
   const db = await getDb()
   const conv = await getConversation(id)
@@ -202,7 +202,7 @@ export async function toggleConversationPin(id: number): Promise<boolean> {
   return !conv.isPinned
 }
 
-// 同步会话的消息数量（从实际消息重新统计）
+// （）
 export async function syncConversationMessageCount(conversationId: number): Promise<void> {
   const db = await getDb()
   const result = await db.select<{ count: number }[]>(

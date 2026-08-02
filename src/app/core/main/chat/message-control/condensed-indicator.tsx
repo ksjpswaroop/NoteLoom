@@ -17,7 +17,7 @@ interface CondensedIndicatorProps {
 export function CondensedIndicator({ chat }: CondensedIndicatorProps) {
   const t = useTranslations('record.chat.messageControl')
 
-  // 仅在有 condensedContent 时显示
+  // condensedContent
   if (!chat.condensedContent) {
     return null
   }

@@ -11,9 +11,9 @@ import { createAiStreamContentProcessor, sanitizeAiRewriteOutput } from './sanit
 const REWRITE_OUTPUT_RULE = 'Never output any thinking, reasoning, analysis, or <think> tags. Output only the final rewritten text.'
 
 /**
- * 润色文本
- * @param text 要润色的文本
- * @returns 润色后的文本
+ * 
+ * @param text 
+ * @returns 
  */
 export async function fetchAiPolish(text: string): Promise<string> {
   try {
@@ -48,9 +48,9 @@ Output:`
 }
 
 /**
- * 精简文本
- * @param text 要精简的文本
- * @returns 精简后的文本
+ * 
+ * @param text 
+ * @returns 
  */
 export async function fetchAiConcise(text: string): Promise<string> {
   try {
@@ -85,9 +85,9 @@ Output:`
 }
 
 /**
- * 拓展文本
- * @param text 要拓展的文本
- * @returns 拓展后的文本
+ * 
+ * @param text 
+ * @returns 
  */
 export async function fetchAiExpand(text: string): Promise<string> {
   try {
@@ -122,10 +122,10 @@ Output:`
 }
 
 /**
- * 流式润色文本
- * @param text 要润色的文本
- * @param onChunk 流式回调函数
- * @param abortSignal 中止信号
+ * 
+ * @param text 
+ * @param onChunk 
+ * @param abortSignal 
  */
 export async function fetchAiPolishStream(
   text: string,
@@ -204,10 +204,10 @@ Output:`
 }
 
 /**
- * 流式精简文本
- * @param text 要精简的文本
- * @param onChunk 流式回调函数
- * @param abortSignal 中止信号
+ * 
+ * @param text 
+ * @param onChunk 
+ * @param abortSignal 
  */
 export async function fetchAiConciseStream(
   text: string,
@@ -286,10 +286,10 @@ Output:`
 }
 
 /**
- * 流式拓展文本
- * @param text 要拓展的文本
- * @param onChunk 流式回调函数
- * @param abortSignal 中止信号
+ * 
+ * @param text 
+ * @param onChunk 
+ * @param abortSignal 
  */
 export async function fetchAiExpandStream(
   text: string,

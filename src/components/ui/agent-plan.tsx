@@ -66,7 +66,7 @@ interface AgentPlanProps {
   isThinking?: boolean;
   currentThought?: string;
   thoughtHistory?: string[];
-  completedSteps?: ReActStep[]; // 已完成的完整步骤
+  completedSteps?: ReActStep[]; // completed full steps
   currentAction?: string;
   currentObservation?: string;
   toolCalls?: ToolCall[];
@@ -84,7 +84,7 @@ interface AgentPlanProps {
     sessionApprovalKey?: string;
   };
   confirmationHistory?: ConfirmationRecord[];
-  currentStepStartTime?: number; // 当前步骤开始时间戳
+  currentStepStartTime?: number; // current step start timestamp
 
   // Props for history mode
   historyJson?: string;
@@ -112,7 +112,7 @@ interface DisplayStep {
   status: "completed" | "in-progress" | "pending" | "need-help" | "failed";
   confirmation?: ConfirmationRecord;
   tools?: string[];
-  duration?: number;  // 耗时（毫秒）
+  duration?: number;  // duration (ms)
 }
 
 export function AgentPlan({
@@ -208,13 +208,13 @@ export function AgentPlan({
     return !normalizedThought || normalizedAnswer.includes(normalizedThought);
   }, [extractFinalAnswer, getThoughtBody]);
 
-  // 实时更新当前步骤的耗时
+  //
   React.useEffect(() => {
     if (mode === "live" && isRunning && currentStepStartTime) {
-      // 立即更新一次
+      //
       setCurrentStepDuration(Date.now() - currentStepStartTime);
 
-      // 设置定时器，每 100ms 更新一次
+      // ， 100ms
       const interval = setInterval(() => {
         setCurrentStepDuration(Date.now() - currentStepStartTime);
       }, 100);
@@ -240,7 +240,7 @@ export function AgentPlan({
           const toolCall = history.toolCalls?.[index];
           let status: DisplayStep["status"] = "completed";
 
-          // 优先使用 toolCall 的实际执行状态，而不是通过文本匹配判断
+          // toolCall ，
           if (toolCall?.result?.success !== undefined) {
             status = toolCall.result.success ? "completed" : "failed";
           } else if (toolCall?.status) {
@@ -252,7 +252,7 @@ export function AgentPlan({
                 status = "failed";
                 break;
               default:
-                // 回退到文本匹配判断
+                //
                 if (step.observation) {
                   status =
                     step.observation.includes("失败") ||
@@ -268,7 +268,7 @@ export function AgentPlan({
                 ? "failed"
                 : "completed";
           } else if (!step.action) {
-            // 只有思考没有动作和观察，说明是未完成的步骤
+            // ，
             status = "pending";
           }
 
@@ -304,20 +304,20 @@ export function AgentPlan({
   const convertLiveData = (): DisplayStep[] => {
     const steps: DisplayStep[] = [];
 
-    // 优先使用 completedSteps（包含完整的步骤信息）
+    // completedSteps（）
     if (completedSteps && completedSteps.length > 0) {
-      // 跟踪已使用的 toolCalls 索引，避免重复匹配
+      // toolCalls ，
       const usedToolCallIndices = new Set<number>();
 
       completedSteps.forEach((step, index) => {
         const confirmation = confirmationHistory[index];
         let status: DisplayStep["status"] = "completed";
 
-        // 通过工具名称匹配 toolCall（而不是索引匹配）
-        // 因为 completedSteps 和 toolCalls 的数量可能不一致
+        // toolCall（）
+        // completedSteps toolCalls
         let toolCall: ToolCall | undefined = undefined;
         if (step.action) {
-          // 从后往前查找，优先使用最新的未使用的 toolCall
+          // ， toolCall
           for (let i = toolCalls.length - 1; i >= 0; i--) {
             if (!usedToolCallIndices.has(i) && toolCalls[i].toolName === step.action.tool) {
               toolCall = toolCalls[i];
@@ -327,7 +327,7 @@ export function AgentPlan({
           }
         }
 
-        // 优先使用 toolCall 的实际执行状态，而不是通过文本匹配判断
+        // toolCall ，
         if (toolCall) {
           switch (toolCall.status) {
             case "success":
@@ -343,7 +343,7 @@ export function AgentPlan({
               status = "pending";
               break;
             default:
-              // 如果 toolCall.status 无效，回退到文本匹配判断
+              // toolCall.status ，
               if (step.observation) {
                 status =
                   step.observation.includes("失败") ||
@@ -355,7 +355,7 @@ export function AgentPlan({
               }
           }
         } else if (step.observation) {
-          // 如果没有对应的 toolCall，回退到文本匹配判断
+          // toolCall，
           status =
             step.observation.includes("失败") ||
             step.observation.includes("错误")
@@ -376,7 +376,7 @@ export function AgentPlan({
         });
       });
     } else {
-      // 兼容旧的 thoughtHistory 格式
+      // thoughtHistory
       thoughtHistory.forEach((thought, index) => {
         const confirmation = confirmationHistory[index];
         let status: DisplayStep["status"] = "completed";
@@ -404,7 +404,7 @@ export function AgentPlan({
       } else if (currentObservation) {
         status = "completed";
       } else if (isThinking && !currentThought) {
-        // 正在等待 AI 生成思考，显示为 pending 状态（会有 loading 效果）
+        // AI ， pending （ loading ）
         status = "pending";
       }
 
@@ -412,7 +412,7 @@ export function AgentPlan({
         id: "current",
         thought: currentThought || "",
         status,
-        duration: currentStepDuration, // 使用实时计算的耗时
+        duration: currentStepDuration, // live-computed duration
       };
 
       if (currentAction) {
@@ -437,13 +437,13 @@ export function AgentPlan({
       steps.push(currentStep);
     }
 
-    // 如果正在思考但没有当前步骤内容，添加一个 loading 步骤
+    // ， loading
     if (isThinking && !currentThought && !currentAction && !currentObservation) {
       steps.push({
         id: "thinking-placeholder",
         thought: "",
         status: "pending",
-        duration: currentStepDuration, // 使用实时计算的耗时
+        duration: currentStepDuration, // live-computed duration
       });
     }
 
@@ -485,7 +485,7 @@ export function AgentPlan({
       if (currentStepId && !expandedTasks.includes(currentStepId)) {
         setExpandedTasks((prev) => {
           const newState = [...prev, currentStepId];
-          // 非嵌入模式下自动展开后滚动到该步骤
+          //
           scrollStepIntoView(currentStepId);
           return newState;
         });
@@ -552,7 +552,7 @@ export function AgentPlan({
     setExpandedTasks((prev) => {
       const isExpanding = !prev.includes(stepId);
       if (isExpanding) {
-        // 非嵌入模式下展开时滚动到该步骤
+        //
         scrollStepIntoView(stepId);
       }
       return prev.includes(stepId)
@@ -600,7 +600,7 @@ export function AgentPlan({
 
   // Extract title from step content (prioritize observation result, then action, then thought)
   const extractTitle = (step: DisplayStep): string => {
-    // 特殊处理 loading 占位符
+    // loading
     if (step.id === "thinking-placeholder" || (!step.thought && !step.action && !step.observation)) {
       return t("thinking");
     }
@@ -614,14 +614,14 @@ export function AgentPlan({
         return extractFromContent(finalAnswer);
       }
 
-      // 预处理：移除首尾的代码块标记 ``` 及其周围的空白行
+      // ： ```
       let processedContent = content.trim();
 
-      // 移除所有 ``` 标记及其所在行
+      // ```
       const lines = processedContent.split('\n');
       const filteredLines = lines.filter(line => {
         const trimmed = line.trim();
-        // 跳过 ``` 行（不管是否有语言标识符）
+        // ``` （）
         if (trimmed === '```' || trimmed.startsWith('```')) {
           return false;
         }
@@ -629,16 +629,16 @@ export function AgentPlan({
       });
       processedContent = filteredLines.join('\n').trim();
 
-      // 按行分割并过滤空行
+      //
       const contentLines = processedContent.split("\n").map(l => l.trim()).filter(l => l);
 
-      // 尝试从第一行获取
+      //
       for (let i = 0; i < Math.min(contentLines.length, 5); i++) {
         const line = contentLines[i];
 
         if (!line) continue;
 
-        // 如果是标题（## 开头），保留标题格式，移除 # 标记
+        // （## ），， #
         const headerMatch = line.match(/^(#{1,6})\s+(.+)$/);
         if (headerMatch) {
           const titleText = headerMatch[2].trim();
@@ -653,7 +653,7 @@ export function AgentPlan({
         }
       }
 
-      // 如果都没找到，返回第一行有效内容
+      // ，
       const firstValidLine = contentLines.find(l => l && l.length > 0);
       return firstValidLine || '';
     };
@@ -700,7 +700,7 @@ export function AgentPlan({
     }
   };
 
-  // 格式化耗时显示
+  //
   const formatDuration = (duration?: number): string => {
     if (duration === undefined || duration === null) return "";
     if (duration < 1000) return `${duration}ms`;
@@ -710,7 +710,7 @@ export function AgentPlan({
     return `${minutes}m ${seconds}s`;
   };
 
-  // 渲染步骤列表内容（用于 embedded 和非 embedded 模式）
+  // （ embedded embedded ）
   const renderSteps = () => (
     <>
       {displaySteps.map((step, index) => {
@@ -753,7 +753,7 @@ export function AgentPlan({
                 </div>
 
                 <div className="flex shrink-0 items-center gap-2">
-                  {/* 耗时显示 */}
+                  {/* */}
                   {step.duration !== undefined && (
                     <span className="text-xs text-muted-foreground tabular-nums">
                       {formatDuration(step.duration)}
@@ -923,7 +923,7 @@ export function AgentPlan({
                 onClick={() => handleConfirm("once")}
               >
                 <CheckCircle data-icon="inline-start" />
-                <span>允许这次</span>
+                <span>Allow once</span>
               </Button>
               {pendingConfirmation.canApproveForSession && (
                 <Button
@@ -934,8 +934,8 @@ export function AgentPlan({
                   <CheckCircle2 data-icon="inline-start" />
                   <span>
                     {pendingConfirmation.sessionApprovalType === "runtime-script"
-                      ? "本会话允许此次脚本调用"
-                      : "本会话都允许"}
+                      ? "Allow this script call for the session"
+                      : "Allow all for this session"}
                   </span>
                 </Button>
               )}
@@ -950,15 +950,15 @@ export function AgentPlan({
   if (mode === "live" && isRunning && displaySteps.length === 0) {
     return (
       <div className="mb-4 w-full">
-        {/* Loading 状态 */}
+        {/* Loading */}
         <div className="flex flex-col items-center justify-center gap-4 py-8">
-          {/* 旋转的 loading 图标 */}
+          {/* loading */}
           <div className="relative">
             <div className="absolute inset-0 rounded-full border-2 border-border/30" />
             <Spinner className="size-8 text-primary" />
           </div>
 
-          {/* 状态文字 */}
+          {/* */}
           <div className="flex flex-col gap-1 text-center">
             <p className="text-sm font-medium text-foreground">
               {isThinking ? t("thinking") : t("running")}
@@ -968,7 +968,7 @@ export function AgentPlan({
             </p>
           </div>
 
-          {/* 脉冲动画点 */}
+          {/* */}
           <div className="flex items-center gap-1.5">
             <div className="size-2 animate-pulse rounded-full bg-primary/60 [animation-delay:0ms]" />
             <div className="size-2 animate-pulse rounded-full bg-primary/60 [animation-delay:150ms]" />
@@ -979,15 +979,15 @@ export function AgentPlan({
     );
   }
 
-  // Embedded 模式：只返回 <li> 元素
+  // Embedded ： <li>
   if (embedded) {
     return <>{renderSteps()}</>
   }
 
-  // 标准模式：返回完整的容器
+  // ：
   return (
     <div className="mb-4 w-full">
-      {/* 步骤列表 */}
+      {/* */}
       <div className="overflow-hidden" ref={contentRef} onScroll={handleScroll}>
         <ul className="flex flex-col gap-1">
           {renderSteps()}

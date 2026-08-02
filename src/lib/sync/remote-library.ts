@@ -153,7 +153,7 @@ async function listObjectStorageFiles(
 ): Promise<RemoteLibraryFile[]> {
   if (platform === 's3') {
     const config = await store.get<S3Config>('s3SyncConfig')
-    if (!config) throw new Error('S3 未配置')
+    if (!config) throw new Error('S3 not configured')
     const objects = await s3ListObjects(config, '')
     return objects
       .filter(object => isLibraryPath(object.key, options))
@@ -166,7 +166,7 @@ async function listObjectStorageFiles(
   }
 
   const config = await store.get<WebDAVConfig>('webdavSyncConfig')
-  if (!config) throw new Error('WebDAV 未配置')
+  if (!config) throw new Error('WebDAV not configured')
   const queue = ['']
   const visited = new Set<string>()
   const files: RemoteLibraryFile[] = []
@@ -233,8 +233,8 @@ export async function pullRemoteLibraryFolder(
   const normalizedFolderPath = folderPath.replace(/^\/+|\/+$/g, '')
   const files = (await listRemoteLibraryFiles({ includeStaticAssets: true }))
     .filter(file => file.path.startsWith(`${normalizedFolderPath}/`))
-  // “下载文件夹”是用户明确发起的远端覆盖操作。已有本地文件也要
-  // 重新下载，否则界面显示完成却无法取得远端更新。
+  // “”。
+  // ，。
   return await pullRemoteLibraryFiles(files, onProgress, { overwriteExisting: true })
 }
 
@@ -377,14 +377,14 @@ export async function downloadRemoteBytes(path: string): Promise<Uint8Array> {
   if (platform === 's3') {
     const config = await store.get<S3Config>('s3SyncConfig')
     const file = config ? await s3DownloadBytes(config, path) : null
-    if (!file) throw new Error('S3 下载失败')
+    if (!file) throw new Error('S3 download failed')
     return file.content
   }
 
   if (platform === 'webdav') {
     const config = await store.get<WebDAVConfig>('webdavSyncConfig')
     const file = config ? await webdavDownloadBytes(config, path) : null
-    if (!file) throw new Error('WebDAV 下载失败')
+    if (!file) throw new Error('WebDAV download failed')
     return file.content
   }
 
@@ -464,14 +464,14 @@ async function uploadRemoteContent(
   if (platform === 's3') {
     const config = await store.get<S3Config>('s3SyncConfig')
     const result = config ? await s3Upload(config, path, content, undefined, contentType) : null
-    if (!result) throw new Error('S3 上传失败')
+    if (!result) throw new Error('S3 upload failed')
     return result.etag || `uploaded:${path}`
   }
 
   if (platform === 'webdav') {
     const config = await store.get<WebDAVConfig>('webdavSyncConfig')
     const result = config ? await webdavUpload(config, path, content, undefined, contentType) : null
-    if (!result) throw new Error('WebDAV 上传失败')
+    if (!result) throw new Error('WebDAV upload failed')
     return result.etag || `uploaded:${path}`
   }
 
@@ -495,7 +495,7 @@ async function uploadRemoteContent(
       break
   }
 
-  if (!response) throw new Error(`${platform} 上传失败`)
+  if (!response) throw new Error(`${platform} Upload failed`)
   return getUploadedRemoteVersion(response) || sha || `uploaded:${path}`
 }
 

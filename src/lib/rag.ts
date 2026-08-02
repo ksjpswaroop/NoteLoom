@@ -17,7 +17,7 @@ import {
   parseBM25ChunkKey
 } from "./bm25";
 
-// 重新导出initVectorDb，使其可在其他模块中导入
+// initVectorDb，
 export { initVectorDb };
 import { getFilePathOptions, getWorkspacePath } from "./workspace";
 import { DirTree } from "@/stores/article";
@@ -38,7 +38,7 @@ import {
 } from './rag-retrieval-policy';
 
 /**
- * 统一错误处理函数
+ * 
  */
 function handleRAGError(error: unknown, context: string, showToast: boolean = true): void {
   const errorMessage = error instanceof Error ? error.message : String(error);
@@ -46,7 +46,7 @@ function handleRAGError(error: unknown, context: string, showToast: boolean = tr
 
   if (showToast) {
     toast({
-      title: 'RAG 功能错误',
+      title: 'RAG feature error',
       description: `${context}: ${errorMessage}`,
       variant: 'destructive',
     });
@@ -54,7 +54,7 @@ function handleRAGError(error: unknown, context: string, showToast: boolean = tr
 }
 
 /**
- * 生成内容哈希值，用于去重
+ * ，
  */
 function generateContentHash(content: string): string {
   return createHash('sha256').update(content.trim()).digest('hex');
@@ -102,7 +102,7 @@ export async function shouldIndexRagPath(path: string): Promise<boolean> {
 }
 
 /**
- * 并发控制函数 - 限制同时执行的任务数量
+ * - 
  */
 async function runWithConcurrencyLimit<T>(
   tasks: (() => Promise<T>)[],
@@ -231,7 +231,7 @@ function parseMarkdownBlocks(text: string, chunkSize: number): MarkdownBlock[] {
 }
 
 /**
- * Markdown 结构化分块：保留标题上下文，并避免从代码块和表格中间截断。
+ * Markdown ：Heading，Code blockTable。
  */
 export function chunkText(
   text: string, 
@@ -280,8 +280,8 @@ export function chunkText(
 }
 
 /**
- * 初始化 BM25 索引
- * 从工作区的 Markdown 文件构建 BM25 索引
+ * BM25 
+ * Markdown File BM25 
  */
 export async function initBM25Search(): Promise<void> {
   try {
@@ -301,22 +301,22 @@ export async function initBM25Search(): Promise<void> {
 
     initBM25Index(documents);
   } catch (error) {
-    console.error('初始化 BM25 索引失败:', error);
+    console.error('Failed to initialize BM25 index:', error);
   }
 }
 
 /**
- * 常用虚词/停用词列表
- * 这些词在搜索时应该被过滤或降权，因为它们在文档中出现频率过高
+ * /List
+ * ，
  */
 const STOP_WORDS = new Set([
-  // 中文虚词
+  //
   '的', '了', '是', '在', '有', '和', '就', '不', '人', '都', '一', '一个',
   '上', '也', '很', '到', '说', '要', '去', '你', '会', '着', '没有', '看',
   '好', '自己', '这', '那', '里', '就是', '为', '与', '之', '用', '可以',
   '但', '而', '或', '及', '等', '对', '把', '被', '让', '给', '从', '向',
 
-  // 英文停用词
+  //
   'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
   'of', 'with', 'by', 'from', 'as', 'is', 'was', 'are', 'were', 'been',
   'be', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could',
@@ -324,20 +324,20 @@ const STOP_WORDS = new Set([
 ]);
 
 /**
- * 同义词词典
- * 用于查询转换优化，生成查询变体
+ * 
+ * ，
  */
 const SYNONYM_DICT: Record<string, string[]> = {
-  // AI/技术术语
+  // AI/
   'ai': ['人工智能', 'artificial intelligence', '机器学习', 'ml'],
   'llm': ['大语言模型', 'large language model', '语言模型'],
   'rag': ['检索增强生成', 'retrieval augmented generation'],
   'agent': ['智能体', '代理', '助手'],
-  'embedding': ['嵌入', '向量', '向量化'],
+  'embedding': ['Embed', '向量', '向量化'],
   'vector': ['向量', '矢量'],
   'prompt': ['提示词', '提示', '指令'],
 
-  // 通用同义词
+  //
   '如何': ['怎么', '怎样', '如何做', '方法'],
   '怎么': ['如何', '怎样', '怎么操作'],
   '怎样': ['如何', '怎么', '怎样做'],
@@ -353,7 +353,7 @@ const SYNONYM_DICT: Record<string, string[]> = {
 };
 
 /**
- * 检查关键词是否为停用词
+ * 
  */
 function isStopWord(keyword: string): boolean {
   const cleanKeyword = keyword.trim().toLowerCase();
@@ -361,7 +361,7 @@ function isStopWord(keyword: string): boolean {
 }
 
 /**
- * 查询转换接口
+ * 
  */
 interface QueryVariant {
   original: string;  // 原始查询
@@ -370,34 +370,34 @@ interface QueryVariant {
 }
 
 /**
- * 基于同义词词典扩展查询
- * @param query 原始查询
- * @param maxVariants 最大变体数量
- * @returns 查询变体列表
+ * 
+ * @param query 
+ * @param maxVariants 
+ * @returns List
  */
 function expandWithSynonyms(query: string, maxVariants: number = 3): QueryVariant[] {
   const variants: QueryVariant[] = [
     { original: query, transformed: query, source: 'original' }
   ];
 
-  // 检查查询中的每个词是否在同义词词典中
+  //
   const queryLower = query.toLowerCase();
   const words = queryLower.split(/\s+/);
 
   for (const word of words) {
-    // 移除标点符号
+    //
     const cleanWord = word.replace(/[^\w\u4e00-\u9fa5]/g, '');
 
     if (SYNONYM_DICT[cleanWord]) {
       const synonyms = SYNONYM_DICT[cleanWord];
 
-      // 为每个同义词生成变体
+      //
       for (const synonym of synonyms) {
         if (variants.length >= maxVariants) break;
 
         const transformed = queryLower.replace(new RegExp(cleanWord, 'gi'), synonym);
 
-        // 避免重复
+        //
         if (!variants.some(v => v.transformed === transformed)) {
           variants.push({
             original: query,
@@ -415,11 +415,11 @@ function expandWithSynonyms(query: string, maxVariants: number = 3): QueryVarian
 }
 
 /**
- * 转换查询（生成多个变体）
- * @param keywords 原始关键词列表
- * @param enableExpansion 是否启用查询扩展
- * @param maxVariants 每个关键词的最大变体数量
- * @returns 扩展后的关键词列表
+ * （）
+ * @param keywords List
+ * @param enableExpansion 
+ * @param maxVariants 
+ * @returns List
  */
 function transformQueries(
   keywords: Keyword[],
@@ -433,12 +433,12 @@ function transformQueries(
   const expandedKeywords: Keyword[] = [];
 
   for (const keyword of keywords) {
-    // 生成查询变体
+    //
     const variants = expandWithSynonyms(keyword.text, maxVariants);
 
-    // 将变体添加到关键词列表
+    // List
     for (const variant of variants) {
-      // 避免重复
+      //
       if (!expandedKeywords.some(k => k.text === variant.transformed)) {
         expandedKeywords.push({
           text: variant.transformed,
@@ -464,18 +464,18 @@ function normalizeKeywordWeights(keywords: Keyword[]): Keyword[] {
 }
 
 /**
- * 扩展检索结果的句子窗口
- * 为每个匹配的 chunk 获取同一文件中相邻的 chunk，提供更完整的上下文
+ * 
+ * chunk File chunk，
  *
- * @param results 原始检索结果
- * @param windowSize 窗口大小（前后各取 N 个 chunk）
- * @returns 扩展后的检索结果
+ * @param results 
+ * @param windowSize （ N chunk）
+ * @returns 
  */
 async function expandWithSentenceWindow(
   results: Array<{ id: number; filename: string; content: string; similarity?: number }>,
   windowSize: number = 2
 ): Promise<Array<{ id: number; filename: string; content: string; similarity?: number }>> {
-  // 按文件分组结果
+  // File
   const resultsByFile = new Map<string, typeof results>();
   for (const result of results) {
     if (!resultsByFile.has(result.filename)) {
@@ -486,24 +486,24 @@ async function expandWithSentenceWindow(
 
   const expandedResults: typeof results = [];
 
-  // 对每个文件的结果进行扩展
+  // File
   for (const [filename, fileResults] of resultsByFile.entries()) {
     try {
-      // 获取该文件的所有向量文档（按 chunk_id 排序）
+      // File（ chunk_id ）
       const allChunks = await getVectorDocumentsByFilename(filename);
 
-      // 创建 chunk_id 到文档的映射
+      // chunk_id
       const chunkMap = new Map<number, VectorDocument>();
       for (const chunk of allChunks) {
         chunkMap.set(chunk.chunk_id, chunk);
       }
 
-      // 对每个结果进行窗口扩展
+      //
       for (const result of fileResults) {
-        // 找到该结果对应的 chunk_id
+        // chunk_id
         let centerChunkId: number | undefined;
 
-        // 通过内容匹配找到 chunk_id
+        // chunk_id
         for (const [chunkId, chunk] of chunkMap.entries()) {
           if (chunk.content === result.content) {
             centerChunkId = chunkId;
@@ -512,12 +512,12 @@ async function expandWithSentenceWindow(
         }
 
         if (centerChunkId === undefined) {
-          // 如果找不到对应的 chunk，直接添加原结果
+          // chunk，
           expandedResults.push(result);
           continue;
         }
 
-        // 获取窗口内的相邻 chunk
+        // chunk
         const windowContents: string[] = [];
         for (let i = centerChunkId - windowSize; i <= centerChunkId + windowSize; i++) {
           const chunk = chunkMap.get(i);
@@ -526,7 +526,7 @@ async function expandWithSentenceWindow(
           }
         }
 
-        // 合并窗口内容
+        //
         const expandedContent = windowContents.join('\n\n---\n\n');
 
         expandedResults.push({
@@ -535,8 +535,8 @@ async function expandWithSentenceWindow(
         });
       }
     } catch (error) {
-      console.error(`扩展文件 ${filename} 的句子窗口失败:`, error);
-      // 失败时保留原结果
+      console.error(`Failed to expand sentence window for ${filename}:`, error);
+      // Failed
       expandedResults.push(...fileResults);
     }
   }
@@ -545,15 +545,15 @@ async function expandWithSentenceWindow(
 }
 
 /**
- * BM25 搜索辅助函数
- * @param query 查询文本
- * @param limit 返回结果数量
- * @returns BM25 检索结果
+ * BM25 
+ * @param query 
+ * @param limit 
+ * @returns BM25 
  */
 async function searchWithBM25(query: string, limit: number = 10): Promise<Array<{id: string, score: number, content: string}>> {
   const index = getBM25Index();
   if (!index) {
-    console.warn('BM25 索引未初始化，跳过 BM25 搜索');
+    console.warn('BM25 index not initialized; skipping BM25 search');
     return [];
   }
 
@@ -564,14 +564,14 @@ async function searchWithBM25(query: string, limit: number = 10): Promise<Array<
 }
 
 /**
- * 处理单个Markdown文件，计算向量并存储到数据库
+ * MarkdownFile，
  */
 export async function processMarkdownFile(
   filePath: string,
   fileContent?: string
 ): Promise<boolean> {
   try {
-    // 检查文件是否在 skills 文件夹下，如果是则跳过处理
+    // File skills File，
     const pathParts = filePath.split('/');
     if (pathParts.some(part => isSkillsFolder(part))) {
       return false;
@@ -587,7 +587,7 @@ export async function processMarkdownFile(
     }
     const vectorDocumentKey = getVectorDocumentKey(filePath);
     const legacyFilename = filePath.split('/').pop() || filePath;
-    // 空文件也视为成功处理，同时清理它可能遗留的旧索引。
+    // File，。
     if (!content || content.trim().length === 0) {
       await deleteVectorDocumentsByFilename(vectorDocumentKey);
       if (legacyFilename !== vectorDocumentKey) {
@@ -600,7 +600,7 @@ export async function processMarkdownFile(
     const chunkSize = await store.get<number>('ragChunkSize');
     const chunkOverlap = await store.get<number>('ragChunkOverlap');
     const chunks = chunkText(content, chunkSize, chunkOverlap).filter(chunk => chunk.trim().length > 0);
-    // 没有有效分块时清理旧索引，避免空内容仍被检索到。
+    // ，。
     if (chunks.length === 0) {
       await deleteVectorDocumentsByFilename(vectorDocumentKey);
       if (legacyFilename !== vectorDocumentKey) {
@@ -635,24 +635,24 @@ export async function processMarkdownFile(
       embeddings.push(...await fetchEmbeddings(chunks.slice(offset, offset + embeddingBatchSize)));
     }
     if (embeddings.length !== chunks.length || embeddings.some(embedding => !embedding)) {
-      console.error(`无法完整计算文件 ${vectorDocumentKey} 的向量，保留旧索引`);
+      console.error(`Could not fully compute vectors for ${vectorDocumentKey}; keeping previous index`);
       return false;
     }
 
-    // 新向量全部计算成功后再替换，避免中途失败破坏旧索引。
+    // ，Failed。
     await deleteVectorDocumentsByFilename(vectorDocumentKey);
     if (legacyFilename !== vectorDocumentKey) {
       await deleteVectorDocumentsByFilename(legacyFilename);
     }
 
-    // 处理每个文本块
+    //
     for (let i = 0; i < chunks.length; i++) {
       const chunk = chunks[i];
 
       const embedding = embeddings[i];
       if (!embedding) continue;
 
-      // 保存到数据库
+      // Save
       await upsertVectorDocument({
         filename: vectorDocumentKey,
         chunk_id: i,
@@ -672,18 +672,18 @@ export async function processMarkdownFile(
 
     return true;
   } catch (error) {
-    console.error(`处理文件 ${filePath} 失败:`, error);
+    console.error(`Failed to process file ${filePath}:`, error);
     return false;
   }
 }
 
 /**
- * 获取工作区目录树
+ * 
  */
 async function getWorkspaceFiles(): Promise<DirTree[]> {
   const workspace = await getWorkspacePath();
   
-  // 递归处理目录的辅助函数
+  //
   async function processDirectory(dirPath: string, useCustomPath: boolean): Promise<DirTree[]> {
     let entries: DirEntry[];
     
@@ -699,7 +699,7 @@ async function getWorkspaceFiles(): Promise<DirTree[]> {
       if (entry.name === '.DS_Store' || entry.name.startsWith('.')) continue;
       if (!entry.isDirectory && !entry.name.endsWith('.md')) continue;
       
-      // 创建DirTree对象
+      // DirTree
       const item: DirTree = {
         name: entry.name,
         isFile: !entry.isDirectory,
@@ -710,13 +710,13 @@ async function getWorkspaceFiles(): Promise<DirTree[]> {
         isEditing: false
       };
       
-      // 如果是目录，递归读取子目录
+      // ，
       if (entry.isDirectory) {
         const childPath = await join(dirPath, entry.name);
-        // 递归处理子目录
+        //
         item.children = await processDirectory(childPath, useCustomPath);
         
-        // 设置父级关系
+        //
         item.children.forEach(child => {
           child.parent = item;
         });
@@ -728,13 +728,13 @@ async function getWorkspaceFiles(): Promise<DirTree[]> {
     return result;
   }
   
-  // 开始处理根目录
+  // Start
   const rootPath = workspace.isCustom ? workspace.path : 'article';
   return await processDirectory(rootPath, workspace.isCustom);
 }
 
 /**
- * 处理工作区中的所有Markdown文件（支持并行处理）
+ * MarkdownFile（）
  */
 export async function processAllMarkdownFiles(onProgress?: (current: number, total: number, fileName: string) => void): Promise<{
   total: number;
@@ -743,11 +743,11 @@ export async function processAllMarkdownFiles(onProgress?: (current: number, tot
   failedFiles: Array<{fileName: string, error: string}>;
 }> {
   try {
-    // 获取工作区中的所有文件
+    // File
     const fileTree = await getWorkspaceFiles();
     const retrievalScope = await resolveRetrievalScope();
 
-    // 收集所有需要处理的文件
+    // File
     const filesToProcess: Array<{name: string, path: string}> = [];
 
     async function collectFiles(tree: DirTree[]): Promise<void> {
@@ -759,7 +759,7 @@ export async function processAllMarkdownFiles(onProgress?: (current: number, tot
           }
         }
 
-        // 递归处理子目录
+        //
         if (item.children && item.children.length > 0) {
           await collectFiles(item.children);
         }
@@ -768,14 +768,14 @@ export async function processAllMarkdownFiles(onProgress?: (current: number, tot
 
     await collectFiles(fileTree);
 
-    // 使用并发控制处理文件（限制并发数为 3）
+    // File（ 3）
     const results = await runWithConcurrencyLimit(
       filesToProcess.map(file => async () => {
         try {
           const success = await processMarkdownFile(file.path);
           return { success, fileName: file.name, error: null };
         } catch (error) {
-          handleRAGError(error, `处理文件 ${file.name} 失败`, false);
+          handleRAGError(error, `Failed to process file ${file.name}`, false);
           return { success: false, fileName: file.name, error: String(error) };
         }
       }),
@@ -788,7 +788,7 @@ export async function processAllMarkdownFiles(onProgress?: (current: number, tot
       }
     );
 
-    // 统计结果
+    //
     const failedFiles: Array<{fileName: string, error: string}> = [];
     let success = 0;
     let failed = 0;
@@ -811,26 +811,26 @@ export async function processAllMarkdownFiles(onProgress?: (current: number, tot
       failedFiles
     };
   } catch (error) {
-    handleRAGError(error, '处理工作区Markdown文件失败');
+    handleRAGError(error, 'Failed to process workspace Markdown files');
     throw error;
   }
 }
 
 /**
- * 根据DirTree项获取完整文件路径
+ * DirTreeFile
  */
 async function getFilePath(item: DirTree): Promise<string> {
   const workspace = await getWorkspacePath();
   let path = item.name;
   let parent = item.parent;
   
-  // 构建相对路径
+  //
   while (parent) {
     path = `${parent.name}/${path}`;
     parent = parent.parent;
   }
   
-  // 转换为完整路径
+  //
   if (workspace.isCustom) {
     return await join(workspace.path, path);
   } else {
@@ -839,7 +839,7 @@ async function getFilePath(item: DirTree): Promise<string> {
 }
 
 /**
- * 为fuzzy_search准备的搜索项结构
+ * fuzzy_search
  */
 interface SearchItem {
   id?: string;
@@ -857,7 +857,7 @@ interface SearchItem {
 }
 
 /**
- * fuzzy_search返回的结果结构
+ * fuzzy_search
  */
 interface FuzzySearchResult {
   item: SearchItem;
@@ -871,25 +871,25 @@ interface FuzzySearchResult {
 }
 
 /**
- * 从工作区中收集所有Markdown文件内容，用于模糊搜索
+ * MarkdownFile，
  */
 async function collectMarkdownContents(scope: RetrievalScope = {}): Promise<SearchItem[]> {
   try {
-    // 获取工作区中的所有文件
+    // File
     const fileTree = await getWorkspaceFiles();
     const items: SearchItem[] = [];
     const resolvedScope = await resolveRetrievalScope(scope);
     
-    // 递归处理文件树
+    // File
     async function processTree(tree: DirTree[]): Promise<void> {
       for (const item of tree) {
         if (item.isFile && item.name.endsWith('.md')) {
-          // 获取完整路径
+          //
           const filePath = await getFilePath(item);
           if (!isPathAllowedForRag(filePath, resolvedScope)) continue;
           
           try {
-            // 读取文件内容
+            // File
             let content = '';
             const workspace = await getWorkspacePath();
             if (workspace.isCustom) {
@@ -899,7 +899,7 @@ async function collectMarkdownContents(scope: RetrievalScope = {}): Promise<Sear
               content = await readTextFile(path, { baseDir });
             }
             
-            // 创建搜索项
+            //
             items.push({
               id: filePath,
               title: item.name,
@@ -907,11 +907,11 @@ async function collectMarkdownContents(scope: RetrievalScope = {}): Promise<Sear
               search_type: 'markdown'
             });
           } catch (error) {
-            console.error(`读取文件 ${filePath} 内容失败:`, error);
+            console.error(`Failed to read file ${filePath}:`, error);
           }
         }
         
-        // 递归处理子目录
+        //
         if (item.children && item.children.length > 0) {
           await processTree(item.children);
         }
@@ -921,13 +921,13 @@ async function collectMarkdownContents(scope: RetrievalScope = {}): Promise<Sear
     await processTree(fileTree);
     return items;
   } catch (error) {
-    console.error('收集Markdown内容失败:', error);
+    console.error('Failed to collect Markdown content:', error);
     return [];
   }
 }
 
 /**
- * 检索结果类型定义
+ * 
  */
 interface SearchResult {
   stableId: string;
@@ -988,7 +988,7 @@ function buildLexicalQueries(query: string, keywords: Keyword[]): Keyword[] {
 }
 
 /**
- * 关键词及其权重类型定义
+ * 
  */
 export interface Keyword {
   text: string;
@@ -996,12 +996,12 @@ export interface Keyword {
 }
 
 /**
- * RAG 来源详情类型定义
+ * RAG 
  */
 export interface RagSource {
-  filepath: string;  // 文件的相对路径
-  filename: string;  // 文件名
-  content: string;   // 引用的文本片段
+  filepath: string;  // File的相对路径
+  filename: string;  // File名
+  content: string;   // Quote的文本片段
 }
 
 export interface RagDiagnosticResult extends RagSource {
@@ -1020,10 +1020,10 @@ export interface RagSearchResponse {
 }
 
 /**
- * 根据完整查询和关键词数组获取相关上下文
- * @param query 用户的完整查询，用于保留语义意图的向量检索和统一重排
- * @param keywords 关键词数组，用于模糊搜索、BM25 和查询扩展
- * @returns 包含上下文文本和引用文件名的对象
+ * 
+ * @param query ，
+ * @param keywords ，、BM25 
+ * @returns QuoteFile
  */
 export async function getContextForQuery(
   query: string,
@@ -1036,7 +1036,7 @@ export async function getContextForQuery(
     const similarityThreshold = await store.get<number>('ragSimilarityThreshold') ?? 0.25;
     const rerankThreshold = await store.get<number>('ragRerankThreshold') ?? 0.1;
 
-    // 读取权重配置（新增配置项）
+    // （）
     const fuzzyWeight = await store.get<number>('ragFuzzyWeight') ?? 0.2;
     const vectorWeight = await store.get<number>('ragVectorWeight') ?? 0.7;
     const bm25Weight = await store.get<number>('ragBm25Weight') ?? 0.1;
@@ -1049,40 +1049,40 @@ export async function getContextForQuery(
     const strategy = createRetrievalStrategy(query, baseWeights, rerankThreshold);
     const resolvedScope = await resolveRetrievalScope(scope, store);
 
-    // 存储所有检索结果（使用新的 SearchResult 类型）
+    // （ SearchResult ）
     const allResults: SearchResult[] = [];
 
-    // 完整查询为空时无法执行语义检索
+    //
     if (!query.trim()) {
       return { context: '', sources: [], sourceDetails: [], diagnostics: [] };
     }
 
-    // 读取查询扩展配置
+    //
     const enableQueryExpansion = await store.get<boolean>('ragEnableQueryExpansion') ?? true;
     const maxQueryVariations = await store.get<number>('ragMaxQueryVariations') ?? 3;
 
-    // 应用查询转换（生成同义词变体）
+    // （）
     const expandedKeywords = normalizeKeywordWeights(
       transformQueries(keywords || [], enableQueryExpansion, maxQueryVariations)
     );
 
-    // 将关键词按权重排序，优先考虑权重高的关键词
+    // ，
     const sortedKeywords = [...expandedKeywords].sort((a, b) => b.weight - a.weight);
     const lexicalQueries = buildLexicalQueries(query, sortedKeywords);
     const items = await collectMarkdownContents(resolvedScope);
     const allowedVectorKeys = new Set(items.map(item => getVectorDocumentKey(item.id || item.title || '')));
 
-    // 1. 使用逐个关键词进行模糊搜索找到相关文件内容
+    // 1. File
     try {
       if (items.length > 0) {
-        // 为每个关键词单独进行搜索
+        //
         for (const keyword of sortedKeywords) {
-          // 跳过停用词的模糊搜索（这些词匹配太多低质量结果）
+          // （）
           if (isStopWord(keyword.text)) {
             continue;
           }
 
-          // 对每个关键词调用Rust的fuzzy_search函数
+          // Rustfuzzy_search
           const fuzzyResults: FuzzySearchResult[] = await invoke('fuzzy_search', {
             items,
             query: keyword.text,  // 单独使用每个关键词
@@ -1092,18 +1092,18 @@ export async function getContextForQuery(
             includeMatches: true
           });
 
-          // 处理模糊搜索结果
+          //
           for (const [resultIndex, result] of fuzzyResults.entries()) {
             if (result.score > 0) {
               const item = result.item;
-              // 提取匹配的文本片段作为上下文
+              //
               const articleMatches = result.matches.filter(m => m.key === 'article');
               if (articleMatches.length > 0) {
-                // 使用匹配部分的上下文（周围大约500个字符）
+                // （500）
                 const match = articleMatches[0];
                 const content = match.value;
 
-                // 找到第一个匹配位置的索引
+                //
                 let startIdx = 0;
                 let endIdx = content.length;
                 if (match.indices.length > 0) {
@@ -1113,7 +1113,7 @@ export async function getContextForQuery(
                 }
 
                 const contextSnippet = content.substring(startIdx, endIdx);
-                const filepath = item.id || item.title || '未命名文件';
+                const filepath = item.id || item.title || 'Untitled file';
                 const resolvedChunk = await resolveSnippetToChunk(filepath, contextSnippet);
 
                 allResults.push({
@@ -1134,10 +1134,10 @@ export async function getContextForQuery(
         }
       }
     } catch (error) {
-      handleRAGError(error, '模糊搜索失败', false);
+      handleRAGError(error, 'Fuzzy search failed', false);
     }
 
-    // 2. 使用完整问题进行一次向量搜索，保留查询的完整语义和关系
+    // 2. ，
     try {
       const queryEmbedding = await getQueryEmbedding(query);
 
@@ -1165,10 +1165,10 @@ export async function getContextForQuery(
         }
       }
     } catch (error) {
-      handleRAGError(error, '向量搜索失败', false);
+      handleRAGError(error, 'Vector search failed', false);
     }
 
-    // 3. 使用 BM25 搜索找到相关文档
+    // 3. BM25
     try {
       for (const lexicalQuery of lexicalQueries) {
         const bm25Results = await searchWithBM25(
@@ -1194,10 +1194,10 @@ export async function getContextForQuery(
         }
       }
     } catch (error) {
-      handleRAGError(error, 'BM25 搜索失败', false);
+      handleRAGError(error, 'BM25 search failed', false);
     }
 
-    // 如果没有找到任何相关上下文，返回空结果
+    // ，
     if (allResults.length === 0) {
       return { context: '', sources: [], sourceDetails: [], diagnostics: [] };
     }
@@ -1205,15 +1205,15 @@ export async function getContextForQuery(
     const windowSize = await store.get<number>('ragWindowSize') ?? 2;
     return await finalizeSearchResults(query, allResults, strategy, resultCount, windowSize);
   } catch (error) {
-    handleRAGError(error, '获取查询上下文失败', false);
+    handleRAGError(error, 'Failed to get query context', false);
     return { context: '', sources: [], sourceDetails: [], diagnostics: [] };
   }
 }
 
 /**
- * 合并相同文档的不同检索结果
- * @param results 所有检索结果
- * @param weights 权重配置
+ * 
+ * @param results 
+ * @param weights 
  */
 function mergeResultsByDocument(
   results: SearchResult[],
@@ -1298,16 +1298,16 @@ function mergeResultsByDocument(
 }
 
 /**
- * 计算两个文本的重叠度（基于字符级的最长公共子序列简化版本）
+ * （）
  */
 function calculateContentOverlap(content1: string, content2: string): number {
   const normalized1 = content1.trim().toLowerCase();
   const normalized2 = content2.trim().toLowerCase();
 
-  // 如果任一内容为空，返回 0
+  // ， 0
   if (!normalized1 || !normalized2) return 0;
 
-  // 简化的重叠度计算：计算共同字符的比例
+  // ：
   const set1 = new Set(normalized1.split(''));
   const set2 = new Set(normalized2.split(''));
 
@@ -1316,13 +1316,13 @@ function calculateContentOverlap(content1: string, content2: string): number {
 
   if (union.size === 0) return 0;
 
-  // Jaccard 相似度
+  // Jaccard
   return intersection.size / union.size;
 }
 
 /**
- * 合并候选、去除重叠片段，并使用完整问题统一重排。
- * 句子窗口在重排完成后扩展，避免较长的相邻内容干扰相关性判断。
+ * 、，。
+ * Done，。
  */
 async function finalizeSearchResults(
   query: string,
@@ -1371,7 +1371,7 @@ async function finalizeSearchResults(
 
   uniqueResults.sort((a, b) => b.normalizedScore - a.normalizedScore);
 
-  // 每种检索器都保留一组候选，避免向量权重较高时挤掉精确编号等词法命中。
+  // ，。
   const rerankCandidateCount = Math.max(
     resultCount * Math.max(strategy.vectorCandidateMultiplier, strategy.lexicalCandidateMultiplier),
     20
@@ -1398,7 +1398,7 @@ async function finalizeSearchResults(
     selectedCandidateIds.add(result.stableId);
   }
 
-  // 即使 rerank 不可用或请求失败，也保持融合分数顺序，不退化为检索器插入顺序。
+  // rerank Failed，，。
   const rerankCandidates = uniqueResults
     .filter(result => selectedCandidateIds.has(result.stableId))
     .slice(0, rerankCandidateCount);
@@ -1421,7 +1421,7 @@ async function finalizeSearchResults(
     normalizedScore: document.similarity
   }));
 
-  // 仅对最终命中的向量块扩展相邻窗口，避免窗口文本影响候选融合和重排。
+  // ，。
   const chunkResults = finalResults.flatMap((result, index) => parseBM25ChunkKey(result.stableId)
     ? [{
         id: index,
@@ -1468,7 +1468,7 @@ async function finalizeSearchResults(
     filename: getRagDisplayFilename(result.filepath),
     content: result.content
   }));
-  const context = finalResults.map(result => `文件：${normalizeRagPath(result.filepath)}
+  const context = finalResults.map(result => `File: ${normalizeRagPath(result.filepath)}
 ${result.content}
 `).join('\n---\n\n');
 
@@ -1476,7 +1476,7 @@ ${result.content}
 }
 
 /**
- * 当文件被更新时处理，更新向量数据库
+ * Handle file updates by refreshing the vector database
  */
 export async function handleFileUpdate(filePath: string, content: string): Promise<void> {
   if (!filePath.endsWith('.md')) return;
@@ -1484,36 +1484,36 @@ export async function handleFileUpdate(filePath: string, content: string): Promi
   try {
     await processMarkdownFile(filePath, content);
   } catch (error) {
-    handleRAGError(error, `更新文件 ${filePath} 的向量失败`, false);
+    handleRAGError(error, `Failed to update vectors for ${filePath}`, false);
   }
 }
 
 /**
- * 检查是否有嵌入模型可用
+ * Embed
  */
 export async function checkEmbeddingModelAvailable(): Promise<boolean> {
   try {
-    // 尝试计算一个简单文本的向量
-    const embedding = await fetchEmbedding('测试嵌入模型');
+    //
+    const embedding = await fetchEmbedding('test embedding model');
     return !!embedding;
   } catch (error) {
-    handleRAGError(error, '嵌入模型检查失败', false);
+    handleRAGError(error, 'Embedding model check failed', false);
     return false;
   }
 }
 
 /**
- * 显示向量处理进度的toast
+ * Vector processingtoast
  */
 export function showVectorProcessingToast(message: string) {
   toast({
-    title: '向量数据库更新',
+    title: 'Vector database update',
     description: message,
   });
 }
 
 /**
- * 从指定文件夹中收集Markdown文件内容
+ * FileMarkdownFile
  */
 async function collectMarkdownContentsInFolder(
   folderPath: string,
@@ -1524,7 +1524,7 @@ async function collectMarkdownContentsInFolder(
     const items: SearchItem[] = [];
     const resolvedScope = await resolveRetrievalScope(scope);
 
-    // 构建文件夹完整路径
+    // File
     let fullFolderPath: string;
     if (workspace.isCustom) {
       fullFolderPath = await join(workspace.path, folderPath);
@@ -1532,7 +1532,7 @@ async function collectMarkdownContentsInFolder(
       fullFolderPath = folderPath;
     }
 
-    // 递归读取文件夹内容
+    // File
     async function processTree(dirPath: string, relativePath: string): Promise<void> {
       let currentEntries: DirEntry[];
 
@@ -1556,7 +1556,7 @@ async function collectMarkdownContentsInFolder(
             : entryRelativePath;
           await processTree(entryFullPath, entryRelativePath);
         } else if (entry.name.endsWith('.md')) {
-          // 读取文件内容并添加到 items
+          // File items
           try {
             let content = '';
             const entryFullPath = workspace.isCustom
@@ -1577,7 +1577,7 @@ async function collectMarkdownContentsInFolder(
               search_type: 'markdown'
             });
           } catch (error) {
-            console.error(`读取文件 ${entryRelativePath} 失败:`, error);
+            console.error(`Failed to read file ${entryRelativePath}:`, error);
           }
         }
       }
@@ -1586,17 +1586,17 @@ async function collectMarkdownContentsInFolder(
     await processTree(fullFolderPath, folderPath);
     return items;
   } catch (error) {
-    console.error('收集文件夹Markdown内容失败:', error);
+    console.error('Failed to collect folder Markdown content:', error);
     return [];
   }
 }
 
 /**
- * 在指定文件夹范围内获取相关上下文
- * @param query 用户的完整查询
- * @param keywords 关键词数组，用于词法检索和查询扩展
- * @param folderPath 文件夹相对路径
- * @returns 包含上下文文本和引用文件名的对象
+ * 
+ * @param query 
+ * @param keywords ，
+ * @param folderPath 
+ * @returns 
  */
 export async function getContextForQueryInFolder(
   query: string,
@@ -1609,7 +1609,7 @@ export async function getContextForQueryInFolder(
     const similarityThreshold = await store.get<number>('ragSimilarityThreshold') ?? 0.25;
     const rerankThreshold = await store.get<number>('ragRerankThreshold') ?? 0.1;
 
-    // 读取权重配置
+    //
     const fuzzyWeight = await store.get<number>('ragFuzzyWeight') ?? 0.2;
     const vectorWeight = await store.get<number>('ragVectorWeight') ?? 0.7;
     const bm25Weight = await store.get<number>('ragBm25Weight') ?? 0.1;
@@ -1627,11 +1627,11 @@ export async function getContextForQueryInFolder(
       return { context: '', sources: [], sourceDetails: [], diagnostics: [] };
     }
 
-    // 读取查询扩展配置
+    //
     const enableQueryExpansion = await store.get<boolean>('ragEnableQueryExpansion') ?? true;
     const maxQueryVariations = await store.get<number>('ragMaxQueryVariations') ?? 3;
 
-    // 应用查询转换（生成同义词变体）
+    // （）
     const expandedKeywords = normalizeKeywordWeights(
       transformQueries(keywords || [], enableQueryExpansion, maxQueryVariations)
     );
@@ -1639,15 +1639,15 @@ export async function getContextForQueryInFolder(
     const sortedKeywords = [...expandedKeywords].sort((a, b) => b.weight - a.weight);
     const lexicalQueries = buildLexicalQueries(query, sortedKeywords);
 
-    // 收集文件夹范围内的文件
+    //
     const items = await collectMarkdownContentsInFolder(folderPath);
     const folderVectorKeys = new Set(items.map(item => getVectorDocumentKey(item.id || item.title || '')));
 
-    // 1. 模糊搜索（限定到文件夹）
+    // 1. （）
     try {
       if (items.length > 0) {
         for (const keyword of sortedKeywords) {
-          // 跳过停用词的模糊搜索
+          //
           if (isStopWord(keyword.text)) {
             continue;
           }
@@ -1678,7 +1678,7 @@ export async function getContextForQueryInFolder(
                 }
 
                 const contextSnippet = content.substring(startIdx, endIdx);
-                const filepath = item.id || item.title || '未命名文件';
+                const filepath = item.id || item.title || 'Untitled file';
                 const resolvedChunk = await resolveSnippetToChunk(filepath, contextSnippet);
 
                 allResults.push({
@@ -1699,10 +1699,10 @@ export async function getContextForQueryInFolder(
         }
       }
     } catch (error) {
-      handleRAGError(error, '模糊搜索失败', false);
+      handleRAGError(error, 'Fuzzy search failed', false);
     }
 
-    // 2. 使用完整问题执行一次向量搜索，并过滤到文件夹范围
+    // 2. ，
     try {
       const queryEmbedding = await getQueryEmbedding(query);
       if (queryEmbedding) {
@@ -1729,10 +1729,10 @@ export async function getContextForQueryInFolder(
         }
       }
     } catch (error) {
-      handleRAGError(error, '向量搜索失败', false);
+      handleRAGError(error, 'Vector search failed', false);
     }
 
-    // 3. 使用 BM25 搜索找到相关文档（限定到文件夹范围）
+    // 3. BM25 （）
     try {
       for (const lexicalQuery of lexicalQueries) {
         const bm25Results = await searchWithBM25(
@@ -1758,10 +1758,10 @@ export async function getContextForQueryInFolder(
         }
       }
     } catch (error) {
-      handleRAGError(error, 'BM25 搜索失败', false);
+      handleRAGError(error, 'BM25 search failed', false);
     }
 
-    // 如果没有找到任何相关上下文，返回空结果
+    // ，
     if (allResults.length === 0) {
       return { context: '', sources: [], sourceDetails: [], diagnostics: [] };
     }
@@ -1769,7 +1769,7 @@ export async function getContextForQueryInFolder(
     const windowSize = await store.get<number>('ragWindowSize') ?? 2;
     return await finalizeSearchResults(query, allResults, strategy, resultCount, windowSize);
   } catch (error) {
-    handleRAGError(error, '获取文件夹查询上下文失败', false);
+    handleRAGError(error, 'Failed to get folder query context', false);
     return { context: '', sources: [], sourceDetails: [], diagnostics: [] };
   }
 }

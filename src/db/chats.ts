@@ -7,28 +7,28 @@ export type ChatType = 'chat' | 'note' | 'clipboard' | 'clear' | 'condensed'
 
 export interface Chat {
   id: number
-  tagId?: number // 可选，用于兼容过渡期
-  conversationId?: number // 关联的会话 ID
+  tagId?: number // ，
+  conversationId?: number // ID
   content?: string
   role: Role
   type: ChatType
   image?: string
-  images?: string // 多张图片，JSON字符串数组
-  imageAnalyses?: string // 图片识别结果，JSON 字符串数组
-  attachments?: string // 不含本地绝对路径的附件展示信息，JSON 字符串数组
-  inserted: boolean // 是否插入到 mark 中
+  images?: string // ，JSON
+  imageAnalyses?: string // ，JSON
+  attachments?: string // ，JSON
+  inserted: boolean // Insert mark
   createdAt: number
-  ragSources?: string // RAG引用的文件名，JSON字符串数组
-  ragSourceDetails?: string // RAG引用的详细信息，JSON字符串数组（包含文件路径和文本片段）
-  agentHistory?: string // Agent执行历史，JSON字符串
-  thinking?: string // AI 思考过程
-  quoteData?: string // 引用信息，JSON字符串
-  // 压缩相关字段
-  condensedContent?: string    // 压缩后的摘要内容（存储在本条消息上）
-  condensedAt?: number         // 压缩时间戳
+  ragSources?: string // RAG，JSON
+  ragSourceDetails?: string // RAG，JSON（）
+  agentHistory?: string // Agent，JSON
+  thinking?: string // AI
+  quoteData?: string // ，JSON
+  //
+  condensedContent?: string    // （）
+  condensedAt?: number         //
 }
 
-// 创建 chats 表
+// chats
 export async function initChatsDb() {
   const db = await getDb()
   await db.execute(`
@@ -51,137 +51,137 @@ export async function initChatsDb() {
     )
   `)
   
-  // 迁移：为现有表添加 ragSources 列（如果不存在）
+  // ： ragSources （）
   try {
     await db.execute(`
       alter table chats add column ragSources text default null
     `)
   } catch {
-    // 如果列已存在，忽略错误
-    // SQLite 会抛出 "duplicate column name" 错误
+    // ，
+    // SQLite "duplicate column name"
   }
   
-  // 迁移：为现有表添加 agentHistory 列（如果不存在）
+  // ： agentHistory （）
   try {
     await db.execute(`
       alter table chats add column agentHistory text default null
     `)
   } catch {
-    // 如果列已存在，忽略错误
+    // ，
   }
   
-  // 迁移：为现有表添加 images 列（如果不存在）
+  // ： images （）
   try {
     await db.execute(`
       alter table chats add column images text default null
     `)
   } catch {
-    // 如果列已存在，忽略错误
+    // ，
   }
 
-  // 迁移：保存图片识别状态和结果，供多轮对话继续引用
+  // ：，
   try {
     await db.execute(`
       alter table chats add column imageAnalyses text default null
     `)
   } catch {
-    // 如果列已存在，忽略错误
+    // ，
   }
 
-  // 迁移：附件历史只保存可同步的展示信息，不保存本地路径
+  // ：，
   try {
     await db.execute(`
       alter table chats add column attachments text default null
     `)
   } catch {
-    // 如果列已存在，忽略错误
+    // ，
   }
   
-  // 迁移：为现有表添加 thinking 列（如果不存在）
+  // ： thinking （）
   try {
     await db.execute(`
       alter table chats add column thinking text default null
     `)
   } catch {
-    // 如果列已存在，忽略错误
+    // ，
   }
   
-  // 迁移：为现有表添加 quoteData 列（如果不存在）
+  // ： quoteData （）
   try {
     await db.execute(`
       alter table chats add column quoteData text default null
     `)
   } catch {
-    // 如果列已存在，忽略错误
+    // ，
   }
 
-  // 迁移：为现有表添加 ragSourceDetails 列（如果不存在）
+  // ： ragSourceDetails （）
   try {
     await db.execute(`
       alter table chats add column ragSourceDetails text default null
     `)
   } catch {
-    // 如果列已存在，忽略错误
+    // ，
   }
 
-  // 迁移：为现有表添加 condensedFrom 列（如果不存在）
+  // ： condensedFrom （）
   try {
     await db.execute(`
       alter table chats add column condensedFrom text default null
     `)
   } catch {
-    // 如果列已存在，忽略错误
+    // ，
   }
 
-  // 迁移：为现有表添加 originalTokenCount 列（如果不存在）
+  // ： originalTokenCount （）
   try {
     await db.execute(`
       alter table chats add column originalTokenCount integer default null
     `)
   } catch {
-    // 如果列已存在，忽略错误
+    // ，
   }
 
-  // 迁移：为现有表添加 originalMessageCount 列（如果不存在）
+  // ： originalMessageCount （）
   try {
     await db.execute(`
       alter table chats add column originalMessageCount integer default null
     `)
   } catch {
-    // 如果列已存在，忽略错误
+    // ，
   }
 
-  // 迁移：为现有表添加 condensedAt 列（如果不存在）
+  // ： condensedAt （）
   try {
     await db.execute(`
       alter table chats add column condensedAt integer default null
     `)
   } catch {
-    // 如果列已存在，忽略错误
+    // ，
   }
 
-  // 迁移：为现有表添加 condensedContent 列（如果不存在）
+  // ： condensedContent （）
   try {
     await db.execute(`
       alter table chats add column condensedContent text default null
     `)
   } catch {
-    // 如果列已存在，忽略错误
+    // ，
   }
 
-  // 迁移：为现有表添加 conversationId 列（如果不存在）
-  // 注意：这个迁移已移到 conversations.ts 的 initConversationsDb 中执行
-  // 这里保留是为了向后兼容，如果 conversations 初始化失败，这里会确保列存在
+  // ： conversationId （）
+  // ： conversations.ts initConversationsDb
+  // ， conversations ，
   try {
     await db.execute(`
       alter table chats add column conversationId integer default null
     `)
   } catch {
-    // 如果列已存在，忽略错误
+    // ，
   }
 }
 
-// 插入一条 chat
+// chat
 export async function insertChat(chat: Omit<Chat, 'id' | 'createdAt'>) {
   const db = await getDb()
   const createdAt = Date.now();
@@ -204,7 +204,7 @@ export async function insertChat(chat: Omit<Chat, 'id' | 'createdAt'>) {
   return result
 }
 
-// 获取所有 chats
+// chats
 export async function getChats(tagId: number) {
   const db = await getDb()
   const result = await db.select<Chat[]>(
@@ -214,7 +214,7 @@ export async function getChats(tagId: number) {
   return result
 }
 
-// 根据会话 ID 获取聊天记录（新方式）
+// ID （）
 export async function getChatsByConversation(conversationId: number) {
   const db = await getDb()
   const result = await db.select<Chat[]>(
@@ -224,7 +224,7 @@ export async function getChatsByConversation(conversationId: number) {
   return result
 }
 
-// 获取所有 chats（用于同步）
+// chats（）
 export async function getAllChats() {
   const db = await getDb()
   const result = await db.select<Chat[]>(
@@ -234,7 +234,7 @@ export async function getAllChats() {
   return result
 }
 
-// 插入多条 chat（用于同步）
+// chat（）
 export async function insertChats(chats: Chat[]) {
   const db = await getDb()
 
@@ -253,7 +253,7 @@ export async function insertChats(chats: Chat[]) {
   }
 }
 
-// 删除所有 chats（用于同步）
+// chats（）
 export async function deleteAllChats() {
   const db = await getDb()
   return await db.execute(
@@ -262,7 +262,7 @@ export async function deleteAllChats() {
   )
 }
 
-// 更新一条 chat
+// chat
 export async function updateChat(chat: Chat) {
   const db = await getDb()
   return await db.execute(
@@ -270,7 +270,7 @@ export async function updateChat(chat: Chat) {
     [chat.tagId, chat.conversationId, chat.content, chat.role, chat.type, chat.image, chat.images, chat.imageAnalyses, chat.attachments, chat.inserted ? 1 : 0, chat.ragSources, chat.ragSourceDetails, chat.agentHistory, chat.thinking, chat.quoteData, chat.condensedContent, chat.condensedAt, chat.id])
 }
 
-// 清空 tagId 下的所有 chats
+// tagId chats
 export async function clearChatsByTagId(tagId: number) {
   const db = await getDb()
   return await db.execute(
@@ -278,7 +278,7 @@ export async function clearChatsByTagId(tagId: number) {
     [tagId])
 }
 
-// 已插入
+//
 export async function updateChatsInsertedById(id: number) {
   const db = await getDb()
   return await db.execute(
@@ -286,7 +286,7 @@ export async function updateChatsInsertedById(id: number) {
     [true, id])
 }
 
-// 删除一条 chat
+// chat
 export async function deleteChat(id: number) {
   const db = await getDb()
   return await db.execute(
@@ -325,9 +325,9 @@ export async function deleteChats(ids: number[]) {
 }
 
 /**
- * 更新消息的压缩摘要内容
- * @param chatId 消息 ID
- * @param condensedContent 压缩摘要内容
+ * 
+ * @param chatId ID
+ * @param condensedContent 
  */
 export async function updateChatCondensedContent(chatId: number, condensedContent: string) {
   const db = await getDb()

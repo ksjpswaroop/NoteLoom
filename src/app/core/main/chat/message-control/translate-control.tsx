@@ -17,11 +17,11 @@ export function TranslateControl({ chat, onTranslatedContent }: TranslateControl
   const [isTranslating, setIsTranslating] = useState(false)
   const [selectedLanguage, setSelectedLanguage] = useState<string>('')
   
-  // 可翻译的语言列表
+  //
   const languageOptions = [
     "English",
-    "中文",
-    "日本語",
+    "Chinese",
+    "Japanese",
     "한국어",
     "Français",
     "Deutsch",
@@ -29,7 +29,7 @@ export function TranslateControl({ chat, onTranslatedContent }: TranslateControl
     "Русский",
   ]
   
-  // 处理翻译
+  //
   async function handleTranslate(language: string) {
     if (!chat.content || isTranslating) return
     
@@ -49,7 +49,7 @@ export function TranslateControl({ chat, onTranslatedContent }: TranslateControl
     }
   }
   
-  // 重置翻译
+  //
   function resetTranslation() {
     setSelectedLanguage('')
     onTranslatedContent('')

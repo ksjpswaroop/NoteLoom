@@ -28,8 +28,8 @@ export function ExportButton({ editor, markdown }: ExportButtonProps) {
 
   const showPdfExportStart = useCallback(() => {
     toast({
-      title: '正在准备 PDF',
-      description: '请在系统打印窗口中选择“另存为 PDF”。',
+      title: 'Preparing PDF',
+      description: 'In the system print dialog, choose “Save as PDF”.',
     })
   }, [])
 
@@ -50,12 +50,12 @@ export function ExportButton({ editor, markdown }: ExportButtonProps) {
       )
 
       if (exported) {
-        toast({ title: format === 'pdf' ? '已打开 PDF 打印窗口' : '导出成功' })
+        toast({ title: format === 'pdf' ? 'Opened PDF print window' : 'Export succeeded' })
       }
     } catch (error) {
       console.error(`${format} export failed:`, error)
       toast({
-        title: '导出失败',
+        title: 'Export failed',
         description: error instanceof Error ? error.message : String(error),
         variant: 'destructive',
       })
@@ -74,7 +74,7 @@ export function ExportButton({ editor, markdown }: ExportButtonProps) {
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          title="导出"
+          title="Export"
           className="p-1 rounded hover:bg-accent focus-visible:outline-none focus-visible:ring-0"
           disabled={exporting !== null}
         >

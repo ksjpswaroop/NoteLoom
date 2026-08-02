@@ -40,5 +40,5 @@ export function MobileActionMenu({ children, className }: MobileActionMenuProps)
   )
 }
 
-// 重新导出 DropdownMenuItem 和 DropdownMenuSeparator 以便在菜单中使用
+// DropdownMenuItem DropdownMenuSeparator
 export { DropdownMenuItem as MobileMenuItem, DropdownMenuSeparator as MobileSeparator } from "@/components/ui/dropdown-menu"

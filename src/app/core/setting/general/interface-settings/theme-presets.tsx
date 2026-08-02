@@ -39,21 +39,43 @@ export function ThemePresets({ onApplyPreset, onResetDefault, t }: ThemePresetsP
       mode: 'light',
       isReset: true,
       colors: {
-        background: '#ffffff',
-        foreground: '#0a0a0a',
+        background: '#F5F7FA',
+        foreground: '#1A2332',
         card: '#ffffff',
-        cardForeground: '#0a0a0a',
-        primary: '#171717',
-        primaryForeground: '#fafafa',
-        secondary: '#f5f5f5',
-        secondaryForeground: '#171717',
-        third: '#e5e5e5',
-        thirdForeground: '#262626',
-        muted: '#f5f5f5',
-        mutedForeground: '#737373',
-        accent: '#f5f5f5',
-        accentForeground: '#171717',
-        border: '#e5e5e5',
+        cardForeground: '#1A2332',
+        primary: '#C47D12',
+        primaryForeground: '#FFFBF0',
+        secondary: '#E8EDF3',
+        secondaryForeground: '#1A2332',
+        third: '#D5DDE8',
+        thirdForeground: '#273141',
+        muted: '#EBEEF3',
+        mutedForeground: '#5C6B7A',
+        accent: '#FEF3C7',
+        accentForeground: '#78350F',
+        border: '#D8E0EA',
+        shadow: '#1A2332',
+      },
+    },
+    {
+      name: t('presets.loomThread.name'),
+      mode: 'dark',
+      colors: {
+        background: '#0F1419',
+        foreground: '#E8ECF1',
+        card: '#161C24',
+        cardForeground: '#E8ECF1',
+        primary: '#E9A825',
+        primaryForeground: '#1A1408',
+        secondary: '#1E2733',
+        secondaryForeground: '#E8ECF1',
+        third: '#273141',
+        thirdForeground: '#D8E0EA',
+        muted: '#1E2733',
+        mutedForeground: '#94A3B4',
+        accent: '#3D2E14',
+        accentForeground: '#FDE68A',
+        border: '#2A3441',
         shadow: '#000000',
       },
     },
@@ -375,12 +397,12 @@ export function ThemePresets({ onApplyPreset, onResetDefault, t }: ThemePresetsP
               : 'border-border hover:border-primary'
           }`}
         >
-          {/* 恢复默认图标 - 只对第一个显示 */}
+          {/* - */}
           {preset.isReset && (
             <RotateCcw className="w-4 h-4" />
           )}
 
-          {/* 颜色预览条 - 恢复默认不显示 */}
+          {/* - */}
           {!preset.isReset && (
             <div className="flex w-full h-3 rounded-full overflow-hidden">
               <div className="flex-1" style={{ backgroundColor: preset.colors.background }} />
@@ -391,7 +413,7 @@ export function ThemePresets({ onApplyPreset, onResetDefault, t }: ThemePresetsP
             </div>
           )}
 
-          {/* 标签和名称 */}
+          {/* */}
           <div className="flex items-center gap-2">
             {!preset.isReset && (
               <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">

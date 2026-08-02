@@ -201,8 +201,8 @@ export async function capturePublicWebPage(
         redirect: 'manual',
         headers: {
           Accept: 'text/html,application/xhtml+xml,text/plain;q=0.9',
-          'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.6',
-          'User-Agent': 'Mozilla/5.0 AppleWebKit/537.36 Chrome/131 Safari/537.36 NoteGen/1',
+          'Accept-Language': 'en-US,en;q=0.9',
+          'User-Agent': 'Mozilla/5.0 AppleWebKit/537.36 Chrome/131 Safari/537.36 NoteLoom/1',
         },
         signal: timeout.signal,
       })

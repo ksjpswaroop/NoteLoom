@@ -32,7 +32,7 @@ export function S3Sync() {
   const [isConnecting, setIsConnecting] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // 初始化配置
+  //
   useEffect(() => {
     const initConfig = async () => {
       try {
@@ -40,7 +40,7 @@ export function S3Sync() {
         const savedConfig = await store.get<S3Config>('s3SyncConfig');
         if (savedConfig) {
           setConfig(savedConfig);
-          // 如果配置完整，自动进行连接检测
+          // ，
           if (savedConfig.accessKeyId && savedConfig.secretAccessKey && savedConfig.region && savedConfig.bucket) {
             testConnection(savedConfig);
           }
@@ -52,7 +52,7 @@ export function S3Sync() {
     initConfig();
   }, []);
 
-  // 测试连接
+  //
   const testConnection = async (configToTest?: S3Config) => {
     const testConfig = configToTest || config;
     if (!testConfig.accessKeyId || !testConfig.secretAccessKey || !testConfig.region || !testConfig.bucket) {
@@ -71,7 +71,7 @@ export function S3Sync() {
     }
   };
 
-  // 配置变更后自动保存，避免输入过程中频繁写入磁盘
+  // ，
   useEffect(() => {
     if (!isInitialized) return;
 
@@ -88,7 +88,7 @@ export function S3Sync() {
     return () => clearTimeout(timer);
   }, [config, isInitialized]);
 
-  // 配置变更处理
+  //
   const handleConfigChange = (key: keyof S3Config, value: string) => {
     setConfig(prev => ({ ...prev, [key]: value }));
     setS3Connected(false);

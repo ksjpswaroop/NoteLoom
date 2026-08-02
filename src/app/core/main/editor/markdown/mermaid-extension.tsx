@@ -86,7 +86,7 @@ function MermaidDiagramView({ node, updateAttributes }: ReactNodeViewProps) {
     }
   }, [code, diagramType])
 
-  // 退出编辑模式后刷新预览
+  //
   useEffect(() => {
     if (!isEditing) {
       renderDiagram()

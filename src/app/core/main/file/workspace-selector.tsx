@@ -13,14 +13,14 @@ export function WorkspaceSelector() {
   const { loadWorkspaceCollapsibleList, loadFileTree, setActiveFilePath, setCurrentArticle } = useArticleStore()
   const t = useTranslations('settings.file')
 
-  // 当前工作区名称
+  //
   const currentWorkspaceName = useMemo(() => {
     return getWorkspaceDisplayName(workspacePath, t('workspace.defaultPath'))
   }, [workspacePath, t])
 
-  // 切换工作区
+  //
   async function handleWorkspaceChange(path: string) {
-    // 处理特殊的默认工作区值
+    //
     const targetPath = path === '__default__' ? '' : path
     if (targetPath === workspacePath) return
     
@@ -32,7 +32,7 @@ export function WorkspaceSelector() {
       await loadFileTree()
       if (lastActivePath) await setActiveFilePath(lastActivePath)
     } catch (error) {
-      console.error('切换工作区失败:', error)
+      console.error('Failed to switch workspace:', error)
     }
   }
 
@@ -43,14 +43,14 @@ export function WorkspaceSelector() {
           <span className="truncate text-xs text-right">{currentWorkspaceName}</span>
         </SelectTrigger>
         <SelectContent>
-          {/* 默认工作区 */}
+          {/* */}
           <SelectItem value="__default__">
             <div className="flex items-center gap-2">
               <FolderOpen className="w-4 h-4" />
               <span>{t('workspace.defaultPath')}</span>
             </div>
           </SelectItem>
-          {/* 历史工作区 */}
+          {/* */}
           {workspaceHistory.map((path, index) => (
             <SelectItem key={index} value={path}>
               <div className="flex items-center gap-2">

@@ -115,7 +115,7 @@ interface SettingState {
   closeBehavior: CloseBehavior
   setCloseBehavior: (behavior: CloseBehavior) => Promise<void>
 
-  // setting - ai - 当前选择的模型 key
+  // setting - ai - key
   currentAi: string
   setCurrentAi: (currentAi: string) => void
 
@@ -179,7 +179,7 @@ interface SettingState {
   codeTheme: string
   setCodeTheme: (codeTheme: string) => void
 
-  // Github 相关设置
+  // Github
   githubUsername: string
   setGithubUsername: (githubUsername: string) => Promise<void>
 
@@ -201,18 +201,18 @@ interface SettingState {
   excludeSensitiveConfig: boolean
   setExcludeSensitiveConfig: (enabled: boolean) => Promise<void>
 
-  // 自动拉取相关设置
+  //
   autoPullOnOpen: boolean
   setAutoPullOnOpen: (autoPullOnOpen: boolean) => Promise<void>
 
-  // Gitee 相关设置
+  // Gitee
   giteeAccessToken: string
   setGiteeAccessToken: (giteeAccessToken: string) => void
 
   giteeAutoSync: string
   setGiteeAutoSync: (giteeAutoSync: string) => Promise<void>
 
-  // Gitlab 相关设置
+  // Gitlab
   gitlabInstanceType: GitlabInstanceType
   setGitlabInstanceType: (instanceType: GitlabInstanceType) => Promise<void>
 
@@ -228,7 +228,7 @@ interface SettingState {
   gitlabUsername: string
   setGitlabUsername: (gitlabUsername: string) => Promise<void>
 
-  // Gitea 相关设置
+  // Gitea
   giteaInstanceType: GiteaInstanceType
   setGiteaInstanceType: (instanceType: GiteaInstanceType) => Promise<void>
 
@@ -244,7 +244,7 @@ interface SettingState {
   giteaUsername: string
   setGiteaUsername: (giteaUsername: string) => Promise<void>
 
-  // 主要备份方式设置
+  //
   primaryBackupMethod: 'github' | 'gitee' | 'gitlab' | 'gitea' | 's3' | 'webdav'
   setPrimaryBackupMethod: (method: 'github' | 'gitee' | 'gitlab' | 'gitea' | 's3' | 'webdav') => Promise<void>
 
@@ -254,7 +254,7 @@ interface SettingState {
   workspacePath: string
   setWorkspacePath: (path: string) => Promise<void>
 
-  // 工作区历史路径
+  //
   workspaceHistory: string[]
   addWorkspaceHistory: (path: string) => Promise<void>
   removeWorkspaceHistory: (path: string) => Promise<void>
@@ -263,11 +263,11 @@ interface SettingState {
   assetsPath: string
   setAssetsPath: (path: string) => Promise<void>
 
-  // 图床设置
+  //
   githubImageAccessToken: string
   setGithubImageAccessToken: (githubImageAccessToken: string) => Promise<void>
 
-  // 自定义仓库名称设置
+  //
   githubCustomSyncRepo: string
   setGithubCustomSyncRepo: (repo: string) => Promise<void>
 
@@ -283,32 +283,32 @@ interface SettingState {
   githubCustomImageRepo: string
   setGithubCustomImageRepo: (repo: string) => Promise<void>
 
-  // 图片识别设置
+  //
   enableImageRecognition: boolean
   setEnableImageRecognition: (enable: boolean) => Promise<void>
 
-  // 界面缩放设置
+  //
   uiScale: number
   setUiScale: (scale: number) => Promise<void>
 
-  // 正文文字大小缩放设置
+  //
   contentTextScale: number
   setContentTextScale: (scale: number) => Promise<void>
 
-  // 文件管理器文字大小设置
+  //
   fileManagerTextSize: string
   setFileManagerTextSize: (size: string) => Promise<void>
 
-  // 记录文字大小设置
+  //
   recordTextSize: string
   setRecordTextSize: (size: string) => Promise<void>
 
-  // 自定义主题颜色设置
+  //
   customThemeColors: CustomThemeColors
   setCustomThemeColors: (colors: CustomThemeColors) => Promise<void>
   resetCustomThemeColors: () => Promise<void>
 
-  // 记录工具栏配置
+  //
   recordToolbarConfig: RecordToolbarItem[]
   setRecordToolbarConfig: (config: RecordToolbarItem[]) => Promise<void>
 
@@ -330,7 +330,7 @@ interface SettingState {
   recordCompletionBehavior: RecordCompletionBehavior
   setRecordCompletionBehavior: (behavior: RecordCompletionBehavior) => Promise<void>
 
-  // 编辑器撤销/重做按钮显示设置
+  // /
   showEditorUndoRedo: boolean
   setShowEditorUndoRedo: (show: boolean) => Promise<void>
 
@@ -602,13 +602,13 @@ const useSettingStore = create<SettingState>((set, get) => ({
       await store.save()
     }
 
-    // 初始化图床配置
+    //
     const savedUseImageRepo = await store.get<boolean>('useImageRepo')
     if (savedUseImageRepo !== undefined && savedUseImageRepo !== null) {
       set({ useImageRepo: savedUseImageRepo })
     }
 
-    // 初始化默认的NoteGen模型配置
+    // NoteGen
     const existingAiModelList = (await store.get('aiModelList') as AiConfig[]) || []
     const hasNoteGenModels = existingAiModelList.some(config => 
       config.key === 'note-gen-free' || 
@@ -623,7 +623,7 @@ const useSettingStore = create<SettingState>((set, get) => ({
       set({ aiModelList: finalAiModelList })
     }
 
-    // 检查是否设置了主要模型，如果没有且存在note-gen-chat，则设置为主要模型
+    // ，note-gen-chat，
     const currentPrimaryModel = await store.get('primaryModel') as string
     const hasNoteGenChat = finalAiModelList.some(config => 
       config.models?.some(model => model.id === 'note-gen-chat') || config.key === 'note-gen-chat'
@@ -640,7 +640,7 @@ const useSettingStore = create<SettingState>((set, get) => ({
       }
     }
 
-    // 检查是否设置了嵌入模型，如果没有且存在note-gen-embedding，则设置为默认嵌入模型
+    // ，note-gen-embedding，
     const currentEmbeddingModel = await store.get('embeddingModel') as string
     const hasNoteGenEmbedding = finalAiModelList.some(config => 
       config.models?.some(model => model.id === 'note-gen-embedding') || config.key === 'note-gen-embedding'
@@ -657,14 +657,14 @@ const useSettingStore = create<SettingState>((set, get) => ({
       }
     }
 
-    // 检查是否设置了TTS模型，如果没有且存在note-gen-tts，则设置为默认TTS模型
+    // TTS，note-gen-tts，TTS
     const currentAudioModel = await store.get('audioModel') as string
     const hasNoteGenTTS = finalAiModelList.some(config => 
       config.models?.some(model => model.modelType === 'tts') || config.modelType === 'tts'
     )
     
     if (!currentAudioModel && hasNoteGenTTS) {
-      // 查找第一个可用的TTS模型
+      // TTS
       for (const config of finalAiModelList) {
         if (config.models && config.models.length > 0) {
           const ttsModel = config.models.find(model => model.modelType === 'tts')
@@ -681,14 +681,14 @@ const useSettingStore = create<SettingState>((set, get) => ({
       }
     }
 
-    // 检查是否设置了STT模型，如果没有且存在note-gen-stt，则设置为默认STT模型
+    // STT，note-gen-stt，STT
     const currentSttModel = await store.get('sttModel') as string
     const hasNoteGenSTT = finalAiModelList.some(config => 
       config.models?.some(model => model.modelType === 'stt') || config.modelType === 'stt'
     )
     
     if (!currentSttModel && hasNoteGenSTT) {
-      // 查找第一个可用的STT模型
+      // STT
       for (const config of finalAiModelList) {
         if (config.models && config.models.length > 0) {
           const sttModel = config.models.find(model => model.modelType === 'stt')
@@ -711,7 +711,7 @@ const useSettingStore = create<SettingState>((set, get) => ({
     const currentSpeechToTextMode = await store.get('speechToTextMode')
     set({ speechToTextMode: normalizeSpeechMode(currentSpeechToTextMode) })
 
-    // 检查并初始化其他模型类型
+    //
     const modelTypes = [
       { storeKey: 'completionModel', modelType: 'chat' },
       { storeKey: 'markDescModel', modelType: 'chat' },
@@ -721,13 +721,13 @@ const useSettingStore = create<SettingState>((set, get) => ({
     for (const { storeKey, modelType } of modelTypes) {
       const currentModel = await store.get(storeKey) as string
       if (!currentModel) {
-        // 查找第一个可用的聊天模型作为默认值
+        //
         const noteGenFreeConfig = finalAiModelList.find(config => config.key === 'note-gen-free')
         if (noteGenFreeConfig?.models?.some(model => model.id === 'note-gen-chat' && model.modelType === modelType)) {
           await store.set(storeKey, 'note-gen-chat')
           set({ [storeKey]: 'note-gen-chat' })
         } else {
-          // 查找其他可用的聊天模型
+          //
           for (const config of finalAiModelList) {
             if (config.models && config.models.length > 0) {
               const chatModel = config.models.find(model => model.modelType === modelType)
@@ -746,8 +746,8 @@ const useSettingStore = create<SettingState>((set, get) => ({
       }
     }
 
-    // 获取 NoteGen 限时免费模型
-    // 如果服务不可用,静默失败,不影响用户使用自己的模型
+    // NoteGen
+    // ,,
     try {
       const apiKey = noteGenDefaultModels[0].apiKey
       const headers = {
@@ -759,7 +759,7 @@ const useSettingStore = create<SettingState>((set, get) => ({
         headers
       })
 
-      // 检查响应状态
+      //
       if (!res.ok) {
         throw new Error(`API responded with status: ${res.status}`)
       }
@@ -767,19 +767,19 @@ const useSettingStore = create<SettingState>((set, get) => ({
       const resModels = await res.json()
 
       if (resModels.data && resModels.data.length > 0) {
-        // 移除旧的 NoteGen Limited 配置
+        // NoteGen Limited
         finalAiModelList = finalAiModelList.filter(model => 
           model.title !== 'NoteGen Limited' && model.key !== 'note-gen-limited'
         )
         
-        // 过滤出不在默认模型中的限时免费模型
+        //
         const limitedModels = resModels.data.filter((model: any) => {
-          // 检查是否在 noteGenDefaultModels 的 models 数组中
+          // noteGenDefaultModels models
           const noteGenFreeConfig = finalAiModelList.find(config => config.key === 'note-gen-free')
           return !noteGenFreeConfig?.models?.some(defaultModel => defaultModel.model === model.id)
         })
         
-        // 如果有限时免费模型,创建统一的 NoteGen Limited 配置
+        // , NoteGen Limited
         if (limitedModels.length > 0) {
           const noteGenLimitedConfig = {
             apiKey,
@@ -802,7 +802,7 @@ const useSettingStore = create<SettingState>((set, get) => ({
         }
       }
     } catch (error) {
-      // 静默处理错误,不影响应用初始化和用户使用自己的模型
+      // ,
       console.debug('NoteGen API service unavailable, skipping limited models:', error)
     }
 
@@ -830,20 +830,20 @@ const useSettingStore = create<SettingState>((set, get) => ({
             set({ [key]: res as GenTemplate[] })
           }, 0);
         } else if (key === 'aiModelList' && hasNoteGenModels) {
-          // 如果已经有NoteGen模型，使用存储的配置
+          // NoteGen，
           hydratedSettings[key] = res as AiConfig[]
         } else if (key === 'recordToolbarConfig') {
-          // 确保包含所有工具，如果缺少新工具则自动添加
+          // ，
           const storedConfig = res as RecordToolbarItem[]
           const defaultConfig = value as RecordToolbarItem[]
 
-          // 检查是否有缺失的工具
+          //
           const missingTools = defaultConfig.filter(
             defaultItem => !storedConfig.some(stored => stored.id === defaultItem.id)
           )
 
           if (missingTools.length > 0) {
-            // 合并配置：保留用户的顺序和启用状态，添加新工具
+            // ：，
             const mergedConfig = [...storedConfig]
             let maxOrder = Math.max(...storedConfig.map(item => item.order), 0)
 
@@ -879,7 +879,7 @@ const useSettingStore = create<SettingState>((set, get) => ({
   autoUpdate: true,
   setAutoUpdate: (autoUpdate) => set({ autoUpdate }),
 
-  language: '简体中文',
+  language: 'English',
   setLanguage: (language) => set({ language }),
 
   appFontFamily: APP_FONT_SYSTEM_VALUE,
@@ -1021,11 +1021,11 @@ const useSettingStore = create<SettingState>((set, get) => ({
   templateList: [
     {
       id: '0',
-      title: '笔记',
-      content: `整理成一篇详细完整的笔记。
-满足以下格式要求：
-- 如果是代码，必须完整保留，不要随意生成。
-- 文字复制的内容尽量不要修改，只处理格式化后的内容。`,
+      title: 'Note',
+      content: `Organize the selected records into a clear, complete Markdown note.
+Requirements:
+- Keep code blocks intact; do not invent code.
+- Prefer the original wording for copied text; mainly fix structure and formatting.`,
       status: true,
       range: GenTemplateRange.All
     },
@@ -1148,20 +1148,20 @@ Prefer the original wording for decisions and action items. Mark unclear audio/t
     }
   },
 
-  // 自动拉取相关设置 - 默认开启
+  // -
   autoPullOnOpen: true,
   setAutoPullOnOpen: async (autoPullOnOpen: boolean) => {
     set({ autoPullOnOpen })
     const store = await Store.load('store.json');
     await store.set('autoPullOnOpen', autoPullOnOpen)
 
-    // 同步更新 sync-manager 的配置
+    // sync-manager
     try {
       const { getSyncManager } = await import('@/lib/sync/sync-manager')
       const manager = getSyncManager()
       await manager.updateConfig({ autoPullOnOpen })
     } catch {
-      // 静默处理
+      //
     }
   },
 
@@ -1180,17 +1180,17 @@ Prefer the original wording for decisions and action items. Mark unclear audio/t
     const store = await Store.load('store.json');
     await store.set('workspacePath', path)
     
-    // 如果路径不为空且不在历史记录中，则添加到历史记录
+    // ，
     if (path && !get().workspaceHistory.includes(path)) {
       await get().addWorkspaceHistory(path)
     }
   },
 
-  // 工作区历史路径管理
+  //
   workspaceHistory: [],
   addWorkspaceHistory: async (path: string) => {
     const currentHistory = get().workspaceHistory
-    const newHistory = [path, ...currentHistory.filter(p => p !== path)].slice(0, 10) // 最多保存10个历史路径
+    const newHistory = [path, ...currentHistory.filter(p => p !== path)].slice(0, 10) // Save10
     set({ workspaceHistory: newHistory })
     const store = await Store.load('store.json')
     await store.set('workspaceHistory', newHistory)
@@ -1210,7 +1210,7 @@ Prefer the original wording for decisions and action items. Mark unclear audio/t
     await store.save()
   },
 
-  // Gitee 相关设置
+  // Gitee
   giteeAccessToken: '',
   setGiteeAccessToken: async (giteeAccessToken: string) => {
     set({ giteeAccessToken })
@@ -1225,7 +1225,7 @@ Prefer the original wording for decisions and action items. Mark unclear audio/t
     await store.set('giteeAutoSync', giteeAutoSync)
   },
 
-  // Gitlab 相关设置
+  // Gitlab
   gitlabInstanceType: GitlabInstanceType.OFFICIAL,
   setGitlabInstanceType: async (instanceType: GitlabInstanceType) => {
     const store = await Store.load('store.json')
@@ -1263,7 +1263,7 @@ Prefer the original wording for decisions and action items. Mark unclear audio/t
     set({ gitlabUsername })
   },
 
-  // Gitea 相关实现
+  // Gitea
   giteaInstanceType: GiteaInstanceType.OFFICIAL,
   setGiteaInstanceType: async (instanceType: GiteaInstanceType) => {
     const store = await Store.load('store.json')
@@ -1309,7 +1309,7 @@ Prefer the original wording for decisions and action items. Mark unclear audio/t
     await store.save()
   },
 
-  // 默认使用 GitHub 作为主要备份方式
+  // GitHub
   primaryBackupMethod: 'github',
   setPrimaryBackupMethod: async (method: 'github' | 'gitee' | 'gitlab' | 'gitea' | 's3' | 'webdav') => {
     const store = await Store.load('store.json')
@@ -1326,7 +1326,7 @@ Prefer the original wording for decisions and action items. Mark unclear audio/t
     await store.save()
   },
 
-  // 图床设置
+  //
   githubImageAccessToken: '',
   setGithubImageAccessToken: async (githubImageAccessToken: string) => {
     set({ githubImageAccessToken })
@@ -1335,7 +1335,7 @@ Prefer the original wording for decisions and action items. Mark unclear audio/t
     await store.save()
   },
 
-  // 图片识别设置
+  //
   enableImageRecognition: true,
   setEnableImageRecognition: async (enable: boolean) => {
     set({ enableImageRecognition: enable })
@@ -1344,7 +1344,7 @@ Prefer the original wording for decisions and action items. Mark unclear audio/t
     await store.save()
   },
 
-  // 界面缩放设置 (75%, 100%, 125%, 150%)
+  // (75%, 100%, 125%, 150%)
   uiScale: 100,
   setUiScale: async (scale: number) => {
     set({ uiScale: scale })
@@ -1352,11 +1352,11 @@ Prefer the original wording for decisions and action items. Mark unclear audio/t
     await store.set('uiScale', scale)
     await store.save()
     
-    // 使用fontSize实现基于rem的缩放
+    // fontSizerem
     document.documentElement.style.fontSize = `${scale}%`
   },
 
-  // 正文文字大小缩放设置 (75%, 100%, 125%, 150%)
+  // (75%, 100%, 125%, 150%)
   contentTextScale: 100,
   setContentTextScale: async (scale: number) => {
     set({ contentTextScale: scale })
@@ -1365,7 +1365,7 @@ Prefer the original wording for decisions and action items. Mark unclear audio/t
     await store.save()
   },
 
-  // 文件管理器文字大小设置 (xs, sm, md, lg, xl)
+  // (xs, sm, md, lg, xl)
   fileManagerTextSize: 'sm',
   setFileManagerTextSize: async (size: string) => {
     set({ fileManagerTextSize: size })
@@ -1374,7 +1374,7 @@ Prefer the original wording for decisions and action items. Mark unclear audio/t
     await store.save()
   },
 
-  // 记录文字大小设置 (xs, sm, md, lg, xl)
+  // (xs, sm, md, lg, xl)
   recordTextSize: 'sm',
   setRecordTextSize: async (size: string) => {
     set({ recordTextSize: size })
@@ -1383,7 +1383,7 @@ Prefer the original wording for decisions and action items. Mark unclear audio/t
     await store.save()
   },
 
-  // 自定义主题颜色设置
+  //
   customThemeColors: {
     light: {
       background: null,
@@ -1428,7 +1428,7 @@ Prefer the original wording for decisions and action items. Mark unclear audio/t
     await store.set('customThemeColors', colors)
     await store.save()
 
-    // 应用主题颜色（同时应用亮色和暗色主题）
+    // （）
     applyThemeColors(colors)
   },
   resetCustomThemeColors: async () => {
@@ -1475,11 +1475,11 @@ Prefer the original wording for decisions and action items. Mark unclear audio/t
     await store.set('customThemeColors', defaultColors)
     await store.save()
 
-    // 清除自定义主题颜色
+    //
     removeThemeColors()
   },
 
-  // 自定义仓库名称设置
+  //
   githubCustomSyncRepo: '',
   setGithubCustomSyncRepo: async (repo: string) => {
     set({ githubCustomSyncRepo: repo })
@@ -1512,7 +1512,7 @@ Prefer the original wording for decisions and action items. Mark unclear audio/t
     await store.save()
   },
 
-  // 记录工具栏配置
+  //
   recordToolbarConfig: [
     { id: 'text', enabled: true, order: 0 },
     { id: 'recording', enabled: true, order: 1 },
@@ -1583,7 +1583,7 @@ Prefer the original wording for decisions and action items. Mark unclear audio/t
     await store.save()
   },
 
-  // 编辑器撤销/重做按钮显示设置 - 默认开启
+  // / -
   showEditorUndoRedo: true,
   setShowEditorUndoRedo: async (show: boolean) => {
     set({ showEditorUndoRedo: show })

@@ -44,30 +44,30 @@ import { getGiteaApiBaseUrl } from "@/lib/sync/gitea"
 import { fetch } from '@tauri-apps/plugin-http'
 import { useSettingsDialogStore } from '@/stores/settings-dialog'
 
-// GitLab 实例类型
+// GitLab
 enum GitlabInstanceType {
   OFFICIAL = 'official',
   JIHULAB = 'jihulab',
   SELF_HOSTED = 'self-hosted'
 }
 
-// GitLab 实例配置
+// GitLab
 const GITLAB_INSTANCES: Record<GitlabInstanceType, { name: string; baseUrl: string }> = {
   [GitlabInstanceType.OFFICIAL]: {
     name: 'GitLab',
     baseUrl: 'https://gitlab.com'
   },
   [GitlabInstanceType.JIHULAB]: {
-    name: '极狐GitLab',
+    name: 'GitLab (JiHu)',
     baseUrl: 'https://jihulab.com'
   },
   [GitlabInstanceType.SELF_HOSTED]: {
-    name: '自建 GitLab',
+    name: 'Self-hosted GitLab',
     baseUrl: ''
   }
 }
 
-// 获取 GitLab API 基础 URL
+// GitLab API URL
 async function getGitlabApiBaseUrl(): Promise<string> {
   const store = await Store.load('store.json')
   const instanceType = await store.get<GitlabInstanceType>('gitlabInstanceType') || GitlabInstanceType.OFFICIAL
@@ -77,17 +77,17 @@ async function getGitlabApiBaseUrl(): Promise<string> {
     customUrl = customUrl.replace(/\/+$/, '').trim()
 
     if (!customUrl) {
-      throw new Error('自建 GitLab 实例的 URL 未配置')
+      throw new Error('Self-hosted GitLab instance URL is not configured')
     }
 
-    // 用户使用 http://localhost:8080/ 这种本地地址，不需要添加 https://
+    // http://localhost:8080/ ， https://
     const baseUrl = `${customUrl}/api/v4`
     return baseUrl
   }
 
   const instance = GITLAB_INSTANCES[instanceType]
   if (!instance) {
-    // 未知类型，默认使用官方 GitLab
+    // ， GitLab
     return `${GITLAB_INSTANCES[GitlabInstanceType.OFFICIAL].baseUrl}/api/v4`
   }
   return `${instance.baseUrl}/api/v4`
@@ -110,13 +110,13 @@ import {
   type AutoDataSyncState,
 } from "@/lib/sync/auto-data-sync-queue"
 
-// ============ 通用辅助函数 ============
+// ============ ============
 function encodePath(path: string, filename?: string): string {
   const fullPath = filename ? `${path}/${filename}` : path
   return fullPath.replace(/\s/g, '_').split('/').map(segment => encodeURIComponent(segment)).join('/')
 }
 
-// GitLab API 需要完整路径一起编码
+// GitLab API
 function encodeGitLabPath(path: string, filename?: string): string {
   const fullPath = filename ? `${path}/${filename}` : path
   return encodeURIComponent(fullPath)
@@ -169,7 +169,7 @@ async function requestGitLab(method: string, url: string, body?: object) {
   headers.append('PRIVATE-TOKEN', gitlabAccessToken as string)
   headers.append('Content-Type', 'application/json')
 
-  // 使用 @tauri-apps/plugin-http 的 fetch 避免 CORS 问题
+  // @tauri-apps/plugin-http fetch CORS
   const { fetch: tauriFetch } = await import('@tauri-apps/plugin-http')
   const response = await tauriFetch(url, { method, headers, body: body ? JSON.stringify(body) : undefined })
 
@@ -201,7 +201,7 @@ async function requestGitea(method: string, url: string, body?: object) {
   throw { status: response.status, message: errorData.message || 'Request failed' }
 }
 
-// ============ GitHub 上传/下载函数 ============
+// ============ GitHub / ============
 async function githubUpload({ file, path, filename, sha, repo, accessToken, githubUsername }: {
   file: string, path: string, filename: string, sha?: string, repo: string, accessToken: string, githubUsername: string
 }) {
@@ -216,7 +216,7 @@ async function githubGetFile({ path, repo, accessToken, githubUsername }: {
   return requestGitHub('GET', url)
 }
 
-// ============ Gitee 上传/下载函数 ============
+// ============ Gitee / ============
 async function giteeUpload({ file, path, filename, sha, repo, accessToken, giteeUsername }: {
   file: string, path: string, filename: string, sha?: string, repo: string, accessToken: string, giteeUsername: string
 }) {
@@ -231,19 +231,19 @@ async function giteeGetFile({ path, repo, accessToken, giteeUsername }: {
   return requestGitee('GET', url)
 }
 
-// ============ GitLab 上传/下载函数 ============
+// ============ GitLab / ============
 async function gitlabUpload({ file, path, filename, sha, accessToken, projectId }: {
   file: string, path: string, filename: string, sha?: string, accessToken: string, projectId: string
 }) {
   const baseUrl = await getGitlabApiBaseUrl()
   const url = `${baseUrl}/projects/${projectId}/repository/files/${encodeGitLabPath(path, filename)}`
 
-  // 如果没有 sha，先尝试用 POST 创建
+  // sha， POST
   if (!sha) {
     try {
       return await requestGitLab('POST', url, { branch: 'main', content: file, commit_message: `Upload ${filename}`, encoding: 'base64' })
     } catch (error: any) {
-      // 如果是 404 错误，说明文件不存在，先获取 SHA 后再上传
+      // 404 ，， SHA
       if (error.status === 404) {
         const existingFile = await gitlabGetFile({ path: `${path}/${filename}`, accessToken, projectId })
         if (existingFile) {
@@ -253,7 +253,7 @@ async function gitlabUpload({ file, path, filename, sha, accessToken, projectId 
     }
   }
 
-  // 如果有 sha，或者 POST 失败，用 PUT 更新
+  // sha， POST ， PUT
   return requestGitLab('PUT', url, { branch: 'main', content: file, commit_message: `Upload ${filename}`, encoding: 'base64', sha })
 }
 
@@ -265,19 +265,19 @@ async function gitlabGetFile({ path, accessToken, projectId }: {
   return requestGitLab('GET', url)
 }
 
-// ============ Gitea 上传/下载函数 ============
+// ============ Gitea / ============
 async function giteaUpload({ file, path, filename, sha, repo, accessToken, giteaUsername }: {
   file: string, path: string, filename: string, sha?: string, repo: string, accessToken: string, giteaUsername: string
 }) {
   const baseUrl = await getGiteaApiBaseUrl()
   const url = `${baseUrl}/repos/${giteaUsername}/${repo}/contents/${encodePath(path, filename)}`
 
-  // 如果没有 sha，先尝试用 POST 创建
+  // sha， POST
   if (!sha) {
     try {
       return await requestGitea('POST', url, { content: file, message: `Upload ${filename}`, branch: 'main' })
     } catch (error: any) {
-      // 如果是 422 错误，说明文件可能已存在，需要先获取 SHA
+      // 422 ，， SHA
       if (error.status === 422) {
         const existingFile = await giteaGetFile({ path: `${path}/${filename}`, repo, accessToken, giteaUsername })
         if (existingFile) {
@@ -287,7 +287,7 @@ async function giteaUpload({ file, path, filename, sha, repo, accessToken, gitea
     }
   }
 
-  // 如果有 sha 或者 POST 失败，用 PUT 更新
+  // sha POST ， PUT
   return requestGitea('PUT', url, { content: file, message: `Upload ${filename}`, branch: 'main', sha })
 }
 
@@ -299,7 +299,7 @@ async function giteaGetFile({ path, repo, accessToken, giteaUsername }: {
   return requestGitea('GET', url)
 }
 
-// ============ 方案状态类型 ============
+// ============ ============
 type ProviderStatus = 'connected' | 'disconnected' | 'failed' | 'unconfigured'
 
 interface ProviderInfo {
@@ -360,7 +360,7 @@ export function SyncToggle({ presentation = 'popover' }: SyncToggleProps) {
     return subscribeAutoDataSyncState(setAutoDataSyncState)
   }, [])
 
-  // 加载各平台状态并自动检测
+  //
   useEffect(() => {
     async function loadProviderStatus() {
       try {
@@ -376,9 +376,9 @@ export function SyncToggle({ presentation = 'popover' }: SyncToggleProps) {
         const s3Config = await store.get<S3Config>('s3SyncConfig')
         const webdavConfig = await store.get<WebDAVConfig>('webdavSyncConfig')
 
-        // 移动端自动检测各平台状态
+        //
         if (isMobile) {
-          // GitHub 检测
+          // GitHub
           if (githubUsername && accessToken && syncRepoState === SyncStateEnum.fail) {
             try {
               const { checkSyncRepoState } = await import('@/lib/sync/github')
@@ -394,7 +394,7 @@ export function SyncToggle({ presentation = 'popover' }: SyncToggleProps) {
             }
           }
 
-          // Gitee 检测
+          // Gitee
           if (giteeUsername && giteeAccessToken && giteeSyncRepoState === SyncStateEnum.fail) {
             try {
               const { checkSyncRepoState } = await import('@/lib/sync/gitee')
@@ -410,7 +410,7 @@ export function SyncToggle({ presentation = 'popover' }: SyncToggleProps) {
             }
           }
 
-          // GitLab 检测
+          // GitLab
           if (gitlabProjectId && gitlabAccessToken && gitlabSyncProjectState === SyncStateEnum.fail) {
             try {
               const { checkSyncProjectState } = await import('@/lib/sync/gitlab')
@@ -426,7 +426,7 @@ export function SyncToggle({ presentation = 'popover' }: SyncToggleProps) {
             }
           }
 
-          // Gitea 检测
+          // Gitea
           if (giteaUsername && giteaAccessToken && giteaSyncRepoState === SyncStateEnum.fail) {
             try {
               const { checkSyncRepoState } = await import('@/lib/sync/gitea')
@@ -493,7 +493,7 @@ export function SyncToggle({ presentation = 'popover' }: SyncToggleProps) {
       }
     }
 
-    // 检测 S3 连接状态
+    // S3
     async function checkS3Status() {
       const store = await Store.load('store.json')
       const s3Config = await store.get<S3Config>('s3SyncConfig')
@@ -503,7 +503,7 @@ export function SyncToggle({ presentation = 'popover' }: SyncToggleProps) {
       }
     }
 
-    // 检测 WebDAV 连接状态
+    // WebDAV
     async function checkWebDAVStatus() {
       const store = await Store.load('store.json')
       const webdavConfig = await store.get<WebDAVConfig>('webdavSyncConfig')
@@ -515,21 +515,21 @@ export function SyncToggle({ presentation = 'popover' }: SyncToggleProps) {
 
     loadProviderStatus()
 
-    // 弹窗打开时检测 S3 和 WebDAV 连接状态
+    // S3 WebDAV
     if (open) {
       checkS3Status()
       checkWebDAVStatus()
     }
   }, [open, syncRepoState, giteeSyncRepoState, gitlabSyncProjectState, giteaSyncRepoState, s3Connected, webdavConnected])
 
-  // 获取当前方案的显示文本
+  //
   const getCurrentProviderDisplay = () => {
     const current = providers.find(p => p.platform === primaryBackupMethod)
     if (!current) {
       return DEFAULT_PROVIDER_LIST.find((provider) => provider.platform === primaryBackupMethod)?.name || ''
     }
 
-    // 已配置时只显示名称，未配置时显示名称 + "未配置"
+    // ， + "Not configured"
     if (current.status === 'unconfigured') {
       return `${current.name} ${t('settings.sync.status.unconfigured')}`
     }
@@ -590,7 +590,7 @@ export function SyncToggle({ presentation = 'popover' }: SyncToggleProps) {
     }
   }
 
-  // 获取状态图标
+  //
   const getStatusIcon = (status: ProviderStatus) => {
     if (status === 'connected') {
       return <span className="text-green-500">●</span>
@@ -602,11 +602,11 @@ export function SyncToggle({ presentation = 'popover' }: SyncToggleProps) {
     return <span className="text-zinc-400">○</span>
   }
 
-  // 处理方案切换
+  //
   const handleProviderChange = async (value: string) => {
     const selectedProvider = providers.find(p => p.platform === value)
 
-    // 如果选择了未配置的方案，跳转到设置页面
+    // ，
     if (selectedProvider?.status === 'unconfigured') {
       await setPrimaryBackupMethod(value as SyncPlatform)
       if (isMobile) {
@@ -617,7 +617,7 @@ export function SyncToggle({ presentation = 'popover' }: SyncToggleProps) {
       return
     }
 
-    // 如果是 S3 或 WebDAV，切换后重新检测连接状态
+    // S3 WebDAV，
     if (value === 's3' || value === 'webdav') {
       const store = await Store.load('store.json')
       if (value === 's3') {
@@ -637,12 +637,12 @@ export function SyncToggle({ presentation = 'popover' }: SyncToggleProps) {
 
     await setPrimaryBackupMethod(value as SyncPlatform)
 
-    // 切换方案后重新加载文件列表
+    //
     await loadFileTree()
     await loadRemoteSyncFiles()
   }
 
-  // 上传到云端
+  //
   async function uploadAll() {
     const confirmRef = await confirm(t('settings.uploadStore.uploadConfirm'))
     if (!confirmRef) return
@@ -664,7 +664,7 @@ export function SyncToggle({ presentation = 'popover' }: SyncToggleProps) {
     }
   }
 
-  // 从云端下载
+  //
   async function downloadAll() {
     const res = await confirm(t('settings.uploadStore.downloadConfirm'))
     if (!res) return
@@ -698,7 +698,7 @@ export function SyncToggle({ presentation = 'popover' }: SyncToggleProps) {
     }
   }
 
-  // 导出本地备份
+  //
   async function handleExport() {
     try {
       setExporting(true);
@@ -729,7 +729,7 @@ export function SyncToggle({ presentation = 'popover' }: SyncToggleProps) {
       toast({
         title: t('settings.backupSync.localBackup.exportSuccess'),
         description: isMobile
-          ? `文件已保存到: ${savedPath}\n请在 Files App 中查看`
+          ? `File saved to: ${savedPath}\nView it in the Files app`
           : savedPath,
       });
     } catch (error) {
@@ -744,13 +744,13 @@ export function SyncToggle({ presentation = 'popover' }: SyncToggleProps) {
     }
   }
 
-  // 导入本地备份
+  //
   async function handleImport() {
     try {
       setImporting(true);
 
       if (isMobile) {
-        // 移动端 TODO: 需要实现文件选择
+        // TODO:
         toast({
           description: t('settings.backupSync.localBackup.importError'),
           variant: "destructive",

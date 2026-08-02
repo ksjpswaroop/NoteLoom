@@ -1,6 +1,6 @@
 /**
- * 替换指定行范围的内容
- * 用于在确认对话框中预览修改效果
+ * 
+ * 
  */
 export function replaceLinesInRange(
   content: string,
@@ -10,7 +10,7 @@ export function replaceLinesInRange(
 ): string {
   const lines = content.split('\n')
 
-  // 容错处理：如果 startLine > endLine，自动交换
+  // ： startLine > endLine，
   let actualStartLine = startLine
   let actualEndLine = endLine
   if (startLine > endLine) {
@@ -18,24 +18,24 @@ export function replaceLinesInRange(
     actualEndLine = startLine
   }
 
-  // 将行号转换为数组索引（从 0 开始）
+  // （ 0 ）
   const startIndex = actualStartLine - 1
   const endIndex = actualEndLine - 1
 
-  // 验证行号范围
+  //
   if (startIndex < 0 || endIndex >= lines.length) {
-    throw new Error(`无效的行号范围: ${startLine}-${endLine}，文件共 ${lines.length} 行`)
+    throw new Error(`Invalid line range: ${startLine}-${endLine}; file has ${lines.length} lines`)
   }
 
-  // 替换指定行
+  //
   const before = lines.slice(0, startIndex)
   const after = lines.slice(endIndex + 1)
   return [...before, ...newLines, ...after].join('\n')
 }
 
 /**
- * 搜索并替换内容（支持正则表达式）
- * 用于在确认对话框中预览修改效果
+ * （）
+ * 
  */
 export function searchReplaceContent(
   content: string,
@@ -50,7 +50,7 @@ export function searchReplaceContent(
     const flags = caseSensitive ? 'g' : 'gi'
 
     if (!useRegex) {
-      // 非正则模式，转义特殊字符
+      // ，
       pattern = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     }
 
@@ -58,13 +58,13 @@ export function searchReplaceContent(
 
     return content.replace(regex, replacement)
   } catch (error) {
-    throw new Error(`搜索替换失败: ${error}`)
+    throw new Error(`Search and replace failed: ${error}`)
   }
 }
 
 /**
- * 在指定行号后插入内容
- * 用于在确认对话框中预览修改效果
+ * 
+ * 
  */
 export function insertLinesAtPosition(
   content: string,
@@ -73,12 +73,12 @@ export function insertLinesAtPosition(
 ): string {
   const lines = content.split('\n')
 
-  // 验证行号
+  //
   if (afterLine < 0 || afterLine > lines.length) {
-    throw new Error(`无效的行号: ${afterLine}，文件共 ${lines.length} 行`)
+    throw new Error(`Invalid line number: ${afterLine}; file has ${lines.length} lines`)
   }
 
-  // 在指定行后插入内容
+  //
   const before = lines.slice(0, afterLine)
   const after = lines.slice(afterLine)
 
@@ -86,8 +86,8 @@ export function insertLinesAtPosition(
 }
 
 /**
- * 删除指定行范围
- * 用于在确认对话框中预览修改效果
+ * 
+ * 
  */
 export function deleteLinesInRange(
   content: string,
@@ -96,7 +96,7 @@ export function deleteLinesInRange(
 ): string {
   const lines = content.split('\n')
 
-  // 容错处理：如果 startLine > endLine，自动交换
+  // ： startLine > endLine，
   let actualStartLine = startLine
   let actualEndLine = endLine
   if (startLine > endLine) {
@@ -104,16 +104,16 @@ export function deleteLinesInRange(
     actualEndLine = startLine
   }
 
-  // 将行号转换为数组索引（从 0 开始）
+  // （ 0 ）
   const startIndex = actualStartLine - 1
   const endIndex = actualEndLine - 1
 
-  // 验证行号范围
+  //
   if (startIndex < 0 || endIndex >= lines.length) {
-    throw new Error(`无效的行号范围: ${startLine}-${endLine}，文件共 ${lines.length} 行`)
+    throw new Error(`Invalid line range: ${startLine}-${endLine}; file has ${lines.length} lines`)
   }
 
-  // 删除指定行
+  //
   const before = lines.slice(0, startIndex)
   const after = lines.slice(endIndex + 1)
 

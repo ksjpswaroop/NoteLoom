@@ -62,7 +62,7 @@ export function S3ImageHosting() {
     || preset === 'custom'
   )
 
-  // 初始化配置
+  //
   useEffect(() => {
     const initConfig = async () => {
       const store = await Store.load('store.json');
@@ -74,7 +74,7 @@ export function S3ImageHosting() {
         });
         setConfig(normalizedConfig);
         await setS3Config(normalizedConfig);
-        // 如果配置完整，自动进行连接检测
+        // ，
         if (isObjectStorageConfigComplete(normalizedConfig)) {
           setS3State(SyncStateEnum.checking);
           try {
@@ -94,18 +94,18 @@ export function S3ImageHosting() {
     initConfig();
   }, [setS3Config]);
 
-  // 自动保存和测试配置
+  //
   const handleConfigChange = async (newConfig: S3Config) => {
     setConfig(newConfig);
     
-    // 自动保存配置
+    //
     try {
       await setS3Config(newConfig);
     } catch (error) {
       console.error('Failed to save S3 config:', error);
     }
     
-    // 如果必填字段都已填写，自动测试连接
+    // ，
     if (isObjectStorageConfigComplete(newConfig)) {
       setS3State(SyncStateEnum.checking);
 

@@ -16,11 +16,11 @@ interface FileShortcutsProps {
 }
 
 /**
- * 文件和文件夹快捷键 Hook
- * 桌面端：
- *   - macOS: Enter 键触发重命名，Cmd+C 复制，Cmd+V 粘贴，Cmd+X 剪切，Backspace 删除
- *   - Windows/Linux: F2 键触发重命名，Ctrl+C 复制，Ctrl+V 粘贴，Ctrl+X 剪切，Delete 删除
- * 移动端：不启用快捷键
+ * Hook
+ * ：
+ * - macOS: Enter ，Cmd+C ，Cmd+V ，Cmd+X ，Backspace 
+ * - Windows/Linux: F2 ，Ctrl+C ，Ctrl+V ，Ctrl+X ，Delete 
+ * ：
  */
 export function useFileShortcuts({
   path,
@@ -34,7 +34,7 @@ export function useFileShortcuts({
   const { activeFilePath } = useArticleStore()
   const [currentPlatform, setCurrentPlatform] = useState<Platform>('unknown')
 
-  // 检测当前平台
+  //
   useEffect(() => {
     try {
       const p = platform()
@@ -50,7 +50,7 @@ export function useFileShortcuts({
     }
   }, [])
 
-  // 检查是否按下了正确的修饰键
+  //
   const isModKey = useCallback((e: KeyboardEvent | React.KeyboardEvent): boolean => {
     if (currentPlatform === 'macos') {
       return e.metaKey && !e.ctrlKey
@@ -60,24 +60,24 @@ export function useFileShortcuts({
   }, [currentPlatform])
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    // 移动端不处理快捷键
+    //
     if (isMobileDevice()) {
       return
     }
 
-    // 正在编辑时也忽略
+    //
     if (isEditing === true) {
       return
     }
 
-    // 只处理选中的文件/文件夹
+    // /
     if (path !== activeFilePath) {
       return
     }
 
     const modPressed = isModKey(e)
 
-    // 重命名: macOS 使用 Enter 键，Windows/Linux 使用 F2 键
+    // : macOS Enter ，Windows/Linux F2
     const isRenameKey = currentPlatform === 'macos'
       ? e.key === 'Enter'
       : e.key === 'F2'
@@ -89,7 +89,7 @@ export function useFileShortcuts({
       return
     }
 
-    // 复制: Cmd+C / Ctrl+C
+    // : Cmd+C / Ctrl+C
     if (modPressed && e.key === 'c' && onCopy) {
       e.preventDefault()
       e.stopPropagation()
@@ -97,7 +97,7 @@ export function useFileShortcuts({
       return
     }
 
-    // 粘贴: Cmd+V / Ctrl+V
+    // : Cmd+V / Ctrl+V
     if (modPressed && e.key === 'v' && onPaste) {
       e.preventDefault()
       e.stopPropagation()
@@ -105,7 +105,7 @@ export function useFileShortcuts({
       return
     }
 
-    // 剪切: Cmd+X / Ctrl+X
+    // : Cmd+X / Ctrl+X
     if (modPressed && e.key === 'x' && onCut) {
       e.preventDefault()
       e.stopPropagation()
@@ -113,7 +113,7 @@ export function useFileShortcuts({
       return
     }
 
-    // 删除: macOS 使用 Backspace，Windows/Linux 使用 Delete
+    // : macOS Backspace，Windows/Linux Delete
     const isDeleteKey = currentPlatform === 'macos'
       ? e.key === 'Backspace'
       : e.key === 'Delete'
@@ -127,7 +127,7 @@ export function useFileShortcuts({
   }, [activeFilePath, isEditing, onStartRename, onCopy, onPaste, onCut, onDelete, path, currentPlatform, isModKey])
 
   useEffect(() => {
-    // 移动端不添加事件监听
+    //
     if (isMobileDevice() || currentPlatform === 'unknown') {
       return
     }

@@ -6,7 +6,6 @@ import { History, MessageSquareDashed, MessageSquarePlus, Search, Trash2 } from 
 import { useTranslations } from "next-intl"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
-import "dayjs/locale/zh-cn"
 import "dayjs/locale/en"
 import useChatStore from "@/stores/chat"
 import useSettingStore from "@/stores/setting"
@@ -34,8 +33,8 @@ const SearchDialog = dynamic(
 
 dayjs.extend(relativeTime)
 
-function formatRelativeTime(timestamp: number, locale: string): string {
-  const dayjsLocale = locale === "en" ? "en" : "zh-cn"
+function formatRelativeTime(timestamp: number): string {
+  const dayjsLocale = 'en'
   return dayjs(timestamp).locale(dayjsLocale).fromNow()
 }
 
@@ -51,7 +50,6 @@ export function MobileChatHeader() {
     chats,
     loading,
   } = useChatStore()
-  const { language } = useSettingStore()
   const autoDataSyncEnabled = useSettingStore(state => state.autoDataSyncEnabled)
   const hasMobileUpdate = useUpdateStore(state => Boolean(state.mobileUpdate))
   const tEmpty = useTranslations("record.chat.empty")
@@ -157,7 +155,7 @@ export function MobileChatHeader() {
                           <div className="min-w-0">
                             <p className="text-sm font-medium truncate">{conversation.title}</p>
                             <p className="text-xs text-muted-foreground mt-1">
-                              {formatRelativeTime(conversation.updatedAt, language)}
+                              {formatRelativeTime(conversation.updatedAt)}
                             </p>
                           </div>
                         </button>

@@ -166,7 +166,7 @@ export interface AiConfig {
   proxyMode?: ProxyMode
   proxyURL?: string
   models?: ModelConfig[]
-  // 保持向后兼容
+  //
   model?: string
   temperature?: number
   topP?: number

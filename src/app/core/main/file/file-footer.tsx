@@ -37,12 +37,12 @@ export function FileFooter() {
   const sync = useSyncAvailability()
   const [switchingWorkspace, setSwitchingWorkspace] = useState(false)
 
-  // 当前工作区名称
+  //
   const currentWorkspaceName = useMemo(() => {
     return getWorkspaceDisplayName(workspacePath, tFile('workspace.defaultPath'))
   }, [workspacePath, tFile])
 
-  // 选择工作区目录
+  //
   async function handleSelectWorkspace() {
     try {
       const selected = await openDialog({
@@ -56,11 +56,11 @@ export function FileFooter() {
         await switchWorkspace(path)
       }
     } catch (error) {
-      console.error('选择工作区失败:', error)
+      console.error('Failed to select workspace:', error)
     }
   }
 
-  // 切换工作区
+  //
   async function switchWorkspace(path: string) {
     if (path === workspacePath || switchingWorkspace) return
 
@@ -75,7 +75,7 @@ export function FileFooter() {
       if (lastActivePath) await setActiveFilePath(lastActivePath)
       await refreshSkills()
     } catch (error) {
-      console.error('切换工作区失败:', error)
+      console.error('Failed to switch workspace:', error)
       await setWorkspacePath(previousWorkspacePath)
       await loadWorkspaceCollapsibleList()
       await loadFileTree()
@@ -85,7 +85,7 @@ export function FileFooter() {
     }
   }
 
-  // 重置为默认工作区
+  //
   async function handleResetWorkspace() {
     if (switchingWorkspace) return
 
@@ -100,7 +100,7 @@ export function FileFooter() {
       if (lastActivePath) await setActiveFilePath(lastActivePath)
       await refreshSkills()
     } catch (error) {
-      console.error('重置工作区失败:', error)
+      console.error('Failed to reset workspace:', error)
       await setWorkspacePath(previousWorkspacePath)
       await loadWorkspaceCollapsibleList()
       await loadFileTree()
@@ -121,7 +121,7 @@ export function FileFooter() {
           ? tContext('syncConfigured', { platform: sync.platform })
           : tContext('syncNotConfigured')}
       />
-      {/* 左侧：工作区选择器 */}
+      {/* ： */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -134,7 +134,7 @@ export function FileFooter() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
-          {/* 选择新工作区 */}
+          {/* */}
           <DropdownMenuLabel>{tFile('workspace.actions')}</DropdownMenuLabel>
           <DropdownMenuItem disabled={switchingWorkspace} onClick={handleSelectWorkspace}>
             <FolderPlus className="mr-2 h-4 w-4" />
@@ -147,7 +147,7 @@ export function FileFooter() {
             </DropdownMenuItem>
           )}
           
-          {/* 历史工作区 */}
+          {/* */}
           {workspaceHistory.length > 0 && (
             <>
               <DropdownMenuSeparator />
@@ -178,7 +178,7 @@ export function FileFooter() {
             </>
           )}
           
-          {/* 默认工作区 */}
+          {/* */}
           {!workspacePath && workspaceHistory.length === 0 && (
             <>
               <DropdownMenuSeparator />

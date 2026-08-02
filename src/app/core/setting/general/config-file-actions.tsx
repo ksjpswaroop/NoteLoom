@@ -43,7 +43,7 @@ export function ConfigFileActions() {
       }
     } catch (error) {
       toast({
-        title: '导入失败',
+        title: 'Import failed',
         description: error instanceof Error ? error.message : String(error),
         variant: 'destructive',
       })

@@ -17,7 +17,7 @@ export function RenameFolder({ item, onStartRename, shortcut }: RenameFolderProp
   const [renameKey, setRenameKey] = useState('F2');
 
   useEffect(() => {
-    // 如果从外部传入了快捷键，使用外部传入的
+    // ，
     if (shortcut) {
       setRenameKey(shortcut);
       return;
@@ -31,8 +31,8 @@ export function RenameFolder({ item, onStartRename, shortcut }: RenameFolderProp
   }, [shortcut]);
 
   function handleStartRename() {
-    // 不再更新文件树，只调用父组件的重命名处理函数
-    // 父组件会通过本地状态管理编辑状态
+    // ，
+    //
     onStartRename();
   }
 

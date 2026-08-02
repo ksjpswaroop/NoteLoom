@@ -75,7 +75,7 @@ export function TableToolbar({ editor }: TableToolbarProps) {
         size="icon-sm"
         onClick={insertTable}
         disabled={!canInsertTable}
-        title="插入表格"
+        title="Insert table"
       >
         <TableIcon />
       </Button>
@@ -84,63 +84,63 @@ export function TableToolbar({ editor }: TableToolbarProps) {
         <ButtonGroup>
           <Button type="button" variant="ghost" size="icon-sm"
             onClick={addColumnBefore}
-            title="在左侧插入列"
+            title="Insert column left"
           >
             <Columns className="rotate-180" />
           </Button>
           <Button type="button" variant="ghost" size="icon-sm"
             onClick={addColumnAfter}
-            title="在右侧插入列"
+            title="Insert column right"
           >
             <Columns />
           </Button>
           <Button type="button" variant="ghost" size="icon-sm"
             onClick={addRowBefore}
-            title="在上方插入行"
+            title="Insert row above"
           >
             <Rows className="rotate-180" />
           </Button>
           <Button type="button" variant="ghost" size="icon-sm"
             onClick={addRowAfter}
-            title="在下方插入行"
+            title="Insert row below"
           >
             <Rows />
           </Button>
           <ButtonGroupSeparator />
           <Button type="button" variant="ghost" size="icon-sm"
             onClick={setColumnAlignmentLeft}
-            title="左对齐"
+            title="Align left"
           >
             <AlignLeft />
           </Button>
           <Button type="button" variant="ghost" size="icon-sm"
             onClick={setColumnAlignmentCenter}
-            title="居中对齐"
+            title="Align center"
           >
             <AlignCenter />
           </Button>
           <Button type="button" variant="ghost" size="icon-sm"
             onClick={setColumnAlignmentRight}
-            title="右对齐"
+            title="Align right"
           >
             <AlignRight />
           </Button>
           <ButtonGroupSeparator />
           <Button type="button" variant="destructive" size="icon-sm"
             onClick={deleteColumn}
-            title="删除列"
+            title="Delete column"
           >
             <Trash2 />
           </Button>
           <Button type="button" variant="destructive" size="icon-sm"
             onClick={deleteRow}
-            title="删除行"
+            title="Delete row"
           >
             <Rows className="rotate-45" />
           </Button>
           <Button type="button" variant="destructive" size="icon-sm"
             onClick={deleteTable}
-            title="删除表格"
+            title="Delete table"
           >
             <Trash2 />
           </Button>

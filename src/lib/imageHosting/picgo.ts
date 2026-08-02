@@ -15,7 +15,7 @@ export async function uploadImageByPicgo(image: File) {
   if (!picgoSetting) {
     return null
   }
-  // 将 File 保存至缓存目录
+  // File
   const cacheDir = await appDataDir()
   const cachePath = `${cacheDir}/picgo`
   if (!await exists(cachePath)) {

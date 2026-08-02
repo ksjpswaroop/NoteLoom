@@ -211,13 +211,13 @@ function mergeCanvasProjects(
     )
     if (hasConflict) {
       const older = remoteProject.updatedAt >= localProject.updatedAt ? localProject : normalizedRemoteProject
-      const origin = older === localProject ? '本地' : '远程'
-      const conflictId = `${older.id}-conflict-${origin === '本地' ? 'local' : 'remote'}-${older.updatedAt}`
+      const origin = older === localProject ? 'Local' : 'Remote'
+      const conflictId = `${older.id}-conflict-${origin === 'Local' ? 'local' : 'remote'}-${older.updatedAt}`
       if (!projects.has(conflictId)) {
         projects.set(conflictId, {
           ...structuredClone(older),
           id: conflictId,
-          title: `${older.title}（同步冲突·${origin}副本）`,
+          title: `${older.title} (sync conflict · ${origin} copy)`,
           pinnedAt: null,
           thumbnailPath: null,
           deletedAt: null,

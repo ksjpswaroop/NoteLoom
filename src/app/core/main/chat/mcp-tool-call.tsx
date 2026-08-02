@@ -30,7 +30,7 @@ export function McpToolCallCard({ toolCall }: McpToolCallCardProps) {
   return (
     <Card className="p-3 bg-muted/30">
       <div className="space-y-2">
-        {/* 头部 */}
+        {/* */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {getStatusIcon()}
@@ -50,10 +50,10 @@ export function McpToolCallCard({ toolCall }: McpToolCallCardProps) {
           </Button>
         </div>
 
-        {/* 展开内容 */}
+        {/* */}
         {expanded && (
           <div className="space-y-3 pt-2">
-            {/* 参数 */}
+            {/* */}
             <div className="space-y-1">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-medium text-muted-foreground">{t('params')}:</span>
@@ -65,7 +65,7 @@ export function McpToolCallCard({ toolCall }: McpToolCallCardProps) {
               </pre>
             </div>
 
-            {/* 结果 */}
+            {/* */}
             {toolCall.result && (
               <div className="space-y-1">
                 <div className="flex items-center justify-between">

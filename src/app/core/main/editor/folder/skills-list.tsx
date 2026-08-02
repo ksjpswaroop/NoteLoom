@@ -12,11 +12,11 @@ interface SkillsListViewProps {
 export function SkillsListView({ skills }: SkillsListViewProps) {
   const t = useTranslations('article.file.folderView')
 
-  // 按 scope 分组
+  // scope
   const globalSkills = skills.filter(s => s.scope === 'global')
   const projectSkills = skills.filter(s => s.scope === 'project')
 
-  // 跟踪每个技能的展开状态
+  //
   const [expandedSkills, setExpandedSkills] = useState<Set<string>>(new Set())
 
   const toggleExpanded = (skillId: string) => {
@@ -39,10 +39,10 @@ export function SkillsListView({ skills }: SkillsListViewProps) {
         <h2 className="text-2xl font-semibold tracking-tight">{t('skills')} ({skills.length})</h2>
       </div>
 
-      {/* Skills 列表 */}
+      {/* Skills */}
       {skills.length === 0 ? null : (
         <div className="flex flex-col gap-4 w-full max-w-2xl shrink-0">
-          {/* 全局 Skills */}
+          {/* Skills */}
           {globalSkills.length > 0 && (
             <div className="space-y-2">
               <h3 className="text-sm font-medium text-muted-foreground px-1">{t('globalSkills')}</h3>
@@ -70,7 +70,7 @@ export function SkillsListView({ skills }: SkillsListViewProps) {
             </div>
           )}
 
-          {/* 工作区 Skills */}
+          {/* Skills */}
           {projectSkills.length > 0 && (
             <div className="space-y-2">
               <h3 className="text-sm font-medium text-muted-foreground px-1">{t('workspaceSkills')}</h3>

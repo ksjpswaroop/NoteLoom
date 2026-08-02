@@ -20,7 +20,7 @@ export function NewFolder({ item }: NewFolderProps) {
 
   function newFolderHandler(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     e.stopPropagation();
-    // 如果当前文件夹未展开，则先展开
+    // ，
     if (!collapsibleList.includes(path)) {
       setCollapsibleList(path, true);
     }

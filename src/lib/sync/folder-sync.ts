@@ -27,23 +27,23 @@ export class FolderSync {
   private platform: string = 'github'
 
   constructor() {
-    // 不再在 constructor 中初始化
+    // constructor
   }
 
   /**
-   * 初始化平台配置（在每次同步前调用以获取最新配置）
-   */
+ * （）
+ */
   private async init() {
     const store = await Store.load('store.json')
     this.platform = await store.get<string>('primaryBackupMethod') || 'github'
   }
 
   async syncFolder(localFolderPath: string): Promise<FolderSyncResult> {
-    // 每次同步前重新读取平台配置
+    //
     await this.init()
 
     try {
-      // 1. 获取本地文件夹下所有 Markdown 文件
+      // 1. Markdown
       const markdownFiles = await collectMarkdownFiles(localFolderPath)
 
       if (markdownFiles.length === 0) {
@@ -52,11 +52,11 @@ export class FolderSync {
           totalFiles: 0,
           successCount: 0,
           failedCount: 0,
-          message: '当前文件夹下没有 Markdown 文件'
+          message: 'No Markdown files in the current folder'
         }
       }
 
-      // 2. 读取每个文件的内容
+      // 2.
       const workspace = await getWorkspacePath()
       const filesToUpload: Array<{ path: string; content: string; sha?: string }> = []
 
@@ -70,7 +70,7 @@ export class FolderSync {
           content = await readTextFile(pathOptions.path, { baseDir: pathOptions.baseDir })
         }
 
-        // 相对路径作为远程路径
+        //
         const remotePath = file.path
         debugSyncPath('folderSync.collectFile', {
           localFolderPath,
@@ -84,8 +84,8 @@ export class FolderSync {
         })
       }
 
-      // 3. 根据平台执行批量提交
-      const message = `Sync folder: ${localFolderPath} - ${new Date().toLocaleString('zh-CN')}`
+      // 3.
+      const message = `Sync folder: ${localFolderPath} - ${new Date().toLocaleString('en-US')}`
       let success = false
       const repoName = this.platform === 's3' || this.platform === 'webdav'
         ? RepoNames.sync
@@ -93,19 +93,19 @@ export class FolderSync {
 
       switch (this.platform) {
         case 'github': {
-          // GitHub 批量提交
+          // GitHub
           success = await this._githubBatchCommit(repoName, filesToUpload, message)
           break
         }
         case 'gitee': {
-          // 先获取远程文件 SHA（用于覆盖）
+          // SHA（）
           const giteeFiles = await this._getGiteeFiles(repoName)
           for (const file of filesToUpload) {
             if (giteeFiles[file.path]) {
               file.sha = giteeFiles[file.path].sha
             }
           }
-          // Gitee: 逐个上传，带 SHA 可以覆盖
+          // Gitee: ， SHA
           success = await this._giteeBatchCommit(repoName, filesToUpload, message)
           break
         }
@@ -127,7 +127,7 @@ export class FolderSync {
             totalFiles: markdownFiles.length,
             successCount: 0,
             failedCount: markdownFiles.length,
-            message: `不支持的平台: ${this.platform}`
+            message: `Unsupported platform: ${this.platform}`
           }
       }
 
@@ -137,7 +137,7 @@ export class FolderSync {
           totalFiles: markdownFiles.length,
           successCount: markdownFiles.length,
           failedCount: 0,
-          message: `成功同步 ${markdownFiles.length} 个文件`
+          message: `Successfully synced ${markdownFiles.length} files`
         }
       } else {
         return {
@@ -145,7 +145,7 @@ export class FolderSync {
           totalFiles: markdownFiles.length,
           successCount: 0,
           failedCount: markdownFiles.length,
-          message: '同步失败'
+          message: 'Sync failed'
         }
       }
     } catch (error) {
@@ -161,8 +161,8 @@ export class FolderSync {
   }
 
   /**
-   * 获取远程仓库中所有文件的 SHA
-   */
+ * SHA
+ */
   async _getGithubTreeFiles(
     repo: string,
     path: string
@@ -178,7 +178,7 @@ export class FolderSync {
     headers.append('Accept', 'application/vnd.github+json')
     headers.append('X-GitHub-Api-Version', '2022-11-28')
 
-    // 使用 git tree API 获取指定路径下的所有文件
+    // git tree API
     const url = `https://api.github.com/repos/${githubUsername}/${repo}/git/trees/main?recursive=1`
     const response = await fetch(url, { method: 'GET', headers, proxy })
 
@@ -199,8 +199,8 @@ export class FolderSync {
   }
 
   /**
-   * 批量提交多个文件到 GitHub
-   */
+ * GitHub
+ */
   async _githubBatchCommit(
     repo: string,
     files: Array<{ path: string; content: string; sha?: string }>,
@@ -218,7 +218,7 @@ export class FolderSync {
     headers.append('X-GitHub-Api-Version', '2022-11-28')
     headers.append('Content-Type', 'application/json')
 
-    // 1. 获取当前 commit 和对应的 tree，后续提交必须基于它，避免覆盖仓库其他目录
+    // 1. commit tree，，
     const refUrl = `https://api.github.com/repos/${githubUsername}/${repo}/git/ref/heads/main`
     const refResponse = await fetch(refUrl, { method: 'GET', headers, proxy })
     if (!refResponse.ok) return false
@@ -232,11 +232,11 @@ export class FolderSync {
     const baseTreeSha = parentCommitData.tree?.sha
 
     if (!baseTreeSha) {
-      console.error('获取 GitHub base tree 失败')
+      console.error('Failed to get GitHub base tree')
       return false
     }
 
-    // 2. 基于当前 tree 创建新 tree，只覆盖本次同步的文件
+    // 2. tree tree，
     const createTreeUrl = `https://api.github.com/repos/${githubUsername}/${repo}/git/trees`
     const treeResponse = await fetch(createTreeUrl, {
       method: 'POST',
@@ -246,13 +246,13 @@ export class FolderSync {
     })
 
     if (!treeResponse.ok) {
-      console.error('创建 tree 失败:', await treeResponse.text())
+      console.error('Failed to create tree:', await treeResponse.text())
       return false
     }
 
     const treeData = await treeResponse.json()
 
-    // 3. 创建 commit
+    // 3. commit
     const commitUrl = `https://api.github.com/repos/${githubUsername}/${repo}/git/commits`
     const commitResponse = await fetch(commitUrl, {
       method: 'POST',
@@ -266,13 +266,13 @@ export class FolderSync {
     })
 
     if (!commitResponse.ok) {
-      console.error('创建 commit 失败:', await commitResponse.text())
+      console.error('Failed to create commit:', await commitResponse.text())
       return false
     }
 
     const commitData = await commitResponse.json()
 
-    // 4. 更新 ref
+    // 4. ref
     const updateRefUrl = `https://api.github.com/repos/${githubUsername}/${repo}/git/refs/heads/main`
     const updateResponse = await fetch(updateRefUrl, {
       method: 'PATCH',
@@ -288,8 +288,8 @@ export class FolderSync {
   }
 
   /**
-   * 获取 Gitee 仓库中所有文件的 SHA（递归获取子目录）
-   */
+ * Gitee SHA（）
+ */
   async _getGiteeFiles(repo: string, path: string = ''): Promise<Record<string, { sha: string }>> {
     const store = await Store.load('store.json')
     const giteeAccessToken = await store.get<string>('giteeAccessToken')
@@ -298,19 +298,19 @@ export class FolderSync {
     const proxy: Proxy | undefined = proxyUrl ? { all: proxyUrl } : undefined
 
     if (!giteeAccessToken || !giteeUsername) {
-      console.error('[Gitee] 缺少 accessToken 或 username')
+      console.error('[Gitee] Missing accessToken or username')
       return {}
     }
 
     const headers = new Headers()
     headers.append('Authorization', `Bearer ${giteeAccessToken}`)
 
-    // 使用 Gitee API 获取仓库内容
+    // Gitee API
     const url = `https://gitee.com/api/v5/repos/${giteeUsername}/${repo}/contents${path ? '/' + path : ''}?access_token=${giteeAccessToken}`
     const response = await fetch(url, { method: 'GET', headers, proxy })
 
     if (!response.ok) {
-      console.error('[Gitee] 获取文件列表失败:', await response.text())
+      console.error('[Gitee] Failed to get file list:', await response.text())
       return {}
     }
 
@@ -322,7 +322,7 @@ export class FolderSync {
         if (item.type === 'file' && item.path && item.sha) {
           result[item.path] = { sha: item.sha }
         } else if (item.type === 'dir' && item.path) {
-          // 递归获取子目录
+          //
           const subFiles = await this._getGiteeFiles(repo, item.path)
           Object.assign(result, subFiles)
         }
@@ -333,8 +333,8 @@ export class FolderSync {
   }
 
   /**
-   * 获取 Gitea 仓库中所有文件的 SHA（递归获取子目录）
-   */
+ * Gitea SHA（）
+ */
   async _getGiteaFiles(repo: string, path: string = ''): Promise<Record<string, { sha: string }>> {
     const store = await Store.load('store.json')
     const giteaAccessToken = await store.get<string>('giteaAccessToken')
@@ -343,7 +343,7 @@ export class FolderSync {
     const proxy: Proxy | undefined = proxyUrl ? { all: proxyUrl } : undefined
 
     if (!giteaAccessToken || !giteaUsername) {
-      console.error('[Gitea] 缺少 accessToken 或 username')
+      console.error('[Gitea] Missing accessToken or username')
       return {}
     }
 
@@ -370,7 +370,7 @@ export class FolderSync {
       const response = await fetch(url, { method: 'GET', headers, proxy })
 
       if (!response.ok) {
-        console.error('[Gitea] 获取文件列表失败:', response.status)
+        console.error('[Gitea] Failed to get file list:', response.status)
         return {}
       }
 
@@ -382,7 +382,7 @@ export class FolderSync {
           if (item.type === 'file' && item.path && item.sha) {
             result[item.path] = { sha: item.sha }
           } else if (item.type === 'dir' && item.path) {
-            // 递归获取子目录
+            //
             const subFiles = await this._getGiteaFiles(repo, item.path)
             Object.assign(result, subFiles)
           }
@@ -391,15 +391,15 @@ export class FolderSync {
 
       return result
     } catch (error) {
-      console.error('[Gitea] 获取文件列表异常:', error)
+      console.error('[Gitea] File list exception:', error)
       return {}
     }
   }
 
   /**
-   * Gitee 批量提交
-   * 注意：Gitee API 不支持真正的批量操作，这里使用并发上传
-   */
+ * Gitee 
+ * ：Gitee API ，
+ */
   async _giteeBatchCommit(
     repo: string,
     files: Array<{ path: string; content: string; sha?: string }>,
@@ -412,7 +412,7 @@ export class FolderSync {
     const proxy: Proxy | undefined = proxyUrl ? { all: proxyUrl } : undefined
 
     if (!giteeAccessToken || !giteeUsername) {
-      console.error('[Gitee] 缺少 accessToken 或 username')
+      console.error('[Gitee] Missing accessToken or username')
       return false
     }
 
@@ -420,8 +420,8 @@ export class FolderSync {
     headers.append('Authorization', `Bearer ${giteeAccessToken}`)
     headers.append('Content-Type', 'application/json')
 
-    // Gitee API: 使用单个文件操作，每个文件一次请求
-    // 使用并发上传提高速度
+    // Gitee API: ，
+    //
 
     const uploadPromises = files.map(async (file) => {
       const base64Content = Buffer.from(file.content).toString('base64')
@@ -439,7 +439,7 @@ export class FolderSync {
         message: message
       }
 
-      // 如果有 SHA（文件已存在），使用 PUT 方法覆盖
+      // SHA（）， PUT
       if (file.sha) {
         body.sha = file.sha
       }
@@ -453,7 +453,7 @@ export class FolderSync {
 
       if (!response.ok) {
         const errorText = await response.text()
-        console.error(`[Gitee] 上传文件 ${file.path} 失败:`, errorText)
+        console.error(`[Gitee] Failed to upload file ${file.path}:`, errorText)
       }
 
       return response.ok
@@ -462,13 +462,13 @@ export class FolderSync {
     const results = await Promise.all(uploadPromises)
     const successCount = results.filter(r => r).length
 
-    // 只要有一个文件成功就算成功
+    //
     return successCount > 0
   }
 
   /**
-   * GitLab 批量提交（使用 commit with actions）
-   */
+ * GitLab （ commit with actions）
+ */
   async _gitlabBatchCommit(
     repo: string,
     files: Array<{ path: string; content: string; sha?: string }>,
@@ -483,12 +483,12 @@ export class FolderSync {
     const proxy: Proxy | undefined = proxyUrl ? { all: proxyUrl } : undefined
 
     if (!gitlabAccessToken) {
-      console.error('[GitLab] 缺少 accessToken')
+      console.error('[GitLab] Missing accessToken')
       return false
     }
 
     if (!gitlabProjectId) {
-      console.error('[GitLab] 缺少 projectId')
+      console.error('[GitLab] Missing projectId')
       return false
     }
 
@@ -496,7 +496,7 @@ export class FolderSync {
     headers.append('PRIVATE-TOKEN', gitlabAccessToken)
     headers.append('Content-Type', 'application/json;charset=iso-8859-1')
 
-    // 构建 actions 数组
+    // actions
     const actions = buildGitlabCommitActions(files)
 
     const url = `${gitlabUrl}/api/v4/projects/${encodeURIComponent(gitlabProjectId)}/repository/commits`
@@ -514,7 +514,7 @@ export class FolderSync {
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('[GitLab] 批量提交失败:', errorText)
+      console.error('[GitLab] Batch commit failed:', errorText)
       return false
     }
 
@@ -522,9 +522,9 @@ export class FolderSync {
   }
 
   /**
-   * Gitea 批量提交（使用单个文件上传 + 并发）
-   * Gitea API 不支持批量 commit，需要逐个上传文件
-   */
+ * Gitea （ + ）
+ * Gitea API commit，
+ */
   async _giteaBatchCommit(
     repo: string,
     files: Array<{ path: string; content: string; sha?: string }>
@@ -539,12 +539,12 @@ export class FolderSync {
     try {
       giteaUrl = await getGiteaApiBaseUrl()
     } catch (error) {
-      console.error('[Gitea] 获取 API URL 失败:', error)
+      console.error('[Gitea] Failed to get API URL:', error)
       return false
     }
 
     if (!giteaAccessToken || !giteaUsername) {
-      console.error('[Gitea] 缺少配置: accessToken 或 username')
+      console.error('[Gitea] Missing config: accessToken or username')
       return false
     }
 
@@ -554,17 +554,17 @@ export class FolderSync {
 
     const apiBaseUrl = giteaUrl.endsWith('/') ? giteaUrl.slice(0, -1) : giteaUrl
 
-    // 先获取远程文件 SHA（用于覆盖）
+    // SHA（）
     const remoteFiles = await this._getGiteaFiles(repo)
 
-    // 为每个文件设置 SHA
+    // SHA
     for (const file of files) {
       if (remoteFiles[file.path]) {
         file.sha = remoteFiles[file.path].sha
       }
     }
 
-    // 使用顺序上传（避免并发导致分支锁定冲突）
+    // （）
     let successCount = 0
     const uploadedPaths = new Set<string>()
 
@@ -589,7 +589,7 @@ export class FolderSync {
         message: file.sha ? `Update ${fileName}` : `Create ${fileName}`
       }
 
-      // 如果有 SHA，使用 PUT 覆盖
+      // SHA， PUT
       if (file.sha) {
         requestBody.sha = file.sha
       }
@@ -603,18 +603,18 @@ export class FolderSync {
 
       if (!response.ok) {
         const errorText = await response.text()
-        console.error(`[Gitea] 上传文件 ${file.path} 失败:`, response.status, errorText)
-        // 继续上传下一个文件
+        console.error(`[Gitea] Failed to upload file ${file.path}:`, response.status, errorText)
+        //
         continue
       }
 
       successCount++
       uploadedPaths.add(file.path)
 
-      // 重新获取剩余文件的 SHA（因为分支已更新）
+      // SHA（）
       if (i < files.length - 1) {
         const newRemoteFiles = await this._getGiteaFiles(repo)
-        // 更新后续文件中尚未上传的文件的 SHA
+        // SHA
         for (let j = i + 1; j < files.length; j++) {
           const otherFile = files[j]
           if (!uploadedPaths.has(otherFile.path) && newRemoteFiles[otherFile.path]) {
@@ -628,8 +628,8 @@ export class FolderSync {
   }
 
   /**
-   * S3 批量上传
-   */
+ * S3 
+ */
   async _s3BatchUpload(
     files: Array<{ path: string; content: string }>
   ): Promise<boolean> {
@@ -639,15 +639,15 @@ export class FolderSync {
     const proxy: Proxy | undefined = proxyUrl ? { all: proxyUrl } : undefined
 
     if (!s3Config || !s3Config.accessKeyId || !s3Config.secretAccessKey || !s3Config.region || !s3Config.bucket) {
-      console.error('[S3] 缺少配置')
+      console.error('[S3] Missing configuration')
       return false
     }
 
-    // 使用并发上传
+    //
     const uploadPromises = files.map(async (file) => {
       const result = await s3Upload(s3Config, file.path, file.content, proxy)
       if (!result) {
-        console.error(`[S3] 上传文件 ${file.path} 失败`)
+        console.error(`[S3] Failed to upload file ${file.path}`)
       }
       return !!result
     })
@@ -659,8 +659,8 @@ export class FolderSync {
   }
 
   /**
-   * WebDAV 批量上传
-   */
+ * WebDAV 
+ */
   async _webdavBatchUpload(
     files: Array<{ path: string; content: string }>
   ): Promise<boolean> {
@@ -670,15 +670,15 @@ export class FolderSync {
     const proxy: Proxy | undefined = proxyUrl ? { all: proxyUrl } : undefined
 
     if (!webdavConfig || !webdavConfig.url || !webdavConfig.username || !webdavConfig.password) {
-      console.error('[WebDAV] 缺少配置')
+      console.error('[WebDAV] Missing configuration')
       return false
     }
 
-    // 使用并发上传
+    //
     const uploadPromises = files.map(async (file) => {
       const result = await webdavUpload(webdavConfig, file.path, file.content, proxy)
       if (!result) {
-        console.error(`[WebDAV] 上传文件 ${file.path} 失败`)
+        console.error(`[WebDAV] Failed to upload file ${file.path}`)
       }
       return !!result
     })

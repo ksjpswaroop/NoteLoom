@@ -16,14 +16,12 @@ import {
 import { useTranslations } from 'next-intl'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import 'dayjs/locale/zh-cn'
 import 'dayjs/locale/en'
-import useSettingStore from '@/stores/setting'
 
 dayjs.extend(relativeTime)
 
-function formatRelativeTime(timestamp: number, locale: string): string {
-  const dayjsLocale = locale === 'en' ? 'en' : 'zh-cn'
+function formatRelativeTime(timestamp: number): string {
+  const dayjsLocale = 'en'
   return dayjs(timestamp).locale(dayjsLocale).fromNow()
 }
 
@@ -39,20 +37,19 @@ export function ChatHeader() {
     chats,
     loading,
   } = useChatStore()
-  const { language } = useSettingStore()
   const t = useTranslations()
   const tEmpty = useTranslations('record.chat.empty')
 
   const [showHistoryDropdown, setShowHistoryDropdown] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
-  // 没有消息或正在加载时禁用新对话按钮
+  //
   const hasCurrentMessages = isTemporaryConversation
     ? chats.length > 0
     : conversations.some(c => c.id === currentConversationId && c.messageCount > 0)
   const isDisabled = (!hasCurrentMessages && !isTemporaryConversation) || loading
 
-  // 过滤并排序会话（排除空会话）
+  // （）
   const filteredConversations = useMemo(() => {
     return conversations
       .filter(c => c.messageCount > 0)
@@ -64,7 +61,7 @@ export function ChatHeader() {
       })
   }, [conversations, searchQuery])
 
-  // 当前会话标题（如果有消息的话）
+  // （）
   const currentConversation = conversations.find(c => c.id === currentConversationId)
   const dropdownTitle = currentConversation && currentConversation.messageCount > 0
     ? currentConversation.title
@@ -72,7 +69,7 @@ export function ChatHeader() {
 
   return (
     <header className="h-12 w-full flex items-center justify-between border-b px-4 gap-2">
-      {/* 左侧：历史对话下拉 */}
+      {/* ： */}
       <div className="flex items-center gap-2">
         {isTemporaryConversation ? (
           <div className="flex items-center gap-2 px-2 text-sm font-medium text-muted-foreground">
@@ -132,7 +129,7 @@ export function ChatHeader() {
                           </div>
                           <div className="shrink-0 ml-auto flex items-center gap-2">
                             <span className="text-xs text-muted-foreground">
-                              {formatRelativeTime(conv.updatedAt, language)}
+                              {formatRelativeTime(conv.updatedAt)}
                             </span>
                             <button
                               onClick={(e) => {
@@ -156,7 +153,7 @@ export function ChatHeader() {
         )}
       </div>
 
-      {/* 右侧：临时会话与新建对话 */}
+      {/* ： */}
       <div className="flex items-center gap-1">
         <TooltipButton
           icon={<MessageSquareDashed />}

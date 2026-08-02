@@ -97,7 +97,7 @@ export function useSyncManager(path?: string, options: UseSyncManagerOptions = {
     }
   }
 
-  // 自动刷新状态
+  //
   React.useEffect(() => {
     if (!autoRefresh || !path) return
 
@@ -110,7 +110,7 @@ export function useSyncManager(path?: string, options: UseSyncManagerOptions = {
     return () => clearInterval(interval)
   }, [path, autoRefresh, refreshInterval])
 
-  // 初始检查
+  //
   React.useEffect(() => {
     if (path) {
       checkStatus(path)

@@ -15,8 +15,8 @@ import { useWorkspaceFileWatcher } from './use-workspace-file-watcher'
 type Platform = 'macos' | 'windows' | 'linux' | 'unknown'
 
 /**
- * 统一的文件管理器快捷键处理
- * 只有当文件管理器区域获得焦点时才响应快捷键
+ * 
+ * 
  */
 function useFileManagerShortcuts() {
   const { activeFilePath, fileTree, selectedFilePaths } = useArticleStore(useShallow((state) => ({
@@ -29,7 +29,7 @@ function useFileManagerShortcuts() {
   const [isFocused, setIsFocused] = useState(false)
   const sidebarRef = useRef<HTMLDivElement>(null)
 
-  // 检测当前平台
+  //
   useEffect(() => {
     try {
       const p = platform()
@@ -45,7 +45,7 @@ function useFileManagerShortcuts() {
     }
   }, [])
 
-  // 检查是否按下了正确的修饰键
+  //
   const isModKey = useCallback((e: KeyboardEvent): boolean => {
     if (currentPlatform === 'macos') {
       return e.metaKey && !e.ctrlKey
@@ -54,11 +54,11 @@ function useFileManagerShortcuts() {
     }
   }, [currentPlatform])
 
-  // 获取当前激活的 item（文件或文件夹）
+  // item（）
   const getActiveItem = useCallback((): { path: string; isDirectory: boolean; isLocale: boolean; name: string; sha?: string } | null => {
     if (!activeFilePath) return null
 
-    // 递归查找文件树中匹配的项
+    //
     function findInTree(tree: typeof fileTree, targetPath: string): ReturnType<typeof getActiveItem> {
       const entry = flattenFileTree(tree).find(item => item.path === targetPath)
       if (!entry) return null
@@ -74,9 +74,9 @@ function useFileManagerShortcuts() {
     return findInTree(fileTree, activeFilePath)
   }, [activeFilePath, fileTree])
 
-  // 处理快捷键
+  //
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    // 移动端不处理快捷键
+    //
     if (isMobileDevice()) {
       return
     }
@@ -86,7 +86,7 @@ function useFileManagerShortcuts() {
       return
     }
 
-    // 只有文件管理器有焦点时才处理
+    //
     if (!isFocused) {
       return
     }
@@ -100,7 +100,7 @@ function useFileManagerShortcuts() {
 
     const modPressed = isModKey(e)
 
-    // 复制: Cmd+C / Ctrl+C
+    // : Cmd+C / Ctrl+C
     if (modPressed && e.key === 'c') {
       e.preventDefault()
       e.stopPropagation()
@@ -120,7 +120,7 @@ function useFileManagerShortcuts() {
       return
     }
 
-    // 剪切: Cmd+X / Ctrl+X
+    // : Cmd+X / Ctrl+X
     if (modPressed && e.key === 'x') {
       e.preventDefault()
       e.stopPropagation()
@@ -140,11 +140,11 @@ function useFileManagerShortcuts() {
       return
     }
 
-    // 粘贴: Cmd+V / Ctrl+V
+    // : Cmd+V / Ctrl+V
     if (modPressed && e.key === 'v') {
       e.preventDefault()
       e.stopPropagation()
-      // 触发粘贴操作（通过事件或直接调用）
+      // （）
       const pasteTargetPath = selectedEntries.length === 1 ? selectedEntries[0].path : activeItem?.path
       if (pasteTargetPath) {
         const event = new CustomEvent('filemanager-paste', { detail: { targetPath: pasteTargetPath } })
@@ -153,7 +153,7 @@ function useFileManagerShortcuts() {
       return
     }
 
-    // 删除: macOS 使用 Backspace，Windows/Linux 使用 Delete
+    // : macOS Backspace，Windows/Linux Delete
     const isDeleteKey = currentPlatform === 'macos'
       ? e.key === 'Backspace'
       : e.key === 'Delete'
@@ -170,7 +170,7 @@ function useFileManagerShortcuts() {
       return
     }
 
-    // 重命名: macOS 使用 Enter 键，Windows/Linux 使用 F2 键
+    // : macOS Enter ，Windows/Linux F2
     const isRenameKey = currentPlatform === 'macos'
       ? e.key === 'Enter'
       : e.key === 'F2'
@@ -187,7 +187,7 @@ function useFileManagerShortcuts() {
     }
   }, [isFocused, getActiveItem, isModKey, currentPlatform, fileTree, selectedFilePaths, setClipboardItem, setClipboardItems])
 
-  // 注册全局快捷键
+  //
   useEffect(() => {
     if (isMobileDevice() || currentPlatform === 'unknown') {
       return
@@ -200,29 +200,29 @@ function useFileManagerShortcuts() {
     }
   }, [handleKeyDown, currentPlatform])
 
-  // 焦点处理
+  //
   const handleFocusIn = useCallback((e: FocusEvent) => {
-    // 检查焦点是否在文件管理器区域内
+    //
     if (sidebarRef.current && sidebarRef.current.contains(e.target as Node)) {
       setIsFocused(true)
     }
   }, [])
 
   const handleFocusOut = useCallback((e: FocusEvent) => {
-    // 检查焦点是否移到了 sidebar 外部
-    // relatedTarget 是即将获得焦点的元素
+    // sidebar
+    // relatedTarget
     const newFocusedElement = e.relatedTarget as Node
 
     if (sidebarRef.current && newFocusedElement) {
-      // 如果新焦点元素不在 sidebar 内，才设置 isFocused = false
+      // sidebar ， isFocused = false
       if (!sidebarRef.current.contains(newFocusedElement)) {
         setIsFocused(false)
       }
     } else if (!newFocusedElement) {
-      // 如果 relatedTarget 为 null（焦点移到了文档外），设置 isFocused = false
+      // relatedTarget null（）， isFocused = false
       setIsFocused(false)
     }
-    // 否则，焦点还在 sidebar 内，保持 isFocused = true
+    // ， sidebar ， isFocused = true
   }, [])
 
   useEffect(() => {
@@ -237,10 +237,10 @@ function useFileManagerShortcuts() {
     }
   }, [handleFocusIn, handleFocusOut])
 
-  // 主动设置焦点到文件管理器
+  //
   const focusSidebar = useCallback(() => {
     setIsFocused(true)
-    // 使用 requestAnimationFrame 确保 DOM 更新后再设置焦点
+    // requestAnimationFrame DOM
     requestAnimationFrame(() => {
       sidebarRef.current?.focus()
     })

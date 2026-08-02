@@ -17,7 +17,7 @@ const GITHUB_CONFIG = {
   tokenKey: 'accessToken',
   tokenLabel: 'Github Access Token',
   tokenDesc: '',
-  tokenUrl: 'https://github.com/settings/personal-access-tokens/new?name=NoteGen&description=NoteGen+sync&expires_in=none&contents=write&administration=write',
+  tokenUrl: 'https://github.com/settings/personal-access-tokens/new?name=NoteLoom&description=NoteLoom+sync&expires_in=none&contents=write&administration=write',
   tokenUrlText: '',
 }
 
@@ -92,7 +92,7 @@ export function GithubSync() {
         onCheckRepo={checkGithubRepos}
         onCreateRepo={createGithubRepo}
       >
-        {/* 自定义仓库信息展示 */}
+        {/* */}
         <div className="flex items-center gap-4">
           <Avatar className="size-12">
             <AvatarImage src={syncRepoInfo?.owner.avatar_url || ''} alt={syncRepoInfo?.owner.login || 'GitHub'} />

@@ -23,7 +23,7 @@ export default function initQuickRecordText() {
                 emitter.emit('quickRecordTextHandler')
             }, 100);
         } else {
-            // 增加判断窗口是否在最前面
+            //
             const isFocused = await window.isFocused();
             if (!isFocused) {
                 await window.setFocus();

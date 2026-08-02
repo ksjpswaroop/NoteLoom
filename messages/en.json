@@ -169,7 +169,10 @@
               "name": "Reset to Default"
             },
             "default": {
-              "name": "Default White"
+              "name": "NoteLoom"
+            },
+            "loomThread": {
+              "name": "Loom Thread"
             },
             "ocean": {
               "name": "Ocean Blue"
@@ -298,15 +301,30 @@
       "automaticSearchDesc": "When a question depends on your records, AI finds relevant notes automatically. It skips search for general questions or when the current note is sufficient.",
       "agentStrategyTitle": "Automatic search strategy",
       "agentStrategies": {
-        "fast": { "title": "Fast", "desc": "Search at most once to minimize response time." },
-        "balanced": { "title": "Standard", "desc": "Search up to twice for a balance between speed and cross-note discovery." },
-        "deep": { "title": "Deep", "desc": "Search up to three times for comparisons, history, and cross-note synthesis." }
+        "fast": {
+          "title": "Fast",
+          "desc": "Search at most once to minimize response time."
+        },
+        "balanced": {
+          "title": "Standard",
+          "desc": "Search up to twice for a balance between speed and cross-note discovery."
+        },
+        "deep": {
+          "title": "Deep",
+          "desc": "Search up to three times for comparisons, history, and cross-note synthesis."
+        }
       },
       "presetDesc": "Presets only adjust result count and thresholds.",
       "presets": {
-        "precision": { "title": "Precision" },
-        "balanced": { "title": "Balanced" },
-        "recall": { "title": "Recall" }
+        "precision": {
+          "title": "Precision"
+        },
+        "balanced": {
+          "title": "Balanced"
+        },
+        "recall": {
+          "title": "Recall"
+        }
       },
       "settingsTitle": "Parameter Settings",
       "settingsDesc": "By adjusting parameters, you can more precisely control the retrieval effect of the knowledge base.",
@@ -932,13 +950,13 @@
     "memories": {
       "title": "Memory Management",
       "desc": "AI long-term memory feature that lets AI remember your writing preferences, experiences, and note-taking habits.",
-    "stats": {
-      "total": "Total Memories",
-      "preferences": "Preferences",
-      "memories": "Memories",
-      "active": "Active",
-      "pending": "Needs review",
-      "archived": "Deleted"
+      "stats": {
+        "total": "Total Memories",
+        "preferences": "Preferences",
+        "memories": "Memories",
+        "active": "Active",
+        "pending": "Needs review",
+        "archived": "Deleted"
       },
       "form": {
         "title": "Add New Memory",
@@ -953,13 +971,13 @@
         "preferenceDesc": "Language, format, style, etc.",
         "memoryDesc": "Facts, experience, expertise, etc.",
         "save": "Save Memory",
-      "saving": "Saving...",
-      "description": "Save stable user information that can help in future conversations.",
-      "kindLabel": "Memory type",
-      "scopeLabel": "Scope",
-      "alwaysApply": "Always apply",
-      "alwaysApplyDescription": "Inject this memory without relying on relevance retrieval.",
-      "update": "Update memory"
+        "saving": "Saving...",
+        "description": "Save stable user information that can help in future conversations.",
+        "kindLabel": "Memory type",
+        "scopeLabel": "Scope",
+        "alwaysApply": "Always apply",
+        "alwaysApplyDescription": "Inject this memory without relying on relevance retrieval.",
+        "update": "Update memory"
       },
       "listTitle": "My Memories",
       "addMemory": "Add Memory",
@@ -988,52 +1006,72 @@
       "errorDelete": "Failed to delete",
       "errorList": "Failed to get memory list",
       "errorEmbedding": "Failed to generate embedding, please check embedding model configuration",
-    "errorClear": "Failed to clear",
-    "policy": {
-      "generate": "Remember important information from chats",
-      "generateDescription": "AI automatically remembers important information. You can also say “Please remember…” or “From now on…”."
-    },
-    "actions": {
-      "undo": "Undo",
-      "more": "More actions",
-      "approve": "Approve",
-      "approveAll": "Approve all",
-      "review": "Review",
-      "edit": "Edit",
-      "promote": "Promote to stable guidance",
-      "demote": "Remove from stable guidance",
-      "restore": "Restore",
-      "archive": "Delete",
-      "deletePermanently": "Delete permanently"
-    },
-    "kinds": {"preference": "Preference", "fact": "Fact", "experience": "Experience", "decision": "Decision"},
-    "scopes": {"global": "Global", "workspace": "Current workspace"},
-    "statuses": {"active": "Active", "pending": "Needs review", "archived": "Deleted"},
-    "filters": {"search": "Search memories", "allKinds": "All types", "allScopes": "All scopes"},
-    "sensitive": {
-      "title": "Potentially sensitive content",
-      "description": "Passwords, tokens, and private keys never become active memories automatically. Confirm that this content is safe before saving.",
-      "badge": "Sensitive"
-    },
-    "indexing": {"ready": "Indexed", "pending": "Awaiting index", "failed": "Index failed"},
-    "deleteConfirm": {
-      "title": "Permanently delete this memory?",
-      "description": "This cannot be undone.",
-      "cancel": "Cancel"
-    },
-    "autoCreated": "Generated {count} memories in the background",
-    "pendingConfirmation": "This memory needs confirmation",
-    "approvedAll": "All candidates approved",
-    "savedPendingIndex": "Memory saved and queued for indexing",
-    "savedPendingReview": "Memory added to the review queue",
-    "archived": "Memory deleted",
-    "promoted": "Added to Agent custom guidance",
-    "demoted": "Removed from Agent custom guidance",
-    "always": "Always apply",
-    "lastRecallReason": "Last recalled: {reason}",
-    "neverRecalled": "Never recalled",
-    "editTitle": "Edit memory",
-    "editDescription": "Change the content, type, scope, and application mode."
+      "errorClear": "Failed to clear",
+      "policy": {
+        "generate": "Remember important information from chats",
+        "generateDescription": "AI automatically remembers important information. You can also say “Please remember…” or “From now on…”."
+      },
+      "actions": {
+        "undo": "Undo",
+        "more": "More actions",
+        "approve": "Approve",
+        "approveAll": "Approve all",
+        "review": "Review",
+        "edit": "Edit",
+        "promote": "Promote to stable guidance",
+        "demote": "Remove from stable guidance",
+        "restore": "Restore",
+        "archive": "Delete",
+        "deletePermanently": "Delete permanently"
+      },
+      "kinds": {
+        "preference": "Preference",
+        "fact": "Fact",
+        "experience": "Experience",
+        "decision": "Decision"
+      },
+      "scopes": {
+        "global": "Global",
+        "workspace": "Current workspace"
+      },
+      "statuses": {
+        "active": "Active",
+        "pending": "Needs review",
+        "archived": "Deleted"
+      },
+      "filters": {
+        "search": "Search memories",
+        "allKinds": "All types",
+        "allScopes": "All scopes"
+      },
+      "sensitive": {
+        "title": "Potentially sensitive content",
+        "description": "Passwords, tokens, and private keys never become active memories automatically. Confirm that this content is safe before saving.",
+        "badge": "Sensitive"
+      },
+      "indexing": {
+        "ready": "Indexed",
+        "pending": "Awaiting index",
+        "failed": "Index failed"
+      },
+      "deleteConfirm": {
+        "title": "Permanently delete this memory?",
+        "description": "This cannot be undone.",
+        "cancel": "Cancel"
+      },
+      "autoCreated": "Generated {count} memories in the background",
+      "pendingConfirmation": "This memory needs confirmation",
+      "approvedAll": "All candidates approved",
+      "savedPendingIndex": "Memory saved and queued for indexing",
+      "savedPendingReview": "Memory added to the review queue",
+      "archived": "Memory deleted",
+      "promoted": "Added to Agent custom guidance",
+      "demoted": "Removed from Agent custom guidance",
+      "always": "Always apply",
+      "lastRecallReason": "Last recalled: {reason}",
+      "neverRecalled": "Never recalled",
+      "editTitle": "Edit memory",
+      "editDescription": "Change the content, type, scope, and application mode."
     },
     "defaultModel": {
       "title": "Default Model",
@@ -2641,9 +2679,9 @@
         "organizeAs": "Organize as",
         "template": "Template",
         "setting": "Settings",
-        "confirm": "确认",
-        "cancel": "取消",
-        "removeThinking": "移除思考过程",
+        "confirm": "Confirm",
+        "cancel": "Cancel",
+        "removeThinking": "Remove thinking process",
         "stop": "Stop"
       }
     },
@@ -2674,11 +2712,11 @@
         "noMatchingConversations": "No matching conversations found",
         "noConversationHistory": "No conversation history yet",
         "quickPrompts": {
-          "title": "快速开始",
-          "writeNote": "帮我写一篇笔记",
-          "summarize": "帮我总结这段内容",
-          "brainstorm": "帮我头脑风暴一些想法",
-          "explain": "帮我解释这个概念"
+          "title": "Quick start",
+          "writeNote": "Help me write a note",
+          "summarize": "Help me summarize this content",
+          "brainstorm": "Help me brainstorm some ideas",
+          "explain": "Help me explain this concept"
         }
       },
       "newChat": "New Chat with New Tag",
@@ -2737,10 +2775,10 @@
         "generationSettingsHelp": "Confirm output language, title, save location, and included content.",
         "outputLanguage": "Output language",
         "outputLanguageAuto": "Follow app language",
-        "outputLanguageZh": "简体中文",
-        "outputLanguageZhTW": "繁體中文",
+        "outputLanguageZh": "Simplified Chinese",
+        "outputLanguageZhTW": "Traditional Chinese",
         "outputLanguageEn": "English",
-        "outputLanguageJa": "日本語",
+        "outputLanguageJa": "Japanese",
         "outputLanguagePtBR": "Português",
         "outputLanguageCustom": "Custom",
         "outputLanguageCustomPlaceholder": "For example: use French, or use natural conversational Chinese",
@@ -2839,9 +2877,15 @@
         "attachImage": "Attach images",
         "addAttachment": {
           "title": "Add",
-          "image": { "title": "Image" },
-          "file": { "title": "File" },
-          "folder": { "title": "Folder" },
+          "image": {
+            "title": "Image"
+          },
+          "file": {
+            "title": "File"
+          },
+          "folder": {
+            "title": "Folder"
+          },
           "entryCount": "{count} items",
           "remove": "Remove {name}",
           "metadataOnly": "metadata only",
@@ -2901,9 +2945,18 @@
           "permissionMode": {
             "label": "Agent permission mode",
             "modes": {
-              "read-only": { "title": "Read only", "description": "Allow reading and analysis, but block changes." },
-              "ask": { "title": "Ask before edits", "description": "Let the model plan freely and preview each concrete change before execution." },
-              "auto-edit": { "title": "Auto edit", "description": "Run reversible local changes automatically; still ask for deletes, scripts, and external actions." }
+              "read-only": {
+                "title": "Read only",
+                "description": "Allow reading and analysis, but block changes."
+              },
+              "ask": {
+                "title": "Ask before edits",
+                "description": "Let the model plan freely and preview each concrete change before execution."
+              },
+              "auto-edit": {
+                "title": "Auto edit",
+                "description": "Run reversible local changes automatically; still ask for deletes, scripts, and external actions."
+              }
             }
           },
           "autoFinal": {
@@ -3030,16 +3083,43 @@
           "commands": {
             "title": "Quick commands",
             "placeholder": "Search commands...",
-            "summarize": { "label": "Summarize", "description": "Extract key points and conclusions", "prompt": "Summarize the following content and extract the key points and conclusions:" },
-            "organize": { "label": "Organize as note", "description": "Create structured Markdown", "prompt": "Organize the following content into a clear, structured Markdown note:" },
-            "rewrite": { "label": "Polish", "description": "Improve wording without changing meaning", "prompt": "Polish the following content while preserving its meaning:" },
-            "translate": { "label": "Translate", "description": "Translate into a chosen language", "prompt": "Translate the following content into:" },
-            "searchNotes": { "label": "Search notes", "description": "Find related content in your knowledge base", "prompt": "Search my note knowledge base and answer:" },
-            "createNote": { "label": "Create note", "description": "Create a structured Markdown note", "prompt": "Create a new Markdown note based on these requirements:" }
+            "summarize": {
+              "label": "Summarize",
+              "description": "Extract key points and conclusions",
+              "prompt": "Summarize the following content and extract the key points and conclusions:"
+            },
+            "organize": {
+              "label": "Organize as note",
+              "description": "Create structured Markdown",
+              "prompt": "Organize the following content into a clear, structured Markdown note:"
+            },
+            "rewrite": {
+              "label": "Polish",
+              "description": "Improve wording without changing meaning",
+              "prompt": "Polish the following content while preserving its meaning:"
+            },
+            "translate": {
+              "label": "Translate",
+              "description": "Translate into a chosen language",
+              "prompt": "Translate the following content into:"
+            },
+            "searchNotes": {
+              "label": "Search notes",
+              "description": "Find related content in your knowledge base",
+              "prompt": "Search my note knowledge base and answer:"
+            },
+            "createNote": {
+              "label": "Create note",
+              "description": "Create a structured Markdown note",
+              "prompt": "Create a new Markdown note based on these requirements:"
+            }
           },
           "skills": {
             "title": "Skills",
-            "scope": { "global": "Global", "project": "Workspace" }
+            "scope": {
+              "global": "Global",
+              "project": "Workspace"
+            }
           },
           "resources": {
             "title": "Link context",
@@ -3141,9 +3221,55 @@
   "canvas": {
     "new": "New canvas",
     "chooseTemplate": "Choose a template",
-    "manager": { "title": "Canvas manager", "view": "View", "grid": "Thumbnail view", "list": "List view", "switchToGrid": "Switch to thumbnail view", "switchToList": "Switch to list view", "sort": { "title": "Sort", "updated": "Last modified", "created": "Date created", "name": "Name" }, "pin": "Pin canvas", "unpin": "Unpin canvas", "refreshThumbnails": "Regenerate thumbnails", "closeTrash": "Back to canvas manager", "trashEmpty": "Recently deleted is empty", "trashEmptyDescription": "Deleted canvases will appear here.", "trashCount": "{count} deleted canvases", "sync": { "upload": "Upload", "pending": "Waiting to upload", "clickToUpload": "Waiting to upload. Click to upload now.", "uploading": "Uploading", "synced": "Uploaded", "failed": "Upload failed", "downloadingAll": "Pulling remote canvases", "deleting": "Deleting and syncing", "permanentlyDeleting": "Deleting permanently" }, "count": "{count} canvases" },
-    "templates": { "blank": "Blank canvas", "flowchart": "Flowchart", "mindmap": "Mind map", "timeline": "Timeline", "quadrant": "Four quadrants", "kanban": "Kanban", "swot": "SWOT analysis" },
-    "import": { "action": "Import canvas or Mermaid", "fileType": "Canvas file", "defaultTitle": "Imported canvas", "success": "Canvas imported", "error": "This file could not be imported" },
+    "manager": {
+      "title": "Canvas manager",
+      "view": "View",
+      "grid": "Thumbnail view",
+      "list": "List view",
+      "switchToGrid": "Switch to thumbnail view",
+      "switchToList": "Switch to list view",
+      "sort": {
+        "title": "Sort",
+        "updated": "Last modified",
+        "created": "Date created",
+        "name": "Name"
+      },
+      "pin": "Pin canvas",
+      "unpin": "Unpin canvas",
+      "refreshThumbnails": "Regenerate thumbnails",
+      "closeTrash": "Back to canvas manager",
+      "trashEmpty": "Recently deleted is empty",
+      "trashEmptyDescription": "Deleted canvases will appear here.",
+      "trashCount": "{count} deleted canvases",
+      "sync": {
+        "upload": "Upload",
+        "pending": "Waiting to upload",
+        "clickToUpload": "Waiting to upload. Click to upload now.",
+        "uploading": "Uploading",
+        "synced": "Uploaded",
+        "failed": "Upload failed",
+        "downloadingAll": "Pulling remote canvases",
+        "deleting": "Deleting and syncing",
+        "permanentlyDeleting": "Deleting permanently"
+      },
+      "count": "{count} canvases"
+    },
+    "templates": {
+      "blank": "Blank canvas",
+      "flowchart": "Flowchart",
+      "mindmap": "Mind map",
+      "timeline": "Timeline",
+      "quadrant": "Four quadrants",
+      "kanban": "Kanban",
+      "swot": "SWOT analysis"
+    },
+    "import": {
+      "action": "Import canvas or Mermaid",
+      "fileType": "Canvas file",
+      "defaultTitle": "Imported canvas",
+      "success": "Canvas imported",
+      "error": "This file could not be imported"
+    },
     "untitled": "Untitled canvas",
     "more": "More actions",
     "duplicate": "Duplicate",
@@ -3151,9 +3277,21 @@
     "delete": "Delete canvas",
     "trash": "Recently deleted",
     "restore": "Restore canvas",
-    "deleteDialog": { "title": "Delete this canvas?", "description": "“{title}” will move to Recently Deleted and can be restored later.", "cancel": "Cancel", "confirm": "Move to Recently Deleted" },
+    "deleteDialog": {
+      "title": "Delete this canvas?",
+      "description": "“{title}” will move to Recently Deleted and can be restored later.",
+      "cancel": "Cancel",
+      "confirm": "Move to Recently Deleted"
+    },
     "permanentDelete": "Delete permanently",
-    "permanentDeleteDialog": { "title": "Permanently delete this canvas?", "description": "The local content for “{title}” will be deleted. If sync is configured, its remote sync file will also be removed. This action cannot be undone.", "cancel": "Cancel", "confirm": "Delete permanently", "deleting": "Deleting", "error": "Permanent deletion failed. Check your sync settings and network, then try again." },
+    "permanentDeleteDialog": {
+      "title": "Permanently delete this canvas?",
+      "description": "The local content for “{title}” will be deleted. If sync is configured, its remote sync file will also be removed. This action cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Delete permanently",
+      "deleting": "Deleting",
+      "error": "Permanent deletion failed. Check your sync settings and network, then try again."
+    },
     "rename": "Rename",
     "loading": "Loading canvas...",
     "undo": "Undo",
@@ -3163,26 +3301,256 @@
     "exportSuccess": "Canvas exported",
     "exportError": "Failed to export canvas",
     "aiPreview": "AI change preview",
-    "tools": { "label": "Canvas tools", "select": "Select", "hand": "Hand", "connector": "Connector", "pen": "Pen", "highlighter": "Highlighter", "eraser": "Eraser" },
-    "toolbox": { "ai": "Generate with AI", "aiPrompt": "Using my description, generate a diagram on the current canvas with native nodes and edges that remain independently editable: ", "shapes": "Shapes", "media": "Media", "drawing": "Drawing", "close": "Close panel", "commonShapes": "Common shapes", "flowchartShapes": "Flowchart", "dataShapes": "Data and storage", "favorites": "Favorites", "recent": "Recent", "searchShapes": "Search shapes", "noShapes": "No matching shapes", "favorite": "Favorite shape", "unfavorite": "Remove favorite", "customComponents": "My components", "deleteCustomComponent": "Delete custom component", "saveCustomComponent": "Save component", "saveCustomComponentDescription": "Save the selected nodes and their internal edges as a reusable component.", "customComponentName": "Component name", "customComponentDefaultName": "My component", "customComponentSaved": "Custom component saved", "connectionShape": "Choose connected shape", "connectionShapeDescription": "Create a shape and connect it to the current node.", "aiDescription": "Describe the diagram to generate or modify", "aiGenerate": "Send to AI", "aiScopes": { "append": "Append", "replace": "Replace", "selection": "Selection", "appendPrompt": "Keep the current content and append this diagram: ", "replacePrompt": "Replace the current canvas and generate this diagram: ", "selectionPrompt": "Only modify the currently selected nodes and edges: "}, "aiPresets": { "flowchart": "Flowchart", "flowchartPrompt": "Create a clear business process flowchart", "architecture": "Architecture", "architecturePrompt": "Create a layered software system architecture diagram", "sequence": "Sequence flow", "sequencePrompt": "Express a participant interaction sequence with independently editable nodes and edges", "mindmap": "Mind map", "mindmapPrompt": "Create a mind map branching outward from a central topic" } },
-    "brush": { "penTitle": "Pen", "highlighterTitle": "Highlighter", "strokeTitle": "Brush stroke", "color": "Color", "size": "Brush width" },
-    "nodes": { "process": "Process", "decision": "Decision", "terminator": "Start / End", "inputOutput": "Input / Output", "document": "Document", "multiDocument": "Multiple documents", "database": "Database", "predefinedProcess": "Predefined process", "manualInput": "Manual input", "preparation": "Preparation", "delay": "Delay", "display": "Display", "connector": "On-page connector", "offPageConnector": "Off-page connector", "internalStorage": "Internal storage", "storedData": "Stored data", "text": "Text", "note": "Note reference", "record": "Record", "image": "Image", "link": "Web link", "todo": "Todo", "group": "Group", "chart": "Data chart" },
-    "chart": {
-      "createTitle": "Create data chart", "editTitle": "Edit data chart", "description": "Enter data and insert it directly. The node finishes processing in the background.", "titleLabel": "Chart title", "titlePlaceholder": "Leave blank to generate automatically", "titleDescription": "Automatic titles are regenerated whenever the chart data is generated.", "typeLabel": "Chart type", "dataLabel": "Data", "dataPlaceholder": "Month,Desktop,Mobile\nJanuary,186,80\nFebruary,305,200", "dataDescription": "Supports natural-language descriptions, CSV, TSV, Markdown tables, and JSON.", "generate": "Generate preview", "generating": "Parsing", "preview": "Preview", "primarySeries": "Value field", "summary": "{rows} rows · {series} series", "emptyPreviewTitle": "Preview not generated", "emptyPreviewDescription": "Enter data and generate a preview to confirm the chart type and content.", "cancel": "Cancel", "insert": "Insert into canvas", "update": "Regenerate", "nodeLoading": "Generating chart…", "nodeErrorTitle": "Chart generation failed", "nodeErrorHint": "Double-click the node to edit the data and retry.",
-      "types": { "auto": "Auto detect", "area": "Area chart", "bar": "Bar chart", "line": "Line chart", "pie": "Pie chart", "radar": "Radar chart", "radial": "Radial chart" },
-      "notes": { "label": "Reference notes", "placeholder": "Select notes", "selected": "{count} notes selected", "title": "Chart source notes", "description": "Select one or more notes to use as chart data sources.", "search": "Search notes", "empty": "No notes found", "manualInput": "Manual input" },
-      "recommendations": { "time-series": "Time series detected; line chart recommended", "continuous": "Continuous cumulative data detected; area chart recommended", "proportion": "Proportions detected; pie chart recommended", "progress": "Progress values detected; radial chart recommended", "multidimensional": "Multidimensional comparison detected; radar chart recommended", "categorical": "Categorical data detected; bar chart recommended", "ai": "Recommended by AI from the data semantics" },
-      "appearance": { "title": "Chart appearance", "variant": "Container", "palette": "Palette", "showTitle": "Show title", "showLegend": "Show legend", "showGrid": "Show grid", "showXAxis": "Show category axis", "showYAxis": "Show value axis", "variants": { "card": "Card", "minimal": "Minimal", "transparent": "Transparent" }, "palettes": { "system": "System", "cool": "Cool", "warm": "Warm", "monochrome": "Monochrome" } },
-      "errors": { "CHART_NEEDS_HEADER_AND_ROW": "Provide a header and at least one data row.", "CHART_NEEDS_TWO_COLUMNS": "Provide at least two columns.", "CHART_INVALID_MARKDOWN_TABLE": "The Markdown table is invalid.", "CHART_JSON_ARRAY_REQUIRED": "JSON must be an array of objects or contain a data array.", "CHART_EMPTY_DATA": "Data cannot be empty.", "CHART_NUMERIC_SERIES_REQUIRED": "No numeric series was found.", "CHART_MISSING_NUMERIC_VALUE": "A numeric series contains an empty or non-numeric value.", "CHART_EMPTY_INPUT": "Enter some data.", "CHART_AI_REQUIRED": "This input requires AI parsing.", "CHART_AI_ADDED_VALUE": "AI returned a number not present in the input, so generation was blocked.", "CHART_AI_SERIES_MISMATCH": "AI returned inconsistent series lengths.", "CHART_AI_INVALID_JSON": "AI did not return valid chart data.", "CHART_AI_NOT_CONFIGURED": "Configure an editor or primary AI model first.", "CHART_GENERATION_INTERRUPTED": "The previous generation was interrupted.", "CHART_UNKNOWN_ERROR": "Could not generate the chart. Check the data and try again." }
+    "tools": {
+      "label": "Canvas tools",
+      "select": "Select",
+      "hand": "Hand",
+      "connector": "Connector",
+      "pen": "Pen",
+      "highlighter": "Highlighter",
+      "eraser": "Eraser"
     },
-    "linkNode": { "urlPrompt": "Enter a web address", "labelPrompt": "Enter a link title" },
-    "utilityNodes": { "title": "Utility nodes", "description": "Add an image, web link, or todo." },
-    "arrange": { "title": "Align and group", "description": "Arrange the selected nodes.", "alignHorizontal": "Align horizontal centers", "alignVertical": "Align vertical centers", "distributeHorizontal": "Distribute horizontally", "distributeVertical": "Distribute vertically", "group": "Create group" },
-    "group": { "defaultLabel": "Group" },
-    "edge": { "title": "Connection style", "description": "Adjust the selected connection path and label.", "orthogonal": "Orthogonal", "straight": "Straight", "curve": "Curve", "editLabel": "Edit label", "labelPrompt": "Enter connection label", "labelDescription": "The label appears at the center of the edge. Leave it empty to remove it.", "saveLabel": "Save label" },
-    "selection": { "tools": "Node tools", "style": "Node style", "color": "Accent", "customColor": "Custom color", "border": "Border", "solid": "Solid", "dashed": "Dashed", "dotted": "Dotted", "borderWidth": "Border width", "fill": "Background", "transparent": "Transparent", "customFill": "Custom fill", "lock": "Lock nodes", "unlock": "Unlock nodes", "copyStyle": "Copy style", "pasteStyle": "Paste style", "styleCopied": "Node style copied", "stylePasted": "Node style applied", "imagePasted": "Image pasted onto canvas", "imagePasteError": "Could not paste image", "chatContext": "Canvas selection: {nodes} nodes, {edges} edges", "chatContextNodes": "{nodes} nodes", "chatContextNodesAndRelations": "{nodes} nodes · {relations} relations", "removeChatContext": "Remove canvas selection" },
-    "layer": { "front": "Bring to front", "forward": "Bring forward", "backward": "Send backward", "back": "Send to back" },
-    "noteNode": { "title": "Add note reference", "description": "Choose a note from the file manager. Double-click the node to open its source file.", "search": "Search notes...", "empty": "No notes found", "group": "Workspace notes", "added": "Added note “{name}”" },
+    "toolbox": {
+      "ai": "Generate with AI",
+      "aiPrompt": "Using my description, generate a diagram on the current canvas with native nodes and edges that remain independently editable: ",
+      "shapes": "Shapes",
+      "media": "Media",
+      "drawing": "Drawing",
+      "close": "Close panel",
+      "commonShapes": "Common shapes",
+      "flowchartShapes": "Flowchart",
+      "dataShapes": "Data and storage",
+      "favorites": "Favorites",
+      "recent": "Recent",
+      "searchShapes": "Search shapes",
+      "noShapes": "No matching shapes",
+      "favorite": "Favorite shape",
+      "unfavorite": "Remove favorite",
+      "customComponents": "My components",
+      "deleteCustomComponent": "Delete custom component",
+      "saveCustomComponent": "Save component",
+      "saveCustomComponentDescription": "Save the selected nodes and their internal edges as a reusable component.",
+      "customComponentName": "Component name",
+      "customComponentDefaultName": "My component",
+      "customComponentSaved": "Custom component saved",
+      "connectionShape": "Choose connected shape",
+      "connectionShapeDescription": "Create a shape and connect it to the current node.",
+      "aiDescription": "Describe the diagram to generate or modify",
+      "aiGenerate": "Send to AI",
+      "aiScopes": {
+        "append": "Append",
+        "replace": "Replace",
+        "selection": "Selection",
+        "appendPrompt": "Keep the current content and append this diagram: ",
+        "replacePrompt": "Replace the current canvas and generate this diagram: ",
+        "selectionPrompt": "Only modify the currently selected nodes and edges: "
+      },
+      "aiPresets": {
+        "flowchart": "Flowchart",
+        "flowchartPrompt": "Create a clear business process flowchart",
+        "architecture": "Architecture",
+        "architecturePrompt": "Create a layered software system architecture diagram",
+        "sequence": "Sequence flow",
+        "sequencePrompt": "Express a participant interaction sequence with independently editable nodes and edges",
+        "mindmap": "Mind map",
+        "mindmapPrompt": "Create a mind map branching outward from a central topic"
+      }
+    },
+    "brush": {
+      "penTitle": "Pen",
+      "highlighterTitle": "Highlighter",
+      "strokeTitle": "Brush stroke",
+      "color": "Color",
+      "size": "Brush width"
+    },
+    "nodes": {
+      "process": "Process",
+      "decision": "Decision",
+      "terminator": "Start / End",
+      "inputOutput": "Input / Output",
+      "document": "Document",
+      "multiDocument": "Multiple documents",
+      "database": "Database",
+      "predefinedProcess": "Predefined process",
+      "manualInput": "Manual input",
+      "preparation": "Preparation",
+      "delay": "Delay",
+      "display": "Display",
+      "connector": "On-page connector",
+      "offPageConnector": "Off-page connector",
+      "internalStorage": "Internal storage",
+      "storedData": "Stored data",
+      "text": "Text",
+      "note": "Note reference",
+      "record": "Record",
+      "image": "Image",
+      "link": "Web link",
+      "todo": "Todo",
+      "group": "Group",
+      "chart": "Data chart"
+    },
+    "chart": {
+      "createTitle": "Create data chart",
+      "editTitle": "Edit data chart",
+      "description": "Enter data and insert it directly. The node finishes processing in the background.",
+      "titleLabel": "Chart title",
+      "titlePlaceholder": "Leave blank to generate automatically",
+      "titleDescription": "Automatic titles are regenerated whenever the chart data is generated.",
+      "typeLabel": "Chart type",
+      "dataLabel": "Data",
+      "dataPlaceholder": "Month,Desktop,Mobile\nJanuary,186,80\nFebruary,305,200",
+      "dataDescription": "Supports natural-language descriptions, CSV, TSV, Markdown tables, and JSON.",
+      "generate": "Generate preview",
+      "generating": "Parsing",
+      "preview": "Preview",
+      "primarySeries": "Value field",
+      "summary": "{rows} rows · {series} series",
+      "emptyPreviewTitle": "Preview not generated",
+      "emptyPreviewDescription": "Enter data and generate a preview to confirm the chart type and content.",
+      "cancel": "Cancel",
+      "insert": "Insert into canvas",
+      "update": "Regenerate",
+      "nodeLoading": "Generating chart…",
+      "nodeErrorTitle": "Chart generation failed",
+      "nodeErrorHint": "Double-click the node to edit the data and retry.",
+      "types": {
+        "auto": "Auto detect",
+        "area": "Area chart",
+        "bar": "Bar chart",
+        "line": "Line chart",
+        "pie": "Pie chart",
+        "radar": "Radar chart",
+        "radial": "Radial chart"
+      },
+      "notes": {
+        "label": "Reference notes",
+        "placeholder": "Select notes",
+        "selected": "{count} notes selected",
+        "title": "Chart source notes",
+        "description": "Select one or more notes to use as chart data sources.",
+        "search": "Search notes",
+        "empty": "No notes found",
+        "manualInput": "Manual input"
+      },
+      "recommendations": {
+        "time-series": "Time series detected; line chart recommended",
+        "continuous": "Continuous cumulative data detected; area chart recommended",
+        "proportion": "Proportions detected; pie chart recommended",
+        "progress": "Progress values detected; radial chart recommended",
+        "multidimensional": "Multidimensional comparison detected; radar chart recommended",
+        "categorical": "Categorical data detected; bar chart recommended",
+        "ai": "Recommended by AI from the data semantics"
+      },
+      "appearance": {
+        "title": "Chart appearance",
+        "variant": "Container",
+        "palette": "Palette",
+        "showTitle": "Show title",
+        "showLegend": "Show legend",
+        "showGrid": "Show grid",
+        "showXAxis": "Show category axis",
+        "showYAxis": "Show value axis",
+        "variants": {
+          "card": "Card",
+          "minimal": "Minimal",
+          "transparent": "Transparent"
+        },
+        "palettes": {
+          "system": "System",
+          "cool": "Cool",
+          "warm": "Warm",
+          "monochrome": "Monochrome"
+        }
+      },
+      "errors": {
+        "CHART_NEEDS_HEADER_AND_ROW": "Provide a header and at least one data row.",
+        "CHART_NEEDS_TWO_COLUMNS": "Provide at least two columns.",
+        "CHART_INVALID_MARKDOWN_TABLE": "The Markdown table is invalid.",
+        "CHART_JSON_ARRAY_REQUIRED": "JSON must be an array of objects or contain a data array.",
+        "CHART_EMPTY_DATA": "Data cannot be empty.",
+        "CHART_NUMERIC_SERIES_REQUIRED": "No numeric series was found.",
+        "CHART_MISSING_NUMERIC_VALUE": "A numeric series contains an empty or non-numeric value.",
+        "CHART_EMPTY_INPUT": "Enter some data.",
+        "CHART_AI_REQUIRED": "This input requires AI parsing.",
+        "CHART_AI_ADDED_VALUE": "AI returned a number not present in the input, so generation was blocked.",
+        "CHART_AI_SERIES_MISMATCH": "AI returned inconsistent series lengths.",
+        "CHART_AI_INVALID_JSON": "AI did not return valid chart data.",
+        "CHART_AI_NOT_CONFIGURED": "Configure an editor or primary AI model first.",
+        "CHART_GENERATION_INTERRUPTED": "The previous generation was interrupted.",
+        "CHART_UNKNOWN_ERROR": "Could not generate the chart. Check the data and try again."
+      }
+    },
+    "linkNode": {
+      "urlPrompt": "Enter a web address",
+      "labelPrompt": "Enter a link title"
+    },
+    "utilityNodes": {
+      "title": "Utility nodes",
+      "description": "Add an image, web link, or todo."
+    },
+    "arrange": {
+      "title": "Align and group",
+      "description": "Arrange the selected nodes.",
+      "alignHorizontal": "Align horizontal centers",
+      "alignVertical": "Align vertical centers",
+      "distributeHorizontal": "Distribute horizontally",
+      "distributeVertical": "Distribute vertically",
+      "group": "Create group"
+    },
+    "group": {
+      "defaultLabel": "Group"
+    },
+    "edge": {
+      "title": "Connection style",
+      "description": "Adjust the selected connection path and label.",
+      "orthogonal": "Orthogonal",
+      "straight": "Straight",
+      "curve": "Curve",
+      "editLabel": "Edit label",
+      "labelPrompt": "Enter connection label",
+      "labelDescription": "The label appears at the center of the edge. Leave it empty to remove it.",
+      "saveLabel": "Save label"
+    },
+    "selection": {
+      "tools": "Node tools",
+      "style": "Node style",
+      "color": "Accent",
+      "customColor": "Custom color",
+      "border": "Border",
+      "solid": "Solid",
+      "dashed": "Dashed",
+      "dotted": "Dotted",
+      "borderWidth": "Border width",
+      "fill": "Background",
+      "transparent": "Transparent",
+      "customFill": "Custom fill",
+      "lock": "Lock nodes",
+      "unlock": "Unlock nodes",
+      "copyStyle": "Copy style",
+      "pasteStyle": "Paste style",
+      "styleCopied": "Node style copied",
+      "stylePasted": "Node style applied",
+      "imagePasted": "Image pasted onto canvas",
+      "imagePasteError": "Could not paste image",
+      "chatContext": "Canvas selection: {nodes} nodes, {edges} edges",
+      "chatContextNodes": "{nodes} nodes",
+      "chatContextNodesAndRelations": "{nodes} nodes · {relations} relations",
+      "removeChatContext": "Remove canvas selection"
+    },
+    "layer": {
+      "front": "Bring to front",
+      "forward": "Bring forward",
+      "backward": "Send backward",
+      "back": "Send to back"
+    },
+    "noteNode": {
+      "title": "Add note reference",
+      "description": "Choose a note from the file manager. Double-click the node to open its source file.",
+      "search": "Search notes...",
+      "empty": "No notes found",
+      "group": "Workspace notes",
+      "added": "Added note “{name}”"
+    },
     "footer": {
       "nodes": "{count} nodes",
       "edges": "{count} connections",
@@ -3193,10 +3561,34 @@
       "fit": "Fit view",
       "layout": "Auto arrange",
       "export": "Export",
-      "import": { "title": "Import", "file": "Choose file", "content": "Enter content", "contentTitle": "Import canvas content", "contentDescription": "Supports NoteLoom Canvas JSON or Mermaid flowchart content. Importing replaces the current canvas.", "contentPlaceholder": "Paste Canvas JSON or Mermaid content…", "confirm": "Import into current canvas" },
-      "exportMenu": { "record": "Export as illustration record", "recordError": "Failed to save the illustration record", "computer": "Save to computer", "source": "Editable files", "png2x": "PNG · 2× high resolution", "png4x": "PNG · 4× ultra resolution", "svg": "SVG · vector", "canvasFile": "NoteLoom Canvas JSON", "mermaid": "Mermaid flowchart" }
+      "import": {
+        "title": "Import",
+        "file": "Choose file",
+        "content": "Enter content",
+        "contentTitle": "Import canvas content",
+        "contentDescription": "Supports NoteLoom Canvas JSON or Mermaid flowchart content. Importing replaces the current canvas.",
+        "contentPlaceholder": "Paste Canvas JSON or Mermaid content…",
+        "confirm": "Import into current canvas"
+      },
+      "exportMenu": {
+        "record": "Export as illustration record",
+        "recordError": "Failed to save the illustration record",
+        "computer": "Save to computer",
+        "source": "Editable files",
+        "png2x": "PNG · 2× high resolution",
+        "png4x": "PNG · 4× ultra resolution",
+        "svg": "SVG · vector",
+        "canvasFile": "NoteLoom Canvas JSON",
+        "mermaid": "Mermaid flowchart"
+      }
     },
-    "contextMenu": { "selectAll": "Select all", "copy": "Copy", "paste": "Paste", "duplicate": "Duplicate", "delete": "Delete selection" },
+    "contextMenu": {
+      "selectAll": "Select all",
+      "copy": "Copy",
+      "paste": "Paste",
+      "duplicate": "Duplicate",
+      "delete": "Delete selection"
+    },
     "empty": {
       "title": "No canvases yet",
       "description": "Create a canvas to organize ideas with diagrams and freehand drawing."
@@ -3948,7 +4340,12 @@
       "canvasTasks": "Extract task relationships",
       "canvasSource": "Selected Markdown source:",
       "canvasPromptSuffix": "Read the current blank canvas, then use canvas tools to generate it. Show an operation preview and wait for confirmation before applying.",
-      "canvasPrompts": { "flowchart": "Turn the selected text into a clear flowchart.", "mindmap": "Turn the selected text into a well-structured mind map.", "timeline": "Identify dates, phases, and milestones and generate a timeline.", "tasks": "Extract tasks, dependencies, and ordering and generate a task relationship diagram." },
+      "canvasPrompts": {
+        "flowchart": "Turn the selected text into a clear flowchart.",
+        "mindmap": "Turn the selected text into a well-structured mind map.",
+        "timeline": "Identify dates, phases, and milestones and generate a timeline.",
+        "tasks": "Extract tasks, dependencies, and ordering and generate a task relationship diagram."
+      },
       "translate": "Translate",
       "translateSubtitle": "Translate to",
       "quoteToChat": "Quote to Chat",
@@ -3993,7 +4390,13 @@
       "generating": "Generating...",
       "abort": "Abort"
     },
-    "canvasDrop": { "hint": "Drop to insert canvas image", "generating": "Generating canvas image…", "success": "Canvas inserted", "successDescription": "Static image created: {path}", "failed": "Could not insert canvas" },
+    "canvasDrop": {
+      "hint": "Drop to insert canvas image",
+      "generating": "Generating canvas image…",
+      "success": "Canvas inserted",
+      "successDescription": "Static image created: {path}",
+      "failed": "Could not insert canvas"
+    },
     "image": {
       "insert": "Insert Image",
       "uploading": "Uploading...",

@@ -2,12 +2,12 @@ import { create } from 'zustand'
 
 interface SyncConfirmState {
   isOpen: boolean
-  dialogType: 'pull' | 'conflict' | 'shaMismatch'  // 对话框类型：拉取确认 | 冲突解决 | SHA 不匹配
+  dialogType: 'pull' | 'conflict' | 'shaMismatch'  // ： | | SHA
   fileName: string
   localContent?: string
   remoteContent?: string
-  localSha?: string      // 本地记录的 SHA（SHA 不匹配时使用）
-  remoteSha?: string    // 远程文件的 SHA（SHA 不匹配时使用）
+  localSha?: string      // SHA（SHA ）
+  remoteSha?: string    // SHA（SHA ）
   commitInfo?: {
     sha: string
     message: string
@@ -16,11 +16,11 @@ interface SyncConfirmState {
     additions?: number
     deletions?: number
   }
-  onConfirm?: () => void  // 确认（拉取/保留远程）
-  onCancel?: () => void   // 取消
-  onKeepLocal?: () => void // 保留本地（冲突时）
-  onMerge?: () => void     // 合并（冲突时）
-  onIgnore?: () => void    // 忽略
+  onConfirm?: () => void  // （/Keep remote）
+  onCancel?: () => void   // Cancel
+  onKeepLocal?: () => void // Keep local（）
+  onMerge?: () => void     // （）
+  onIgnore?: () => void    // Ignore
 
   // Actions
   showPullDialog: (data: {
@@ -54,13 +54,13 @@ interface SyncConfirmState {
     onCancel?: () => void
   }) => void
 
-  // 显示 SHA 不匹配对话框
+  // SHA
   showShaMismatchDialog: (data: {
     fileName: string
     localSha?: string
     remoteSha?: string
-    onForceUpload: () => void  // 强制上传（不带 SHA）
-    onCancel: () => void        // 取消
+    onForceUpload: () => void  // （ SHA）
+    onCancel: () => void        // Cancel
   }) => void
 
   hideConfirmDialog: () => void
@@ -97,7 +97,7 @@ export const useSyncConfirmStore = create<SyncConfirmState>((set) => ({
     remoteContent: data.remoteContent,
     commitInfo: data.commitInfo,
     onKeepLocal: data.onKeepLocal,
-    onConfirm: data.onKeepRemote,  // onConfirm 用于保留远程
+    onConfirm: data.onKeepRemote,  // onConfirm Keep remote
     onMerge: data.onMerge,
     onCancel: data.onCancel
   }),
@@ -108,7 +108,7 @@ export const useSyncConfirmStore = create<SyncConfirmState>((set) => ({
     fileName: data.fileName,
     localSha: data.localSha,
     remoteSha: data.remoteSha,
-    onConfirm: data.onForceUpload,  // onConfirm 用于强制上传
+    onConfirm: data.onForceUpload,  // onConfirm
     onCancel: data.onCancel
   }),
 

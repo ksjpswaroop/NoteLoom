@@ -7,7 +7,7 @@ import {
 } from './utils';
 
 /**
- * 清理补全结果
+ * Complete
  */
 function cleanupCompletion(text: string): string {
   return text
@@ -17,8 +17,8 @@ function cleanupCompletion(text: string): string {
     .replace(/\s*```$/g, '')
     .replace(/^[\s\n]+|[\s\n]+$/g, '')
     .replace(/^["'""жат]|["'""жат]$/g, '')
-    .replace(/^续写[：:]\s*/i, '')
-    .replace(/^补全[：:]\s*/i, '')
+    .replace(/^Continue writing[：:]\s*/i, '')
+    .replace(/^Complete[：:]\s*/i, '')
     .replace(/^Continuation[:\s]*/i, '')
     .trim()
 }
@@ -115,19 +115,19 @@ ${context}`
 }
 
 /**
- * 快速生成代码/文本补全
- * 专门用于内联补全，使用更少的上下文和更快的响应
+ * /Complete
+ * Complete，
  */
 export async function fetchCompletion(context: string, abortSignal?: AbortSignal): Promise<string> {
   try {
     const aiConfig = await getEditorAISettings()
 
-    // 验证AI服务
+    // AI
     if (await validateAIService(aiConfig?.baseURL) === null) return ''
 
     const openai = await createOpenAIClient(aiConfig)
 
-    // 构建简洁的补全 prompt
+    // Complete prompt
     const prompt = `Continue the following text naturally. Requirements:
 - Return ONLY the continuation text (1 sentence)
 - Use the same language as the context
@@ -162,8 +162,8 @@ Continuation:`
 }
 
 /**
- * 流式获取补全结果
- * 实时将生成的文本插入到编辑器中
+ * Complete
+ * 
  */
 export async function fetchCompletionStream(
   context: string,
@@ -173,12 +173,12 @@ export async function fetchCompletionStream(
   try {
     const aiConfig = await getEditorAISettings()
 
-    // 验证AI服务
+    // AI
     if (await validateAIService(aiConfig?.baseURL) === null) return
 
     const openai = await createOpenAIClient(aiConfig)
 
-    // 构建简洁的补全 prompt
+    // Complete prompt
     const prompt = `Continue the following text naturally. Requirements:
 - Return ONLY the continuation text (1 sentence)
 - Use the same language as the context
@@ -218,17 +218,17 @@ Continuation:`
       }
     }
   } catch (error) {
-    // 对于 abort 请求，静默处理不抛出错误
+    // abort ，
     if (error instanceof Error && error.name === 'AbortError') {
       return
     }
-    // 其他错误重新抛出
+    //
     throw error
   }
 }
 
 /**
- * 基于当前笔记上下文生成可插入的 Markdown 内容。
+ *  Markdown 。
  */
 export async function fetchEditorAiGenerationStream(
   request: EditorAiGenerationRequest,

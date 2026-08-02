@@ -190,7 +190,7 @@ export function ControlImage() {
     }
   }
 
-  // 处理移动端文件选择
+  //
   async function handleFileInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     try {
       const files = event.target.files
@@ -202,14 +202,14 @@ export function ControlImage() {
         await uploadMobileFile(files[i])
       }
       
-      // 重置 input
+      // input
       event.target.value = ''
     } catch (error) {
       console.error('Error in handleFileInputChange:', error)
     }
   }
 
-  // 移动端文件上传
+  //
   async function uploadMobileFile(file: File) {
     const queueId = uuid()
     const tagId = await getDefaultRecordSaveTagId()
@@ -260,7 +260,7 @@ export function ControlImage() {
         desc,
       }
       
-      // 尝试上传图片到图床（如果配置了图床）
+      // （）
       try {
         const url = await uploadImage(cachedFile)
         if (url) {
@@ -269,7 +269,7 @@ export function ControlImage() {
         }
       } catch (uploadError) {
         console.error('Failed to upload to image hosting:', uploadError)
-        // 继续使用本地文件
+        //
       }
       
       const result = await insertMark(mark)
@@ -335,7 +335,7 @@ export function ControlImage() {
         desc,
       }
       
-      // 尝试上传图片到图床（如果配置了图床）
+      // （）
       const file = new File([fileData], filename, { type: getImageMimeType(ext) })
       try {
         const url = await uploadImage(file)
@@ -372,7 +372,7 @@ export function ControlImage() {
 
   return (
     <>
-      {/* 移动端文件选择 */}
+      {/* */}
       {isMobile && (
         <input
           ref={fileInputRef}

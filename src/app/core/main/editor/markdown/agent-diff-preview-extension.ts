@@ -30,7 +30,7 @@ function createInsertedContentWidget(content: string) {
     element.className = 'agent-diff-preview-inserted'
     element.dataset.agentDiffType = 'inserted'
     element.contentEditable = 'false'
-    element.textContent = content || '新增内容'
+    element.textContent = content || 'Added content'
     return element
   }
 }

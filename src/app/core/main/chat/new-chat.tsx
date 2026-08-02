@@ -13,7 +13,7 @@ export function NewChat() {
     startNewConversation()
   }
 
-  // 当前会话没有消息时禁用新对话按钮
+  //
   const isDisabled = chats.length === 0
 
   return (

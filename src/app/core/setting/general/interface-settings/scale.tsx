@@ -11,7 +11,7 @@ export function ScaleSettings() {
   const t = useTranslations('settings.general.interface')
   const { uiScale, setUiScale } = useSettingStore()
 
-  // 初始化时应用缩放
+  //
   useEffect(() => {
     document.documentElement.style.fontSize = `${uiScale}%`
   }, [])

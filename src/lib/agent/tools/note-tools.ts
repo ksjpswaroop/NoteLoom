@@ -81,7 +81,7 @@ function missingFileReadResult(filePath: string): ToolResult {
       filePath,
       exists: false,
     },
-    message: `文件不存在: ${filePath}。请直接告知用户或继续完成无需该文件的回答，不要用相同参数重复读取。`,
+    message: `File does not exist: ${filePath}. Tell the user or continue without it; do not retry the same read arguments.`,
   }
 }
 
@@ -155,17 +155,17 @@ export const listMarkdownFilesTool: Tool = {
       return {
         success: true,
         data: files,
-        message: `找到 ${files.length} 个 Markdown 文件`,
+        message: `Found ${files.length} Markdown files`,
       }
     } catch (error) {
-      console.error('[list_markdown_files] 获取文件列表失败', {
+      console.error('[list_markdown_files] Failed to get file list', {
         error: String(error),
         errorName: error instanceof Error ? error.name : 'unknown',
         errorMessage: error instanceof Error ? error.message : String(error),
       })
       return {
         success: false,
-        error: `获取 Markdown 文件列表失败: ${error}`,
+        error: `Failed to get Markdown file list: ${error}`,
       }
     }
   },
@@ -190,13 +190,13 @@ export const readMarkdownFileTool: Tool = {
     try {
       const normalizedFilePath = await ensureSafeWorkspaceRelativePath(params.filePath)
 
-      // 检查是否已关联该文件到对话中（避免重复读取）
+      // （）
       const chatStore = useChatStore.getState()
       const { linkedResource } = chatStore
 
-      // 如果有关联的文件（非文件夹），且路径匹配，则提示内容已在上下文中
+      // （），，
       if (linkedResource && !isLinkedFolder(linkedResource)) {
-        // 提取文件名进行比较，支持相对路径和绝对路径的匹配
+        // ，
         const requestedFileName = normalizedFilePath.split('/').pop() || normalizedFilePath
         const linkedFileName = linkedResource.relativePath.split('/').pop() || linkedResource.relativePath
 
@@ -205,17 +205,17 @@ export const readMarkdownFileTool: Tool = {
             success: true,
             data: {
               filePath: normalizedFilePath,
-              content: `[该文件内容已在对话上下文中] 文件 "${linkedResource.name}" (${linkedResource.relativePath}) 已关联到当前对话，其完整内容已在上下文中，无需再次读取。请直接使用上下文中已有的文件内容。`,
+              content: `[File content already in conversation context] File "${linkedResource.name}" (${linkedResource.relativePath}) is linked to this conversation and its full content is already in context—do not read it again. Use the file content already present in context.`,
               alreadyInContext: true,
             },
-            message: `文件 "${linkedResource.name}" 已在对话上下文中，无需再次读取`,
+            message: `File "${linkedResource.name}" is already in conversation context; no need to read again`,
           }
         }
       }
 
       let content = ''
 
-      // 统一使用 getFilePathOptions 来处理路径，无论是自定义工作区还是默认工作区
+      // getFilePathOptions ，
       const { path, baseDir } = await getFilePathOptions(normalizedFilePath)
 
       const fileExists = baseDir
@@ -234,14 +234,14 @@ export const readMarkdownFileTool: Tool = {
       return {
         success: true,
         data: { filePath: normalizedFilePath, content },
-        message: `成功读取文件: ${normalizedFilePath}`,
+        message: `Successfully read file: ${normalizedFilePath}`,
       }
     } catch (error) {
       if (isFileNotFoundError(error)) {
         return missingFileReadResult(String(params.filePath || ''))
       }
 
-      console.error('[read_markdown_file] 读取失败', {
+      console.error('[read_markdown_file] Read failed', {
         filePath: params.filePath,
         error: String(error),
         errorName: error instanceof Error ? error.name : 'unknown',
@@ -249,7 +249,7 @@ export const readMarkdownFileTool: Tool = {
       })
       return {
         success: false,
-        error: `读取文件失败: ${error}`,
+        error: `Failed to read file: ${error}`,
       }
     }
   },
@@ -288,10 +288,10 @@ export const openMarkdownFileTool: Tool = {
       return {
         success: true,
         data: { filePath: normalizedFilePath, content },
-        message: `成功打开文件: ${normalizedFilePath}`,
+        message: `Successfully opened file: ${normalizedFilePath}`,
       }
     } catch (error) {
-      console.error('[open_markdown_file] 打开失败', {
+      console.error('[open_markdown_file] Open failed', {
         filePath: params.filePath,
         error: String(error),
         errorName: error instanceof Error ? error.name : 'unknown',
@@ -299,7 +299,7 @@ export const openMarkdownFileTool: Tool = {
       })
       return {
         success: false,
-        error: `打开文件失败: ${error}`,
+        error: `Failed to open file: ${error}`,
       }
     }
   },
@@ -336,15 +336,15 @@ export const createFileTool: Tool = {
         ? await ensureSafeWorkspaceRelativePath(params.folderPath)
         : undefined
 
-      // 验证内容参数
+      //
       if (!params.content || typeof params.content !== 'string') {
         return {
           success: false,
-          error: '缺少必需参数 content 或参数类型错误',
+          error: 'Missing required parameter content, or wrong type',
         }
       }
 
-      // 如果没有提供 fileName，生成默认文件名
+      // fileName，
       let fileName = params.fileName
       if (!fileName || typeof fileName !== 'string' || fileName.trim() === '') {
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19)
@@ -364,7 +364,7 @@ export const createFileTool: Tool = {
       const isSpecialSkillPath =
         filePath.startsWith('skills/') || filePath.startsWith('outputs/')
 
-      // 统一使用 getFilePathOptions 来处理路径
+      // getFilePathOptions
       const specialArticleRelativePath = isSpecialSkillPath
         ? `article/${filePath}`.replace(/^article\/article\//, 'article/')
         : undefined
@@ -372,7 +372,7 @@ export const createFileTool: Tool = {
         ? { path: specialArticleRelativePath as string, baseDir: BaseDirectory.AppData }
         : await getFilePathOptions(filePath)
 
-      // 在创建文件前，确保父目录存在
+      // ，
       const parentFolderPath = filePath.substring(0, filePath.lastIndexOf('/'))
       const needsParentFolder = parentFolderPath && parentFolderPath !== filePath
 
@@ -389,12 +389,12 @@ export const createFileTool: Tool = {
           return {
             success: true,
             data: { filePath, alreadyExists: true },
-            message: `文件已存在且内容一致，无需重复创建: ${filePath}`,
+            message: `File already exists with the same content; no create needed: ${filePath}`,
           }
         }
         return {
           success: false,
-          error: `文件已存在: ${filePath}。create_file 只能创建新文件，已取消本次创建；如需覆盖或更新，请让用户明确提出更新请求。`,
+          error: `File already exists: ${filePath}. create_file can only create new files; this create was cancelled. If overwrite or update is needed, have the user explicitly request an update.`,
         }
       }
 
@@ -419,14 +419,14 @@ export const createFileTool: Tool = {
         await writeTextFile(path, params.content)
       }
 
-      // 获取完整路径用于返回
+      //
       const { getWorkspacePath } = await import('@/lib/workspace')
       const workspace = await getWorkspacePath()
       const workspacePath = workspace.isCustom
         ? workspace.path
         : `${await appDataDir()}/article`
 
-      // 构建工作区完整路径
+      //
       const fullPath = `${workspacePath}/${filePath}`
 
       const articleStore = useArticleStore.getState()
@@ -437,7 +437,7 @@ export const createFileTool: Tool = {
         await articleStore.loadFileTree()
       }
 
-      // 如果是 Markdown 文件，选中并读取
+      // Markdown ，
       if (filePath.endsWith('.md')) {
         emitter.emit('editor-file-content-updated', {
           path: filePath,
@@ -455,12 +455,12 @@ export const createFileTool: Tool = {
           fullPath,
           alreadyExists: false,
         },
-        message: `成功创建文件: ${fullPath}`,
+        message: `Successfully created file: ${fullPath}`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `创建文件失败: ${error}`,
+        error: `Failed to create file: ${error}`,
       }
     }
   },
@@ -495,7 +495,7 @@ export const updateMarkdownFileTool: Tool = {
     try {
       const normalizedFilePath = await ensureSafeWorkspaceRelativePath(params.filePath)
 
-      // 统一使用 getFilePathOptions 来处理路径
+      // getFilePathOptions
       const { path, baseDir } = await getFilePathOptions(normalizedFilePath)
 
       if (params.expectedModifiedAt) {
@@ -503,7 +503,7 @@ export const updateMarkdownFileTool: Tool = {
         if (Number.isNaN(expectedModifiedAt.getTime())) {
           return {
             success: false,
-            error: `expectedModifiedAt 无效: ${params.expectedModifiedAt}`,
+            error: `Invalid expectedModifiedAt: ${params.expectedModifiedAt}`,
           }
         }
 
@@ -515,7 +515,7 @@ export const updateMarkdownFileTool: Tool = {
         if (currentModifiedAt && currentModifiedAt.getTime() !== expectedModifiedAt.getTime()) {
           return {
             success: false,
-            error: `文件已在磁盘上发生变化，已取消更新: ${normalizedFilePath}`,
+            error: `File changed on disk; update cancelled: ${normalizedFilePath}`,
             data: {
               filePath: normalizedFilePath,
               conflict: true,
@@ -540,7 +540,7 @@ export const updateMarkdownFileTool: Tool = {
             modifiedAt: currentStat.mtime?.toISOString(),
             unchanged: true,
           },
-          message: `文件已是目标内容，无需重复更新: ${normalizedFilePath}`,
+          message: `File already has the target content; no update needed: ${normalizedFilePath}`,
         }
       }
 
@@ -573,12 +573,12 @@ export const updateMarkdownFileTool: Tool = {
           filePath: normalizedFilePath,
           modifiedAt: updatedStat.mtime?.toISOString(),
         },
-        message: `成功更新文件: ${normalizedFilePath}`,
+        message: `Successfully updated file: ${normalizedFilePath}`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `更新文件失败: ${error}`,
+        error: `Failed to update file: ${error}`,
       }
     }
   },
@@ -602,10 +602,10 @@ export const deleteMarkdownFileTool: Tool = {
       const articleStore = useArticleStore.getState()
       const normalizedFilePath = await ensureSafeWorkspaceRelativePath(params.filePath)
 
-      // 检查是否是当前打开的文件
+      //
       const isCurrentFile = articleStore.activeFilePath === normalizedFilePath
 
-      // 统一使用 getFilePathOptions 来处理路径
+      // getFilePathOptions
       const { path, baseDir } = await getFilePathOptions(normalizedFilePath)
       const fileExists = baseDir
         ? await exists(path, { baseDir })
@@ -619,13 +619,13 @@ export const deleteMarkdownFileTool: Tool = {
         }
       }
 
-      // 删除向量数据库中的记录
+      //
       const filename = normalizedFilePath.split('/').pop() || normalizedFilePath
       try {
         const { deleteVectorDocumentsByFilename } = await import('@/db/vector')
         await deleteVectorDocumentsByFilename(filename)
       } catch (error) {
-        console.error(`删除文件 ${filename} 的向量数据失败:`, error)
+        console.error(`Failed to delete vector data for file ${filename}:`, error)
       }
 
       const removed = articleStore.removeLocalEntry(normalizedFilePath)
@@ -635,7 +635,7 @@ export const deleteMarkdownFileTool: Tool = {
 
       await articleStore.cleanTabsByDeletedFile(normalizedFilePath)
 
-      // 如果删除的是当前打开的文件，取消选择并清空内容
+      // ，
       if (isCurrentFile) {
         await articleStore.setActiveFilePath('')
         articleStore.setCurrentArticle('')
@@ -648,13 +648,13 @@ export const deleteMarkdownFileTool: Tool = {
           alreadyAbsent: !fileExists,
         },
         message: fileExists
-          ? `成功删除文件: ${normalizedFilePath}`
-          : `文件已不存在，无需重复删除: ${normalizedFilePath}`,
+          ? `Successfully deleted file: ${normalizedFilePath}`
+          : `File no longer exists; no delete needed: ${normalizedFilePath}`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `删除文件失败: ${error}`,
+        error: `Failed to delete file: ${error}`,
       }
     }
   },
@@ -702,11 +702,11 @@ Use folderPath to limit scope to a specific folder.`,
       const excludedPaths = await ragStore.get<string[]>('ragExcludedPaths') ?? DEFAULT_EXCLUDED_RAG_PATHS
       const isSearchablePath = (relativePath: string) => isPathAllowedForRag(relativePath, { excludedPaths })
 
-      // RAG 模式：调用 RAG 搜索
+      // RAG ： RAG
       if (params.mode === 'rag') {
         const { getContextForQuery, getContextForQueryInFolder } = await import('@/lib/rag')
 
-        // 完整问题用于向量检索，关键词用于 BM25、模糊检索和查询扩展。
+        // ， BM25、。
         let keywords = [{ text: params.query, weight: 1 }]
         try {
           const rankedKeywords = await invoke<Array<{ text: string; weight: number }>>('rank_keywords', {
@@ -720,14 +720,14 @@ Use folderPath to limit scope to a specific folder.`,
           console.warn('Failed to rank note search keywords, using the full query:', error)
         }
 
-        // 根据是否指定文件夹选择不同的 RAG 方法
+        // RAG
         const ragResult = normalizedFolderPath
           ? await getContextForQueryInFolder(params.query, keywords, normalizedFolderPath)
           : await getContextForQuery(params.query, keywords)
 
-        // 获取所有文件列表，用于补全路径（向量数据库只存文件名，需要补全相对路径）
+        // ，（，）
         const allFiles = (await getAllMarkdownFiles()).filter(file => isSearchablePath(file.relativePath))
-        // 创建文件名到相对路径的映射（处理同名文件）
+        // （）
         const fileNameToPath = new Map<string, string[]>()
         const relativePathSet = new Set<string>()
         for (const file of allFiles) {
@@ -744,7 +744,7 @@ Use folderPath to limit scope to a specific folder.`,
           ragResult.diagnostics.map(diagnostic => [diagnostic.filepath, diagnostic.finalScore])
         )
 
-        // 格式化返回结果，并保证路径可以原样交给读取工具。
+        // ，。
         const resolvedResults = await Promise.all(ragResult.sourceDetails.map(async source => {
           const workspaceRelativePath = (await toWorkspaceRelativePath(source.filepath))
             .replace(/\\/g, '/')
@@ -783,12 +783,12 @@ Use folderPath to limit scope to a specific folder.`,
         return {
           success: true,
           data: formattedResults,
-          message: `RAG 搜索找到 ${ragResult.sources.length} 个相关笔记${normalizedFolderPath ? `（文件夹：${normalizedFolderPath}）` : ''}`,
+ message: `RAG search found ${ragResult.sources.length} related notes${normalizedFolderPath ? `（File：${normalizedFolderPath}）` : ''}`,
         }
       }
 
-      // 关键词模式：原有的精确匹配搜索
-      // 如果指定了文件夹路径，先过滤文件列表
+      // ：
+      // ，
       let allFiles = (await getAllMarkdownFiles()).filter(file => isSearchablePath(file.relativePath))
       if (normalizedFolderPath) {
         allFiles = allFiles.filter(file => file.relativePath.startsWith(normalizedFolderPath))
@@ -805,7 +805,7 @@ Use folderPath to limit scope to a specific folder.`,
         try {
           let content = ''
 
-          // 统一使用 getFilePathOptions 来处理路径
+          // getFilePathOptions
           const { path, baseDir } = await getFilePathOptions(file.relativePath)
 
           if (baseDir) {
@@ -815,18 +815,18 @@ Use folderPath to limit scope to a specific folder.`,
           }
 
           if (content.toLowerCase().includes(params.query.toLowerCase())) {
-            // 按行分割内容
+            //
             const lines = content.split('\n')
 
-            // 查找匹配的行
+            //
             for (let i = 0; i < lines.length; i++) {
               if (lines[i].toLowerCase().includes(params.query.toLowerCase())) {
-                // 提取上下文（前后各 2 行）
+                // （ 2 ）
                 const contextStart = Math.max(0, i - 2)
                 const contextEnd = Math.min(lines.length, i + 3)
                 const contextLines = lines.slice(contextStart, contextEnd)
 
-                // 格式化匹配内容，包含行号
+                // ，
                 const formattedLines = contextLines.map((line, idx) => {
                   const actualLineNum = contextStart + idx + 1
                   const isMatchLine = actualLineNum === i + 1
@@ -841,24 +841,24 @@ Use folderPath to limit scope to a specific folder.`,
                   lineNumber: i + 1,
                 })
 
-                break // 只添加第一个匹配位置，避免重复
+                break // Only add the first match to avoid duplicates
               }
             }
           }
         } catch (error) {
-          console.error(`读取文件 ${file.path} 失败:`, error)
+          console.error(`Failed to read file ${file.path}:`, error)
         }
       }
 
       return {
         success: true,
         data: results,
-        message: `找到 ${results.length} 个匹配的文件${normalizedFolderPath ? `（文件夹：${normalizedFolderPath}）` : ''}`,
+ message: `Found ${results.length} matching files${normalizedFolderPath ? `（File：${normalizedFolderPath}）` : ''}`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `搜索文件失败: ${error}`,
+        error: `Failed to search files: ${error}`,
       }
     }
   },
@@ -900,7 +900,7 @@ export const readMarkdownFilesBatchTool: Tool = {
       if (!Array.isArray(params.filePaths) || params.filePaths.length === 0) {
         return {
           success: false,
-          error: '参数 filePaths 必须是非空数组',
+          error: 'Parameter filePaths must be a non-empty array',
         }
       }
 
@@ -923,7 +923,7 @@ export const readMarkdownFilesBatchTool: Tool = {
         try {
           let content = ''
 
-          // 统一使用 getFilePathOptions 来处理路径
+          // getFilePathOptions
           const normalizedFilePath = await ensureSafeWorkspaceRelativePath(filePath)
           const { path, baseDir } = await getFilePathOptions(normalizedFilePath)
 
@@ -939,7 +939,7 @@ export const readMarkdownFilesBatchTool: Tool = {
         }
       }
 
-      // 只要有任何文件读取失败，就标记为失败状态
+      // ，
       const hasErrors = errors.length > 0
       return {
         success: !hasErrors,
@@ -952,16 +952,16 @@ export const readMarkdownFilesBatchTool: Tool = {
           failCount: errors.length,
         },
         message: hasErrors
-          ? `部分失败：成功读取 ${results.length} 个文件，跳过 ${skipped.length} 个已在上下文中的文件，${errors.length} 个失败`
-          : `成功读取 ${results.length} 个文件，跳过 ${skipped.length} 个已在上下文中的文件`,
+          ? `Partial failure: read ${results.length} files, skipped ${skipped.length} already in context, ${errors.length} failed`
+          : `Successfully read ${results.length} files; skipped ${skipped.length} already in context`,
         error: hasErrors
-          ? `部分文件读取失败：${errors.map(e => `${e.filePath}: ${e.error}`).join('; ')}`
+          ? `Some files failed to read: ${errors.map(e => `${e.filePath}: ${e.error}`).join('; ')}`
           : undefined,
       }
     } catch (error) {
       return {
         success: false,
-        error: `批量读取文件失败: ${error}`,
+        error: `Failed to batch-read files: ${error}`,
       }
     }
   },
@@ -985,7 +985,7 @@ export const deleteMarkdownFilesBatchTool: Tool = {
       if (!Array.isArray(params.filePaths) || params.filePaths.length === 0) {
         return {
           success: false,
-          error: '参数 filePaths 必须是非空数组',
+          error: 'Parameter filePaths must be a non-empty array',
         }
       }
 
@@ -1002,7 +1002,7 @@ export const deleteMarkdownFilesBatchTool: Tool = {
             currentFileDeleted = true
           }
 
-          // 统一使用 getFilePathOptions 来处理路径
+          // getFilePathOptions
           const { path, baseDir } = await getFilePathOptions(normalizedFilePath)
 
           if (baseDir) {
@@ -1017,14 +1017,14 @@ export const deleteMarkdownFilesBatchTool: Tool = {
         }
       }
 
-      // 批量删除向量数据库中的记录（只删除成功的文件）
+      // （）
       const { deleteVectorDocumentsByFilename } = await import('@/db/vector')
       for (const filePath of results) {
         const filename = filePath.split('/').pop() || filePath
         try {
           await deleteVectorDocumentsByFilename(filename)
         } catch (error) {
-          console.error(`删除文件 ${filename} 的向量数据失败:`, error)
+          console.error(`Failed to delete vector data for file ${filename}:`, error)
         }
       }
 
@@ -1035,7 +1035,7 @@ export const deleteMarkdownFilesBatchTool: Tool = {
         articleStore.setCurrentArticle('')
       }
 
-      // 只要有任何文件删除失败，就标记为失败状态
+      // ，
       const hasErrors = errors.length > 0
       return {
         success: !hasErrors,
@@ -1046,16 +1046,16 @@ export const deleteMarkdownFilesBatchTool: Tool = {
           failCount: errors.length,
         },
         message: hasErrors
-          ? `部分失败：成功删除 ${results.length} 个文件，${errors.length} 个失败`
-          : `成功删除 ${results.length} 个文件`,
+          ? `Partial failure: deleted ${results.length} files, ${errors.length} failed`
+          : `Successfully deleted ${results.length} files`,
         error: hasErrors
-          ? `部分文件删除失败：${errors.map(e => `${e.filePath}: ${e.error}`).join('; ')}`
+          ? `Some files failed to delete: ${errors.map(e => `${e.filePath}: ${e.error}`).join('; ')}`
           : undefined,
       }
     } catch (error) {
       return {
         success: false,
-        error: `批量删除文件失败: ${error}`,
+        error: `Failed to batch-delete files: ${error}`,
       }
     }
   },
@@ -1097,26 +1097,26 @@ export const listMarkdownFilesByDateTool: Tool = {
       let startDate: Date | undefined
       let endDate: Date | undefined
 
-      // 优先使用 lastNDays 参数（最近 N 天）
+      // lastNDays （ N ）
       if (params.lastNDays && typeof params.lastNDays === 'number') {
         const now = new Date()
         startDate = new Date(now.getTime() - params.lastNDays * 24 * 60 * 60 * 1000)
         endDate = now
       }
-      // 其次使用 olderThanDays 参数（N 天之前）
+      // olderThanDays （N ）
       else if (params.olderThanDays && typeof params.olderThanDays === 'number') {
         const now = new Date()
         endDate = new Date(now.getTime() - params.olderThanDays * 24 * 60 * 60 * 1000)
-        // startDate 不设置，表示从最早开始到 endDate
+        // startDate ， endDate
       }
-      // 最后使用 startDate/ endDate 参数（绝对时间范围）
+      // startDate/ endDate （）
       else {
         if (params.startDate) {
           startDate = new Date(params.startDate)
           if (isNaN(startDate.getTime())) {
             return {
               success: false,
-              error: `无效的 startDate 格式: ${params.startDate}，请使用 ISO 8601 格式（如 2024-01-01）`,
+              error: `Invalid startDate format: ${params.startDate}. Use ISO 8601 (e.g. 2024-01-01)`,
             }
           }
         }
@@ -1125,7 +1125,7 @@ export const listMarkdownFilesByDateTool: Tool = {
           if (isNaN(endDate.getTime())) {
             return {
               success: false,
-              error: `无效的 endDate 格式: ${params.endDate}，请使用 ISO 8601 格式（如 2024-12-31）`,
+              error: `Invalid endDate format: ${params.endDate}. Use ISO 8601 (e.g. 2024-12-31)`,
             }
           }
         } else {
@@ -1133,19 +1133,19 @@ export const listMarkdownFilesByDateTool: Tool = {
         }
       }
 
-      // 获取包含元数据的文件列表
+      //
       const allFiles = await getAllMarkdownFiles(true)
 
-      // 根据时间范围过滤
+      //
       const filteredFiles: MarkdownFile[] = []
       for (const file of allFiles) {
         if (!file.modifiedAt) {
-          continue // 没有修改时间的文件跳过
+ continue // File
         }
 
         const modifiedTime = new Date(file.modifiedAt)
 
-        // 检查是否在时间范围内
+        //
         if (startDate && modifiedTime < startDate) {
           continue
         }
@@ -1156,7 +1156,7 @@ export const listMarkdownFilesByDateTool: Tool = {
         filteredFiles.push(file)
       }
 
-      // 按修改时间倒序排列
+      //
       filteredFiles.sort((a, b) => {
         const aTime = a.modifiedAt ? new Date(a.modifiedAt).getTime() : 0
         const bTime = b.modifiedAt ? new Date(b.modifiedAt).getTime() : 0
@@ -1174,17 +1174,17 @@ export const listMarkdownFilesByDateTool: Tool = {
           accessedAt: metadata?.accessedAt?.toISOString(),
           isReadOnly: metadata?.isReadOnly,
         })),
-        message: `找到 ${filteredFiles.length} 个符合条件的文件（${startDate ? `从 ${startDate.toISOString()}` : ''}${endDate ? `到 ${endDate.toISOString()}` : ''}）`,
+        message: `Found ${filteredFiles.length} matching files (${startDate ? `from ${startDate.toISOString()}` : ''}${endDate ? `to ${endDate.toISOString()}` : ''}）`,
       }
     } catch (error) {
-      console.error('[list_markdown_files_by_date] 获取文件列表失败', {
+      console.error('[list_markdown_files_by_date] Failed to get file list', {
         error: String(error),
         errorName: error instanceof Error ? error.name : 'unknown',
         errorMessage: error instanceof Error ? error.message : String(error),
       })
       return {
         success: false,
-        error: `按时间获取 Markdown 文件列表失败: ${error}`,
+        error: `Failed to list Markdown files by date: ${error}`,
       }
     }
   },
@@ -1214,16 +1214,16 @@ export const renameFileTool: Tool = {
       const articleStore = useArticleStore.getState()
       const normalizedFilePath = await ensureSafeWorkspaceRelativePath(params.filePath)
 
-      // 检查是否是当前打开的文件
+      //
       const isCurrentFile = articleStore.activeFilePath === normalizedFilePath
 
-      // 验证新文件名以 .md 结尾
+      // .md
       let newName = params.newName
       if (!newName.endsWith('.md')) {
         newName += '.md'
       }
 
-      // 获取原文件的完整路径信息
+      //
       const { path: oldPath, baseDir } = await getFilePathOptions(normalizedFilePath)
       let currentFileContent = ''
       if (isCurrentFile) {
@@ -1239,14 +1239,14 @@ export const renameFileTool: Tool = {
         }
       }
 
-      // 构建新路径（保持原文件夹，只改文件名）
+      // （，）
       const pathParts = normalizedFilePath.split('/')
       pathParts[pathParts.length - 1] = newName
       const newRelativePath = pathParts.join('/')
 
       const { path: newPath, baseDir: newBaseDir } = await getFilePathOptions(newRelativePath)
 
-      // 检查新文件名是否已存在
+      //
       const { exists } = await import('@tauri-apps/plugin-fs')
       const targetExists = newBaseDir
         ? await exists(newPath, { baseDir: newBaseDir })
@@ -1265,18 +1265,18 @@ export const renameFileTool: Tool = {
             newName,
             alreadyRenamed: true,
           },
-          message: `文件已位于重命名后的路径，无需重复操作: ${newRelativePath}`,
+          message: `File is already at the renamed path; no repeat needed: ${newRelativePath}`,
         }
       }
 
       if (targetExists) {
         return {
           success: false,
-          error: `文件名 "${newName}" 已存在，请使用其他文件名`,
+          error: `Filename "${newName}" already exists; choose another name`,
         }
       }
 
-      // 执行重命名
+      //
       if (baseDir) {
         await rename(oldPath, newPath, { oldPathBaseDir: baseDir, newPathBaseDir: baseDir })
       } else {
@@ -1307,7 +1307,7 @@ export const renameFileTool: Tool = {
       }
       emitter.emit('editor-file-path-changed', pathChangedEvent)
 
-      // 如果重命名的是当前打开的文件，更新 activeFilePath 并重新读取内容
+      // ， activeFilePath
       if (isCurrentFile) {
         await articleStore.setActiveFilePath(newRelativePath)
         articleStore.setCurrentArticle(currentFileContent)
@@ -1321,10 +1321,10 @@ export const renameFileTool: Tool = {
           newPath: newRelativePath,
           newName,
         },
-        message: `成功将 "${normalizedFilePath}" 重命名为 "${newRelativePath}"`,
+        message: `Successfully renamed "${normalizedFilePath}" to "${newRelativePath}"`,
       }
     } catch (error) {
-      console.error('[rename_file] 重命名失败', {
+      console.error('[rename_file] Rename failed', {
         filePath: params.filePath,
         newName: params.newName,
         error: String(error),
@@ -1332,7 +1332,7 @@ export const renameFileTool: Tool = {
       })
       return {
         success: false,
-        error: `重命名文件失败: ${error}`,
+        error: `Failed to rename file: ${error}`,
       }
     }
   },
@@ -1363,18 +1363,18 @@ export const moveFileTool: Tool = {
       const normalizedFilePath = await ensureSafeWorkspaceRelativePath(params.filePath)
       const normalizedTargetFolderPath = await ensureSafeWorkspaceRelativePath(params.targetFolderPath)
 
-      // 检查是否是当前打开的文件
+      //
       const isCurrentFile = articleStore.activeFilePath === normalizedFilePath
 
-      // 提取原文件名
+      //
       const fileName = normalizedFilePath.split('/').pop() || normalizedFilePath
 
-      // 构建新路径
+      //
       const newRelativePath = normalizedTargetFolderPath
         ? `${normalizedTargetFolderPath}/${fileName}`
         : fileName
 
-      // 验证目标文件夹是否存在
+      //
       const { exists } = await import('@tauri-apps/plugin-fs')
       const { path: targetFolderDir, baseDir: targetBaseDir } = await getFilePathOptions(normalizedTargetFolderPath)
 
@@ -1385,11 +1385,11 @@ export const moveFileTool: Tool = {
       if (!targetFolderExists) {
         return {
           success: false,
-          error: `目标文件夹 "${normalizedTargetFolderPath}" 不存在，请先创建该文件夹`,
+          error: `Target folder "${normalizedTargetFolderPath}" does not exist. Create it first`,
         }
       }
 
-      // 获取原文件和新文件的完整路径信息
+      //
       const { path: oldPath, baseDir: oldBaseDir } = await getFilePathOptions(normalizedFilePath)
       const { path: newPath, baseDir: newBaseDir } = await getFilePathOptions(newRelativePath)
       let currentFileContent = ''
@@ -1406,7 +1406,7 @@ export const moveFileTool: Tool = {
         }
       }
 
-      // 检查目标位置是否已存在同名文件
+      //
       const targetExists = newBaseDir
         ? await exists(newPath, { baseDir: newBaseDir })
         : await exists(newPath)
@@ -1423,18 +1423,18 @@ export const moveFileTool: Tool = {
             newPath: newRelativePath,
             alreadyMoved: true,
           },
-          message: `文件已位于目标位置，无需重复移动: ${newRelativePath}`,
+          message: `File is already at the destination; no move needed: ${newRelativePath}`,
         }
       }
 
       if (targetExists) {
         return {
           success: false,
-          error: `目标位置已存在同名文件 "${fileName}"，请先重命名或删除该文件`,
+          error: `A file named "${fileName}" already exists at the destination; rename or delete it first`,
         }
       }
 
-      // 执行移动（使用 rename）
+      // （ rename）
       if (oldBaseDir) {
         await rename(oldPath, newPath, { oldPathBaseDir: oldBaseDir, newPathBaseDir: oldBaseDir })
       } else {
@@ -1465,7 +1465,7 @@ export const moveFileTool: Tool = {
       }
       emitter.emit('editor-file-path-changed', pathChangedEvent)
 
-      // 如果移动的是当前打开的文件，更新 activeFilePath 并重新读取内容
+      // ， activeFilePath
       if (isCurrentFile) {
         await articleStore.setActiveFilePath(newRelativePath)
         articleStore.setCurrentArticle(currentFileContent)
@@ -1478,10 +1478,10 @@ export const moveFileTool: Tool = {
           oldPath: normalizedFilePath,
           newPath: newRelativePath,
         },
-        message: `成功将 "${normalizedFilePath}" 移动到 "${newRelativePath}"`,
+        message: `Successfully moved "${normalizedFilePath}" to "${newRelativePath}"`,
       }
     } catch (error) {
-      console.error('[move_file] 移动失败', {
+      console.error('[move_file] Move failed', {
         filePath: params.filePath,
         targetFolderPath: params.targetFolderPath,
         error: String(error),
@@ -1489,7 +1489,7 @@ export const moveFileTool: Tool = {
       })
       return {
         success: false,
-        error: `移动文件失败: ${error}`,
+        error: `Failed to move file: ${error}`,
       }
     }
   },
@@ -1528,21 +1528,21 @@ export const copyFileTool: Tool = {
         ? await ensureSafeWorkspaceRelativePath(params.targetFolderPath)
         : undefined
 
-      // 提取原文件名
+      //
       const originalFileName = normalizedFilePath.split('/').pop() || normalizedFilePath
 
-      // 确定新文件名
+      //
       let newFileName = params.newName || originalFileName
       if (!newFileName.endsWith('.md')) {
         newFileName += '.md'
       }
 
-      // 构建新路径
+      //
       let newRelativePath = normalizedTargetFolderPath
         ? `${normalizedTargetFolderPath}/${newFileName}`
         : newFileName
 
-      // 验证目标文件夹是否存在（如果指定了目标文件夹）
+      // （）
       if (normalizedTargetFolderPath) {
         const { exists } = await import('@tauri-apps/plugin-fs')
         const { path: targetFolderDir, baseDir: targetBaseDir } = await getFilePathOptions(normalizedTargetFolderPath)
@@ -1554,22 +1554,22 @@ export const copyFileTool: Tool = {
         if (!targetFolderExists) {
           return {
             success: false,
-            error: `目标文件夹 "${normalizedTargetFolderPath}" 不存在，请先创建该文件夹`,
+            error: `Target folder "${normalizedTargetFolderPath}" does not exist. Create it first`,
           }
         }
       }
 
-      // 获取原文件和新文件的完整路径信息
+      //
       const { path: oldPath, baseDir: oldBaseDir } = await getFilePathOptions(normalizedFilePath)
       const { path: newPath, baseDir: newBaseDir } = await getFilePathOptions(newRelativePath)
 
-      // 检查目标位置是否已存在同名文件
+      //
       const { exists } = await import('@tauri-apps/plugin-fs')
       let targetExists = newBaseDir
         ? await exists(newPath, { baseDir: newBaseDir })
         : await exists(newPath)
 
-      // 如果存在同名文件且没有指定新文件名，自动添加序号
+      // ，
       if (targetExists && !params.newName) {
         const baseName = newFileName.replace(/\.md$/, '')
         let counter = 1
@@ -1587,10 +1587,10 @@ export const copyFileTool: Tool = {
         } while (targetExists && counter < 1000)
       }
 
-      // 重新获取最终的新路径
+      //
       const { path: finalNewPath, baseDir: finalNewBaseDir } = await getFilePathOptions(newRelativePath)
 
-      // 执行复制
+      //
       if (oldBaseDir && finalNewBaseDir) {
         await copyFile(oldPath, finalNewPath, { fromPathBaseDir: oldBaseDir, toPathBaseDir: finalNewBaseDir })
       } else {
@@ -1615,10 +1615,10 @@ export const copyFileTool: Tool = {
           newPath: newRelativePath,
           newName: newFileName,
         },
-        message: `成功将 "${normalizedFilePath}" 复制为 "${newRelativePath}"`,
+        message: `Successfully copied "${normalizedFilePath}" to "${newRelativePath}"`,
       }
     } catch (error) {
-      console.error('[copy_file] 复制失败', {
+      console.error('[copy_file] Copy failed', {
         filePath: params.filePath,
         targetFolderPath: params.targetFolderPath,
         error: String(error),
@@ -1626,7 +1626,7 @@ export const copyFileTool: Tool = {
       })
       return {
         success: false,
-        error: `复制文件失败: ${error}`,
+        error: `Failed to copy file: ${error}`,
       }
     }
   },
@@ -1650,7 +1650,7 @@ export const moveFilesBatchTool: Tool = {
       if (!Array.isArray(params.files) || params.files.length === 0) {
         return {
           success: false,
-          error: '参数 files 必须是非空数组',
+          error: 'Parameter files must be a non-empty array',
         }
       }
 
@@ -1664,20 +1664,20 @@ export const moveFilesBatchTool: Tool = {
           const filePath = await ensureSafeWorkspaceRelativePath(file.filePath)
           const targetFolderPath = await ensureSafeWorkspaceRelativePath(file.targetFolderPath)
 
-          // 检查是否是当前打开的文件
+          //
           if (articleStore.activeFilePath === filePath) {
             currentFileMoved = true
           }
 
-          // 提取原文件名
+          //
           const fileName = filePath.split('/').pop() || filePath
 
-          // 构建新路径
+          //
           const newRelativePath = targetFolderPath
             ? `${targetFolderPath}/${fileName}`
             : fileName
 
-          // 验证目标文件夹是否存在
+          //
           const { exists } = await import('@tauri-apps/plugin-fs')
           const { path: targetFolderDir, baseDir: targetBaseDir } = await getFilePathOptions(targetFolderPath)
 
@@ -1686,25 +1686,25 @@ export const moveFilesBatchTool: Tool = {
             : await exists(targetFolderDir)
 
           if (!targetFolderExists) {
-            errors.push({ filePath, error: `目标文件夹 "${targetFolderPath}" 不存在` })
+            errors.push({ filePath, error: `Target folder "${targetFolderPath}" does not exist` })
             continue
           }
 
-          // 获取原文件和新文件的完整路径信息
+          //
           const { path: oldPath, baseDir: oldBaseDir } = await getFilePathOptions(filePath)
           const { path: newPath, baseDir: newBaseDir } = await getFilePathOptions(newRelativePath)
 
-          // 检查目标位置是否已存在同名文件
+          //
           const targetExists = newBaseDir
             ? await exists(newPath, { baseDir: newBaseDir })
             : await exists(newPath)
 
           if (targetExists) {
-            errors.push({ filePath, error: '目标位置已存在同名文件' })
+            errors.push({ filePath, error: 'A file with the same name already exists at the destination' })
             continue
           }
 
-          // 执行移动（使用 rename）
+          // （ rename）
           if (oldBaseDir) {
             await rename(oldPath, newPath, { oldPathBaseDir: oldBaseDir, newPathBaseDir: oldBaseDir })
           } else {
@@ -1725,10 +1725,10 @@ export const moveFilesBatchTool: Tool = {
         }
       }
 
-      // 刷新文件列表
+      //
       await articleStore.loadFileTree()
 
-      // 如果移动了当前打开的文件，需要更新 activeFilePath
+      // ， activeFilePath
       if (currentFileMoved && results.length > 0) {
         const movedFile = results.find(r => articleStore.activeFilePath === r.oldPath)
         if (movedFile) {
@@ -1737,7 +1737,7 @@ export const moveFilesBatchTool: Tool = {
         }
       }
 
-      // 只要有任何文件移动失败，就标记为失败状态
+      // ，
       return {
         success: errors.length === 0,
         data: {
@@ -1747,13 +1747,13 @@ export const moveFilesBatchTool: Tool = {
           failCount: errors.length,
         },
         message: errors.length === 0
-          ? `成功移动 ${results.length} 个文件`
-          : `部分失败：成功移动 ${results.length} 个文件，${errors.length} 个失败`,
+          ? `Successfully moved ${results.length} files`
+          : `Partial failure: moved ${results.length} files, ${errors.length} failed`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `批量移动文件失败: ${error}`,
+        error: `Failed to batch-move files: ${error}`,
       }
     }
   },
@@ -1777,7 +1777,7 @@ export const copyFilesBatchTool: Tool = {
       if (!Array.isArray(params.files) || params.files.length === 0) {
         return {
           success: false,
-          error: '参数 files 必须是非空数组',
+          error: 'Parameter files must be a non-empty array',
         }
       }
 
@@ -1793,21 +1793,21 @@ export const copyFilesBatchTool: Tool = {
             : undefined
           const newName = file.newName
 
-          // 提取原文件名
+          //
           const originalFileName = filePath.split('/').pop() || filePath
 
-          // 确定新文件名
+          //
           let newFileName = newName || originalFileName
           if (!newFileName.endsWith('.md')) {
             newFileName += '.md'
           }
 
-          // 构建新路径
+          //
           let newRelativePath = targetFolderPath
             ? `${targetFolderPath}/${newFileName}`
             : newFileName
 
-          // 验证目标文件夹是否存在（如果指定了目标文件夹）
+          // （）
           if (targetFolderPath) {
             const { exists } = await import('@tauri-apps/plugin-fs')
             const { path: targetFolderDir, baseDir: targetBaseDir } = await getFilePathOptions(targetFolderPath)
@@ -1817,22 +1817,22 @@ export const copyFilesBatchTool: Tool = {
               : await exists(targetFolderDir)
 
             if (!targetFolderExists) {
-              errors.push({ filePath, error: `目标文件夹 "${targetFolderPath}" 不存在` })
+              errors.push({ filePath, error: `Target folder "${targetFolderPath}" does not exist` })
               continue
             }
           }
 
-          // 获取原文件和新文件的完整路径信息
+          //
           const { path: oldPath, baseDir: oldBaseDir } = await getFilePathOptions(filePath)
           const { path: newPath, baseDir: newBaseDir } = await getFilePathOptions(newRelativePath)
 
-          // 检查目标位置是否已存在同名文件
+          //
           const { exists } = await import('@tauri-apps/plugin-fs')
           let targetExists = newBaseDir
             ? await exists(newPath, { baseDir: newBaseDir })
             : await exists(newPath)
 
-          // 如果存在同名文件且没有指定新文件名，自动添加序号
+          // ，
           if (targetExists && !newName) {
             const baseName = newFileName.replace(/\.md$/, '')
             let counter = 1
@@ -1850,10 +1850,10 @@ export const copyFilesBatchTool: Tool = {
             } while (targetExists && counter < 1000)
           }
 
-          // 重新获取最终的新路径
+          //
           const { path: finalNewPath, baseDir: finalNewBaseDir } = await getFilePathOptions(newRelativePath)
 
-          // 执行复制
+          //
           if (oldBaseDir && finalNewBaseDir) {
             await copyFile(oldPath, finalNewPath, { fromPathBaseDir: oldBaseDir, toPathBaseDir: finalNewBaseDir })
           } else {
@@ -1875,10 +1875,10 @@ export const copyFilesBatchTool: Tool = {
         }
       }
 
-      // 刷新文件列表
+      //
       await articleStore.loadFileTree()
 
-      // 只要有任何文件复制失败，就标记为失败状态
+      // ，
       return {
         success: errors.length === 0,
         data: {
@@ -1888,13 +1888,13 @@ export const copyFilesBatchTool: Tool = {
           failCount: errors.length,
         },
         message: errors.length === 0
-          ? `成功复制 ${results.length} 个文件`
-          : `部分失败：成功复制 ${results.length} 个文件，${errors.length} 个失败`,
+          ? `Successfully copied ${results.length} files`
+          : `Partial failure: copied ${results.length} files, ${errors.length} failed`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `批量复制文件失败: ${error}`,
+        error: `Failed to batch-copy files: ${error}`,
       }
     }
   },
@@ -1918,7 +1918,7 @@ export const renameFilesBatchTool: Tool = {
       if (!Array.isArray(params.files) || params.files.length === 0) {
         return {
           success: false,
-          error: '参数 files 必须是非空数组',
+          error: 'Parameter files must be a non-empty array',
         }
       }
 
@@ -1932,38 +1932,38 @@ export const renameFilesBatchTool: Tool = {
           const filePath = await ensureSafeWorkspaceRelativePath(file.filePath)
           let newName = file.newName
 
-          // 验证新文件名以 .md 结尾
+          // .md
           if (!newName.endsWith('.md')) {
             newName += '.md'
           }
 
-          // 检查是否是当前打开的文件
+          //
           if (articleStore.activeFilePath === filePath) {
             currentFileRenamed = true
           }
 
-          // 获取原文件的完整路径信息
+          //
           const { path: oldPath, baseDir } = await getFilePathOptions(filePath)
 
-          // 构建新路径（保持原文件夹，只改文件名）
+          // （，）
           const pathParts = filePath.split('/')
           pathParts[pathParts.length - 1] = newName
           const newRelativePath = pathParts.join('/')
 
           const { path: newPath, baseDir: newBaseDir } = await getFilePathOptions(newRelativePath)
 
-          // 检查新文件名是否已存在
+          //
           const { exists } = await import('@tauri-apps/plugin-fs')
           const targetExists = newBaseDir
             ? await exists(newPath, { baseDir: newBaseDir })
             : await exists(newPath)
 
           if (targetExists) {
-            errors.push({ filePath, error: `文件名 "${newName}" 已存在` })
+            errors.push({ filePath, error: `Filename "${newName}" already exists` })
             continue
           }
 
-          // 执行重命名
+          //
           if (baseDir) {
             await rename(oldPath, newPath, { oldPathBaseDir: baseDir, newPathBaseDir: baseDir })
           } else {
@@ -1988,10 +1988,10 @@ export const renameFilesBatchTool: Tool = {
         }
       }
 
-      // 刷新文件列表
+      //
       await articleStore.loadFileTree()
 
-      // 如果重命名了当前打开的文件，更新 activeFilePath 并重新读取内容
+      // ， activeFilePath
       if (currentFileRenamed && results.length > 0) {
         const renamedFile = results.find(r => articleStore.activeFilePath === r.oldPath)
         if (renamedFile) {
@@ -2000,7 +2000,7 @@ export const renameFilesBatchTool: Tool = {
         }
       }
 
-      // 只要有任何文件重命名失败，就标记为失败状态
+      // ，
       return {
         success: errors.length === 0,
         data: {
@@ -2010,17 +2010,17 @@ export const renameFilesBatchTool: Tool = {
           failCount: errors.length,
         },
         message: errors.length === 0
-          ? `成功重命名 ${results.length} 个文件`
-          : `部分失败：成功重命名 ${results.length} 个文件，${errors.length} 个失败`,
+          ? `Successfully renamed ${results.length} files`
+          : `Partial failure: renamed ${results.length} files, ${errors.length} failed`,
       }
     } catch (error) {
-      console.error('[rename_files_batch] 批量重命名失败', {
+      console.error('[rename_files_batch] Batch rename failed', {
         error: String(error),
         errorMessage: error instanceof Error ? error.message : String(error),
       })
       return {
         success: false,
-        error: `批量重命名文件失败: ${error}`,
+        error: `Failed to batch-rename files: ${error}`,
       }
     }
   },

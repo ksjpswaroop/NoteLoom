@@ -1,8 +1,8 @@
 /**
- * Skill 管理器
+ * Skill 
  *
- * 负责 Skills 的发现、加载、注册和匹配。
- * 遵循 Agent Skills 官方规范: https://agentskills.io/specification
+ * Skills 、、。
+ * Agent Skills : https://agentskills.io/specification
  */
 
 import {
@@ -32,18 +32,18 @@ import { exists } from '@tauri-apps/plugin-fs'
 import { Store } from '@tauri-apps/plugin-store'
 
 // ============================================================================
-// SkillManager 类
+// SkillManager
 // ============================================================================
 
 /**
- * Skill 管理器类
+ * Skill 
  *
- * 负责：
- * - 发现和加载 Skills
- * - 注册和注销 Skills
- * - 匹配相关 Skills
- * - 验证 Skill 格式
- * - 管理脚本、参考文档和资源文件
+ * ：
+ * - Skills
+ * - Skills
+ * - Skills
+ * - Skill 
+ * - 、
  */
 class SkillManager {
   private skills: Map<string, SkillContent> = new Map()
@@ -66,13 +66,13 @@ class SkillManager {
   }
 
   // ========================================================================
-  // 初始化
+  //
   // ========================================================================
 
   /**
-   * 初始化 Skill 管理器
-   * 加载所有可用的 Skills
-   */
+ * Skill 
+ * Skills
+ */
   async initialize(): Promise<void> {
     if (this.initialized) {
       return
@@ -85,8 +85,8 @@ class SkillManager {
   }
 
   /**
-   * 重新加载所有 Skills
-   */
+ * Skills
+ */
   async reload(): Promise<void> {
     this.skills.clear()
     this.installedSkills.clear()
@@ -96,23 +96,23 @@ class SkillManager {
   }
 
   // ========================================================================
-  // 发现和加载
+  //
   // ========================================================================
 
   /**
-   * 发现并加载所有 Skills
-   */
+ * Skills
+ */
   async discoverSkills(): Promise<void> {
-    // 加载全局 Skills
+    // Skills
     await this.discoverGlobalSkills()
 
-    // 工作区 Skill 与全局 Skill 同名时覆盖全局版本。
+    // Skill Skill 。
     await this.discoverProjectSkills()
   }
 
   /**
-   * 发现工作区 Skills
-   */
+ * Skills
+ */
   private async discoverProjectSkills(): Promise<void> {
     try {
       const skillsDirExists = await this.directoryExists('skills', 'project')
@@ -126,17 +126,17 @@ class SkillManager {
         try {
           await this.loadSkillFromDirectory('skills', dirName, 'project')
         } catch (error) {
-          console.error(`加载工作区 Skill 失败: ${dirName}`, error)
+          console.error(`Skill Failed: ${dirName}`, error)
         }
       }
     } catch (error) {
-      console.error('发现工作区 Skills 失败:', error)
+      console.error('Skills Failed', error)
     }
   }
 
   /**
-   * 发现全局 Skills
-   */
+ * Skills
+ */
   private async discoverGlobalSkills(): Promise<void> {
     try {
       const skillsDirExists = await this.directoryExists('skills', 'global')
@@ -150,17 +150,17 @@ class SkillManager {
         try {
           await this.loadSkillFromDirectory('skills', dirName, 'global')
         } catch (error) {
-          console.error(`加载全局 Skill 失败: ${dirName}`, error)
+          console.error(`Skill Failed: ${dirName}`, error)
         }
       }
     } catch (error) {
-      console.error('发现全局 Skills 失败:', error)
+      console.error('Skills Failed', error)
     }
   }
 
   /**
-   * 从目录加载单个 Skill
-   */
+ * Skill
+ */
   private async loadSkillFromDirectory(
     baseDir: string,
     dirName: string,
@@ -170,7 +170,7 @@ class SkillManager {
     const skillDirPath = `${baseDir}/${dirName}`
     const skillFilePath = `${skillDirPath}/${SKILL_FILE_NAME}`
 
-    // 检查 SKILL.md 是否存在
+    // SKILL.md
     const fileExists = await this.fileExists(skillFilePath, scope)
     if (!fileExists) {
       this.skillFiles.set(skillId, {
@@ -181,18 +181,18 @@ class SkillManager {
         hasReferencesDir: false,
         hasAssetsDir: false,
         isValid: false,
-        error: 'SKILL.md 文件不存在',
+        error: 'SKILL.md File does not exist',
       })
       return
     }
 
-    // 读取 SKILL.md 内容
+    // SKILL.md
     const content = await this.readFileContent(skillFilePath, scope)
 
-    // 解析 Skill 文件
+    // Skill
     const parsed = parseSkillFile(content)
 
-    // 验证元数据
+    //
     const validation = validateSkillYamlMetadata(parsed.metadata)
     if (!validation.valid) {
       this.skillFiles.set(skillId, {
@@ -208,7 +208,7 @@ class SkillManager {
       return
     }
 
-    // 检查官方规范目录结构
+    //
     const hasScriptsDir = await this.directoryExists(
       `${skillDirPath}/${SCRIPTS_DIR_NAME}`,
       scope
@@ -222,7 +222,7 @@ class SkillManager {
       scope
     )
 
-    // 向后兼容：检查旧的根目录文件
+    // ：
     const hasReferenceFile = await this.fileExists(
       `${skillDirPath}/${REFERENCE_FILE_NAME}`,
       scope
@@ -236,7 +236,7 @@ class SkillManager {
       scope
     )
 
-    // 加载脚本 (scripts/)
+    // (scripts/)
     const scripts: SkillScript[] = []
     if (hasScriptsDir) {
       const scriptFiles = await this.loadScriptsFromDirectory(
@@ -246,7 +246,7 @@ class SkillManager {
       scripts.push(...scriptFiles)
     }
 
-    // 加载参考文档 (references/)
+    // (references/)
     const references: SkillReference[] = []
     if (hasReferencesDir) {
       const referenceFiles = await this.loadReferencesFromDirectory(
@@ -256,7 +256,7 @@ class SkillManager {
       references.push(...referenceFiles)
     }
 
-    // 向后兼容：加载根目录的 REFERENCE.md
+    // ： REFERENCE.md
     if (hasReferenceFile && !hasReferencesDir) {
       const refContent = await this.readFileContent(
         `${skillDirPath}/${REFERENCE_FILE_NAME}`,
@@ -267,11 +267,11 @@ class SkillManager {
         path: REFERENCE_FILE_NAME,
         description: 'Legacy reference file (consider moving to references/)',
       })
-      // 将旧格式内容附加到指令中
-      parsed.content += '\n\n---\n\n## 参考文档 (Legacy)\n\n' + refContent
+      //
+      parsed.content += '\n\n---\n\n## (Legacy)\n\n' + refContent
     }
 
-    // 加载资源文件 (assets/)
+    // (assets/)
     const assets: SkillAsset[] = []
     if (hasAssetsDir) {
       const assetFiles = await this.loadAssetsFromDirectory(
@@ -281,20 +281,20 @@ class SkillManager {
       assets.push(...assetFiles)
     }
 
-    // 向后兼容：加载 KEYWORDS.md
+    // ： KEYWORDS.md
     if (hasKeywordsFile) {
       const keywordsContent = await this.readFileContent(
         `${skillDirPath}/${KEYWORDS_FILE_NAME}`,
         scope
       )
-      parsed.content += '\n\n---\n\n## 关键词 (Legacy)\n\n' + keywordsContent
+      parsed.content += '\n\n---\n\n## (Legacy)\n\n' + keywordsContent
     }
 
-    // 加载根目录下的所有 .md 文件（排除 SKILL.md 自身）
+    // .md （ SKILL.md ）
     const rootMdFiles = await this.loadRootMdFiles(skillDirPath, scope)
     references.push(...rootMdFiles)
 
-    // 构建 Skill 内容
+    // Skill
     const now = Date.now()
     const skill: SkillContent = {
       metadata: {
@@ -324,10 +324,10 @@ class SkillManager {
       assets,
     }
 
-    // 注册 Skill
+    // Skill
     this.registerSkill(skill)
 
-    // 记录文件信息
+    //
     this.skillFiles.set(skillId, {
       id: skillId,
       directory: skillDirPath,
@@ -346,8 +346,8 @@ class SkillManager {
   }
 
   /**
-   * 从 scripts/ 目录加载脚本，限制递归深度以避免无界扫描。
-   */
+ * scripts/ ，。
+ */
   private async loadScriptsFromDirectory(
     scriptsDir: string,
     scope: SkillScope,
@@ -356,7 +356,7 @@ class SkillManager {
   ): Promise<SkillScript[]> {
     const scripts: SkillScript[] = []
 
-    // 与导入层保持一致，允许合理的嵌套结构但避免无界扫描。
+    // ，。
     const maxDepth = 10
 
     try {
@@ -374,7 +374,7 @@ class SkillManager {
       }
 
       for (const entry of entries) {
-        // 跳过隐藏文件和目录
+        //
         if (entry.name.startsWith('.')) {
           continue
         }
@@ -382,10 +382,10 @@ class SkillManager {
         const relativePath = basePath ? `${basePath}/${entry.name}` : entry.name
 
         if (entry.isFile) {
-          // 检测脚本类型
+          //
           const scriptType = detectScriptType(entry.name)
           if (!scriptType) {
-            // 非脚本文件，静默跳过（减少日志噪音）
+            // ，（）
             continue
           }
 
@@ -395,13 +395,13 @@ class SkillManager {
           // when hashing fails.
           const scriptPath = `${scriptsDir}/${entry.name}`
           scripts.push({
-            name: relativePath, // 使用相对路径作为脚本名称（如 "office/unpack.py"）
+            name: relativePath, // （ "office/unpack.py"）
             path: scriptPath,
             type: scriptType,
             sha256: await this.hashFile(scriptPath, scope),
           })
         } else if (entry.isDirectory && depth < maxDepth) {
-          // 递归加载子目录中的脚本（受 maxDepth 限制）
+          // （ maxDepth ）
           const subScripts = await this.loadScriptsFromDirectory(
             `${scriptsDir}/${entry.name}`,
             scope,
@@ -412,15 +412,15 @@ class SkillManager {
         }
       }
     } catch (error) {
-      console.error(`[SkillManager] 读取脚本目录失败: ${scriptsDir}`, error)
+      console.error(`[SkillManager] Failed: ${scriptsDir}`, error)
     }
 
     return scripts
   }
 
   /**
-   * 从 references/ 目录加载参考文档
-   */
+ * references/ 
+ */
   private async loadReferencesFromDirectory(
     referencesDir: string,
     scope: SkillScope
@@ -442,12 +442,12 @@ class SkillManager {
       }
 
       for (const entry of entries) {
-        // 跳过隐藏文件和目录
+        //
         if (entry.name.startsWith('.')) {
           continue
         }
 
-        // 只处理 markdown 文件
+        // markdown
         if (entry.isFile && entry.name.endsWith('.md')) {
           references.push({
             name: entry.name,
@@ -456,15 +456,15 @@ class SkillManager {
         }
       }
     } catch (error) {
-      console.error(`读取参考文档目录失败: ${referencesDir}`, error)
+      console.error(`Failed: ${referencesDir}`, error)
     }
 
     return references
   }
 
   /**
-   * 从 assets/ 目录加载资源文件
-   */
+ * assets/ 
+ */
   private async loadAssetsFromDirectory(
     assetsDir: string,
     scope: SkillScope
@@ -486,7 +486,7 @@ class SkillManager {
       }
 
       for (const entry of entries) {
-        // 跳过隐藏文件和目录
+        //
         if (entry.name.startsWith('.')) {
           continue
         }
@@ -495,7 +495,7 @@ class SkillManager {
           const ext = entry.name.substring(entry.name.lastIndexOf('.')).toLowerCase()
           const assetPath = `${assetsDir}/${entry.name}`
 
-          // 根据扩展名确定资源类型
+          //
           let type: SkillAsset['type'] = 'other'
           if (['.json', '.yaml', '.yml', '.toml'].includes(ext)) {
             type = 'data'
@@ -518,16 +518,16 @@ class SkillManager {
         }
       }
     } catch (error) {
-      console.error(`读取资源目录失败: ${assetsDir}`, error)
+      console.error(`Failed: ${assetsDir}`, error)
     }
 
     return assets
   }
 
   /**
-   * 从 skill 根目录加载额外的 .md 文件（如 editing.md, pptxgenjs.md）
-   * 支持加载 skill 根目录下的所有 .md 文件（排除 SKILL.md 自身）
-   */
+ * skill .md （ editing.md, pptxgenjs.md）
+ * skill .md （ SKILL.md ）
+ */
   private async loadRootMdFiles(
     skillDirPath: string,
     scope: SkillScope
@@ -549,33 +549,33 @@ class SkillManager {
       }
 
       for (const entry of entries) {
-        // 只处理 .md 文件，排除 SKILL.md
+        // .md ， SKILL.md
         if (
           entry.isFile &&
           entry.name.endsWith('.md') &&
           entry.name !== SKILL_FILE_NAME
         ) {
           references.push({
-            name: entry.name, // 如 "pptxgenjs.md", "editing.md"
+            name: entry.name, // "pptxgenjs.md", "editing.md"
             path: entry.name,
             description: `Additional reference file: ${entry.name}`,
           })
         }
       }
     } catch (error) {
-      console.error(`[SkillManager] 读取根目录 .md 文件失败: ${skillDirPath}`, error)
+      console.error(`[SkillManager] Root directory .md FileFailed: ${skillDirPath}`, error)
     }
 
     return references
   }
 
   // ========================================================================
-  // 注册和注销
+  //
   // ========================================================================
 
   /**
-   * 注册 Skill
-   */
+ * Skill
+ */
   registerSkill(skill: SkillContent): void {
     this.installedSkills.set(
       `${skill.metadata.scope}:${skill.metadata.id}`,
@@ -585,8 +585,8 @@ class SkillManager {
   }
 
   /**
-   * 注销 Skill
-   */
+ * Skill
+ */
   unregisterSkill(skillId: string): void {
     this.skills.delete(skillId)
     for (const key of this.installedSkills.keys()) {
@@ -598,26 +598,26 @@ class SkillManager {
   }
 
   // ========================================================================
-  // 获取 Skills
+  // Skills
   // ========================================================================
 
   /**
-   * 获取所有 Skills
-   */
+ * Skills
+ */
   getAllSkills(): SkillContent[] {
     return Array.from(this.skills.values())
   }
 
   /**
-   * 获取所有作用域中实际安装的 Skills，包括被同名项目 Skill 覆盖的全局 Skill。
-   */
+ * Skills， Skill Skill。
+ */
   getAllInstalledSkills(): SkillContent[] {
     return Array.from(this.installedSkills.values())
   }
 
   /**
-   * 获取指定作用域的 Skills
-   */
+ * Skills
+ */
   getSkillsByScope(scope: SkillScope): SkillContent[] {
     return this.getAllInstalledSkills().filter(
       (skill) => skill.metadata.scope === scope
@@ -625,8 +625,8 @@ class SkillManager {
   }
 
   /**
-   * 获取所有已启用的 Skills
-   */
+ * Skills
+ */
   async getEnabledSkills(): Promise<SkillContent[]> {
     return this.getAllSkills().filter(
       (skill) => skill.metadata.enabled !== false
@@ -634,8 +634,8 @@ class SkillManager {
   }
 
   /**
-   * 获取可用户调用的 Skills
-   */
+ * Skills
+ */
   getUserInvocableSkills(): SkillContent[] {
     return this.getAllSkills().filter(
       (skill) => skill.metadata.enabled !== false && skill.metadata.userInvocable !== false
@@ -643,54 +643,54 @@ class SkillManager {
   }
 
   /**
-   * 根据 ID 获取 Skill
-   */
+ * ID Skill
+ */
   getSkill(id: string): SkillContent | undefined {
     return this.skills.get(id)
   }
 
   /**
-   * 检查 Skill 是否存在
-   */
+ * Skill 
+ */
   hasSkill(id: string): boolean {
     return this.skills.has(id)
   }
 
   /**
-   * 获取 Skill 的脚本
-   */
+ * Skill 
+ */
   getSkillScripts(skillId: string): SkillScript[] {
     const skill = this.getSkill(skillId)
     return skill?.scripts || []
   }
 
   /**
-   * 获取 Skill 的参考文档
-   */
+ * Skill 
+ */
   getSkillReferences(skillId: string): SkillReference[] {
     const skill = this.getSkill(skillId)
     return skill?.references || []
   }
 
   /**
-   * 获取 Skill 的资源文件
-   */
+ * Skill 
+ */
   getSkillAssets(skillId: string): SkillAsset[] {
     const skill = this.getSkill(skillId)
     return skill?.assets || []
   }
 
   // ========================================================================
-  // 匹配相关
+  //
   // ========================================================================
 
   /**
-   * 根据用户输入匹配相关 Skills
-   *
-   * @param userInput - 用户输入
-   * @param maxResults - 最大返回结果数
-   * @returns 匹配的 Skills 列表（按匹配分数排序）
-   */
+ * Skills
+ *
+ * @param userInput - 
+ * @param maxResults - 
+ * @returns Skills （）
+ */
   async matchRelevantSkills(
     userInput: string,
     maxResults: number = 3
@@ -705,7 +705,7 @@ class SkillManager {
       }
     }
 
-    // 按分数降序排序
+    //
     scores.sort((a, b) => b.score - a.score)
 
     const result = scores
@@ -716,8 +716,8 @@ class SkillManager {
   }
 
   /**
-   * 计算 Skill 与用户输入的匹配分数
-   */
+ * Skill 
+ */
   private calculateMatchScore(
     skill: SkillContent,
     userInput: string
@@ -727,67 +727,67 @@ class SkillManager {
     const reasons: string[] = []
     let score = 0
 
-    // 完全匹配
+    //
     if (description.includes(input)) {
       score += 1
-      reasons.push('描述包含用户输入')
+      reasons.push('Translated message')
     }
 
-    // 关键词匹配
+    //
     const keywords = this.extractKeywords(description)
     const matchedKeywords = keywords.filter((keyword) =>
       input.includes(keyword)
     )
     if (matchedKeywords.length > 0) {
       score += matchedKeywords.length * 0.5
-      reasons.push(`匹配关键词: ${matchedKeywords.join(', ')}`)
+      reasons.push(`${matchedKeywords.join(', ')}`)
     }
 
-    // 语义相似度（简化版）
+    // （）
     if (this.hasSemanticOverlap(description, input)) {
       score += 0.3
-      reasons.push('语义相关')
+      reasons.push('Semantically related')
     }
 
     return {
       skill,
-      score: Math.min(score, 1), // 限制在 0-1 之间
+      score: Math.min(score, 1), // 0-1
       reasons,
     }
   }
 
   /**
-   * 从描述中提取关键词
-   */
+ * 
+ */
   private extractKeywords(description: string): string[] {
     const keywords: string[] = []
 
-    // 提取各种引号中的内容作为关键词（支持中文引号）
+    // （）
     const quoteRegex = /[""""「」『』\[\]（）()](.+?)[""""「」『』\[\]（）()]/g
     let match
     while ((match = quoteRegex.exec(description)) !== null) {
       keywords.push(match[1].toLowerCase())
     }
 
-    // 提取"当...时使用"或"当...时调用"中的内容
+    // "...""..."
     const triggerRegex = /当(?:.*?)?(.+?)(?:时使用|时调用|时)/gi
     let triggerMatch
     while ((triggerMatch = triggerRegex.exec(description)) !== null) {
       keywords.push(triggerMatch[1].toLowerCase())
     }
 
-    // 提取"关于...的内容"中的关键词
+    // "..."
     const aboutRegex = /关于[""""「」『』\[\]（）()]?([^""""「」『』\[\]（）()\s]+)[""""「」『』\[\]】()]?的内容/g
     let aboutMatch
     while ((aboutMatch = aboutRegex.exec(description)) !== null) {
       keywords.push(aboutMatch[1].toLowerCase())
     }
 
-    // 提取描述中的所有中文词汇（2-4个字的词）
+    // （2-4）
     const chineseWords = description.match(/[\u4e00-\u9fa5]{2,4}/g) || []
     keywords.push(...chineseWords)
 
-    // 提取描述中的所有英文单词
+    //
     const englishWords = description.match(/[a-zA-Z]{2,}/g) || []
     keywords.push(...englishWords.map(w => w.toLowerCase()))
 
@@ -795,8 +795,8 @@ class SkillManager {
   }
 
   /**
-   * 检查语义重叠
-   */
+ * 
+ */
   private hasSemanticOverlap(text1: string, text2: string): boolean {
     const words1 = new Set(text1.split(/\s+/))
     const words2 = new Set(text2.split(/\s+/))
@@ -808,17 +808,17 @@ class SkillManager {
       }
     }
 
-    // 至少 20% 的词重叠
+    // 20%
     return overlap / words2.size >= 0.2
   }
 
   // ========================================================================
-  // 验证
+  //
   // ========================================================================
 
   /**
-   * 验证 Skill 内容
-   */
+ * Skill 
+ */
   validateSkill(content: string): { valid: boolean; errors: string[] } {
     try {
       const parsed = parseSkillFile(content)
@@ -837,12 +837,12 @@ class SkillManager {
   }
 
   // ========================================================================
-  // 辅助方法
+  //
   // ========================================================================
 
   /**
-   * 检查文件是否存在
-   */
+ * 
+ */
   private async fileExists(
     path: string,
     scope: SkillScope
@@ -863,8 +863,8 @@ class SkillManager {
   }
 
   /**
-   * 检查目录是否存在
-   */
+ * 
+ */
   private async directoryExists(
     path: string,
     scope: SkillScope
@@ -873,8 +873,8 @@ class SkillManager {
   }
 
   /**
-   * 列出 Skill 子目录
-   */
+ * Skill 
+ */
   private async listSkillDirectories(
     baseDir: string,
     scope: SkillScope
@@ -901,15 +901,15 @@ class SkillManager {
         }
       }
     } catch (error) {
-      console.error(`列出目录失败: ${baseDir}`, error)
+      console.error(`Failed: ${baseDir}`, error)
     }
 
     return dirs
   }
 
   /**
-   * 读取文件内容
-   */
+ * 
+ */
   private async readFileContent(
     path: string,
     scope: SkillScope
@@ -926,15 +926,15 @@ class SkillManager {
   }
 
   /**
-   * 获取 Skill 文件信息
-   */
+ * Skill 
+ */
   getSkillFileInfo(id: string): SkillFileInfo | undefined {
     return this.skillFiles.get(id)
   }
 
   /**
-   * 获取所有 Skill 文件信息
-   */
+ * Skill 
+ */
   getAllSkillFileInfo(): SkillFileInfo[] {
     return Array.from(this.skillFiles.values())
   }
@@ -1005,12 +1005,12 @@ class SkillManager {
 }
 
 // ============================================================================
-// 单例导出
+//
 // ============================================================================
 
 export const skillManager = new SkillManager()
 
-// 重置管理器（主要用于测试）
+// （）
 export function resetSkillManager(): void {
   ;(skillManager as any).skills.clear()
   ;(skillManager as any).installedSkills.clear()

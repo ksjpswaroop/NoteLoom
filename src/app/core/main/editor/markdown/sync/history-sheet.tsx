@@ -20,7 +20,7 @@ import { isMobileDevice } from '@/lib/check'
 
 interface CommitInfo {
   sha: string
-  fullSha?: string // 完整 SHA，用于恢复功能
+  fullSha?: string // Full SHA for restore
   message: string
   author: string
   date: Date
@@ -79,13 +79,13 @@ export function HistorySheet({ editor }: HistorySheetProps) {
         }
         case 'gitlab': {
           const result = await getGitlabFileCommits({ path: activeFilePath, repo })
-          // GitLab 返回 { data } 对象，需要从中提取数组
+          // GitLab { data } ，
           commits = (result && result.data) ? result.data : []
           break
         }
         case 'gitea': {
           const result = await getGiteaFileCommits({ path: activeFilePath, repo })
-          // Gitea 返回 { data } 对象，需要从中提取数组
+          // Gitea { data } ，
           commits = (result && result.data) ? result.data : []
           break
         }
@@ -133,7 +133,7 @@ export function HistorySheet({ editor }: HistorySheetProps) {
         const sha = commit.sha || commit.id || ''
         return {
           sha: sha.slice(0, 7),
-          fullSha: sha, // 保存完整 SHA，用于恢复功能
+          fullSha: sha, // Persist full SHA for restore
           message: commit.commit?.message || commit.message || 'No message',
           author: commit.commit?.author?.name || commit.author?.name || commit.author_name || 'Unknown',
           date: new Date(commit.commit?.author?.date || commit.created_at || commit.committed_date || Date.now()),
@@ -152,8 +152,8 @@ export function HistorySheet({ editor }: HistorySheetProps) {
     } catch (error) {
       console.error('Failed to load history:', error)
       toast({
-        title: '加载失败',
-        description: '无法加载提交历史',
+        title: 'Failed to load',
+        description: 'None',
         variant: 'destructive'
       })
     } finally {
@@ -184,7 +184,7 @@ export function HistorySheet({ editor }: HistorySheetProps) {
         case 'gitee': {
           const fileInfo = await getGiteeFiles({ path: activeFilePath, repo, ref: commitSha })
           if (fileInfo?.content) {
-            // Gitee 也是 base64 编码
+            // Gitee base64
             content = decodeGiteeBase64(fileInfo.content)
           }
           break
@@ -193,24 +193,24 @@ export function HistorySheet({ editor }: HistorySheetProps) {
           try {
             const fileInfo = await getGitlabFileContent({ path: activeFilePath, ref: commitSha, repo })
             if (fileInfo?.content) {
-              // GitLab 返回的是 base64 编码内容，需要解码
+              // GitLab base64 ，
               content = decodeBase64ToString(fileInfo.content)
             }
           } catch (e) {
-            console.error('[HistorySheet] GitLab 获取内容失败:', e)
+            console.error('[HistorySheet] GitLab Failed', e)
           }
           break
         }
         case 'gitea': {
           try {
-            // 使用 getFileContentFromCommit 通过 Git tree API 获取特定 commit 的文件内容
+            // getFileContentFromCommit Git tree API commit
             const fileInfo = await getGiteaFileContentFromCommit({ path: activeFilePath, ref: commitSha, repo })
             if (fileInfo && fileInfo.content) {
-              // Gitea 返回的是 base64 编码内容，需要解码
+              // Gitea base64 ，
               content = decodeGiteeBase64(fileInfo.content)
             }
           } catch (e) {
-            console.error('[HistorySheet] Gitea 获取内容失败:', e)
+            console.error('[HistorySheet] Gitea Failed', e)
           }
           break
         }
@@ -218,20 +218,20 @@ export function HistorySheet({ editor }: HistorySheetProps) {
 
 
       if (content) {
-        // 保存到本地文件
+        //
         await saveLocalFile(activeFilePath, content)
 
-        // 更新编辑器内容
+        //
         editor.commands.clearContent()
         editor.commands.setContent(content, { contentType: 'markdown' })
 
-        // 更新同步时间和恢复时间
+        //
         await updateFileSyncTime(activeFilePath)
         await updateFileRestoreTime(activeFilePath)
 
         toast({
-          title: '已恢复',
-          description: '已从历史版本恢复文件'
+          title: 'Restored',
+          description: 'File'
         })
 
         setIsOpen(false)
@@ -239,8 +239,8 @@ export function HistorySheet({ editor }: HistorySheetProps) {
     } catch (error) {
       console.error('Failed to restore version:', error)
       toast({
-        title: '恢复失败',
-        description: '无法从历史版本恢复文件',
+        title: 'Restore failed',
+        description: 'None File',
         variant: 'destructive'
       })
     } finally {
@@ -263,7 +263,7 @@ export function HistorySheet({ editor }: HistorySheetProps) {
         'p-0.5 rounded transition-colors hover:bg-[hsl(var(--muted))]',
         isOpen && 'bg-[hsl(var(--muted))]'
       )}
-      title="历史记录"
+      title="History"
     >
       <History size={14} />
     </button>
@@ -272,7 +272,7 @@ export function HistorySheet({ editor }: HistorySheetProps) {
   const content = (
     <>
       <div className="flex items-center justify-between mb-2">
-        <div className="font-semibold text-sm">提交历史</div>
+        <div className="font-semibold text-sm">Commit history</div>
         {activeFilePath && provider && repoInfo.repo && (
           <a
             href={(() => {
@@ -287,7 +287,7 @@ export function HistorySheet({ editor }: HistorySheetProps) {
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs text-muted-foreground hover:text-primary inline-flex items-center gap-1"
-            title="在仓库中打开"
+            title="Open in repository"
           >
             <ExternalLink size={10} />
             <span className="truncate max-w-30">{activeFilePath.split('/').pop()}</span>
@@ -297,11 +297,11 @@ export function HistorySheet({ editor }: HistorySheetProps) {
       <div className="flex-1 overflow-y-auto pr-1">
         {isLoading ? (
           <div className="flex items-center justify-center py-8 text-muted-foreground">
-            加载中...
+            Loading...
           </div>
         ) : history.length === 0 ? (
           <div className="py-8 text-center text-muted-foreground">
-            暂无提交记录
+            No commits yet
           </div>
         ) : (
           <ul className="space-y-2">
@@ -338,10 +338,10 @@ export function HistorySheet({ editor }: HistorySheetProps) {
                       'text-xs text-blue-500 hover:text-blue-600 inline-flex items-center gap-1',
                       restoringSha === commit.sha && 'opacity-50'
                     )}
-                    title="恢复此版本"
+                    title="Restore this version"
                   >
                     <RotateCcw size={12} />
-                    {restoringSha === commit.sha ? '恢复中...' : '恢复'}
+                    {restoringSha === commit.sha ? 'Restoring...' : 'Restore'}
                   </button>
                 </div>
               </li>
@@ -360,7 +360,7 @@ export function HistorySheet({ editor }: HistorySheetProps) {
         </DrawerTrigger>
         <DrawerContent className="max-h-[80vh] rounded-t-[24px]">
           <DrawerHeader className="pb-2">
-            <DrawerTitle>提交历史</DrawerTitle>
+            <DrawerTitle>Commit history</DrawerTitle>
           </DrawerHeader>
           <div className="flex min-h-0 flex-1 flex-col px-4 pb-4 overflow-hidden">
             {content}

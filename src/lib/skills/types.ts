@@ -1,156 +1,156 @@
 /**
- * Skills 类型定义
+ * Skills 
  *
- * Skills 是可重用的 AI 能力包，让 AI 助手能够根据任务自动应用特定的行为模式。
- * 遵循 Agent Skills 官方规范: https://agentskills.io/specification
+ * Skills AI ， AI 。
+ * Agent Skills : https://agentskills.io/specification
  */
 
 // ============================================================================
-// 核心类型
+//
 // ============================================================================
 
 /**
- * Skill 作用域
+ * Skill 
  */
 export type SkillScope = 'global' | 'project'
 
 /**
- * Skill 脚本类型
+ * Skill 
  */
 export type ScriptType = 'python' | 'bash' | 'javascript' | 'node' | 'shell'
 
 /**
- * Skill 脚本文件
+ * Skill 
  */
 export interface SkillScript {
-  name: string                  // 脚本文件名
-  path: string                  // 相对路径 (scripts/script-name.py)
-  type: ScriptType              // 脚本类型
-  sha256: string                // 脚本内容哈希，用于完整性校验和权限绑定
-  description?: string          // 脚本描述
+  name: string                  //
+  path: string                  // (scripts/script-name.py)
+  type: ScriptType              //
+  sha256: string                // ，
+  description?: string          //
 }
 
 /**
- * Skill 参考文件
+ * Skill 
  */
 export interface SkillReference {
-  name: string                  // 参考文件名
-  path: string                  // 相对路径 (references/reference.md)
-  description?: string          // 参考内容描述
+  name: string                  //
+  path: string                  // (references/reference.md)
+  description?: string          //
 }
 
 /**
- * Skill 资源文件 (assets/)
+ * Skill (assets/)
  */
 export interface SkillAsset {
-  name: string                  // 资源文件名
-  path: string                  // 相对路径 (assets/template.json)
+  name: string                  //
+  path: string                  // (assets/template.json)
   type: 'template' | 'image' | 'data' | 'other'
-  description?: string          // 资源描述
+  description?: string          //
 }
 
 /**
- * Skill 元数据 (符合官方规范)
+ * Skill ()
  */
 export interface SkillMetadata {
-  // 基本信息 (官方规范必填字段)
-  id: string                    // 唯一标识 (skill-name, 必须与目录名匹配)
-  name: string                  // Skill 名称 (1-64字符, 小写字母数字和连字符)
-  description: string           // 功能描述 (1-1024字符, 用于 AI 匹配)
+  // ()
+  id: string                    // (skill-name, )
+  name: string                  // Skill (1-64, )
+  description: string           // (1-1024, AI )
 
-  // 官方规范可选字段
-  license?: string              // 许可证名称或引用的许可证文件
-  compatibility?: string        // 环境要求 (1-500字符)
-  metadata?: Record<string, string>  // 额外的元数据键值对
+  //
+  license?: string              //
+  compatibility?: string        // (1-500)
+  metadata?: Record<string, string>  //
 
-  // 扩展字段 (应用特定)
-  version?: string              // 版本号 (存储在 metadata.version 中)
-  author?: string               // 作者 (存储在 metadata.author 中)
+  // ()
+  version?: string              // ( metadata.version )
+  author?: string               // ( metadata.author )
 
-  // 存储位置
-  scope: SkillScope             // 作用域：全局(应用数据目录) 或 项目(工作区)
+  //
+  scope: SkillScope             // ：() ()
 
-  // 执行配置 (扩展字段)
-  model?: string                // 指定使用的模型
-  allowedTools?: string[]       // 允许使用的工具 (无需权限确认)
+  // ()
+  model?: string                //
+  allowedTools?: string[]       // ()
 
-  // 可见性控制 (扩展字段)
-  userInvocable?: boolean       // 是否在斜杠菜单显示
+  // ()
+  userInvocable?: boolean       //
 
-  // 状态 (扩展字段)
-  enabled?: boolean             // 是否启用
+  // ()
+  enabled?: boolean             //
   createdAt: number
   updatedAt: number
 
-  // 依赖声明
+  //
   dependencies?: SkillDependency[]
 }
 
 /**
- * Skill 内容
+ * Skill 
  */
 export interface SkillContent {
   metadata: SkillMetadata
-  instructions: string          // Markdown 格式的指令 (SKILL.md 内容)
+  instructions: string          // Markdown (SKILL.md )
 
-  // 官方规范支持的目录结构
-  scripts: SkillScript[]        // scripts/ 目录中的脚本
-  references: SkillReference[]  // references/ 目录中的参考文档
-  assets: SkillAsset[]          // assets/ 目录中的静态资源
+  //
+  scripts: SkillScript[]        // scripts/
+  references: SkillReference[]  // references/
+  assets: SkillAsset[]          // assets/
 }
 
 // ============================================================================
-// 解析相关类型
+//
 // ============================================================================
 
 /**
- * SKILL.md 文件的 YAML 前置元数据 (符合官方规范)
+ * SKILL.md YAML ()
  */
 export interface SkillYamlMetadata {
-  // 必填字段
+  //
   name: string
   description: string
 
-  // 可选字段 (官方规范)
+  // ()
   license?: string
   compatibility?: string
   metadata?: Record<string, string>
-  allowedTools?: string[] | string  // 空格分隔的工具列表或数组
+  allowedTools?: string[] | string  //
 
-  // 扩展字段 (向后兼容)
+  // ()
   version?: string
   author?: string
   model?: string
   userInvocable?: boolean
 
-  // 依赖声明
+  //
   dependencies?: SkillDependency[]
 }
 
 /**
- * Skill 依赖声明
+ * Skill 
  */
 export interface SkillDependency {
-  name: string           // 依赖名称，如 "requests" 或 "lodash"
-  version?: string      // 版本要求，如 ">=2.0.0"（可选）
-  manager: 'pip' | 'npm' | 'yarn' | 'pnpm'  // 包管理器
+  name: string           // ， "requests" "lodash"
+  version?: string      // ， ">=2.0.0"（）
+  manager: 'pip' | 'npm' | 'yarn' | 'pnpm'  //
 }
 
 /**
- * 解析后的 SKILL.md 内容
+ * SKILL.md 
  */
 export interface ParsedSkillFile {
   metadata: SkillYamlMetadata
-  content: string               // Markdown 内容（不包含 YAML 前置）
-  rawContent: string            // 原始文件内容
+  content: string               // Markdown （ YAML ）
+  rawContent: string            //
 }
 
 // ============================================================================
-// 验证相关类型
+//
 // ============================================================================
 
 /**
- * 验证结果
+ * 
  */
 export interface ValidationResult {
   valid: boolean
@@ -159,7 +159,7 @@ export interface ValidationResult {
 }
 
 /**
- * 验证错误
+ * 
  */
 export interface ValidationError {
   field: string
@@ -168,7 +168,7 @@ export interface ValidationError {
 }
 
 /**
- * 验证警告
+ * 
  */
 export interface ValidationWarning {
   field: string
@@ -177,11 +177,11 @@ export interface ValidationWarning {
 }
 
 // ============================================================================
-// 执行相关类型
+//
 // ============================================================================
 
 /**
- * Skill 执行结果
+ * Skill 
  */
 export interface SkillExecutionResult {
   success: boolean
@@ -189,12 +189,12 @@ export interface SkillExecutionResult {
   result?: string
   error?: string
   toolsUsed: string[]
-  scriptsUsed: string[]          // 使用的脚本列表
+  scriptsUsed: string[]          //
   executionTime: number
 }
 
 /**
- * Skill 执行记录
+ * Skill 
  */
 export interface SkillExecutionRecord {
   id: string
@@ -206,87 +206,87 @@ export interface SkillExecutionRecord {
 }
 
 // ============================================================================
-// 存储相关类型
+//
 // ============================================================================
 
 /**
- * Skill 文件信息
+ * Skill 
  */
 export interface SkillFileInfo {
-  id: string                    // 从目录名派生
-  directory: string             // Skill 目录路径
-  mainFile: string              // SKILL.md 文件路径
+  id: string                    //
+  directory: string             // Skill
+  mainFile: string              // SKILL.md
 
-  // 官方规范目录结构
-  hasScriptsDir: boolean        // 是否有 scripts/ 目录
-  hasReferencesDir: boolean     // 是否有 references/ 目录
-  hasAssetsDir: boolean         // 是否有 assets/ 目录
+  //
+  hasScriptsDir: boolean        // scripts/
+  hasReferencesDir: boolean     // references/
+  hasAssetsDir: boolean         // assets/
 
-  // 向后兼容 (已弃用，但保留以支持旧结构)
-  hasReferenceFile?: boolean    // 根目录是否有 REFERENCE.md
-  hasExamplesFile?: boolean     // 根目录是否有 EXAMPLES.md
-  hasKeywordsFile?: boolean     // 根目录是否有 KEYWORDS.md
+  // (，)
+  hasReferenceFile?: boolean    // REFERENCE.md
+  hasExamplesFile?: boolean     // EXAMPLES.md
+  hasKeywordsFile?: boolean     // KEYWORDS.md
 
-  isValid: boolean              // 是否有效 Skill
-  error?: string                // 错误信息
+  isValid: boolean              // Skill
+  error?: string                //
 
-  // 统计信息
-  scriptCount?: number          // 脚本数量
-  referenceCount?: number       // 参考文件数量
-  assetCount?: number           // 资源文件数量
+  //
+  scriptCount?: number          //
+  referenceCount?: number       //
+  assetCount?: number           //
 }
 
 // ============================================================================
-// 工具函数类型
+//
 // ============================================================================
 
 /**
- * Skill 匹配分数
+ * Skill 
  */
 export interface SkillMatchScore {
   skill: SkillContent
-  score: number                 // 匹配分数 (0-1)
-  reasons: string[]             // 匹配原因
+  score: number                 // (0-1)
+  reasons: string[]             //
 }
 
 // ============================================================================
-// 常量
+//
 // ============================================================================
 
 /**
- * Skill 文件名常量
+ * Skill 
  */
 export const SKILL_FILE_NAME = 'SKILL.md'
 
 /**
- * 官方规范目录名称
+ * 
  */
 export const SCRIPTS_DIR_NAME = 'scripts'
 export const REFERENCES_DIR_NAME = 'references'
 export const ASSETS_DIR_NAME = 'assets'
 
 /**
- * 向后兼容的文件名 (已弃用)
- * @deprecated 使用 references/ 目录代替
+ * ()
+ * @deprecated references/ 
  */
 export const REFERENCE_FILE_NAME = 'REFERENCE.md'
 export const EXAMPLES_FILE_NAME = 'EXAMPLES.md'
 export const KEYWORDS_FILE_NAME = 'KEYWORDS.md'
 
 /**
- * Skills 目录名称
+ * Skills 
  */
 export const SKILLS_DIR_NAME = 'skills'
 
 /**
- * 默认元数据值
+ * 
  */
 export const DEFAULT_SKILL_VERSION = '1.0.0'
 export const DEFAULT_SKILL_ENABLED = true
 export const DEFAULT_USER_INVOCABLE = true
 
 /**
- * 支持的脚本类型及其扩展名
+ * 
  */
 export const SCRIPT_EXTENSIONS: Record<ScriptType, string[]> = {
   python: ['.py'],
@@ -297,7 +297,7 @@ export const SCRIPT_EXTENSIONS: Record<ScriptType, string[]> = {
 }
 
 /**
- * 脚本类型的 shebang 标记
+ * shebang 
  */
 export const SCRIPT_SHEBANG: Record<ScriptType, string[]> = {
   python: ['#!/usr/bin/env python', '#!/usr/bin/python'],

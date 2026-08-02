@@ -36,16 +36,16 @@ export function HistoryDropdown({
   const t = useTranslations('record.chat.empty')
   const [searchQuery, setSearchQuery] = useState('')
 
-  // 过滤并排序会话（排除当前会话、已显示会话和空会话）
+  // （、）
   const filteredConversations = useMemo(() => {
     return conversations
       .filter(c => c.id !== currentConversationId && !excludeConversationIds.includes(c.id) && c.messageCount > 0)
       .filter(c => c.title.toLowerCase().includes(searchQuery.toLowerCase()))
       .sort((a, b) => {
-        // 置顶的排在前面
+        //
         if (a.isPinned && !b.isPinned) return -1
         if (!a.isPinned && b.isPinned) return 1
-        // 然后按更新时间排序
+        //
         return b.updatedAt - a.updatedAt
       })
   }, [conversations, currentConversationId, excludeConversationIds, searchQuery])
@@ -70,7 +70,7 @@ export function HistoryDropdown({
         align="end"
         className="w-[340px] max-h-[400px] overflow-y-auto"
       >
-        {/* 搜索框 */}
+        {/* */}
         <div className="px-2 py-2">
           <div className="relative">
             <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -85,7 +85,7 @@ export function HistoryDropdown({
 
         <DropdownMenuSeparator />
 
-        {/* 会话列表 */}
+        {/* */}
         {filteredConversations.length === 0 ? (
           <div className="px-4 py-8 text-center text-sm text-muted-foreground">
             {searchQuery ? t('noMatchingConversations') : t('noConversationHistory')}
@@ -108,7 +108,7 @@ export function HistoryDropdown({
                       </span>
                     </div>
                     <div className="shrink-0 ml-auto flex items-center gap-2">
-                      {/* 删除按钮 - 悬停时显示 */}
+                      {/* - */}
                       <button
                         onClick={(e) => {
                           e.stopPropagation()

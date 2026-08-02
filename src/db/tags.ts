@@ -15,7 +15,7 @@ function enqueueRecordsAutoSync(reason: string) {
   enqueueAutoDataSync('records', reason)
 }
 
-// 创建 tags 表
+// tags
 export async function initTagsDb() {
   const db = await getDb()
   await db.execute(`
@@ -28,14 +28,14 @@ export async function initTagsDb() {
     )
   `)
   
-  // 检查 sortOrder 列是否存在，如果不存在则添加
+  // sortOrder ，
   try {
     await db.execute("select sortOrder from tags limit 1")
   } catch {
-    // sortOrder 列不存在，添加该列
+    // sortOrder ，
     await db.execute("alter table tags add column sortOrder integer DEFAULT 0")
     
-    // 为现有标签设置初始排序值
+    //
     const existingTags = await db.select<Tag[]>("select id from tags order by id asc")
     for (let i = 0; i < existingTags.length; i++) {
       await db.execute("update tags set sortOrder = $1 where id = $2", [i, existingTags[i].id])
@@ -59,7 +59,7 @@ export async function getTags() {
   const db = await getDb();
   const tags = await db.select<Tag[]>("select * from tags order by sortOrder asc, id asc")
 
-  // 获取 tags 对应的 marks 数量
+  // tags marks
   for (const tag of tags) {
     // deleted = 0  
     const res = await db.select<{ total: number }[]>("select count(*) as total from marks where tagId = $1 and deleted = $2", [tag.id, 0])

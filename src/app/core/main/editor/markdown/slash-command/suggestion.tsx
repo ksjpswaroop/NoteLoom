@@ -225,7 +225,7 @@ async function createMarkdownLinksForFilePaths(paths: string[], currentFilePath:
   )
 }
 
-// 辅助函数: 创建 Mermaid 图表命令
+// : Mermaid
 const createMermaidCommand = (
   type: 'flowchart' | 'sequence' | 'gantt' | 'classDiagram' | 'stateDiagram' | 'pie' | 'er' | 'journey'
 ) => ({
@@ -238,7 +238,7 @@ const createMermaidCommand = (
   },
 })
 
-// 辅助函数: 创建自定义事件命令
+// :
 const createCustomEventCommand = (eventName: string, detail?: unknown) => ({
   command: ({ editor, range }: { editor: Editor; range: Range }) => {
     editor.chain().focus().deleteRange(range).run()
@@ -265,7 +265,7 @@ const createCustomAiInstructionCommand = () => ({
   },
 })
 
-// 翻译接口
+//
 export interface SlashCommandTranslations {
   groups: {
     ai: string
@@ -348,7 +348,7 @@ export interface SlashCommandTranslations {
   }
 }
 
-// 导出搜索函数供外部使用
+//
 export function filterItems(items: SlashCommandItem[], query: string): SlashCommandItem[] {
   if (!query || query.length === 0) {
     return items
@@ -363,86 +363,86 @@ export function filterItems(items: SlashCommandItem[], query: string): SlashComm
 }
 
 export const suggestionItems = (t?: SlashCommandTranslations): SlashCommandItem[] => {
-  // 默认中文翻译（作为后备）
+  // （）
   const defaultT: SlashCommandTranslations = {
     groups: {
       ai: 'AI',
-      heading: '标题',
-      list: '列表',
-      block: '块级',
-      align: '对齐',
-      embed: '嵌入',
-      math: '数学',
-      chart: '图表',
+      heading: 'Heading',
+      list: 'List',
+      block: 'Block',
+      align: 'Align',
+      embed: 'Embed',
+      math: 'Math',
+      chart: 'Diagram',
     },
     items: {
-      continue: '续写',
-      continueDesc: 'AI 续写内容',
-      generateSection: '生成章节',
-      generateSectionDesc: '根据当前笔记生成一个新章节',
-      summarize: '总结',
-      summarizeDesc: '总结当前笔记内容',
-      customInstruction: '自定义指令',
-      customInstructionDesc: '输入自己的指令并让 AI 执行',
-      heading1: '一级标题',
-      heading1Desc: '大标题',
-      heading2: '二级标题',
-      heading2Desc: '中标题',
-      heading3: '三级标题',
-      heading3Desc: '小标题',
-      heading4: '四级标题',
-      heading4Desc: '四级标题',
-      heading5: '五级标题',
-      heading5Desc: '五级标题',
-      heading6: '六级标题',
-      heading6Desc: '六级标题',
-      bulletList: '无序列表',
-      bulletListDesc: '创建简单的项目列表',
-      orderedList: '有序列表',
-      orderedListDesc: '创建带编号的列表',
-      taskList: '任务列表',
-      taskListDesc: '创建带复选框的任务列表',
-      image: '图片',
-      imageDesc: '插入本地图片或图床图片',
-      file: '文件',
-      fileDesc: '选择本地文件并插入链接',
-      table: '表格',
-      tableDesc: '插入表格',
-      blockquote: '引用',
-      blockquoteDesc: '捕获引用内容',
-      codeBlock: '代码块',
-      codeBlockDesc: '捕获代码片段',
-      divider: '分割线',
-      dividerDesc: '在元素之间创建分隔线',
-      inlineMath: '行内公式',
-      inlineMathDesc: '插入行内 LaTeX 公式',
-      blockMath: '块级公式',
-      blockMathDesc: '插入块级 LaTeX 公式',
-      flowchart: '流程图',
-      flowchartDesc: '插入流程图',
-      sequence: '时序图',
-      sequenceDesc: '插入时序图',
-      gantt: '甘特图',
-      ganttDesc: '插入甘特图',
-      classDiagram: '类图',
-      classDiagramDesc: '插入类图',
-      stateDiagram: '状态图',
-      stateDiagramDesc: '插入状态图',
-      pie: '饼图',
-      pieDesc: '插入饼图',
-      erDiagram: 'ER图',
-      erDiagramDesc: '插入实体关系图',
-      journey: '旅程图',
-      journeyDesc: '插入用户旅程图',
+      continue: 'Continue writing',
+      continueDesc: 'AI continue writing',
+      generateSection: 'Generate section',
+      generateSectionDesc: 'Generate a new section from the current note',
+      summarize: 'Summarize',
+      summarizeDesc: 'Summarize the current note',
+      customInstruction: 'Custom instruction',
+      customInstructionDesc: 'Enter your own instruction for the AI to run',
+      heading1: 'Heading 1',
+      heading1Desc: 'Large heading',
+      heading2: 'Heading 2',
+      heading2Desc: 'Medium heading',
+      heading3: 'Heading 3',
+      heading3Desc: 'Small heading',
+      heading4: 'Heading 4',
+      heading4Desc: 'Heading 4',
+      heading5: 'Heading 5',
+      heading5Desc: 'Heading 5',
+      heading6: 'Heading 6',
+      heading6Desc: 'Heading 6',
+      bulletList: 'Bullet list',
+      bulletListDesc: 'Create a simple bullet list',
+      orderedList: 'Numbered list',
+      orderedListDesc: 'Create a numbered list',
+      taskList: 'Task list',
+      taskListDesc: 'Create a task list with checkboxes',
+      image: 'Image',
+      imageDesc: 'Insert a local image or image-host image',
+      file: 'File',
+      fileDesc: 'Choose a local file and insert a link',
+      table: 'Table',
+      tableDesc: 'Insert table',
+      blockquote: 'Quote',
+      blockquoteDesc: 'Capture quote',
+      codeBlock: 'Code block',
+      codeBlockDesc: 'Capture code snippet',
+      divider: 'Divider',
+      dividerDesc: 'Create a divider between elements',
+      inlineMath: 'Inline formula',
+      inlineMathDesc: 'Insert inline LaTeX formula',
+      blockMath: 'Block formula',
+      blockMathDesc: 'Insert block LaTeX formula',
+      flowchart: 'Flowchart',
+      flowchartDesc: 'Insert flowchart',
+      sequence: 'Sequence diagram',
+      sequenceDesc: 'Insert sequence diagram',
+      gantt: 'Gantt chart',
+      ganttDesc: 'Insert Gantt chart',
+      classDiagram: 'Class diagram',
+      classDiagramDesc: 'Insert class diagram',
+      stateDiagram: 'State diagram',
+      stateDiagramDesc: 'Insert state diagram',
+      pie: 'Pie chart',
+      pieDesc: 'Insert pie chart',
+      erDiagram: 'ER diagram',
+      erDiagramDesc: 'Insert entity-relationship diagram',
+      journey: 'Journey map',
+      journeyDesc: 'Insert user journey map',
     },
     imageUpload: {
-      success: '上传成功',
-      saveSuccess: '保存成功',
-      savePath: '保存路径: __PATH__',
-      failed: '插入图片失败',
+      success: 'Upload succeeded',
+      saveSuccess: 'Saved',
+      savePath: 'Save path: __PATH__',
+      failed: 'Failed to insert image',
     },
     fileInsert: {
-      failed: '插入文件链接失败',
+      failed: 'Failed to insert file link',
     },
   }
 
@@ -543,7 +543,7 @@ export const suggestionItems = (t?: SlashCommandTranslations): SlashCommandItem[
       },
     },
 
-    // 列表
+    //
     {
       title: tr.items.bulletList,
       description: tr.items.bulletListDesc,
@@ -575,7 +575,7 @@ export const suggestionItems = (t?: SlashCommandTranslations): SlashCommandItem[
       },
     },
 
-    // 块级元素
+    //
     {
       title: tr.items.image,
       description: tr.items.imageDesc,
@@ -662,7 +662,7 @@ export const suggestionItems = (t?: SlashCommandTranslations): SlashCommandItem[
       description: tr.items.fileDesc,
       icon: <FilePlus className="w-4 h-4" />,
       group: tr.groups.block,
-      searchTerms: ['file', 'attachment', 'link', 'local', 'document', '文件', '附件', '链接'],
+      searchTerms: ['file', 'attachment', 'link', 'local', 'document', 'File', 'Attachment', 'Link'],
       command: async ({ editor, range }: { editor: Editor; range: Range }) => {
         const rangeStart = range.from
         editor.chain().focus().deleteRange(range).run()
@@ -744,7 +744,7 @@ export const suggestionItems = (t?: SlashCommandTranslations): SlashCommandItem[
       },
     },
 
-    // 数学公式
+    //
     {
       title: tr.items.inlineMath,
       description: tr.items.inlineMathDesc,
@@ -762,7 +762,7 @@ export const suggestionItems = (t?: SlashCommandTranslations): SlashCommandItem[
       ...createCustomEventCommand('tiptap-insert-block-math'),
     },
 
-    // 图表
+    //
     {
       title: tr.items.flowchart,
       description: tr.items.flowchartDesc,
@@ -853,7 +853,7 @@ function findSlashMatch(config: {
     return null
   }
 
-  // Markdown 链接或图片的目标地址由文件路径推荐处理，不能触发 Slash Command。
+  // Markdown ， Slash Command。
   if (/\[[^\]\n]+\]\([^)\n]*$/.test(text)) {
     return null
   }

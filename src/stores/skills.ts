@@ -5,50 +5,50 @@ import { skillManager } from '@/lib/skills/manager'
 import { uninstallSkill } from '@/lib/skills/uninstall'
 
 interface SkillsState {
-  // 配置
+  //
   enabled: boolean
-  autoMatch: boolean              // 是否自动匹配 Skills
+  autoMatch: boolean              // Skills
 
   // Skills
   skills: SkillMetadata[]
-  globalSkills: SkillMetadata[]   // 全局 Skills
-  projectSkills: SkillMetadata[]  // 工作区 Skills
+  globalSkills: SkillMetadata[]   // Skills
+  projectSkills: SkillMetadata[]  // Skills
 
-  // 运行时
-  activeSkill: string | null      // 当前活跃的 Skill
+  //
+  activeSkill: string | null      // Skill
   skillHistory: SkillExecutionRecord[]
 
-  // 是否已初始化
+  //
   initialized: boolean
-  initializing: boolean  // 是否正在初始化，防止重复初始化
+  initializing: boolean  // ，
 
-  // 方法
+  //
   initSkills: () => Promise<void>
   loadSkillsConfig: () => Promise<void>
 
-  // 配置管理
+  //
   setEnabled: (enabled: boolean) => Promise<void>
   setAutoMatch: (autoMatch: boolean) => Promise<void>
 
-  // Skill 管理方法
+  // Skill
   toggleSkill: (id: string) => Promise<void>
   deleteSkill: (id: string, scope?: 'global' | 'project') => Promise<void>
   refreshSkills: () => Promise<void>
 
-  // 获取方法
+  //
   getSkill: (id: string) => SkillContent | undefined
   getEnabledSkills: () => Promise<SkillContent[]>
   getUserInvocableSkills: () => SkillContent[]
   getSkillsByScope: (scope: 'global' | 'project') => SkillContent[]
 
-  // 执行历史
+  //
   addExecutionRecord: (record: SkillExecutionRecord) => void
   clearExecutionHistory: () => void
 }
 
 export const useSkillsStore = create<SkillsState>((set, get) => ({
-  // 初始状态
-  enabled: true,  // 默认启用
+  //
+  enabled: true,  //
   autoMatch: true,
   skills: [],
   globalSkills: [],
@@ -56,22 +56,22 @@ export const useSkillsStore = create<SkillsState>((set, get) => ({
   activeSkill: null,
   skillHistory: [],
   initialized: false,
-  initializing: false,  // 防止重复初始化
+  initializing: false,  //
 
-  // 初始化 Skills
+  // Skills
   initSkills: async () => {
     const state = get()
 
-    // 防止重复初始化
+    //
     if (state.initializing) {
-      // 等待正在进行的初始化完成
+      //
       while (get().initializing) {
         await new Promise(resolve => setTimeout(resolve, 100))
       }
       return
     }
 
-    // 如果已经初始化过，只加载配置
+    // ，
     if (state.initialized) {
       await get().loadSkillsConfig()
       return
@@ -84,30 +84,30 @@ export const useSkillsStore = create<SkillsState>((set, get) => ({
       const enabled = await store.get<boolean>('skills.enabled')
       const autoMatch = await store.get<boolean>('skills.autoMatch')
 
-      // 先设置配置，不设置 initialized
+      // ， initialized
       set({
-        enabled: enabled ?? true,  // 默认为 true
+        enabled: enabled ?? true,  // true
         autoMatch: autoMatch ?? true,
       })
 
-      // 初始化 Skill 管理器
+      // Skill
       await skillManager.initialize()
 
-      // 加载 Skills 到状态
+      // Skills
       await get().refreshSkills()
 
-      // 只有成功完成所有初始化后才设置 initialized 为 true
+      // initialized true
       set({ initialized: true })
     } catch (error) {
       console.error('Failed to initialize Skills:', error)
-      // 初始化失败，重置状态
+      // ，
       set({ initialized: false })
     } finally {
       set({ initializing: false })
     }
   },
 
-  // 加载 Skills 配置
+  // Skills
   loadSkillsConfig: async () => {
     try {
       const store = await Store.load('store.json')
@@ -123,7 +123,7 @@ export const useSkillsStore = create<SkillsState>((set, get) => ({
     }
   },
 
-  // 设置启用状态
+  //
   setEnabled: async (enabled: boolean) => {
     const store = await Store.load('store.json')
     await store.set('skills.enabled', enabled)
@@ -131,7 +131,7 @@ export const useSkillsStore = create<SkillsState>((set, get) => ({
     set({ enabled })
   },
 
-  // 设置自动匹配
+  //
   setAutoMatch: async (autoMatch: boolean) => {
     const store = await Store.load('store.json')
     await store.set('skills.autoMatch', autoMatch)
@@ -139,7 +139,7 @@ export const useSkillsStore = create<SkillsState>((set, get) => ({
     set({ autoMatch })
   },
 
-  // 刷新 Skills 列表
+  // Skills
   refreshSkills: async () => {
     await skillManager.reload()
 
@@ -164,27 +164,27 @@ export const useSkillsStore = create<SkillsState>((set, get) => ({
     })
   },
 
-  // 切换 Skill 启用状态
+  // Skill
   toggleSkill: async (id: string) => {
     const skill = skillManager.getSkill(id)
     if (!skill) return
 
-    // 更新 Skill 的启用状态
+    // Skill
     skill.metadata.enabled = !skill.metadata.enabled
     skill.metadata.updatedAt = Date.now()
 
-    // 保存到本地存储
+    //
     const store = await Store.load('store.json')
     const enabledSkills = await store.get<Record<string, boolean>>('skills.enabledSkills') || {}
     enabledSkills[id] = skill.metadata.enabled
     await store.set('skills.enabledSkills', enabledSkills)
     await store.save()
 
-    // 更新状态
+    //
     await get().refreshSkills()
   },
 
-  // 删除 Skill
+  // Skill
   deleteSkill: async (id: string, scope?: 'global' | 'project') => {
     const skill = scope
       ? skillManager.getSkillsByScope(scope).find(candidate => candidate.metadata.id === id)
@@ -193,38 +193,38 @@ export const useSkillsStore = create<SkillsState>((set, get) => ({
 
     await uninstallSkill(id, skill.metadata.scope)
 
-    // 更新状态
+    //
     await get().refreshSkills()
   },
 
-  // 获取 Skill
+  // Skill
   getSkill: (id: string) => {
     return skillManager.getSkill(id)
   },
 
-  // 获取已启用的 Skills
+  // Skills
   getEnabledSkills: async () => {
     return await skillManager.getEnabledSkills()
   },
 
-  // 获取可用户调用的 Skills
+  // Skills
   getUserInvocableSkills: () => {
     return skillManager.getUserInvocableSkills()
   },
 
-  // 按作用域获取 Skills
+  // Skills
   getSkillsByScope: (scope: 'global' | 'project') => {
     return skillManager.getSkillsByScope(scope)
   },
 
-  // 添加执行记录
+  //
   addExecutionRecord: (record: SkillExecutionRecord) => {
     const history = get().skillHistory
-    const newHistory = [record, ...history].slice(0, 100) // 保留最近 100 条
+    const newHistory = [record, ...history].slice(0, 100) // 100
     set({ skillHistory: newHistory })
   },
 
-  // 清除执行历史
+  //
   clearExecutionHistory: () => {
     set({ skillHistory: [] })
   },

@@ -17,7 +17,7 @@ import { getFilePathOptions, getWorkspacePath } from '@/lib/workspace'
 import { shouldExclude } from '@/config/sync-exclusions'
 
 /**
- * 获取 GitLab 分支配置
+ * GitLab 
  */
 async function getGitlabBranch(): Promise<string> {
   const store = await Store.load('store.json')
@@ -25,7 +25,7 @@ async function getGitlabBranch(): Promise<string> {
 }
 
 /**
- * 获取 Gitea 分支配置
+ * Gitea 
  */
 async function getGiteaBranch(): Promise<string> {
   const store = await Store.load('store.json')
@@ -33,7 +33,7 @@ async function getGiteaBranch(): Promise<string> {
 }
 
 /**
- * 获取 S3 配置
+ * S3 
  */
 async function getS3Config(): Promise<S3Config | null> {
   const store = await Store.load('store.json')
@@ -45,7 +45,7 @@ async function getS3Config(): Promise<S3Config | null> {
 }
 
 /**
- * 获取 WebDAV 配置
+ * WebDAV 
  */
 async function getWebDAVConfig(): Promise<WebDAVConfig | null> {
   const store = await Store.load('store.json')
@@ -56,31 +56,31 @@ async function getWebDAVConfig(): Promise<WebDAVConfig | null> {
   return null
 }
 
-// 同步配置
+//
 export interface SyncConfig {
-  autoSync: boolean           // 自动同步总开关
-  autoPushOnSave: boolean     // 保存时自动推送
-  autoPullOnOpen: boolean     // 打开或切换文件时自动拉取
+  autoSync: boolean           //
+  autoPushOnSave: boolean     // Save
+  autoPullOnOpen: boolean     //
   conflictPolicy: 'ask' | 'local' | 'remote'
 }
 
 export const defaultSyncConfig: SyncConfig = {
   autoSync: true,
   autoPushOnSave: true,
-  autoPullOnOpen: true,       // 默认开启
+  autoPullOnOpen: true,       //
   conflictPolicy: 'ask'
 }
 
-// 同步状态
+//
 export interface SyncState {
-  isSyncing: boolean          // 是否正在同步
-  pendingSync: boolean         // 是否有待同步的变更
-  lastSyncTime: number        // 最后同步时间
-  lastSyncSha: string         // 最后同步的 SHA
+  isSyncing: boolean          //
+  pendingSync: boolean         //
+  lastSyncTime: number        //
+  lastSyncSha: string         // SHA
   syncStatus: 'synced' | 'local_newer' | 'remote_newer' | 'conflict' | 'unknown'
 }
 
-// 同步结果
+//
 export interface SyncResult {
   success: boolean
   action: 'push' | 'pull' | 'delete' | 'none' | 'conflict'
@@ -88,7 +88,7 @@ export interface SyncResult {
   error?: string
 }
 
-// 同步日志
+//
 export interface SyncLog {
   timestamp: number
   action: 'push' | 'pull' | 'delete'
@@ -97,7 +97,7 @@ export interface SyncLog {
   error?: string
 }
 
-// 同步管理器
+//
 export class SyncManager {
   private config: SyncConfig = { ...defaultSyncConfig }
   private state: SyncState = {
@@ -115,111 +115,111 @@ export class SyncManager {
   }
 
   /**
-   * 加载配置
-   */
+ * 
+ */
   async loadConfig(): Promise<void> {
     try {
-      // 先从 sync_config.json 加载配置
+      // sync_config.json
       const syncStore = await Store.load('sync_config.json')
       const savedConfig = await syncStore.get<SyncConfig>('config')
       if (savedConfig) {
         this.config = { ...defaultSyncConfig, ...savedConfig }
       }
 
-      // 再从 store.json 读取设置中的 autoPull 配置
+      // store.json autoPull
       const settingStore = await Store.load('store.json')
       const autoPullOnOpen = await settingStore.get<boolean>('autoPullOnOpen')
 
-      // 覆盖配置
+      //
       if (autoPullOnOpen !== undefined && autoPullOnOpen !== null) {
         this.config.autoPullOnOpen = autoPullOnOpen
       }
     } catch {
-      // 静默处理配置加载错误
+      //
     }
   }
 
   /**
-   * 保存配置
-   */
+ * 
+ */
   async saveConfig(): Promise<void> {
     try {
       const store = await Store.load('sync_config.json')
       await store.set('config', this.config)
       await store.save()
     } catch {
-      // 静默处理配置保存错误
+      //
     }
   }
 
   /**
-   * 更新配置
-   */
+ * 
+ */
   async updateConfig(config: Partial<SyncConfig>): Promise<void> {
     this.config = { ...this.config, ...config }
     await this.saveConfig()
   }
 
   /**
-   * 获取配置
-   */
+ * 
+ */
   getConfig(): SyncConfig {
     return { ...this.config }
   }
 
   /**
-   * 获取同步状态
-   */
+ * 
+ */
   getState(): SyncState {
     return { ...this.state }
   }
 
   /**
-   * 获取当前使用的平台
-   */
+ * 
+ */
   async getCurrentPlatform(): Promise<string> {
     const store = await Store.load('store.json')
     return await store.get<string>('primaryBackupMethod') || 'github'
   }
 
   /**
-   * 计算文件的 SHA
-   */
+ * SHA
+ */
   async calculateSha(content: string): Promise<string> {
     return await calculateFileSha(content)
   }
 
   /**
-   * 获取本地文件 SHA
-   */
+ * SHA
+ */
   async getLocalSha(path: string): Promise<string | null> {
     const meta = await getLocalFileMetadata(path)
     return meta.localSha || null
   }
 
   /**
-   * 获取远程文件 SHA
-   */
+ * SHA
+ */
   async getRemoteSha(path: string): Promise<string | null> {
     const info = await getRemoteFileInfo(path)
     return info.sha || null
   }
 
   /**
-   * 推送文件到远程
-   */
+ * 
+ */
   async pushFile(path: string, content: string): Promise<SyncResult> {
-    // 检查是否应该排除
+    //
     if (shouldExclude(path)) {
-      return { success: true, action: 'none', message: '文件被排除在同步之外' }
+      return { success: true, action: 'none', message: 'File' }
     }
 
     try {
       const platform = await this.getCurrentPlatform() as 'github' | 'gitee' | 'gitlab' | 'gitea' | 's3' | 'webdav'
-      // S3 不需要 repo，直接设为空字符串
+      // S3 repo，
       const repo = (platform === 's3' || platform === 'webdav') ? '' : await getSyncRepoName(platform)
       const sha = (platform === 's3' || platform === 'webdav') ? undefined : await this.getRemoteSha(path) || undefined
-      const message = `Sync: ${path} - ${new Date().toLocaleString('zh-CN')}`
+      const message = `Sync: ${path} - ${new Date().toLocaleString('en-US')}`
       const filename = path.split('/').pop() || path
 
       let uploadSuccess = false
@@ -248,13 +248,13 @@ export class SyncManager {
         case 's3': {
           const s3Config = await getS3Config()
           if (!s3Config) {
-            return { success: false, action: 'push', error: 'S3 配置未找到' }
+            return { success: false, action: 'push', error: 'S3 configuration not found' }
           }
-          // S3 使用相对路径作为 key，不需要添加 pathPrefix
+          // S3 key， pathPrefix
           const result = await s3Upload(s3Config, path, content)
           uploadSuccess = !!result
           if (uploadSuccess && result) {
-            // 更新 ETag 记录
+            // ETag
             useSyncStore.getState().updateS3FileEtag(path, result.etag)
           }
           break
@@ -262,12 +262,12 @@ export class SyncManager {
         case 'webdav': {
           const webdavConfig = await getWebDAVConfig()
           if (!webdavConfig) {
-            return { success: false, action: 'push', error: 'WebDAV 配置未找到' }
+            return { success: false, action: 'push', error: 'WebDAV configuration not found' }
           }
           const result = await webdavUpload(webdavConfig, path, content)
           uploadSuccess = !!result
           if (uploadSuccess && result) {
-            // 更新 ETag 记录
+            // ETag
             useSyncStore.getState().updateWebDAVFileEtag(path, result.etag)
           }
           break
@@ -275,7 +275,7 @@ export class SyncManager {
       }
 
       if (uploadSuccess) {
-        // 推送成功后更新本地记录的远程 SHA
+        // SHA
         if (platform !== 's3' && platform !== 'webdav') {
           const newRemoteSha = await this.getRemoteSha(path)
           if (newRemoteSha) {
@@ -283,11 +283,11 @@ export class SyncManager {
           }
         }
         await this.logSync(path, 'push', true)
-        return { success: true, action: 'push', message: '推送成功' }
+        return { success: true, action: 'push', message: 'Push succeeded' }
       }
 
-      await this.logSync(path, 'push', false, '推送失败')
-      return { success: false, action: 'push', error: '推送失败' }
+      await this.logSync(path, 'push', false, 'Push failed')
+      return { success: false, action: 'push', error: 'Push failed' }
     } catch (error) {
       await this.logSync(path, 'push', false, String(error))
       return { success: false, action: 'push', error: String(error) }
@@ -295,12 +295,12 @@ export class SyncManager {
   }
 
   /**
-   * 从远程拉取文件
-   */
+ * 
+ */
   async pullFile(path: string): Promise<SyncResult> {
     try {
       const platform = await this.getCurrentPlatform() as 'github' | 'gitee' | 'gitlab' | 'gitea' | 's3' | 'webdav'
-      // S3 不需要 repo
+      // S3 repo
       const repo = (platform === 's3' || platform === 'webdav') ? '' : await getSyncRepoName(platform)
 
       let content: string | undefined
@@ -329,13 +329,13 @@ export class SyncManager {
         case 's3': {
           const s3Config = await getS3Config()
           if (!s3Config) {
-            return { success: false, action: 'pull', error: 'S3 配置未找到' }
+            return { success: false, action: 'pull', error: 'S3 configuration not found' }
           }
-          // S3 使用相对路径作为 key
+          // S3 key
           const s3File = await s3Download(s3Config, path)
           if (s3File) {
             content = s3File.content
-            // 更新 ETag 记录
+            // ETag
             useSyncStore.getState().updateS3FileEtag(path, s3File.etag)
           }
           break
@@ -343,12 +343,12 @@ export class SyncManager {
         case 'webdav': {
           const webdavConfig = await getWebDAVConfig()
           if (!webdavConfig) {
-            return { success: false, action: 'pull', error: 'WebDAV 配置未找到' }
+            return { success: false, action: 'pull', error: 'WebDAV configuration not found' }
           }
           const webdavFile = await webdavDownload(webdavConfig, path)
           if (webdavFile) {
             content = webdavFile.content
-            // 更新 ETag 记录
+            // ETag
             useSyncStore.getState().updateWebDAVFileEtag(path, webdavFile.etag)
           }
           break
@@ -356,14 +356,14 @@ export class SyncManager {
       }
 
       if (content) {
-        // S3 和 WebDAV 不需要 base64 解码，其他平台需要
+        // S3 WebDAV base64 ，
         let decodedContent = content
         if (platform !== 's3' && platform !== 'webdav') {
           decodedContent = decodeBase64ToString(content)
         }
         await saveLocalFile(path, decodedContent)
 
-        // 获取远程文件的 SHA 并更新本地记录
+        // SHA
         if (platform !== 's3' && platform !== 'webdav') {
           const remoteSha = await this.getRemoteSha(path)
           if (remoteSha) {
@@ -373,11 +373,11 @@ export class SyncManager {
 
         await updateFileSyncTime(path)
         await this.logSync(path, 'pull', true)
-        return { success: true, action: 'pull', message: '拉取成功' }
+        return { success: true, action: 'pull', message: 'Remote file does not exist' }
       }
 
-      await this.logSync(path, 'pull', false, '文件不存在')
-      return { success: false, action: 'pull', error: '远程文件不存在' }
+      await this.logSync(path, 'pull', false, 'File does not exist')
+      return { success: false, action: 'pull', error: 'Remote file does not exist' }
     } catch (error) {
       await this.logSync(path, 'pull', false, String(error))
       return { success: false, action: 'pull', error: String(error) }
@@ -385,18 +385,18 @@ export class SyncManager {
   }
 
   /**
-   * 删除远程文件
-   */
+ * 
+ */
   async deleteRemoteFile(path: string): Promise<SyncResult> {
     try {
       const platform = await this.getCurrentPlatform() as 'github' | 'gitee' | 'gitlab' | 'gitea' | 's3' | 'webdav'
-      // S3 不需要 repo
+      // S3 repo
       const repo = (platform === 's3' || platform === 'webdav') ? '' : await getSyncRepoName(platform)
       const sha = (platform === 's3' || platform === 'webdav') ? undefined : await this.getRemoteSha(path)
 
-      // S3 和 WebDAV 不需要 SHA，但其他平台需要
+      // S3 WebDAV SHA，
       if ((platform !== 's3' && platform !== 'webdav') && !sha) {
-        return { success: true, action: 'none', message: '远程文件不存在，无需删除' }
+        return { success: true, action: 'none', message: 'Remote file does not exist，None' }
       }
 
       let success = false
@@ -417,12 +417,12 @@ export class SyncManager {
         case 's3': {
           const s3Config = await getS3Config()
           if (!s3Config) {
-            return { success: false, action: 'delete', error: 'S3 配置未找到' }
+            return { success: false, action: 'delete', error: 'S3 configuration not found' }
           }
-          // S3 使用相对路径作为 key
+          // S3 key
           success = await s3Delete(s3Config, path)
           if (success) {
-            // 移除 ETag 记录
+            // ETag
             useSyncStore.getState().removeS3FileEtag(path)
           }
           break
@@ -430,11 +430,11 @@ export class SyncManager {
         case 'webdav': {
           const webdavConfig = await getWebDAVConfig()
           if (!webdavConfig) {
-            return { success: false, action: 'delete', error: 'WebDAV 配置未找到' }
+            return { success: false, action: 'delete', error: 'WebDAV configuration not found' }
           }
           success = await webdavDelete(webdavConfig, path)
           if (success) {
-            // 移除 ETag 记录
+            // ETag
             useSyncStore.getState().removeWebDAVFileEtag(path)
           }
           break
@@ -443,11 +443,11 @@ export class SyncManager {
 
       if (success) {
         await this.logSync(path, 'delete', true)
-        return { success: true, action: 'delete', message: '删除成功' }
+        return { success: true, action: 'delete', message: 'Delete succeeded' }
       }
 
-      await this.logSync(path, 'delete', false, '删除失败')
-      return { success: false, action: 'delete', error: '删除失败' }
+      await this.logSync(path, 'delete', false, 'Delete failed')
+      return { success: false, action: 'delete', error: 'Delete failed' }
     } catch (error) {
       await this.logSync(path, 'delete', false, String(error))
       return { success: false, action: 'delete', error: String(error) }
@@ -455,17 +455,17 @@ export class SyncManager {
   }
 
   /**
-   * 处理冲突
-   */
+ * 
+ */
   async resolveConflict(path: string, strategy: 'ask' | 'local' | 'remote', localContent?: string, remoteContent?: string): Promise<SyncResult> {
     try {
-      // 如果策略是 ask，需要获取用户选择
+      // ask，
       if (strategy === 'ask') {
-        // 这里会通过 UI 弹窗让用户选择，实际处理在外部
-        return { success: false, action: 'conflict', message: '需要用户选择' }
+        // UI ，
+        return { success: false, action: 'conflict', message: 'Translated message' }
       }
 
-      // 获取内容
+      //
       if (!localContent) {
         const workspace = await getWorkspacePath()
         const pathOptions = await getFilePathOptions(path)
@@ -484,53 +484,53 @@ export class SyncManager {
 
       switch (strategy) {
         case 'local':
-          // 保留本地，删除远程然后重新上传
+          // ，
           await this.deleteRemoteFile(path)
           await this.pushFile(path, localContent)
-          toast({ title: '冲突处理', description: '保留本地版本' })
+          toast({ title: 'Keep local version', description: 'Keep local version' })
           break
         case 'remote':
-          // 使用远程版本
+          //
           await saveLocalFile(path, remoteContent)
           await updateFileSyncTime(path)
-          toast({ title: '冲突处理', description: '使用远程版本' })
+          toast({ title: 'Use remote version', description: 'Use remote version' })
           break
       }
 
-      return { success: true, action: 'push', message: '冲突已解决' }
+      return { success: true, action: 'push', message: 'Conflict' }
     } catch (error) {
       return { success: false, action: 'conflict', error: String(error) }
     }
   }
 
   /**
-   * 同步单个文件
-   */
+ * 
+ */
   async syncFile(path: string, options: {
     onConflict?: (local: string, remote: string) => Promise<'local' | 'remote' | 'cancel'>
   } = {}): Promise<SyncResult> {
-    // 检查是否正在同步
+    //
     if (this.state.isSyncing) {
       this.state.pendingSync = true
-      return { success: true, action: 'none', message: '同步中，标记待同步' }
+      return { success: true, action: 'none', message: '，' }
     }
 
     this.state.isSyncing = true
 
     try {
-      // 获取本地和远程的 SHA
+      // SHA
       const localSha = await this.getLocalSha(path)
       const remoteSha = await this.getRemoteSha(path)
 
-      // 比较版本
+      //
       const syncResult = await compareFileVersions(path)
 
       if (syncResult.action === 'none') {
-        return { success: true, action: 'none', message: '文件已同步' }
+        return { success: true, action: 'none', message: 'File' }
       }
 
       if (syncResult.action === 'push') {
-        // 推送本地版本
+        //
         const workspace = await getWorkspacePath()
         const pathOptions = await getFilePathOptions(path)
         const content = workspace.isCustom
@@ -544,7 +544,7 @@ export class SyncManager {
       }
 
       if (syncResult.action === 'pull') {
-        // 拉取远程版本
+        //
         const result = await this.pullFile(path)
         this.state.lastSyncTime = Date.now()
         this.state.lastSyncSha = remoteSha || ''
@@ -552,7 +552,7 @@ export class SyncManager {
       }
 
       if (syncResult.action === 'conflict' && options.onConflict) {
-        // 处理冲突
+        //
         const workspace = await getWorkspacePath()
         const pathOptions = await getFilePathOptions(path)
         const localContent = workspace.isCustom
@@ -562,7 +562,7 @@ export class SyncManager {
         const choice = await options.onConflict(localContent, remoteContent)
 
         if (choice === 'cancel') {
-          return { success: false, action: 'conflict', error: '用户取消' }
+          return { success: false, action: 'conflict', error: 'Cancelled by user' }
         }
 
         return await this.resolveConflict(path, choice, localContent, remoteContent)
@@ -572,7 +572,7 @@ export class SyncManager {
     } finally {
       this.state.isSyncing = false
 
-      // 如果有待同步的变更，继续同步
+      // ，
       if (this.state.pendingSync) {
         this.state.pendingSync = false
         await this.syncFile(path, options)
@@ -581,28 +581,28 @@ export class SyncManager {
   }
 
   /**
-   * 保存时触发推送（带节流）
-   */
+ * （）
+ */
   async onSave(path: string): Promise<void> {
     if (!this.config.autoSync || !this.config.autoPushOnSave) {
       return
     }
 
-    // 检查是否应该排除
+    //
     if (shouldExclude(path)) {
       return
     }
 
-    // 标记该路径需要同步（内容从磁盘读取）
+    // （）
     this.syncQueue.set(path, { timestamp: Date.now() })
 
-    // 如果正在同步，标记待同步
+    // ，
     if (this.state.isSyncing) {
       this.state.pendingSync = true
       return
     }
 
-    // 节流 2 秒
+    // 2
     if (this.throttleTimer) {
       clearTimeout(this.throttleTimer)
     }
@@ -613,26 +613,26 @@ export class SyncManager {
   }
 
   /**
-   * 打开时触发拉取
-   * 返回 { updated: true, content: string } 如果拉取了新内容
-   */
+ * 
+ * { updated: true, content: string } 
+ */
   async onOpen(path: string): Promise<{ updated: boolean; content?: string } | null> {
     if (!this.config.autoSync || !this.config.autoPullOnOpen) {
       return null
     }
 
-    // 检查是否应该排除
+    //
     if (shouldExclude(path)) {
       return null
     }
 
-    // 比较版本，决定是否需要拉取
+    // ，
     const syncResult = await compareFileVersions(path)
 
     if (syncResult.action === 'pull') {
       const result = await this.pullFile(path)
       if (result.success && result.action === 'pull') {
-        // 读取拉取的内容并返回
+        //
         try {
           const { pullRemoteFile } = await import('./auto-sync')
           const content = await pullRemoteFile(path)
@@ -644,7 +644,7 @@ export class SyncManager {
       return { updated: result.success }
     }
 
-    // 处理冲突情况：远程文件较新但 SHA 不同（可能是同步过的）
+    // ： SHA （）
     if (syncResult.action === 'conflict') {
       const result = await this.pullFile(path)
       if (result.success && result.action === 'pull') {
@@ -663,14 +663,14 @@ export class SyncManager {
   }
 
   /**
-   * 处理同步队列
-   */
+ * 
+ */
   private async processSyncQueue(): Promise<void> {
     this.state.isSyncing = true
 
     try {
       for (const [path] of this.syncQueue) {
-        // 始终从磁盘读取最新内容，确保上传的是本地最新内容
+        // ，
         const { getFilePathOptions, getWorkspacePath } = await import('@/lib/workspace')
         const { readTextFile } = await import('@tauri-apps/plugin-fs')
         const workspace = await getWorkspacePath()
@@ -695,8 +695,8 @@ export class SyncManager {
   }
 
   /**
-   * 同步所有文件
-   */
+ * 
+ */
   async syncAll(paths: string[]): Promise<SyncResult[]> {
     const results: SyncResult[] = []
 
@@ -709,8 +709,8 @@ export class SyncManager {
   }
 
   /**
-   * 记录同步日志
-   */
+ * 
+ */
   private async logSync(filePath: string, action: 'push' | 'pull' | 'delete', success: boolean, error?: string): Promise<void> {
     try {
       const store = await Store.load('sync_logs.json')
@@ -724,7 +724,7 @@ export class SyncManager {
         error
       })
 
-      // 只保留最近 100 条
+      // 100
       if (logs.length > 100) {
         logs.splice(100)
       }
@@ -736,8 +736,8 @@ export class SyncManager {
   }
 
   /**
-   * 获取同步日志
-   */
+ * 
+ */
   async getLogs(limit?: number): Promise<SyncLog[]> {
     try {
       const store = await Store.load('sync_logs.json')
@@ -749,8 +749,8 @@ export class SyncManager {
   }
 
   /**
-   * 清除同步日志
-   */
+ * 
+ */
   async clearLogs(): Promise<void> {
     try {
       const store = await Store.load('sync_logs.json')
@@ -761,8 +761,8 @@ export class SyncManager {
   }
 
   /**
-   * 获取文件的同步状态
-   */
+ * 
+ */
   async getFileSyncStatus(path: string): Promise<SyncState['syncStatus']> {
     const localSha = await this.getLocalSha(path)
     const remoteSha = await this.getRemoteSha(path)
@@ -787,7 +787,7 @@ export class SyncManager {
   }
 }
 
-// 单例实例
+//
 let syncManager: SyncManager | null = null
 
 export function getSyncManager(): SyncManager {
@@ -797,7 +797,7 @@ export function getSyncManager(): SyncManager {
   return syncManager
 }
 
-// 便捷函数
+//
 export async function syncOnSave(path: string): Promise<void> {
   const manager = getSyncManager()
   await manager.onSave(path)
@@ -818,15 +818,15 @@ function hasConfiguredText(value: string | null | undefined): boolean {
 }
 
 /**
- * 检查同步是否已配置
- * 检查是否有选择同步平台并配置了对应的访问令牌
+ * 
+ * 
  */
 export async function isSyncConfigured(): Promise<boolean> {
   try {
     const store = await Store.load('store.json')
     const platform = await store.get<string>('primaryBackupMethod') || 'github'
 
-    // 检查对应平台的访问令牌（确保不是空字符串）
+    // （）
     switch (platform) {
       case 'github': {
         const token = await store.get<string>('accessToken')

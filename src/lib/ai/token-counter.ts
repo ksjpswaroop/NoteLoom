@@ -1,8 +1,8 @@
 import type { Chat } from '@/db/chats'
 
 /**
- * 简单的 Token 估算（不依赖外部库）
- * 规则：中文约 1.5 字符/token，英文约 4 字符/token
+ * Token （）
+ * ： 1.5 /token， 4 /token
  */
 export function estimateTokens(text: string): number {
   if (!text) return 0
@@ -12,7 +12,7 @@ export function estimateTokens(text: string): number {
 }
 
 /**
- * 计算 Chat 数组的总 token 量
+ * Chat token 
  */
 export function estimateChatTokens(chats: Chat[]): number {
   return chats.reduce((sum, chat) => {
@@ -21,7 +21,7 @@ export function estimateChatTokens(chats: Chat[]): number {
 }
 
 /**
- * 计算用户消息的 token 总量
+ * token 
  */
 export function estimateUserTokens(chats: Chat[]): number {
   return chats

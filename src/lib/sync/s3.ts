@@ -3,8 +3,8 @@ import { S3Config } from '@/types/sync'
 import { buildRepoContentPath, debugSyncPath, debugSyncPerf } from './remote-file'
 
 /**
- * S3 同步核心模块
- * 支持阿里云 OSS、AWS S3、MinIO 等 S3 兼容服务
+ * S3 
+ * OSS、AWS S3、MinIO S3 
  */
 
 function getPerfNow() {
@@ -15,7 +15,7 @@ function roundMs(value: number) {
   return Math.round(value)
 }
 
-// 生成 AWS 签名 V4 (使用 Web Crypto API)
+// AWS V4 ( Web Crypto API)
 async function generateSignature(
   method: string,
   url: string,
@@ -28,21 +28,21 @@ async function generateSignature(
   const dateStamp = date.toISOString().slice(0, 10).replace(/-/g, '')
   const amzDate = date.toISOString().replace(/[:\-]|\.\d{3}/g, '')
 
-  // 必须将 x-amz-date 加入 headers 参与签名
+  // x-amz-date headers
   headers['x-amz-date'] = amzDate
 
-  // 创建规范请求
-  // 必须对路径进行 URI 编码，但要保留斜杠
+  //
+  // URI ，
   const urlObj = new URL(url)
   const canonicalUri = urlObj.pathname
 
-  // AWS V4 签名要求查询字符串必须按字母顺序排列并正确编码
+  // AWS V4
   const canonicalQuerystring = Array.from(urlObj.searchParams.entries())
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
     .join('&')
 
-  // AWS V4 签名要求 Headers 的 Key 必须全部转为小写
+  // AWS V4 Headers Key
   const canonicalHeaders = Object.keys(headers)
     .sort()
     .map(key => `${key.toLowerCase()}:${headers[key].trim()}\n`)
@@ -53,7 +53,7 @@ async function generateSignature(
     .map(key => key.toLowerCase())
     .join(';')
 
-  // 使用 Web Crypto API 计算 SHA256
+  // Web Crypto API SHA256
   const payloadHash = await crypto.subtle.digest('SHA-256', payload)
   const payloadHashHex = Array.from(new Uint8Array(payloadHash))
     .map(b => b.toString(16).padStart(2, '0'))
@@ -68,7 +68,7 @@ async function generateSignature(
     payloadHashHex
   ].join('\n')
 
-  // 创建字符串以供签名
+  //
   const credentialScope = `${dateStamp}/${config.region}/s3/aws4_request`
 
   const stringToSign = [
@@ -78,7 +78,7 @@ async function generateSignature(
     await sha256Hex(canonicalRequest)
   ].join('\n')
 
-  // 计算签名
+  //
   const signingKey = await getSignatureKey(config.secretAccessKey, dateStamp, config.region, 's3')
   const signature = await hmacSha256Hex(signingKey, stringToSign)
 
@@ -89,7 +89,7 @@ async function generateSignature(
   }
 }
 
-// Web Crypto API 辅助函数
+// Web Crypto API
 async function sha256Hex(data: string): Promise<string> {
   const encoder = new TextEncoder()
   const hash = await crypto.subtle.digest('SHA-256', encoder.encode(data))
@@ -118,7 +118,7 @@ async function getSignatureKey(
 ): Promise<CryptoKey> {
   const encoder = new TextEncoder()
 
-  // 导入初始密钥
+  //
   const kSecret = await crypto.subtle.importKey(
     'raw',
     encoder.encode('AWS4' + key),
@@ -170,17 +170,17 @@ async function getSignatureKey(
 }
 
 /**
- * 构建 S3 URL
- * 支持 Virtual Hosted Style 和 Path Style
+ * S3 URL
+ * Virtual Hosted Style Path Style
  */
 function buildS3Url(config: S3Config, key: string): string {
   const endpoint = (config.endpoint || `https://s3.${config.region}.amazonaws.com`).trim()
   const bucket = config.bucket.trim()
 
-  // 移除 endpoint 末尾的斜杠
+  // endpoint
   const cleanEndpoint = endpoint.endsWith('/') ? endpoint.slice(0, -1) : endpoint
 
-  // 处理 pathPrefix，移除末尾的斜杠以防止双斜杠问题
+  // pathPrefix，
   const prefix = config.pathPrefix ? config.pathPrefix.trim().replace(/\/+$/, '') : ''
   const fullKey = prefix ? `${prefix}/${key}` : key
   const encodedFullKey = buildRepoContentPath({ path: fullKey })
@@ -193,29 +193,29 @@ function buildS3Url(config: S3Config, key: string): string {
 
   let url = ''
 
-  // 针对阿里云 OSS、AWS S3 等支持 Virtual Hosted Style 的服务
+  // OSS、AWS S3 Virtual Hosted Style
   const isAliyun = cleanEndpoint.includes('aliyuncs.com')
   const isAWS = cleanEndpoint.includes('amazonaws.com')
   const isCloudflareR2 = cleanEndpoint.includes('cloudflarestorage.com')
 
-  // Cloudflare R2 需要使用 Path Style，不是 Virtual Hosted Style
+  // Cloudflare R2 Path Style， Virtual Hosted Style
   if (isCloudflareR2) {
-    // 使用 Path Style: https://endpoint/bucket/key
+    // Path Style: https://endpoint/bucket/key
     url = `${cleanEndpoint}/${bucket}/${encodedFullKey}`
   } else if (isAliyun || isAWS) {
-    // 使用 Virtual Hosted Style: https://bucket.endpoint/key
+    // Virtual Hosted Style: https://bucket.endpoint/key
     try {
       const urlObj = new URL(cleanEndpoint)
       urlObj.hostname = `${bucket}.${urlObj.hostname}`
       url = `${urlObj.toString()}/${encodedFullKey}`
-      // 处理可能的双斜杠
+      //
       url = url.replace(/([^:]\/)\/+/g, '$1')
     } catch {
       console.warn('[S3 Sync] Failed to switch to Virtual Hosted Style, using Path Style')
       url = `${cleanEndpoint}/${bucket}/${encodedFullKey}`
     }
   } else {
-    // MinIO 等使用 Path Style
+    // MinIO Path Style
     url = `${cleanEndpoint}/${bucket}/${encodedFullKey}`
   }
 
@@ -223,16 +223,16 @@ function buildS3Url(config: S3Config, key: string): string {
 }
 
 /**
- * 构建 S3 基础 URL（不含 key）
+ * S3 URL（ key）
  */
 function buildS3BaseUrl(config: S3Config): string {
   const endpoint = (config.endpoint || `https://s3.${config.region}.amazonaws.com`).trim()
   const bucket = config.bucket.trim()
 
-  // 移除 endpoint 末尾的斜杠
+  // endpoint
   const cleanEndpoint = endpoint.endsWith('/') ? endpoint.slice(0, -1) : endpoint
 
-  // 针对阿里云 OSS、AWS S3 等支持 Virtual Hosted Style 的服务进行优化
+  // OSS、AWS S3 Virtual Hosted Style
   const isAliyun = cleanEndpoint.includes('aliyuncs.com')
   const isAWS = cleanEndpoint.includes('amazonaws.com')
 
@@ -251,7 +251,7 @@ function buildS3BaseUrl(config: S3Config): string {
 }
 
 /**
- * 测试 S3 连接
+ * S3 
  */
 export async function testS3Connection(config: S3Config, proxy?: Proxy): Promise<boolean> {
   try {
@@ -268,7 +268,7 @@ export async function testS3Connection(config: S3Config, proxy?: Proxy): Promise
       'X-Amz-Content-Sha256': payloadHashHex
     }
 
-    // 使用 GET 请求代替 HEAD，以便在出错时能获取具体的 XML 错误信息
+    // GET HEAD， XML
     const method = 'GET'
     const { authorization, amzDate } = await generateSignature(method, baseUrl, headers, emptyPayload, config)
 
@@ -287,7 +287,7 @@ export async function testS3Connection(config: S3Config, proxy?: Proxy): Promise
       return true
     }
 
-    // 如果 GET (ListObjects) 失败（可能是只有写权限），尝试 PUT 一个测试文件
+    // GET (ListObjects) （）， PUT
     if (response.status === 403) {
       console.warn('ListObjects (GET) failed with 403, trying PutObject to verify write permission...')
 
@@ -318,7 +318,7 @@ export async function testS3Connection(config: S3Config, proxy?: Proxy): Promise
       })
 
       if (putResponse.status === 200 || putResponse.status === 204) {
-        // 清理测试文件
+        //
         try {
           const deleteHeaders = {
             Host: new URL(testUrl).host
@@ -337,7 +337,7 @@ export async function testS3Connection(config: S3Config, proxy?: Proxy): Promise
             proxy
           })
         } catch {
-          // 忽略清理错误
+          //
         }
         return true
       } else {
@@ -359,7 +359,7 @@ export async function testS3Connection(config: S3Config, proxy?: Proxy): Promise
   } catch (error) {
     console.error('S3 connection test failed:', error)
 
-    // 尝试提取更有用的错误信息
+    //
     const errorMessage = (error as Error).message || String(error)
     if (errorMessage.includes('error sending request')) {
       console.warn(
@@ -372,7 +372,7 @@ export async function testS3Connection(config: S3Config, proxy?: Proxy): Promise
 }
 
 /**
- * 上传文件到 S3（类似推送）
+ * S3（）
  */
 export async function s3Upload(
   config: S3Config,
@@ -437,7 +437,7 @@ export async function s3Upload(
     })
 
     if (response.status === 200 || response.status === 204) {
-      // 获取 ETag
+      // ETag
       const etag = response.headers.get('ETag') || ''
       logPerf('completed', {
         success: true,
@@ -465,7 +465,7 @@ export async function s3Upload(
 }
 
 /**
- * 从 S3 下载文件（类似拉取）
+ * S3 （）
  */
 async function s3DownloadBytesInternal(
   config: S3Config,
@@ -527,7 +527,7 @@ async function s3DownloadBytesInternal(
 
       return { content, etag, lastModified }
     } else if (response.status === 404) {
-      // 文件不存在
+      //
       logPerf('completed', {
         success: false,
         status: response.status,
@@ -570,7 +570,7 @@ export async function s3Download(
 }
 
 /**
- * 删除 S3 文件
+ * S3 
  */
 export async function s3Delete(config: S3Config, key: string, proxy?: Proxy): Promise<boolean> {
   try {
@@ -600,7 +600,7 @@ export async function s3Delete(config: S3Config, key: string, proxy?: Proxy): Pr
       proxy
     })
 
-    // 204 No Content 或 200 OK 都表示删除成功
+    // 204 No Content 200 OK
     return response.status === 204 || response.status === 200
   } catch (error) {
     console.error('S3 Delete error:', error)
@@ -609,7 +609,7 @@ export async function s3Delete(config: S3Config, key: string, proxy?: Proxy): Pr
 }
 
 /**
- * 列出 S3 文件（用于获取文件列表）
+ * S3 （）
  */
 export async function s3ListObjects(
   config: S3Config,
@@ -633,11 +633,11 @@ export async function s3ListObjects(
     logPerf('start')
     const baseUrl = buildS3BaseUrl(config)
 
-    // 处理 pathPrefix
+    // pathPrefix
     const configPrefix = config.pathPrefix ? config.pathPrefix.trim().replace(/\/+$/, '') : ''
     const fullPrefix = configPrefix ? `${configPrefix}/${prefix}` : prefix
 
-    // 构建 ListObjectsV2 URL
+    // ListObjectsV2 URL
     const listUrl = new URL(baseUrl)
     listUrl.searchParams.set('list-type', '2')
     listUrl.searchParams.set('prefix', fullPrefix)
@@ -700,7 +700,7 @@ export async function s3ListObjects(
 }
 
 /**
- * 解析 ListObjectsV2 响应 XML
+ * ListObjectsV2 XML
  */
 function parseListObjectsResponse(
   xml: string,
@@ -708,26 +708,26 @@ function parseListObjectsResponse(
 ): Array<{ key: string; etag: string; lastModified: string; size: number }> {
   const results: Array<{ key: string; etag: string; lastModified: string; size: number }> = []
 
-  // 提取所有 Contents 节点
+  // Contents
   const contentsRegex = /<Contents>([\s\S]*?)<\/Contents>/g
   let match
 
   while ((match = contentsRegex.exec(xml)) !== null) {
     const content = match[1]
 
-    // 提取 Key
+    // Key
     const keyMatch = /<Key>(.*?)<\/Key>/.exec(content)
-    // 提取 ETag
+    // ETag
     const etagMatch = /<ETag>(.*?)<\/ETag>/.exec(content)
-    // 提取 LastModified
+    // LastModified
     const lastModifiedMatch = /<LastModified>(.*?)<\/LastModified>/.exec(content)
-    // 提取 Size
+    // Size
     const sizeMatch = /<Size>(.*?)<\/Size>/.exec(content)
 
     if (keyMatch) {
       let key = keyMatch[1]
 
-      // 移除 prefix 前缀，还原相对路径
+      // prefix ，
       if (prefix && key.startsWith(prefix + '/')) {
         key = key.substring(prefix.length + 1)
       }
@@ -745,7 +745,7 @@ function parseListObjectsResponse(
 }
 
 /**
- * 获取文件信息
+ * 
  */
 export async function s3HeadObject(
   config: S3Config,
@@ -803,7 +803,7 @@ export async function s3HeadObject(
 
       return { etag, lastModified }
     } else if (response.status === 404) {
-      // 文件不存在
+      //
       logPerf('completed', {
         success: false,
         status: response.status,

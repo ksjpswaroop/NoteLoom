@@ -1,4 +1,4 @@
-// 根据 markdown 截取标题
+// markdown
 export function extractTitle(content: string) {
   const regex = /^# (.*)/m
   const match = content.match(regex)

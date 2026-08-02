@@ -3,15 +3,15 @@ import { getMarks, getAllMarks, insertMark, updateMark, delMark, restoreMark, Ma
 import useTagStore from '@/stores/tag'
 
 /**
- * 获取当前选中的标签ID
- * 如果用户没有明确指定标签，使用当前选中的标签
+ * ID
+ * ，
  */
 function getCurrentTagId(tagId?: number): number {
-  // 如果明确传入了 tagId，使用传入的值
+  // tagId，
   if (tagId !== undefined && tagId !== null) {
     return tagId
   }
-  // 否则使用当前选中的标签
+  //
   return useTagStore.getState().currentTagId
 }
 
@@ -36,12 +36,12 @@ export const readMarksTool: Tool = {
       return {
         success: true,
         data: activeMarks,
-        message: `找到 ${activeMarks.length} 条记录`,
+        message: `Found ${activeMarks.length} records`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `读取记录失败: ${error}`,
+        error: `Failed to read record: ${error}`,
       }
     }
   },
@@ -97,12 +97,12 @@ export const createMarkTool: Tool = {
       return {
         success: true,
         data: { id: result.lastInsertId },
-        message: `成功创建记录，ID: ${result.lastInsertId}`,
+        message: `Successfully created record, ID: ${result.lastInsertId}`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `创建记录失败: ${error}`,
+        error: `Failed to create record: ${error}`,
       }
     }
   },
@@ -147,7 +147,7 @@ export const updateMarkTool: Tool = {
       if (!mark) {
         return {
           success: false,
-          error: `未找到ID为 ${params.id} 的记录`,
+          error: `Record with ID ${params.id} not found`,
         }
       }
       
@@ -166,19 +166,19 @@ export const updateMarkTool: Tool = {
         return {
           success: true,
           data: { id: mark.id, unchanged: true },
-          message: `记录 ID: ${params.id} 已是目标状态，无需重复更新`,
+          message: `Record ID: ${params.id} is already the target state; no update needed`,
         }
       }
       
       await updateMark(updatedMark)
       return {
         success: true,
-        message: `成功更新记录 ID: ${params.id}`,
+        message: `Successfully updated record ID: ${params.id}`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `更新记录失败: ${error}`,
+        error: `Failed to update record: ${error}`,
       }
     }
   },
@@ -205,19 +205,19 @@ export const deleteMarkTool: Tool = {
         return {
           success: true,
           data: { id: params.id, alreadyAbsent: true },
-          message: `记录 ID: ${params.id} 已删除，无需重复操作`,
+          message: `Record ID: ${params.id} is deleted; no repeat needed`,
         }
       }
       await delMark(params.id)
       return {
         success: true,
         data: { id: params.id, alreadyAbsent: false },
-        message: `成功删除记录 ID: ${params.id}`,
+        message: `Successfully deleted record ID: ${params.id}`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `删除记录失败: ${error}`,
+        error: `Failed to delete record: ${error}`,
       }
     }
   },
@@ -241,12 +241,12 @@ export const restoreMarkTool: Tool = {
       await restoreMark(params.id)
       return {
         success: true,
-        message: `成功恢复记录 ID: ${params.id}`,
+        message: `Successfully restored record ID: ${params.id}`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `恢复记录失败: ${error}`,
+        error: `Failed to restore record: ${error}`,
       }
     }
   },
@@ -294,12 +294,12 @@ export const searchMarksTool: Tool = {
       return {
         success: true,
         data: results,
-        message: `找到 ${results.length} 条匹配的记录`,
+        message: `Found ${results.length} matching records`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `搜索记录失败: ${error}`,
+        error: `Failed to search records: ${error}`,
       }
     }
   },
@@ -355,12 +355,12 @@ export const searchAllMarksTool: Tool = {
       return {
         success: true,
         data: results,
-        message: `在所有标签中找到 ${results.length} 条匹配的记录`,
+        message: `Found ${results.length} matching records across all tags`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `搜索所有记录失败: ${error}`,
+        error: `Failed to search all records: ${error}`,
       }
     }
   },
@@ -384,7 +384,7 @@ export const createMarksBatchTool: Tool = {
       if (!Array.isArray(params.marks) || params.marks.length === 0) {
         return {
           success: false,
-          error: '参数 marks 必须是非空数组',
+          error: 'Parameter marks must be a non-empty array',
         }
       }
 
@@ -403,12 +403,12 @@ export const createMarksBatchTool: Tool = {
       return {
         success: true,
         data: { count: marksToInsert.length },
-        message: `成功批量创建 ${marksToInsert.length} 条记录`,
+        message: `Successfully batch-created ${marksToInsert.length} records`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `批量创建记录失败: ${error}`,
+        error: `Failed to batch-create records: ${error}`,
       }
     }
   },
@@ -432,7 +432,7 @@ export const updateMarksBatchTool: Tool = {
       if (!Array.isArray(params.marks) || params.marks.length === 0) {
         return {
           success: false,
-          error: '参数 marks 必须是非空数组',
+          error: 'Parameter marks must be a non-empty array',
         }
       }
 
@@ -452,12 +452,12 @@ export const updateMarksBatchTool: Tool = {
       return {
         success: true,
         data: { count: marksToUpdate.length },
-        message: `成功批量更新 ${marksToUpdate.length} 条记录`,
+        message: `Successfully batch-updated ${marksToUpdate.length} records`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `批量更新记录失败: ${error}`,
+        error: `Failed to batch-update records: ${error}`,
       }
     }
   },
@@ -481,7 +481,7 @@ export const deleteMarksBatchTool: Tool = {
       if (!Array.isArray(params.ids) || params.ids.length === 0) {
         return {
           success: false,
-          error: '参数 ids 必须是非空数组',
+          error: 'Parameter ids must be a non-empty array',
         }
       }
 
@@ -490,12 +490,12 @@ export const deleteMarksBatchTool: Tool = {
       return {
         success: true,
         data: { count: params.ids.length },
-        message: `成功批量删除 ${params.ids.length} 条记录`,
+        message: `Successfully batch-deleted ${params.ids.length} records`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `批量删除记录失败: ${error}`,
+        error: `Failed to batch-delete records: ${error}`,
       }
     }
   },
@@ -519,7 +519,7 @@ export const restoreMarksBatchTool: Tool = {
       if (!Array.isArray(params.ids) || params.ids.length === 0) {
         return {
           success: false,
-          error: '参数 ids 必须是非空数组',
+          error: 'Parameter ids must be a non-empty array',
         }
       }
 
@@ -528,12 +528,12 @@ export const restoreMarksBatchTool: Tool = {
       return {
         success: true,
         data: { count: params.ids.length },
-        message: `成功批量恢复 ${params.ids.length} 条记录`,
+        message: `Successfully batch-restored ${params.ids.length} records`,
       }
     } catch (error) {
       return {
         success: false,
-        error: `批量恢复记录失败: ${error}`,
+        error: `Failed to batch-restore records: ${error}`,
       }
     }
   },

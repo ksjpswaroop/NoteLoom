@@ -91,7 +91,7 @@ interface MarkState {
   setQueue: (queueId: string, mark: Partial<MarkQueue>) => void
   removeQueue: (queueId: string) => void
 
-  // 多选状态
+  //
   selectedMarkIds: Set<number>
   setSelectedMarkIds: (ids: Set<number>) => void
   toggleMarkSelection: (id: number) => void
@@ -118,7 +118,7 @@ interface MarkState {
   hasActiveRecordFilters: () => boolean
   initRecordFilters: () => Promise<void>
 
-  // 同步
+  //
   syncState: boolean
   setSyncState: (syncState: boolean) => void
   lastSyncTime: string
@@ -235,7 +235,7 @@ const useMarkStore = create<MarkState>((set, get) => ({
     })
   },
 
-  // 多选状态
+  //
   selectedMarkIds: new Set<number>(),
   setSelectedMarkIds: (ids) => {
     set({ selectedMarkIds: ids })
@@ -358,7 +358,7 @@ const useMarkStore = create<MarkState>((set, get) => ({
     })
   },
 
-  // 同步
+  //
   syncState: false,
   setSyncState: (syncState) => {
     set({ syncState })
@@ -416,7 +416,7 @@ const useMarkStore = create<MarkState>((set, get) => ({
           console.error('[mark store] GitLab getFiles error:', e)
         }
 
-        // 如果目录不存在（files 为 null），先创建目录标记文件
+        // （files null），
         if (!files) {
           try {
             await uploadGitlabFile({
@@ -429,7 +429,7 @@ const useMarkStore = create<MarkState>((set, get) => ({
           } catch {
             // Ignore .gitkeep creation failures; the main upload path reports errors below.
           }
-          // 重新获取文件列表
+          //
           files = await gitlabGetFiles({ path, repo: gitlabRepoName })
         }
 
@@ -528,7 +528,7 @@ const useMarkStore = create<MarkState>((set, get) => ({
           const s3Key = `${path}/${filename}`
           const s3Result = await s3Download(s3Config, s3Key)
           if (s3Result) {
-            // S3 返回的 content 是字符串，直接解析
+            // S3 content ，
             result = JSON.parse(s3Result.content)
             hasRemoteData = true
           }
@@ -548,7 +548,7 @@ const useMarkStore = create<MarkState>((set, get) => ({
         break;
       }
     }
-    // S3 已经直接解析到 result 了，这里处理 Git 平台
+    // S3 result ， Git
     if (files) {
       try {
         if (!options.allowMissingRemote || !hasEmptyRemoteFileContent(files)) {

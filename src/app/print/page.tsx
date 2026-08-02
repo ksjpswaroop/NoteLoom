@@ -43,7 +43,7 @@ export default function PrintPage() {
 
     void (async () => {
       if (!key) {
-        throw new Error('打印内容不存在或已经过期')
+        throw new Error('Print content does not exist or has expired')
       }
 
       const store = await Store.load(PRINT_EXPORT_STORE)
@@ -52,7 +52,7 @@ export default function PrintPage() {
       await store.save()
 
       if (!printDocument) {
-        throw new Error('打印内容不存在或已经过期')
+        throw new Error('Print content does not exist or has expired')
       }
 
       const exportedDocument = new DOMParser().parseFromString(printDocument.html, 'text/html')
@@ -70,7 +70,7 @@ export default function PrintPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center p-8 text-sm text-muted-foreground">
-      {error || '正在准备系统打印窗口…'}
+      {error || 'Preparing the system print dialog…'}
     </main>
   )
 }

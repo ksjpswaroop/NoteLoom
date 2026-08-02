@@ -3,15 +3,15 @@ import { WebDAVConfig } from '@/types/sync'
 import { buildRepoContentPath, debugSyncPath, debugSyncPerf } from './remote-file'
 
 /**
- * WebDAV 同步核心模块
- * 支持群晖、QNAP、Nextcloud 等 WebDAV 协议存储
+ * WebDAV 
+ * 、QNAP、Nextcloud WebDAV 
  */
 
 const DEFAULT_TEMPORARY_BLOCK_COOLDOWN_MS = 60_000
 const webDAVTemporaryBlockUntil = new Map<string, number>()
 
 /**
- * 构建 Basic Auth 头
+ * Basic Auth 
  */
 function buildAuthHeader(username: string, password: string): string {
   return `Basic ${btoa(`${username}:${password}`)}`
@@ -124,7 +124,7 @@ function buildWebDAVBaseUrl(config: WebDAVConfig): string {
       return normalizedUrl
     }
   } catch {
-    // 保持原始地址，后续请求会按当前错误处理路径返回。
+    // ，。
   }
 
   return rawUrl
@@ -193,7 +193,7 @@ async function getReachableWebDAVBaseUrl(config: WebDAVConfig, proxy?: Proxy) {
 }
 
 /**
- * 构建 WebDAV URL
+ * WebDAV URL
  */
 function buildWebDAVUrl(config: WebDAVConfig, key: string): string {
   const baseUrl = buildWebDAVBaseUrl(config)
@@ -322,7 +322,7 @@ async function ensureCollectionPathExists(
 }
 
 /**
- * 测试 WebDAV 连接
+ * WebDAV 
  */
 export async function testWebDAVConnection(config: WebDAVConfig, proxy?: Proxy): Promise<boolean> {
   const startedAt = getPerfNow()
@@ -389,7 +389,7 @@ export async function testWebDAVConnection(config: WebDAVConfig, proxy?: Proxy):
 }
 
 /**
- * 创建所有父目录
+ * 
  */
 async function ensureParentDirsExist(
   config: WebDAVConfig,
@@ -398,7 +398,7 @@ async function ensureParentDirsExist(
 ): Promise<boolean> {
   const pathPrefix = getPathPrefix(config)
 
-  // 首先确保 pathPrefix 目录存在
+  // pathPrefix
   if (pathPrefix) {
     const ok = await ensureCollectionPathExists(config, pathPrefix, proxy)
     if (!ok) {
@@ -407,7 +407,7 @@ async function ensureParentDirsExist(
   }
 
   const parts = key.split('/').filter(p => p)
-  // 构建所有可能的父目录路径
+  //
   for (let i = 1; i < parts.length; i++) {
     const relativeParentPath = parts.slice(0, i).join('/')
     const parentPath = pathPrefix ? `${pathPrefix}/${relativeParentPath}` : relativeParentPath
@@ -417,7 +417,7 @@ async function ensureParentDirsExist(
 }
 
 /**
- * 上传文件到 WebDAV
+ * WebDAV
  */
 export async function webdavUpload(
   config: WebDAVConfig,
@@ -448,7 +448,7 @@ export async function webdavUpload(
       contentLength: content.length,
       hasPathPrefix: Boolean(getPathPrefix(config)),
     })
-    // 先确保父目录存在
+    //
     await ensureParentDirsExist(config, key, proxy)
     logPerf('ensureParentDirs')
 
@@ -519,7 +519,7 @@ export async function webdavUpload(
 }
 
 /**
- * 从 WebDAV 下载文件
+ * WebDAV 
  */
 async function webdavDownloadBytesInternal(
   config: WebDAVConfig,
@@ -612,7 +612,7 @@ export async function webdavDownload(
 }
 
 /**
- * 删除 WebDAV 文件
+ * WebDAV 
  */
 export async function webdavDelete(config: WebDAVConfig, key: string, proxy?: Proxy): Promise<boolean> {
   try {
@@ -639,7 +639,7 @@ export async function webdavDelete(config: WebDAVConfig, key: string, proxy?: Pr
 }
 
 /**
- * 获取文件信息（HEAD 请求）
+ * （HEAD ）
  */
 export async function webdavHeadObject(
   config: WebDAVConfig,
@@ -674,7 +674,7 @@ export async function webdavHeadObject(
 
       return { etag, lastModified }
     } else if (response.status === 404 || response.status === 409) {
-      // 文件不存在，返回 null
+      // ， null
       return null
     } else {
       const errorText = await response.text()
@@ -701,7 +701,7 @@ export async function webdavHeadObject(
 }
 
 /**
- * 列出 WebDAV 文件
+ * WebDAV 
  */
 export async function webdavListObjects(
   config: WebDAVConfig,
@@ -716,7 +716,7 @@ export async function webdavListObjects(
 
     const baseUrl = buildWebDAVBaseUrl(config)
     const pathPrefix = getPathPrefix(config)
-    // 不要尾随斜杠
+    //
     const fullPrefix = pathPrefix ? (prefix ? `${pathPrefix}/${prefix}` : pathPrefix) : prefix
 
     const encodedFullPrefix = buildRepoContentPath({ path: fullPrefix })
@@ -755,7 +755,7 @@ export async function webdavListObjects(
       })
       return results
     } else if (response.status === 404 || response.status === 409) {
-      // 目录不存在是正常情况，不需要打印错误日志
+      // ，
       debugSyncPerf('webdav.listObjects.completed', {
         prefix,
         success: false,
@@ -789,7 +789,7 @@ export async function webdavListObjects(
 }
 
 /**
- * 解析 PROPFIND 响应 XML
+ * PROPFIND XML
  */
 function parsePropfindResponse(
   xml: string,
@@ -798,35 +798,35 @@ function parsePropfindResponse(
   const results: Array<{ key: string; etag: string; lastModified: string; size: number }> = []
 
   try {
-    // 使用正则解析 XML 响应
-    // 提取所有 response 元素
+    // XML
+    // response
     const responseRegex = /<d:response>([\s\S]*?)<\/d:response>/g
     let match
 
     while ((match = responseRegex.exec(xml)) !== null) {
       const responseContent = match[1]
 
-      // 提取 href
+      // href
       const hrefMatch = /<d:href>([^<]+)<\/d:href>/.exec(responseContent)
-      // 提取 getetag
+      // getetag
       const etagMatch = /<d:getetag>([^<]+)<\/d:getetag>/.exec(responseContent)
-      // 提取 getlastmodified
+      // getlastmodified
       const lastModMatch = /<d:getlastmodified>([^<]+)<\/d:getlastmodified>/.exec(responseContent)
-      // 提取 getcontentlength
+      // getcontentlength
       const sizeMatch = /<d:getcontentlength>([^<]+)<\/d:getcontentlength>/.exec(responseContent)
 
       if (hrefMatch) {
         let href = hrefMatch[1]
 
-        // 坚果云返回的 href 包含 /dav/ 前缀，需要移除
+        // href /dav/ ，
         if (href.startsWith('/dav/')) {
-          href = href.substring(5) // 移除 /dav/
+          href = href.substring(5) // /dav/
         }
 
         try {
           href = decodeURIComponent(href)
         } catch {
-          // 解码失败保持原样
+          //
         }
 
         const normalizedPrefix = prefix.replace(/^\/+|\/+$/g, '')
@@ -834,19 +834,19 @@ function parsePropfindResponse(
         const isDirectory = href.endsWith('/')
         const hrefWithoutTrailingSlash = href.replace(/\/+$/, '')
 
-        // 跳过当前目录本身，但保留它的直接子目录，供完整远端遍历使用。
+        // ，，。
         if (hrefWithoutTrailingSlash === normalizedPrefix) {
           continue
         }
 
-        // 移除前缀，还原相对路径
+        // ，
         if (normalizedPrefix && href.startsWith(`${normalizedPrefix}/`)) {
           href = href.substring(`${normalizedPrefix}/`.length)
         } else if (normalizedPrefix && href.startsWith(normalizedPrefix)) {
           href = href.substring(normalizedPrefix.length)
         }
 
-        // 移除开头的斜杠
+        //
         href = href.replace(/^\/+/, '').replace(/\/+$/, '')
 
         if (!href) continue
@@ -867,7 +867,7 @@ function parsePropfindResponse(
 }
 
 /**
- * 创建目录
+ * 
  */
 export async function webdavMkcol(
   config: WebDAVConfig,
@@ -892,7 +892,7 @@ export async function webdavMkcol(
     })
     markTemporaryBlocked(config, response, 'mkcolPublic')
 
-    // 201 表示创建成功，405 表示已存在
+    // 201 ，405
     return response.status === 201 || response.status === 405
   } catch (error) {
     console.error('WebDAV mkcol error:', error)

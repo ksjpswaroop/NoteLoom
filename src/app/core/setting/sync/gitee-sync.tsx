@@ -17,7 +17,7 @@ dayjs.extend(relativeTime)
 const GITEE_CONFIG = {
   platform: 'gitee' as const,
   tokenKey: 'giteeAccessToken',
-  tokenLabel: 'Gitee 私人令牌',
+  tokenLabel: 'Gitee private token',
   tokenDesc: '',
   tokenUrl: 'https://gitee.com/profile/personal_access_tokens/new',
   tokenUrlText: '',
@@ -39,7 +39,7 @@ export function GiteeSync() {
     setGiteeSyncRepoInfo
   } = useSyncStore()
 
-  // 获取实际使用的仓库名称
+  //
   const getRepoName = () => {
     return giteeCustomSyncRepo.trim() || RepoNames.sync
   }
@@ -53,24 +53,24 @@ export function GiteeSync() {
   }, [setGiteeAccessToken, setGiteeSyncRepoInfo, setGiteeSyncRepoState])
 
 
-  // 检查 Gitee 仓库状态（仅检查，不创建）
+  // Gitee （，）
   async function checkRepoState() {
     try {
       setGiteeSyncRepoState(SyncStateEnum.checking)
-      // 先清空之前的仓库信息
+      //
       setGiteeSyncRepoInfo(undefined)
       
-      // 添加超时保护，避免无限等待
+      // ，
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('检测超时')), 15000) // 15秒超时
+        setTimeout(() => reject(new Error('Check timed out')), 15000) // 15s timeout
       })
       
-      // 使用 Promise.race 来处理超时
+      // Promise.race
       await Promise.race([
         (async () => {
-          // 先检查网络连接
+          //
           if (!navigator.onLine) {
-            throw new Error('网络连接不可用')
+            throw new Error('Network unavailable')
           }
           
           await getUserInfo();
@@ -93,26 +93,26 @@ export function GiteeSync() {
       setGiteeSyncRepoInfo(undefined)
       setGiteeSyncRepoState(SyncStateEnum.fail)
       
-      // 如果是超时错误，显示特定提示
+      // ，
       if (err instanceof Error) {
-        if (err.message === '检测超时') {
-          console.warn('Gitee 仓库检测超时，可能是网络问题')
-        } else if (err.message === '网络连接不可用') {
-          console.warn('网络连接不可用，请检查网络设置')
+        if (err.message === 'Check timed out') {
+          console.warn('Gitee repository check timed out; this may be a network issue')
+        } else if (err.message === 'Network unavailable') {
+          console.warn('Network unavailable，')
         }
       }
     }
   }
 
-  // 手动创建仓库
+  //
   async function createGiteeRepo() {
     try {
       setGiteeSyncRepoState(SyncStateEnum.creating)
       const repoName = getRepoName()
       
-      // 添加超时保护
+      //
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('创建超时')), 20000) // 20秒超时
+        setTimeout(() => reject(new Error('Creation timed out')), 20000) // 20s timeout
       })
       
       await Promise.race([
@@ -132,14 +132,14 @@ export function GiteeSync() {
       console.error('Failed to create Gitee repo:', err)
       setGiteeSyncRepoState(SyncStateEnum.fail)
       
-      if (err instanceof Error && err.message === '创建超时') {
-        console.warn('Gitee 仓库创建超时，可能是网络问题')
+      if (err instanceof Error && err.message === 'Creation timed out') {
+        console.warn('Gitee repository creation timed out; this may be a network issue')
       }
     }
   }
 
   useEffect(() => {
-    // 添加网络状态监听
+    //
     const handleOnline = () => {
       // Network connected
     }

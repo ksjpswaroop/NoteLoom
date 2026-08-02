@@ -137,7 +137,7 @@ Examples:
 - "请记住，我希望以后都用中文回答" -> preference
 - "以后都用英文回答我" -> preference
 - "从现在起，发布说明默认先写用户能感知到的变化" -> preference
-- "以后不要在文章里使用过多小标题" -> preference
+- "以后不要在文章里使用过多Small heading" -> preference
 - "你记住，NoteLoom 项目使用 pnpm" -> memory
 - "Remember that I prefer concise English answers in future conversations" -> preference
 - "From now on, use pnpm commands for this workspace" -> preference

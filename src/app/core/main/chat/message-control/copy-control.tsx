@@ -14,31 +14,31 @@ export function CopyControl({ chat, translatedContent }: CopyControlProps) {
   const t = useTranslations()
   const [isCopied, setIsCopied] = useState(false)
   
-  // 处理复制功能
+  //
   async function handleCopy() {
     if (!chat.content || isCopied) return
     
     try {
-      // 使用翻译后的内容或原始内容
+      //
       let textToCopy = translatedContent || chat.content
       
-      // 清理多余的空白字符
+      //
       textToCopy = textToCopy.trim()
       
       if (!textToCopy) {
-        console.warn('复制内容为空')
+        console.warn('Translated message')
         return
       }
       
       await writeText(textToCopy)
       setIsCopied(true)
       
-      // 2秒后重置复制状态
+      // 2
       setTimeout(() => {
         setIsCopied(false)
       }, 2000)
     } catch (error) {
-      console.error('复制失败:', error)
+      console.error('Copy failed:', error)
     }
   }
 

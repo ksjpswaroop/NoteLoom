@@ -73,7 +73,7 @@ export function SyncPlatformCard({
   const [error, setError] = useState<string | null>(null)
   const [isInitializing, setIsInitializing] = useState(true)
 
-  // 初始化加载 token
+  // token
   useEffect(() => {
     const init = async () => {
       try {
@@ -91,10 +91,10 @@ export function SyncPlatformCard({
     init()
   }, [config.tokenKey, setAccessToken])
 
-  // 监听 syncRepoState 变化来显示错误
+  // syncRepoState
   useEffect(() => {
     if (syncRepoState === SyncStateEnum.fail && accessToken) {
-      // 可以在这里设置错误消息，但通常由具体组件设置
+      // ，
     }
   }, [syncRepoState, accessToken])
 
@@ -206,7 +206,7 @@ export function SyncPlatformCard({
   )
 }
 
-// 状态徽章组件
+//
 function StatusBadge({ state }: { state: SyncStateEnum }) {
   const t = useTranslations()
 

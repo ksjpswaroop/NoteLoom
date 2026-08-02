@@ -16,11 +16,11 @@ interface ImageHostingState {
   deleteImage: (name: string) => void
   getImages: () => Promise<void>
 
-  // 主要图床
+  //
   mainImageHosting: string
   setMainImageHosting: (mainImageHosting: string) => Promise<void>
   
-  // 图床 Github 仓库
+  // Github
   imageRepoUserInfo?: OctokitResponse<UserInfo>
   setImageRepoUserInfo: (imageRepoUserInfo?: OctokitResponse<UserInfo>) => Promise<void>
   imageRepoState: SyncStateEnum
@@ -28,13 +28,13 @@ interface ImageHostingState {
   imageRepoInfo?: GithubRepoInfo
   setImageRepoInfo: (imageRepoInfo?: GithubRepoInfo) => void
 
-  // S3 配置
+  // S3
   s3Config?: S3Config
   setS3Config: (config: S3Config) => Promise<void>
   s3State: SyncStateEnum
   setS3State: (state: SyncStateEnum) => void
 
-  // S.EE / PicGo 连接状态
+  // S.EE / PicGo
   smmsState: SyncStateEnum
   setSmmsState: (state: SyncStateEnum) => void
   picgoState: SyncStateEnum
@@ -52,7 +52,7 @@ const useImageStore = create<ImageHostingState>((set, get) => ({
       set({ mainImageHosting })
     }
 
-    // 初始化 S3 配置
+    // S3
     const s3Config = await store.get<S3Config>('s3Config');
     if (s3Config) {
       set({ s3Config })
@@ -79,7 +79,7 @@ const useImageStore = create<ImageHostingState>((set, get) => ({
     set({ images: images || [] })
   },
 
-  // 主要图床
+  //
   mainImageHosting: 'github',
   setMainImageHosting: async (mainImageHosting) => {
     set({ mainImageHosting })
@@ -105,7 +105,7 @@ const useImageStore = create<ImageHostingState>((set, get) => ({
     set({ imageRepoInfo })
   },
 
-  // S3 配置
+  // S3
   s3Config: undefined,
   setS3Config: async (config) => {
     set({ s3Config: config })

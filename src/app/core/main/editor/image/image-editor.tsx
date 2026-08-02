@@ -105,7 +105,7 @@ export function ImageEditor({ filePath }: ImageEditorProps) {
       setHasChanges(false)
       setPreviewScale(1)
       
-      // 加载图片尺寸
+      //
       const img = new Image()
       img.onload = () => {
         setImageWidth(img.naturalWidth)
@@ -115,7 +115,7 @@ export function ImageEditor({ filePath }: ImageEditorProps) {
     } catch (error) {
       console.error('Failed to load image:', error)
       toast({
-        title: '加载图片失败',
+        title: 'ImageFailed',
         description: String(error),
         variant: 'destructive'
       })
@@ -152,7 +152,7 @@ export function ImageEditor({ filePath }: ImageEditorProps) {
       setHasChanges(true)
       setPreviewScale(1)
       
-      // 更新图片尺寸
+      //
       setImageWidth(canvas.width)
       setImageHeight(canvas.height)
     } catch (error) {
@@ -224,7 +224,7 @@ export function ImageEditor({ filePath }: ImageEditorProps) {
       let blob: Blob
 
       if (cropperRef.current) {
-        // 如果在裁切模式，从 Cropper 获取图片
+        // ， Cropper
         const canvas = cropperRef.current.getCanvas()
         if (!canvas) return
 
@@ -234,7 +234,7 @@ export function ImageEditor({ filePath }: ImageEditorProps) {
           }, 'image/png')
         })
       } else {
-        // 非裁切模式，直接从 imageSrc 获取图片数据
+        // ， imageSrc
         const response = await fetch(imageSrc)
         blob = await response.blob()
       }
@@ -258,13 +258,13 @@ export function ImageEditor({ filePath }: ImageEditorProps) {
       await loadFileTree()
 
       toast({
-        title: '保存成功',
-        description: '图片已保存'
+        title: 'Saved',
+        description: 'Image Save'
       })
     } catch (error) {
       console.error('Failed to save image:', error)
       toast({
-        title: '保存失败',
+        title: 'Save failed',
         description: String(error),
         variant: 'destructive'
       })
@@ -275,7 +275,7 @@ export function ImageEditor({ filePath }: ImageEditorProps) {
     if (!cropMode || !cropperRef.current) return
     
     try {
-      // 获取裁切后的图片
+      //
       const canvas = cropperRef.current.getCanvas()
       if (!canvas) return
 
@@ -285,11 +285,11 @@ export function ImageEditor({ filePath }: ImageEditorProps) {
         }, 'image/png')
       })
 
-      // 更新图片显示
+      //
       const url = URL.createObjectURL(blob)
       setImageSrc(url)
       
-      // 更新图片尺寸
+      //
       const img = new Image()
       img.onload = () => {
         setImageWidth(img.naturalWidth)
@@ -350,7 +350,7 @@ export function ImageEditor({ filePath }: ImageEditorProps) {
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center h-full bg-background">
-        <p className="text-muted-foreground">加载中...</p>
+        <p className="text-muted-foreground">Loading...</p>
       </div>
     )
   }
@@ -358,7 +358,7 @@ export function ImageEditor({ filePath }: ImageEditorProps) {
   if (!imageSrc) {
     return (
       <div className="flex-1 flex items-center justify-center h-full bg-background">
-        <p className="text-muted-foreground">无法加载图片</p>
+        <p className="text-muted-foreground">Unable to load image</p>
       </div>
     )
   }
@@ -370,7 +370,7 @@ export function ImageEditor({ filePath }: ImageEditorProps) {
         <Toggle
           pressed={cropMode}
           onPressedChange={setCropMode}
-          aria-label="裁切模式"
+          aria-label="Crop mode"
           size="sm"
         >
           <Crop className="h-4 w-4" />
@@ -380,7 +380,7 @@ export function ImageEditor({ filePath }: ImageEditorProps) {
         
         <TooltipButton
           icon={<RotateCw className="h-4 w-4" />}
-          tooltipText="旋转"
+          tooltipText="Rotate"
           onClick={handleRotate}
           size="sm"
           side="bottom"
@@ -388,7 +388,7 @@ export function ImageEditor({ filePath }: ImageEditorProps) {
         
         <TooltipButton
           icon={<FlipHorizontal className="h-4 w-4" />}
-          tooltipText="水平翻转"
+          tooltipText="Flip horizontal"
           onClick={handleFlipHorizontal}
           size="sm"
           side="bottom"
@@ -396,7 +396,7 @@ export function ImageEditor({ filePath }: ImageEditorProps) {
         
         <TooltipButton
           icon={<FlipVertical className="h-4 w-4" />}
-          tooltipText="垂直翻转"
+          tooltipText="Flip vertical"
           onClick={handleFlipVertical}
           size="sm"
           side="bottom"
@@ -406,7 +406,7 @@ export function ImageEditor({ filePath }: ImageEditorProps) {
         
         <TooltipButton
           icon={<ZoomIn className="h-4 w-4" />}
-          tooltipText="放大"
+          tooltipText="Zoom in"
           onClick={handleZoomIn}
           size="sm"
           side="bottom"
@@ -414,7 +414,7 @@ export function ImageEditor({ filePath }: ImageEditorProps) {
         
         <TooltipButton
           icon={<ZoomOut className="h-4 w-4" />}
-          tooltipText="缩小"
+          tooltipText="Zoom out"
           onClick={handleZoomOut}
           size="sm"
           side="bottom"
@@ -430,7 +430,7 @@ export function ImageEditor({ filePath }: ImageEditorProps) {
               onClick={handleReset}
             >
               <Undo className="h-4 w-4 mr-1" />
-              重置
+              Reset
             </Button>
             
             <Button
@@ -439,7 +439,7 @@ export function ImageEditor({ filePath }: ImageEditorProps) {
               onClick={handleSave}
             >
               <Save className="h-4 w-4 mr-1" />
-              保存
+              Save
             </Button>
           </>
         )}

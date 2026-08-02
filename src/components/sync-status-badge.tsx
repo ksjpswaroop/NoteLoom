@@ -40,43 +40,43 @@ export function SyncStatusBadge({ path, showLabel = false, className, badgeProps
   }> = {
     synced: {
       icon: CheckCircle2,
-      label: '已同步',
+      label: 'Synced',
       variant: 'secondary',
       iconClassName: 'text-primary',
     },
     local_newer: {
       icon: ArrowUpCircle,
-      label: '待推送',
+      label: 'Pending push',
       variant: 'outline',
       iconClassName: 'text-primary',
     },
     remote_newer: {
       icon: ArrowDownCircle,
-      label: '有更新',
+      label: 'Updates available',
       variant: 'outline',
       iconClassName: 'text-foreground',
     },
     conflict: {
       icon: AlertTriangle,
-      label: '冲突',
+      label: 'Conflict',
       variant: 'destructive',
       iconClassName: 'text-destructive',
     },
     unknown: {
       icon: CloudOff,
-      label: '未同步',
+      label: 'Not synced',
       variant: 'secondary',
       iconClassName: 'text-muted-foreground',
     },
     syncing: {
       icon: Loader2,
-      label: '同步中',
+      label: 'Syncing',
       variant: 'secondary',
       iconClassName: 'animate-spin text-primary',
     },
     offline: {
       icon: CloudOff,
-      label: '离线',
+      label: 'Offline',
       variant: 'outline',
       iconClassName: 'text-muted-foreground',
     },
@@ -87,16 +87,16 @@ export function SyncStatusBadge({ path, showLabel = false, className, badgeProps
   const Icon = config.icon
 
   const formatLastSyncTime = () => {
-    if (!lastSyncTime) return '暂无同步记录'
+    if (!lastSyncTime) return 'No sync history'
     const date = new Date(lastSyncTime)
     const now = new Date()
     const diffMs = now.getTime() - date.getTime()
     const diffMins = Math.floor(diffMs / 60000)
 
-    if (diffMins < 1) return '刚刚同步'
-    if (diffMins < 60) return `${diffMins} 分钟前`
-    if (diffMins < 1440) return `${Math.floor(diffMins / 60)} 小时前`
-    return date.toLocaleDateString('zh-CN')
+    if (diffMins < 1) return 'Just synced'
+    if (diffMins < 60) return `${diffMins} minutes ago`
+    if (diffMins < 1440) return `${Math.floor(diffMins / 60)} hours ago`
+    return date.toLocaleDateString('en-US')
   }
 
   return (
@@ -136,12 +136,12 @@ export function SyncStatusBadge({ path, showLabel = false, className, badgeProps
   )
 }
 
-// 简化版本，只显示图标
+// ，
 export function SyncStatusIcon({ path, className }: { path?: string; className?: string }) {
   return <SyncStatusBadge path={path} showLabel={false} className={className} />
 }
 
-// 带标签的版本
+//
 export function SyncStatusLabel({ path, className }: { path?: string; className?: string }) {
   return <SyncStatusBadge path={path} showLabel={true} className={className} />
 }

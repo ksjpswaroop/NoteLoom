@@ -38,29 +38,51 @@ interface ColorScheme {
 
 const presets: ColorScheme[] = [
   {
-    name: '默认白色',
+    name: 'NoteLoom',
     mode: 'light',
     colors: {
-      background: '#ffffff',
-      foreground: '#0a0a0a',
+      background: '#F5F7FA',
+      foreground: '#1A2332',
       card: '#ffffff',
-      cardForeground: '#0a0a0a',
-      primary: '#171717',
-      primaryForeground: '#fafafa',
-      secondary: '#f5f5f5',
-      secondaryForeground: '#171717',
-      third: '#e5e5e5',
-      thirdForeground: '#262626',
-      muted: '#f5f5f5',
-      mutedForeground: '#737373',
-      accent: '#f5f5f5',
-      accentForeground: '#171717',
-      border: '#e5e5e5',
+      cardForeground: '#1A2332',
+      primary: '#C47D12',
+      primaryForeground: '#FFFBF0',
+      secondary: '#E8EDF3',
+      secondaryForeground: '#1A2332',
+      third: '#D5DDE8',
+      thirdForeground: '#273141',
+      muted: '#EBEEF3',
+      mutedForeground: '#5C6B7A',
+      accent: '#FEF3C7',
+      accentForeground: '#78350F',
+      border: '#D8E0EA',
+      shadow: '#1A2332',
+    },
+  },
+  {
+    name: 'Loom Thread',
+    mode: 'dark',
+    colors: {
+      background: '#0F1419',
+      foreground: '#E8ECF1',
+      card: '#161C24',
+      cardForeground: '#E8ECF1',
+      primary: '#E9A825',
+      primaryForeground: '#1A1408',
+      secondary: '#1E2733',
+      secondaryForeground: '#E8ECF1',
+      third: '#273141',
+      thirdForeground: '#D8E0EA',
+      muted: '#1E2733',
+      mutedForeground: '#94A3B4',
+      accent: '#3D2E14',
+      accentForeground: '#FDE68A',
+      border: '#2A3441',
       shadow: '#000000',
     },
   },
   {
-    name: '海洋蓝',
+    name: 'Ocean blue',
     mode: 'light',
     colors: {
       background: '#f0f9ff',
@@ -82,7 +104,7 @@ const presets: ColorScheme[] = [
     },
   },
   {
-    name: '森林绿',
+    name: 'Forest green',
     mode: 'light',
     colors: {
       background: '#f0fdf4',
@@ -104,7 +126,7 @@ const presets: ColorScheme[] = [
     },
   },
   {
-    name: '日落红',
+    name: 'Sunset red',
     mode: 'light',
     colors: {
       background: '#fef2f2',
@@ -126,7 +148,7 @@ const presets: ColorScheme[] = [
     },
   },
   {
-    name: '薰衣草紫',
+    name: 'Lavender purple',
     mode: 'light',
     colors: {
       background: '#faf5ff',
@@ -148,7 +170,7 @@ const presets: ColorScheme[] = [
     },
   },
   {
-    name: '午夜暗',
+    name: 'Midnight dark',
     mode: 'dark',
     colors: {
       background: '#1a1a2e',
@@ -170,7 +192,7 @@ const presets: ColorScheme[] = [
     },
   },
   {
-    name: '深海',
+    name: 'Deep sea',
     mode: 'dark',
     colors: {
       background: '#0f172a',
@@ -192,7 +214,7 @@ const presets: ColorScheme[] = [
     },
   },
   {
-    name: '暗夜绿',
+    name: 'Night green',
     mode: 'dark',
     colors: {
       background: '#0a1f1a',
@@ -214,7 +236,7 @@ const presets: ColorScheme[] = [
     },
   },
   {
-    name: '紫罗兰暗',
+    name: 'Dark violet',
     mode: 'dark',
     colors: {
       background: '#1a0b2e',
@@ -236,7 +258,7 @@ const presets: ColorScheme[] = [
     },
   },
   {
-    name: '珊瑚暖',
+    name: 'Warm coral',
     mode: 'light',
     colors: {
       background: '#fff7ed',
@@ -258,7 +280,7 @@ const presets: ColorScheme[] = [
     },
   },
   {
-    name: '石板灰',
+    name: 'Slate gray',
     mode: 'light',
     colors: {
       background: '#f8fafc',
@@ -280,7 +302,7 @@ const presets: ColorScheme[] = [
     },
   },
   {
-    name: '暗夜金',
+    name: 'Night gold',
     mode: 'dark',
     colors: {
       background: '#1a1915',
@@ -305,6 +327,7 @@ const presets: ColorScheme[] = [
 
 const presetNameKeys = [
   'default',
+  'loomThread',
   'ocean',
   'forest',
   'sunset',
@@ -325,7 +348,7 @@ export default function ThemeSettingsPage() {
   const [importCode, setImportCode] = useState('')
   const [exportCode, setExportCode] = useState('')
 
-  // 实时保存颜色变化
+  //
   const handleColorChange = async (colorKey: string, value: HSLValue | null) => {
     const updatedColors = {
       light: {
@@ -345,7 +368,7 @@ export default function ThemeSettingsPage() {
     applyThemeColors(updatedColors)
   }
 
-  // 应用预设方案
+  //
   const applyPreset = async (preset: ColorScheme) => {
     const hexToHsl = (hex: string): HSLValue | null => {
       const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
@@ -418,7 +441,7 @@ export default function ThemeSettingsPage() {
     applyThemeColors(updatedColors)
   }
 
-  // 生成导出代码
+  //
   const handleExport = () => {
     const exportData = {
       name: 'Custom Theme',
@@ -441,7 +464,7 @@ export default function ThemeSettingsPage() {
     setExportCode(JSON.stringify(exportData, null, 2))
   }
 
-  // 导入配色方案
+  //
   const handleImport = async () => {
     try {
       const importData = JSON.parse(importCode) as ColorScheme

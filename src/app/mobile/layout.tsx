@@ -8,7 +8,6 @@ import dynamic from "next/dynamic"
 import { applyThemeColors } from "@/lib/theme-utils"
 import { applyAppFontFamily } from "@/lib/font-settings"
 import dayjs from "dayjs"
-import zh from "dayjs/locale/zh-cn";
 import en from "dayjs/locale/en";
 import { useI18n } from "@/hooks/useI18n"
 import useVectorStore from "@/stores/vector"
@@ -157,24 +156,16 @@ export default function RootLayout({
   }, [])
 
   useEffect(() => {
-    switch (currentLocale) {
-      case 'zh':
-        dayjs.locale(zh);
-        break;
-      case 'en':
-        dayjs.locale(en);
-        break;
-      default:
-        break;
-    }
+    void currentLocale
+    dayjs.locale(en)
   }, [currentLocale])
 
-  // 应用自定义主题颜色
+  //
   useEffect(() => {
     applyThemeColors(customThemeColors)
   }, [customThemeColors])
 
-  // 应用字体
+  //
   useEffect(() => {
     applyAppFontFamily(appFontFamily)
   }, [appFontFamily])
@@ -214,7 +205,7 @@ export default function RootLayout({
                 </div>
               ) : null}
             </div>
-            {/* 隐藏的记录工具组件，用于监听事件 */}
+            {/* ， */}
             <div className="absolute opacity-0 pointer-events-none -z-50">
               <ControlText />
               <ControlRecording />

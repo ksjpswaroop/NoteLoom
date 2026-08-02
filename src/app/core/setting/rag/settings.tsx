@@ -233,7 +233,7 @@ export function Settings() {
       setDiagnosticResults(result.diagnostics);
       setDiagnosticCompleted(true);
     } catch (error) {
-      console.error('知识库检索测试失败:', error);
+      console.error('Knowledge base retrieval test failed:', error);
       toast({ title: t('diagnosticFailed'), variant: 'destructive' });
     } finally {
       setDiagnosticLoading(false);

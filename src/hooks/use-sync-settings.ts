@@ -4,7 +4,7 @@ import { Store } from '@tauri-apps/plugin-store'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { SyncPlatform } from '@/types/sync'
 
-// 缓存 Store 实例
+// Store
 let storeInstance: Store | null = null
 let storePromise: Promise<Store> | null = null
 
@@ -25,20 +25,20 @@ export interface SyncPlatformStatus {
 }
 
 export interface UseSyncSettingsReturn {
-  // 加载状态
+  
   isLoading: boolean
   error: string | null
   clearError: () => void
 
-  // Token 操作
+  // Token
   getToken: (platform: SyncPlatform) => Promise<string | null>
   setToken: (platform: SyncPlatform, token: string) => Promise<void>
 
-  // 各平台状态
+  
   platformStatus: Record<SyncPlatform, SyncPlatformStatus>
   updatePlatformStatus: (platform: SyncPlatform, status: Partial<SyncPlatformStatus>) => void
 
-  // 刷新所有平台状态
+  
   refreshAllStatus: () => Promise<void>
 }
 
@@ -63,7 +63,7 @@ export function useSyncSettings(): UseSyncSettingsReturn {
 
   const initialized = useRef(false)
 
-  // 初始化加载所有平台状态
+  
   useEffect(() => {
     if (initialized.current) return
     initialized.current = true
@@ -82,7 +82,7 @@ export function useSyncSettings(): UseSyncSettingsReturn {
 
             statusMap[platform] = {
               hasToken: !!token,
-              isConnected: false, // 需要各组件单独检查
+              isConnected: false, 
               repoName: null,
               lastSync: null,
             }

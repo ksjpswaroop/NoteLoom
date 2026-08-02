@@ -137,7 +137,7 @@ export function AgentApprovalPanel({
   )
   const description = translateKey(
     approvalPreview.descriptionKey,
-    "Agent 请求执行需要确认的操作。"
+    "The agent requested an operation that needs confirmation."
   )
   const hasDetails = approvalPreview.fields.length > 0
   const isRemoteSkillInstall = pendingConfirmation.toolName === "skill_install_source"
@@ -222,11 +222,11 @@ export function AgentApprovalPanel({
             ? riskWarnings.length > 0
               ? translateKey(
                   "record.chat.input.agent.confirmation.tools.install_remote_skill.continue",
-                  "继续安装"
+                  "Continue install"
                 )
               : translateKey(
                   "record.chat.input.agent.confirmation.tools.install_remote_skill.confirm",
-                  "确认安装"
+                  "Confirm install"
                 )
             : t("record.chat.input.agent.confirmation.confirm")}
         </Button>
@@ -250,7 +250,7 @@ export function AgentApprovalPanel({
               <AlertTitle>
                 {translateKey(
                   "record.chat.input.agent.confirmation.tools.install_remote_skill.warningTitle",
-                  "检测到安装风险"
+                  "Install risk detected"
                 )}
               </AlertTitle>
               <AlertDescription>
