@@ -54,10 +54,8 @@ interface ExcalidrawEditorProps {
 
 function sceneFromApi(api: ExcalidrawApiHandle): ExcalidrawSceneFile {
   const appState = api.getAppState()
-  const {
-    collaborators: _collaborators,
-    ...persistableAppState
-  } = appState
+  const { collaborators, ...persistableAppState } = appState
+  void collaborators
   return createEmptyExcalidrawScene({
     elements: api.getSceneElements(),
     appState: {

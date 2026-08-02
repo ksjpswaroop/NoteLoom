@@ -259,15 +259,19 @@ async function withEnsureProgress<T>(
   title: string,
   run: () => Promise<T>,
 ): Promise<T> {
-  let progressToast: ReturnType<typeof toast> | null = null
+  type EnsureToast = {
+    dismiss: () => void
+    update: (next: { title?: string; description?: string }) => void
+  }
+  const toastRef: { current: EnsureToast | null } = { current: null }
   let lastMessage = ''
   let allowToast = false
   const showAfterMs = 450
   const delayTimer = typeof window !== 'undefined'
     ? window.setTimeout(() => {
       allowToast = true
-      if (lastMessage && !progressToast) {
-        progressToast = toast({ title, description: lastMessage })
+      if (lastMessage && !toastRef.current) {
+        toastRef.current = toast({ title, description: lastMessage })
       }
     }, showAfterMs)
     : undefined
@@ -280,14 +284,14 @@ async function withEnsureProgress<T>(
       allowToast = true
       if (delayTimer !== undefined) window.clearTimeout(delayTimer)
     }
-    if (next === lastMessage && progressToast) return
+    if (next === lastMessage && toastRef.current) return
     lastMessage = next
     if (!allowToast) return
-    if (!progressToast) {
-      progressToast = toast({ title, description: next })
+    if (!toastRef.current) {
+      toastRef.current = toast({ title, description: next })
       return
     }
-    progressToast.update({ title, description: next })
+    toastRef.current.update({ title, description: next })
   }
 
   const unsubs: Array<() => void> = []
@@ -312,7 +316,7 @@ async function withEnsureProgress<T>(
     for (const unsub of unsubs) {
       try { unsub() } catch { /* ignore */ }
     }
-    progressToast?.dismiss()
+    toastRef.current?.dismiss()
   }
 }
 
